@@ -1,0 +1,246 @@
+/* =========================
+   RESET & BASE
+========================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  background: #eaf1ff;
+}
+
+/* =========================
+   PAGE LAYOUT
+========================= */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  background: #eaf1ff;
+}
+
+/* =========================
+   LEFT SIDE
+========================= */
+.login-left {
+  flex: 1;
+  padding: 70px 80px;
+  margin-left: 40px;
+}
+
+.logo {
+  width: 300px;
+  height: auto;
+  margin-top: -130px;
+  margin-left: -70px;
+}
+
+.login-left h1 {
+  font-size: 42px;
+  font-weight: 700;
+  color: #111827;
+  margin-top: 100px;
+}
+
+.login-left p {
+  margin-top: 12px;
+  font-size: 18px;
+  color: #000000;
+  max-width: 460px;
+}
+
+.bg-img {
+  margin-top: 20px;
+  width: 100%;
+  max-width: 500px;
+}
+
+/* =========================
+   RIGHT SIDE
+========================= */
+.login-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =========================
+   LOGIN CARD
+========================= */
+.login-card {
+  width: 420px;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* =========================
+   TAB
+========================= */
+.tab {
+  display: flex;
+  background: #e5e7eb;
+  border-radius: 14px;
+  margin-bottom: 28px;
+  padding: 4px;
+}
+
+.tab button {
+  flex: 1;
+  padding: 12px 0;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 10px;
+  color: #6b7280;
+}
+
+.tab button.active {
+  background: #1f6cff;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* =========================
+   FORM
+========================= */
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #111827;
+}
+
+/* INPUT WITH ICON */
+.input-icon {
+  position: relative;
+  margin-bottom: 18px;
+}
+
+.input-icon .material-icons {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #8c8989;
+  pointer-events: none;
+  z-index: 2; /* 👈 เพิ่ม */
+}
+.input-icon .material-icons:first-child {
+  left: 14px;
+}
+
+.input-icon input {
+  width: 100%;
+  padding: 13px 42px 13px 46px;
+  color: #000000;
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  font-size: 15px;
+  position: relative; /* 👈 เพิ่ม */
+  z-index: 1;         /* 👈 เพิ่ม */
+}
+
+
+.input-icon input:focus {
+  outline: none;
+  border-color: #1f6cff;
+}
+
+/* PASSWORD TOGGLE */
+.password .toggle-password {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: auto;
+  cursor: pointer;
+  color: #6b7280;
+  z-index: 3; /* 👈 เพิ่ม */
+}
+
+
+/* =========================
+   FORGOT
+========================= */
+.forgot {
+  text-align: right;
+  font-size: 14px;
+  color: #1f6cff;
+  cursor: pointer;
+  margin: 6px 0 24px;
+}
+
+/* =========================
+   BUTTON
+========================= */
+.login-btn {
+  width: 100%;
+  padding: 14px 0;
+  background: #1f6cff;
+  color: #ffffff;
+  font-size: 18px;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.login-btn:hover {
+  background: #1858d8;
+}
+
+/* =========================
+   REGISTER TEXT
+========================= */
+.register-text {
+  text-align: center;
+  margin-top: 22px;
+  font-size: 14px;
+  color: #374151;
+}
+
+.register-text span {
+  color: #1f6cff;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+/* ======================
+   RESPONSIVE
+   ====================== */
+@media (max-width: 900px) {
+  .login-page {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .login-left {
+    padding: 40px;
+    text-align: center;
+  }
+
+  .login-left p {
+    margin: 12px auto;
+  }
+
+  .bg-img {
+    display: none;
+  }
+
+  .login-right {
+    padding-bottom: 40px;
+  }
+}
