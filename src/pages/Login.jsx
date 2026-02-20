@@ -7,9 +7,17 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = (e) => {
-    e.preventDefault();
-    navigate("/");
+  e.preventDefault();
+
+  const userData = {
+    name: "May",
+    email: "may@email.com",
   };
+
+  localStorage.setItem("user", JSON.stringify(userData));
+  navigate("/");
+};
+
 
   return (
     <div className="login-page">

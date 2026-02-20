@@ -80,6 +80,7 @@ function Navbar() {
             <div className="dropdown">
               <Link to="/profile">โปรไฟล์</Link>
               <Link to="/my-activities">กิจกรรมของฉัน</Link>
+              <Link to="/activity">กิจกรรมที่เข้าร่วม</Link>
               <Link to="/settings">ตั้งค่า</Link>
 
               <button className="logout" onClick={handleLogout}>
