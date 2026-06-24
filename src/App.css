@@ -1,14 +1,3 @@
-#root {
-  width: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  margin: 0;
-}
-
-
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -19,7 +8,7 @@ body {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: drop-shadow(0 0 2em #1d424daa);
 }
 
 @keyframes logo-spin {

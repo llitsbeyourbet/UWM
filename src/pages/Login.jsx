@@ -5,62 +5,93 @@ import "./Login.css";
 export default function Login() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e) => {
-  e.preventDefault();
+  const isEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  const isPhone = (value) => /^0\d{9}$/.test(value);
+  const isUsername = (value) => value.length >= 3; // 👈 เพิ่ม
 
-  const userData = {
-    name: "May",
-    email: "may@email.com",
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (!isEmail(identifier) && !isPhone(identifier) && !isUsername(identifier)) { // 👈 แก้
+      setError("กรุณากรอกอีเมล, username หรือเบอร์โทรให้ถูกต้อง");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: identifier, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || "เกิดข้อผิดพลาด");
+        return;
+      }
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      navigate("/");
+    } catch (err) {
+      setError("ไม่สามารถเชื่อมต่อ server ได้");
+    } finally {
+      setLoading(false);
+    }
   };
-
-  localStorage.setItem("user", JSON.stringify(userData));
-  navigate("/");
-};
-
 
   return (
     <div className="login-page">
-      {/* LEFT */}
       <div className="login-left">
         <img src="/logo.png" alt="Logo" className="logo" />
-
-        <h1>เจอเพื่อน เจอกิจกรรม</h1>
+        <h1>Meet Friends, Meet Activities</h1>
         <p>Until We Meet ช่วยให้คุณค้นหาและเข้าร่วมกิจกรรมได้ง่ายขึ้น</p>
-
         <img src="/bg.png" alt="bg" className="bg-img" />
       </div>
 
-      {/* RIGHT */}
       <div className="login-right">
         <div className="login-card">
-          {/* TAB */}
           <div className="tab">
             <button className="active">เข้าสู่ระบบ</button>
-            <button onClick={() => navigate("/register")}>
-              สร้างบัญชี
-            </button>
+            <button onClick={() => navigate("/register")}>สร้างบัญชี</button>
           </div>
 
           <form onSubmit={handleLogin}>
-            {/* EMAIL */}
-            <label>อีเมล หรือ เบอร์โทรศัพท์</label>
+            <label>อีเมล, Username หรือ เบอร์โทรศัพท์</label>
             <div className="input-icon">
               <span className="material-icons">mail</span>
               <input
                 type="text"
-                placeholder="อีเมล หรือ เบอร์โทรศัพท์"
+                placeholder="อีเมล, username หรือเบอร์โทร"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
                 required
               />
             </div>
 
-            {/* PASSWORD */}
             <label>รหัสผ่าน</label>
             <div className="input-icon password">
               <span className="material-icons">lock</span>
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="รหัสผ่าน"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
               <span
@@ -73,16 +104,16 @@ export default function Login() {
 
             <div className="forgot">ลืมรหัสผ่าน?</div>
 
-            <button className="login-btn" type="submit">
-              เข้าสู่ระบบ
+            <button className="login-btn" type="submit" disabled={loading}>
+              {loading ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ"}
             </button>
           </form>
 
+          {error && <p className="error-text">{error}</p>}
+
           <p className="register-text">
             ยังไม่มีบัญชีผู้ใช้?{" "}
-            <span onClick={() => navigate("/register")}>
-              สร้างบัญชีผู้ใช้
-            </span>
+            <span onClick={() => navigate("/register")}>สร้างบัญชีผู้ใช้</span>
           </p>
         </div>
       </div>

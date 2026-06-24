@@ -1,24 +1,10 @@
 /* =========================
-   RESET & BASE
-========================= */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: "Segoe UI", Tahoma, sans-serif;
-  background: #eaf1ff;
-}
-
-/* =========================
    PAGE LAYOUT
 ========================= */
 .login-page {
   min-height: 100vh;
   display: flex;
-  background: #eaf1ff;
+  background: #fefff6;
 }
 
 /* =========================
@@ -27,21 +13,21 @@ body {
 .login-left {
   flex: 1;
   padding: 70px 80px;
-  margin-left: 40px;
+  margin-left: 30px;
 }
 
 .logo {
   width: 300px;
   height: auto;
-  margin-top: -130px;
-  margin-left: -70px;
+  margin-top: -100px;
+  margin-left: -90px;
 }
 
 .login-left h1 {
   font-size: 42px;
   font-weight: 700;
   color: #111827;
-  margin-top: 100px;
+  margin-top: 20px;
 }
 
 .login-left p {
@@ -221,19 +207,23 @@ input::-ms-clear {
 /* ======================
    RESPONSIVE
    ====================== */
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .login-page {
     flex-direction: column;
     align-items: center;
   }
-
-  .login-left {
-    padding: 40px;
+  .logo {
     text-align: center;
+    margin-left: 0px;
+    margin-top: -70px;
   }
 
-  .login-left p {
-    margin: 12px auto;
+  .login-left {
+    padding: 30px;
+    text-align: center;
+  }
+  .login-left h1{
+    margin-top: -40px;
   }
 
   .bg-img {

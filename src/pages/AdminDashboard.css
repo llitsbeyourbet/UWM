@@ -1,0 +1,174 @@
+.admin-page {
+  min-height: 100vh;
+  background: #f5f5f5;
+  font-family: 'Sarabun', sans-serif;
+  padding-bottom: 80px;
+}
+
+.admin-header {
+  background: #000;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.admin-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.admin-subtitle {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: #aaa;
+}
+
+.admin-back-btn {
+  padding: 6px 14px;
+  background: #333;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Sarabun', sans-serif;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 12px;
+}
+
+.stat-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.stat-number {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 500;
+}
+
+.stat-label {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: #888;
+}
+
+.stat-card.blue .stat-number { color: #4A6FFF; }
+.stat-card.green .stat-number { color: #6BCB77; }
+.stat-card.red .stat-number { color: #FF6B6B; }
+.stat-card.amber .stat-number { color: #FFD93D; }
+.stat-card.purple .stat-number { color: #9B59B6; }
+.stat-card.gray .stat-number { color: #888; }
+
+.admin-section {
+  padding: 0 12px;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: #111;
+  margin: 0 0 10px;
+}
+
+.report-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.report-info {
+  flex: 1;
+}
+
+.report-activity {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #111;
+}
+
+.report-count {
+  margin: 4px 0;
+  font-size: 12px;
+  color: #e53935;
+}
+
+.report-reasons {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.report-reason {
+  margin: 0;
+  font-size: 12px;
+  color: #555;
+}
+
+.report-status {
+  color: #aaa;
+}
+
+.report-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.suspend-btn {
+  padding: 6px 12px;
+  background: #fff0f0;
+  color: #e53935;
+  border: 1px solid #e53935;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: 'Sarabun', sans-serif;
+  white-space: nowrap;
+}
+
+.dismiss-btn {
+  padding: 6px 12px;
+  background: #f0f0f0;
+  color: #555;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: 'Sarabun', sans-serif;
+}
+
+.empty-text {
+  text-align: center;
+  color: #aaa;
+  font-size: 14px;
+  margin-top: 24px;
+}
+
+.admin-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 14px;
+  color: #888;
+  font-family: 'Sarabun', sans-serif;
+}

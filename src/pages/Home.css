@@ -1,46 +1,287 @@
 .home {
-  padding: 40px;
-  background: #e2edff;
   min-height: 100vh;
+  background: #F5F0E8;
+  font-family: 'Sarabun', sans-serif;
+  padding-bottom: 80px;
 }
 
-.welcome-box {
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  margin-bottom: 30px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-}
-
-.section-title {
-  margin-bottom: 20px;
-}
-
-.card-container {
+.home-header {
+  padding: 20px 20px 0;
   display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.activity-card {
+.home-greeting {
+  margin: 0;
+  font-size: 13px;
+  color: #888;
+}
+
+.home-username {
+  margin: 2px 0 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+}
+
+.home-icons {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-btn {
+  width: 36px;
+  height: 36px;
   background: white;
-  padding: 20px;
-  border-radius: 12px;
-  width: 280px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.home-title {
+  padding: 16px 20px 0;
+}
+
+.home-title h1 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 800;
+  color: #111;
+  line-height: 1.2;
+}
+
+.home-title h1 em {
+  font-style: italic;
+  font-weight: 700;
+}
+
+.home-title p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #888;
+}
+
+.category-scroll {
+  padding: 14px 20px 0;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.category-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.category-pill {
+  padding: 8px 16px;
+  background: white;
+  color: #111;
+  border-radius: 50px;
+  font-size: 13px;
+  white-space: nowrap;
+  cursor: pointer;
   transition: 0.2s;
 }
 
-.activity-card:hover {
-  transform: translateY(-5px);
+.category-pill.active {
+  background: #111;
+  color: white;
 }
 
-.activity-card button {
-  margin-top: 10px;
-  padding: 8px 14px;
-  border: none;
-  border-radius: 6px;
-  background: #4f7cff;
-  color: white;
+.home-cards {
+  padding: 14px 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.home-card {
+  border-radius: 20px;
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
   cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.home-card:hover {
+  transform: scale(1.01);
+}
+
+.card-circle {
+  position: absolute;
+  right: -20px;
+  top: -20px;
+  width: 100px;
+  height: 100px;
+  background: rgba(0,0,0,0.06);
+  border-radius: 50%;
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  z-index: 1;
+}
+
+.card-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  background: #111;
+  color: white;
+  border-radius: 50px;
+  font-size: 11px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.card-name {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: #111;
+}
+
+.card-meta {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: #555;
+}
+
+.card-emoji {
+  font-size: 36px;
+  z-index: 1;
+}
+
+.card-emoji-img {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.card-bottom {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.card-btn {
+  padding: 6px 14px;
+  background: #111;
+  color: white;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.loading-text,
+.empty-text {
+  text-align: center;
+  color: #aaa;
+  font-size: 14px;
+  margin-top: 40px;
+}
+
+/* iPad (768px) */
+@media (max-width: 768px) {
+  .home-header {
+    padding: 16px 16px 0;
+  }
+
+  .home-title {
+    padding: 14px 16px 0;
+  }
+
+  .home-title h1 {
+    font-size: 26px;
+  }
+
+  .category-scroll {
+    padding: 12px 16px 0;
+  }
+
+  .home-cards {
+    padding: 12px 16px 0;
+  }
+
+  .card-name {
+    font-size: 16px;
+  }
+}
+
+/* มือถือ (480px) */
+@media (max-width: 480px) {
+  .home-header {
+    padding: 14px 14px 0;
+  }
+
+  .home-title {
+    padding: 12px 14px 0;
+  }
+
+  .home-title h1 {
+    font-size: 22px;
+  }
+
+  .home-title p {
+    font-size: 12px;
+  }
+
+  .category-scroll {
+    padding: 10px 14px 0;
+  }
+
+  .category-pill {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .home-cards {
+    padding: 10px 14px 0;
+    gap: 10px;
+  }
+
+  .home-card {
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .card-name {
+    font-size: 15px;
+  }
+
+  .card-meta {
+    font-size: 11px;
+  }
+
+  .card-emoji {
+    font-size: 28px;
+  }
+
+  .card-emoji-img {
+    width: 48px;
+    height: 48px;
+  }
+
+  .card-btn {
+    font-size: 14px;
+    padding: 5px 12px;
+  }
+
+  .icon-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .home-username {
+    font-size: 14px;
+  }
 }

@@ -1,0 +1,129 @@
+.notifications-page {
+  min-height: 100vh;
+  background: #f5f5f5;
+  font-family: 'Sarabun', sans-serif;
+}
+
+.notif-header {
+  background: #fff;
+  padding: 16px;
+  border-bottom: 0.5px solid #eee;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.notif-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: #111;
+}
+
+.notif-list {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.notif-section-label {
+  margin: 8px 0 6px 4px;
+  font-size: 13px;
+  color: #888;
+}
+
+.notif-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.notif-card.new {
+  background: #f0f0ff;
+}
+
+.notif-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.notif-icon.blue { background: #c8d8f0; }
+.notif-icon.green { background: #d0f0d8; }
+.notif-icon.amber { background: #f0e8d0; }
+.notif-icon.red { background: #f0d0d0; }
+
+.notif-body {
+  flex: 1;
+}
+
+.notif-message {
+  margin: 0;
+  font-size: 14px;
+  color: #111;
+  line-height: 1.5;
+}
+
+.notif-time {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: #aaa;
+}
+
+.notif-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.btn-accept {
+  padding: 6px 16px;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Sarabun', sans-serif;
+}
+
+.btn-reject {
+  padding: 6px 16px;
+  background: #f0f0f0;
+  color: #555;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Sarabun', sans-serif;
+}
+
+.bold {
+  font-weight: 500;
+}
+
+.empty-text {
+  text-align: center;
+  color: #aaa;
+  font-size: 14px;
+  margin-top: 40px;
+}
+.btn-review {
+  padding: 6px 16px;
+  background: #fff3e0;
+  color: #e65100;
+  border: 1px solid #e65100;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Sarabun', sans-serif;
+  margin-top: 4px;
+}

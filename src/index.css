@@ -1,11 +1,15 @@
+/* ใน index.css หรือ App.css */
+body {
+  padding-bottom: 50px;
+}
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Sarabun', sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
   color: rgba(12, 11, 11, 0.87);
-  background-color: #e2edff;
+
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -26,7 +30,6 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: #ffffff;
 }
 #root {
   width: 100%;
