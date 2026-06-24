@@ -23,7 +23,7 @@ function EditProfile() {
       }
 
       try {
-        const res = await fetch("http://localhost:5000/api/auth/me", {
+        const res = await fetch("${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/auth/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -35,7 +35,7 @@ function EditProfile() {
         setBirthdate(data.birthdate || "");
         setBio(data.bio || "");
         if (data.profileImage) {
-          setPreview(`http://localhost:5000/uploads/${data.profileImage}`);
+          setPreview(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/uploads/${data.profileImage}`);
         }
       } catch (err) {
         console.log(err);
@@ -55,7 +55,7 @@ function EditProfile() {
     formData.append("image", file);
 
     try {
-      const res = await fetch("http://localhost:5000/api/upload", {
+      const res = await fetch("${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/upload", {
         method: "POST",
         body: formData,
       });
@@ -72,7 +72,7 @@ function EditProfile() {
 
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/auth/update", {
+      const res = await fetch("${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/auth/update", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -36,7 +36,7 @@ function ActivityDetail() {
 
       let user = null;
       try {
-        const userRes = await fetch("http://localhost:5000/api/auth/me", {
+        const userRes = await fetch("${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/auth/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
         user = await userRes.json();
@@ -45,12 +45,12 @@ function ActivityDetail() {
       }
 
       try {
-        const res = await fetch(`http://localhost:5000/api/activities/${activityId}`);
+        const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/activities/${activityId}`);
         const activityData = await res.json();
         setActivity(activityData);
 
         // 👈 ดึงคะแนนเฉลี่ยกิจกรรม (ทุกคนเห็น)
-        const ratingRes = await fetch(`http://localhost:5000/api/review/activity/${activityId}/rating`);
+        const ratingRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/review/activity/${activityId}/rating`);
         const ratingData = await ratingRes.json();
         setActivityRating(ratingData);
 
@@ -58,21 +58,21 @@ function ActivityDetail() {
           setIsOwner(true);
 
           // 👈 ถ้าเป็นเจ้าของ ดึง comment ด้วย
-          const commentRes = await fetch(`http://localhost:5000/api/review/activity/${activityId}/comments`, {
+          const commentRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/review/activity/${activityId}/comments`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           const commentData = await commentRes.json();
           setComments(commentData);
 
         } else if (user) {
-          const statusRes = await fetch(`http://localhost:5000/api/join/${activityId}/status`, {
+          const statusRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/join/${activityId}/status`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           const statusData = await statusRes.json();
           setJoinStatus(statusData.status);
 
           if (statusData.status === "checked_in") {
-            const reviewRes = await fetch(`http://localhost:5000/api/review/${activityId}/status`, {
+            const reviewRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/review/${activityId}/status`, {
               headers: { Authorization: `Bearer ${token}` },
             });
             const reviewData = await reviewRes.json();
@@ -97,7 +97,7 @@ function ActivityDetail() {
 
     setJoinLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/join/${activity.id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/join/${activity.id}`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -126,7 +126,7 @@ function ActivityDetail() {
 
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`http://localhost:5000/api/join/${activity.id}/cancel`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/join/${activity.id}/cancel`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -147,7 +147,7 @@ function ActivityDetail() {
 
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`http://localhost:5000/api/activities/${activity.id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/activities/${activity.id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -174,7 +174,7 @@ function ActivityDetail() {
     const token = localStorage.getItem("token");
     setReportLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/report/${activity.id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/report/${activity.id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -211,7 +211,7 @@ function ActivityDetail() {
     <div className="activity-detail-page">
       <div className="activity-cover">
         {activity.cover ? (
-          <img src={`http://localhost:5000/uploads/${activity.cover}`} alt="cover" className="activity-cover-img" />
+          <img src={`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/uploads/${activity.cover}`} alt="cover" className="activity-cover-img" />
         ) : (
           <div className="activity-cover-placeholder" />
         )}

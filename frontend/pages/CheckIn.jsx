@@ -20,11 +20,11 @@ function CheckIn() {
       }
 
       try {
-        const actRes = await fetch(`http://localhost:5000/api/activities/${activityId}`);
+        const actRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/activities/${activityId}`);
         const actData = await actRes.json();
         setActivity(actData);
 
-        const statusRes = await fetch(`http://localhost:5000/api/join/${activityId}/status`, {
+        const statusRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/join/${activityId}/status`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const statusData = await statusRes.json();
@@ -45,7 +45,7 @@ function CheckIn() {
     const token = localStorage.getItem("token");
     setCheckinLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/join/${activityId}/checkin`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/join/${activityId}/checkin`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });

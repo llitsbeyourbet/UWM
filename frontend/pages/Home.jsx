@@ -38,7 +38,7 @@ function Home() {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/activities");
+        const res = await fetch("${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/activities");
         const data = await res.json();
         setActivities(data);
       } catch (err) {
@@ -126,7 +126,7 @@ function Home() {
                   <p className="card-meta">👥 {item.participantCount} คน</p>
                 </div>
                 {item.cover ? (
-                  <img src={`http://localhost:5000/uploads/${item.cover}`} alt="cover" className="card-emoji-img" />
+                  <img src={`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/uploads/${item.cover}`} alt="cover" className="card-emoji-img" />
                 ) : (
                   <span className="card-emoji">🎉</span>
                 )}

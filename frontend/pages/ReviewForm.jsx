@@ -17,7 +17,7 @@ function ReviewForm() {
   useEffect(() => {
     const fetchActivity = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/activities/${activityId}`);
+        const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/activities/${activityId}`);
         const data = await res.json();
         setActivity(data);
       } catch (err) {
@@ -36,7 +36,7 @@ function ReviewForm() {
     const token = localStorage.getItem("token");
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/review/${activityId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/review/${activityId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -104,7 +104,7 @@ function ReviewForm() {
         <div className="review-activity-card">
           <div className="review-activity-icon">
             {activity.cover ? (
-              <img src={`http://localhost:5000/uploads/${activity.cover}`} alt="cover" className="review-activity-img" />
+              <img src={`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/uploads/${activity.cover}`} alt="cover" className="review-activity-img" />
             ) : (
               <span style={{ fontSize: 28 }}>🎉</span>
             )}

@@ -12,7 +12,7 @@ function Notifications() {
   const fetchNotifications = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/notifications", {
+      const res = await fetch("${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/notifications", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -28,7 +28,7 @@ function Notifications() {
   const handleAccept = async (n) => {
     try {
       const token = localStorage.getItem("token");
-      await fetch(`http://localhost:5000/api/join/${n.activityId}/respond/${n.fromUserId}`, {
+      await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/join/${n.activityId}/respond/${n.fromUserId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -48,7 +48,7 @@ function Notifications() {
   const handleReject = async (n) => {
     try {
       const token = localStorage.getItem("token");
-      await fetch(`http://localhost:5000/api/join/${n.activityId}/respond/${n.fromUserId}`, {
+      await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/join/${n.activityId}/respond/${n.fromUserId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

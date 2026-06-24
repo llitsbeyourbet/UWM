@@ -19,7 +19,7 @@ function EditActivity() {
   useEffect(() => {
     const fetchActivity = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/activities/${id}`);
+        const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/activities/${id}`);
         const data = await res.json();
         setActivityName(data.activityName || "");
         setDetail(data.detail || "");
@@ -29,7 +29,7 @@ function EditActivity() {
         setLocation(data.location || "");
         setParticipantCount(data.participantCount || 1);
         setActivityType(data.activityType || "public");
-        if (data.cover) setPreview([`http://localhost:5000/uploads/${data.cover}`]);
+        if (data.cover) setPreview([`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/uploads/${data.cover}`]);
       } catch (err) {
         console.log(err);
       }
@@ -46,7 +46,7 @@ function EditActivity() {
       const formData = new FormData();
       formData.append("image", files[0]);
       try {
-        const res = await fetch("http://localhost:5000/api/upload", {
+        const res = await fetch("${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/upload", {
           method: "POST",
           body: formData,
         });
@@ -68,7 +68,7 @@ function EditActivity() {
     }
 
     try {
-      const res = await fetch(`http://localhost:5000/api/activities/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/activities/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

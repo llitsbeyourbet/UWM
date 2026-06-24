@@ -20,7 +20,7 @@ function Profile() {
 
       try {
         // ดึง user จาก API
-        const userRes = await fetch("http://localhost:5000/api/auth/me", {
+        const userRes = await fetch("${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/auth/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!userRes.ok) {
@@ -31,20 +31,20 @@ function Profile() {
         setUser(userData);
 
         // ดึงกิจกรรมที่สร้าง
-        const actRes = await fetch("http://localhost:5000/api/activities");
+        const actRes = await fetch("${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/activities");
         const actData = await actRes.json();
         const created = actData.filter((a) => a.createdBy === userData.id);
         setCreatedActivities(created);
 
         // ดึงกิจกรรมที่ checked_in
-        const joinRes = await fetch("http://localhost:5000/api/join/checked-in", {
+        const joinRes = await fetch("${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/join/checked-in", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const joinData = await joinRes.json();
         setJoinedActivities(joinData);
 
         // 👈 ดึงคะแนน host จาก API
-        const ratingRes = await fetch(`http://localhost:5000/api/review/host/${userData.id}`);
+        const ratingRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/review/host/${userData.id}`);
         const ratingData = await ratingRes.json();
         setHostRating(ratingData.avgRating);
 
@@ -76,7 +76,7 @@ function Profile() {
   const ActivityCard = ({ item }) => (
     <div className="profile-activity-card" onClick={() => handleViewDetail(item)}>
       {item.cover ? (
-        <img src={`http://localhost:5000/uploads/${item.cover}`} alt="cover" className="profile-card-img" />
+        <img src={`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/uploads/${item.cover}`} alt="cover" className="profile-card-img" />
       ) : (
         <div className="profile-card-placeholder" />
       )}
@@ -107,7 +107,7 @@ function Profile() {
           <div className="profile-card-inner">
             <div className="profile-avatar-wrap">
               {user?.profileImage ? (
-                <img src={`http://localhost:5000/uploads/${user.profileImage}`} alt="avatar" className="profile-avatar-img" />
+                <img src={`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/uploads/${user.profileImage}`} alt="avatar" className="profile-avatar-img" />
               ) : (
                 <div className="profile-avatar-initials">
                   {getInitials(user?.name)}

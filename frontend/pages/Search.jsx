@@ -25,7 +25,7 @@ function Search() {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/activities");
+        const res = await fetch("${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/activities");
         const data = await res.json();
         setActivities(data);
         setFiltered(data);
@@ -106,7 +106,7 @@ function Search() {
           filtered.map((item) => (
             <div key={item.id} className="activity-card" onClick={() => handleViewDetail(item)}>
               {item.cover ? (
-                <img src={`http://localhost:5000/uploads/${item.cover}`} alt="cover" className="card-cover" />
+                <img src={`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/uploads/${item.cover}`} alt="cover" className="card-cover" />
               ) : (
                 <div className="card-cover-placeholder" />
               )}
