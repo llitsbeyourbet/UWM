@@ -1,3 +1,4 @@
+import API_URL from "../config";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./EditProfile.css";
@@ -23,7 +24,7 @@ function EditProfile() {
       }
 
       try {
-        const res = await fetch("${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/auth/me", {
+        const res = await fetch("${API_URL}/api/auth/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -35,7 +36,7 @@ function EditProfile() {
         setBirthdate(data.birthdate || "");
         setBio(data.bio || "");
         if (data.profileImage) {
-          setPreview(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/uploads/${data.profileImage}`);
+          setPreview(`${API_URL}/uploads/${data.profileImage}`);
         }
       } catch (err) {
         console.log(err);
@@ -55,7 +56,7 @@ function EditProfile() {
     formData.append("image", file);
 
     try {
-      const res = await fetch("${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/upload", {
+      const res = await fetch("${API_URL}/api/upload", {
         method: "POST",
         body: formData,
       });
@@ -72,7 +73,7 @@ function EditProfile() {
 
     setLoading(true);
     try {
-      const res = await fetch("${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/auth/update", {
+      const res = await fetch("${API_URL}/api/auth/update", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

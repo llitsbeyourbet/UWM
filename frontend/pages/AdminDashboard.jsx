@@ -1,3 +1,4 @@
+import API_URL from "../config";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AdminDashboard.css";
@@ -21,14 +22,14 @@ function AdminDashboard() {
     const token = localStorage.getItem("token");
     try {
       // ดึงสถิติ
-      const statsRes = await fetch("${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/admin/dashboard", {
+      const statsRes = await fetch("${API_URL}/api/admin/dashboard", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const statsData = await statsRes.json();
       setStats(statsData);
 
       // ดึงรายงาน
-      const reportsRes = await fetch("${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/admin/reports", {
+      const reportsRes = await fetch("${API_URL}/api/admin/reports", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const reportsData = await reportsRes.json();
@@ -44,7 +45,7 @@ function AdminDashboard() {
     if (!window.confirm("ต้องการระงับกิจกรรมนี้ไหม?")) return;
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/admin/suspend/${activityId}`, {
+      const res = await fetch(`${API_URL}/api/admin/suspend/${activityId}`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -60,7 +61,7 @@ function AdminDashboard() {
   const handleDismiss = async (activityId) => {
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/admin/unsuspend/${activityId}`, {
+      const res = await fetch(`${API_URL}/api/admin/unsuspend/${activityId}`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
       });

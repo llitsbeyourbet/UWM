@@ -1,3 +1,4 @@
+import API_URL from "../config";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./CreateActivities.css";
@@ -30,7 +31,7 @@ function CreateActivities() {
       formData.append("image", files[0]);
 
       try {
-        const res = await fetch("${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/upload", {
+        const res = await fetch("${API_URL}/api/upload", {
           method: "POST",
           body: formData,
         });
@@ -53,7 +54,7 @@ function CreateActivities() {
     }
 
     try {
-      const res = await fetch("${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/activities", {
+      const res = await fetch("${API_URL}/api/activities", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
