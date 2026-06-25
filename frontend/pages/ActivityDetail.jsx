@@ -37,7 +37,7 @@ function ActivityDetail() {
 
       let user = null;
       try {
-        const userRes = await fetch("${API_URL}/api/auth/me", {
+        const userRes = await fetch(`${API_URL}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         user = await userRes.json();

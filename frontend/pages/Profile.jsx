@@ -21,7 +21,7 @@ function Profile() {
 
       try {
         // ดึง user จาก API
-        const userRes = await fetch("${API_URL}/api/auth/me", {
+        const userRes = await fetch(`${API_URL}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!userRes.ok) {
@@ -32,13 +32,13 @@ function Profile() {
         setUser(userData);
 
         // ดึงกิจกรรมที่สร้าง
-        const actRes = await fetch("${API_URL}/api/activities");
+        const actRes = await fetch(`${API_URL}/api/activities`);
         const actData = await actRes.json();
         const created = actData.filter((a) => a.createdBy === userData.id);
         setCreatedActivities(created);
 
         // ดึงกิจกรรมที่ checked_in
-        const joinRes = await fetch("${API_URL}/api/join/checked-in", {
+        const joinRes = await fetch(`${API_URL}/api/join/checked-in`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const joinData = await joinRes.json();

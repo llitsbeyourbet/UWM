@@ -47,7 +47,7 @@ function EditActivity() {
       const formData = new FormData();
       formData.append("image", files[0]);
       try {
-        const res = await fetch("${API_URL}/api/upload", {
+        const res = await fetch(`${API_URL}/api/upload`, {
           method: "POST",
           body: formData,
         });

@@ -39,7 +39,7 @@ function Home() {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const res = await fetch("${API_URL}/api/activities");
+        const res = await fetch(`${API_URL}/api/activities`);
         const data = await res.json();
         setActivities(data);
       } catch (err) {

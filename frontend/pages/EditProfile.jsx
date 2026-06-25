@@ -24,7 +24,7 @@ function EditProfile() {
       }
 
       try {
-        const res = await fetch("${API_URL}/api/auth/me", {
+        const res = await fetch(`${API_URL}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -56,7 +56,7 @@ function EditProfile() {
     formData.append("image", file);
 
     try {
-      const res = await fetch("${API_URL}/api/upload", {
+      const res = await fetch(`${API_URL}/api/upload`, {
         method: "POST",
         body: formData,
       });
@@ -73,7 +73,7 @@ function EditProfile() {
 
     setLoading(true);
     try {
-      const res = await fetch("${API_URL}/api/auth/update", {
+      const res = await fetch(`${API_URL}/api/auth/update`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

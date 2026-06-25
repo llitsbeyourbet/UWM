@@ -22,14 +22,14 @@ function AdminDashboard() {
     const token = localStorage.getItem("token");
     try {
       // ดึงสถิติ
-      const statsRes = await fetch("${API_URL}/api/admin/dashboard", {
+      const statsRes = await fetch(`${API_URL}/api/admin/dashboard`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const statsData = await statsRes.json();
       setStats(statsData);
 
       // ดึงรายงาน
-      const reportsRes = await fetch("${API_URL}/api/admin/reports", {
+      const reportsRes = await fetch(`${API_URL}/api/admin/reports`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const reportsData = await reportsRes.json();

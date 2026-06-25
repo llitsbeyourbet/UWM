@@ -31,7 +31,7 @@ function CreateActivities() {
       formData.append("image", files[0]);
 
       try {
-        const res = await fetch("${API_URL}/api/upload", {
+        const res = await fetch(`${API_URL}/api/upload`, {
           method: "POST",
           body: formData,
         });
@@ -54,7 +54,7 @@ function CreateActivities() {
     }
 
     try {
-      const res = await fetch("${API_URL}/api/activities", {
+      const res = await fetch(`${API_URL}/api/activities`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
