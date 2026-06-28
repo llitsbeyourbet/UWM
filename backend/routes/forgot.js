@@ -6,7 +6,9 @@ const User = require("../models/User");
 const OTP = require("../models/OTP");
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false, // 👈 ต้องเป็น false สำหรับ port 587
   auth: {
     user: process.env.EMAIL,
     pass: process.env.EMAIL_PASSWORD,
