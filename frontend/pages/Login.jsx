@@ -63,6 +63,10 @@ export default function Login() {
       <div className="login-logo">
         <img src="/logo.png" alt="Logo" className="logo" />
       </div>
+      <div className="login-hero">
+        <h1>Meet Friends,<br />Meet Activities</h1>
+        <p>Until We Meet ช่วยให้คุณค้นหาและเข้าร่วมกิจกรรมได้ง่ายขึ้น</p>
+      </div>
 
       {/* Card */}
       <div className="login-card">
