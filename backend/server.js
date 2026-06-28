@@ -30,6 +30,7 @@ require("./models/Report");
 require("./models/ActivityReview");
 require("./models/HostReview");
 require("./models/Comment");
+require("./models/OTP");
 
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/activities", require("./routes/activities"));
@@ -39,6 +40,7 @@ app.use("/api/upload", require("./routes/upload"));
 app.use("/api/report", require("./routes/report"));
 app.use("/api/admin", require("./routes/admin"));
 app.use("/api/review", require("./routes/review"));
+app.use("/api/forgot", require("./routes/forgot"));
 
 sequelize.authenticate()
   .then(() => console.log("MySQL connected"))

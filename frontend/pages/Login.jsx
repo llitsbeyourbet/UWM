@@ -103,7 +103,11 @@ export default function Login() {
               </span>
             </div>
 
-            <div className="forgot">ลืมรหัสผ่าน?</div>
+            <div className="forgot">
+              <p className="forgot-link" onClick={() => navigate("/forgot-password")}>
+                ลืมรหัสผ่าน?
+              </p>
+            </div>
 
             <button className="login-btn" type="submit" disabled={loading}>
               {loading ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ"}

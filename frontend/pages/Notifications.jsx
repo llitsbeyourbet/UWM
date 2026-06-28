@@ -133,7 +133,7 @@ function Notifications() {
     const d = new Date(dateStr);
     const now = new Date();
     const diff = Math.floor((now - d) / 1000 / 60);
-    if (diff < 1) return "เมื่อกี้";
+    if (diff < 1) return "เมื่อสักครู่";
     if (diff < 60) return `${diff} นาทีที่แล้ว`;
     if (diff < 1440) return `${Math.floor(diff / 60)} ชั่วโมงที่แล้ว`;
     return "เมื่อวาน";

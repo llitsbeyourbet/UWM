@@ -14,6 +14,7 @@ import EditActivity from "./pages/EditActivity";
 import CheckIn from "./pages/CheckIn";
 import AdminDashboard from "./pages/AdminDashboard";
 import ReviewForm from "./pages/ReviewForm";
+import ForgotPassword from "./pages/ForgotPassword";
 
 
 
@@ -40,6 +41,7 @@ function App() {
         <Route path="/checkin/:activityId" element={<CheckIn />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/review/:activityId" element={<ReviewForm />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
       </Routes>
     </> 
