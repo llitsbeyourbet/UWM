@@ -13,13 +13,13 @@ export default function Login() {
 
   const isEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
   const isPhone = (value) => /^0\d{9}$/.test(value);
-  const isUsername = (value) => value.length >= 3; // 👈 เพิ่ม
+  const isUsername = (value) => value.length >= 3;
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
 
-    if (!isEmail(identifier) && !isPhone(identifier) && !isUsername(identifier)) { // 👈 แก้
+    if (!isEmail(identifier) && !isPhone(identifier) && !isUsername(identifier)) {
       setError("กรุณากรอกอีเมล, username หรือเบอร์โทรให้ถูกต้อง");
       return;
     }
@@ -58,69 +58,67 @@ export default function Login() {
 
   return (
     <div className="login-page">
-      <div className="login-left">
+
+      {/* Logo */}
+      <div className="login-logo">
         <img src="/logo.png" alt="Logo" className="logo" />
-        <h1>Meet Friends, Meet Activities</h1>
-        <p>Until We Meet ช่วยให้คุณค้นหาและเข้าร่วมกิจกรรมได้ง่ายขึ้น</p>
-        <img src="/bg.png" alt="bg" className="bg-img" />
       </div>
 
-      <div className="login-right">
-        <div className="login-card">
-          <div className="tab">
-            <button className="active">เข้าสู่ระบบ</button>
-            <button onClick={() => navigate("/register")}>สร้างบัญชี</button>
+      {/* Card */}
+      <div className="login-card">
+        <div className="tab">
+          <button className="active">เข้าสู่ระบบ</button>
+          <button onClick={() => navigate("/register")}>สร้างบัญชี</button>
+        </div>
+
+        <form onSubmit={handleLogin}>
+          <label>อีเมล, Username หรือ เบอร์โทรศัพท์</label>
+          <div className="input-icon">
+            <span className="material-icons">mail</span>
+            <input
+              type="text"
+              placeholder="อีเมล, username หรือเบอร์โทร"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
+              required
+            />
           </div>
 
-          <form onSubmit={handleLogin}>
-            <label>อีเมล, Username หรือ เบอร์โทรศัพท์</label>
-            <div className="input-icon">
-              <span className="material-icons">mail</span>
-              <input
-                type="text"
-                placeholder="อีเมล, username หรือเบอร์โทร"
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
-                required
-              />
-            </div>
+          <label>รหัสผ่าน</label>
+          <div className="input-icon password">
+            <span className="material-icons">lock</span>
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="รหัสผ่าน"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <span
+              className="material-icons toggle-password"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? "visibility_off" : "visibility"}
+            </span>
+          </div>
 
-            <label>รหัสผ่าน</label>
-            <div className="input-icon password">
-              <span className="material-icons">lock</span>
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="รหัสผ่าน"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-              <span
-                className="material-icons toggle-password"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? "visibility_off" : "visibility"}
-              </span>
-            </div>
+          <div className="forgot">
+            <p className="forgot-link" onClick={() => navigate("/forgot-password")}>
+              ลืมรหัสผ่าน?
+            </p>
+          </div>
 
-            <div className="forgot">
-              <p className="forgot-link" onClick={() => navigate("/forgot-password")}>
-                ลืมรหัสผ่าน?
-              </p>
-            </div>
+          <button className="login-btn" type="submit" disabled={loading}>
+            {loading ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ"}
+          </button>
+        </form>
 
-            <button className="login-btn" type="submit" disabled={loading}>
-              {loading ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ"}
-            </button>
-          </form>
+        {error && <p className="error-text">{error}</p>}
 
-          {error && <p className="error-text">{error}</p>}
-
-          <p className="register-text">
-            ยังไม่มีบัญชีผู้ใช้?{" "}
-            <span onClick={() => navigate("/register")}>สร้างบัญชีผู้ใช้</span>
-          </p>
-        </div>
+        <p className="register-text">
+          ยังไม่มีบัญชีผู้ใช้?{" "}
+          <span onClick={() => navigate("/register")}>สร้างบัญชีผู้ใช้</span>
+        </p>
       </div>
     </div>
   );
