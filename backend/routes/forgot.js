@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const { Resend } = require("resend"); // 👈 เปลี่ยนเป็น Resend
+const Brevo = require("@getbrevo/brevo");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const OTP = require("../models/OTP");
 
-const resend = new Resend(process.env.RESEND_API_KEY); // 👈 เปลี่ยน
+const apiInstance = new Brevo.TransactionalEmailsApi();
+apiInstance.authentications["apiKey"].apiKey = process.env.BREVO_API_KEY;
 
-// ส่ง OTP ไปที่อีเมล
 router.post("/send-otp", async (req, res) => {
   try {
     const { email } = req.body;
@@ -22,21 +22,20 @@ router.post("/send-otp", async (req, res) => {
     await OTP.destroy({ where: { email } });
     await OTP.create({ email, otp, expiredAt });
 
-    // 👈 เปลี่ยนมาใช้ Resend
-    const result = await resend.emails.send({
-      from: "UWM <onboarding@resend.dev>",
-      to: email,
-      subject: "Until We Meet — รหัส OTP สำหรับรีเซ็ตรหัสผ่าน",
-      html: `
-        <div style="font-family:sans-serif;padding:20px;">
-          <h2>รีเซ็ตรหัสผ่าน</h2>
-          <p>รหัส OTP ของคุณคือ</p>
-          <h1 style="color:#4A6FFF;letter-spacing:8px;">${otp}</h1>
-          <p>รหัสนี้จะหมดอายุใน 10 นาที</p>
-        </div>
-      `,
-    });
-    console.log("Resend result:", JSON.stringify(result)); // 👈 เพิ่มบรรทัดนี้
+    const sendSmtpEmail = new Brevo.SendSmtpEmail();
+    sendSmtpEmail.subject = "Until We Meet — รหัส OTP สำหรับรีเซ็ตรหัสผ่าน";
+    sendSmtpEmail.htmlContent = `
+      <div style="font-family:sans-serif;padding:20px;">
+        <h2>รีเซ็ตรหัสผ่าน</h2>
+        <p>รหัส OTP ของคุณคือ</p>
+        <h1 style="color:#4A6FFF;letter-spacing:8px;">${otp}</h1>
+        <p>รหัสนี้จะหมดอายุใน 10 นาที</p>
+      </div>
+    `;
+    sendSmtpEmail.sender = { name: "Until We Meet", email: process.env.BREVO_EMAIL };
+    sendSmtpEmail.to = [{ email: email }];
+
+    await apiInstance.sendTransacEmail(sendSmtpEmail);
 
     res.json({ message: "ส่ง OTP สำเร็จ กรุณาเช็คอีเมล" });
   } catch (err) {
@@ -45,7 +44,6 @@ router.post("/send-otp", async (req, res) => {
   }
 });
 
-// ยืนยัน OTP และรีเซ็ตรหัสผ่าน
 router.post("/reset-password", async (req, res) => {
   try {
     const { email, otp, newPassword } = req.body;
