@@ -41,7 +41,7 @@ function App() {
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/edit-profile" element={<EditProfile />} />
             <Route path="/edit-activity/:id" element={<EditActivity />} />
-            <Route path="/checkin/:activityId" element={<CheckIn />} />
+            <Route path="/checkin/:activityId/:qrToken" element={<CheckIn />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/review/:activityId" element={<ReviewForm />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />

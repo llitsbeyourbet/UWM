@@ -80,4 +80,39 @@ router.delete("/:id", auth, async (req, res) => {
   }
 });
 
+// 👇 สร้าง QR Token
+router.get("/:id/qr", auth, async (req, res) => {
+  try {
+    const activity = await Activity.findByPk(req.params.id);
+
+    if (!activity)
+      return res.status(404).json({
+        message: "ไม่พบกิจกรรม",
+      });
+
+    // อนุญาตเฉพาะเจ้าของกิจกรรม
+    if (activity.createdBy !== req.userId)
+      return res.status(403).json({
+        message: "ไม่มีสิทธิ์",
+      });
+
+    const qrToken = jwt.sign(
+      {
+        activityId: activity.id,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "10s",
+      }
+    );
+
+    res.json({ qrToken });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "เกิดข้อผิดพลาด",
+    });
+  }
+});
+
 module.exports = router;

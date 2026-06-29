@@ -5,7 +5,7 @@ import "./CheckIn.css";
 
 function CheckIn() {
   const navigate = useNavigate();
-  const { activityId } = useParams();
+  const { activityId, qrToken } = useParams();
   const [activity, setActivity] = useState(null);
   const [joinStatus, setJoinStatus] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -48,7 +48,13 @@ function CheckIn() {
     try {
       const res = await fetch(`${API_URL}/api/join/${activityId}/checkin`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          qrToken,
+        }),
       });
 
       const data = await res.json();
@@ -58,6 +64,7 @@ function CheckIn() {
       }
 
       setDone(true);
+      setJoinStatus("checked_in");
     } catch (err) {
       alert("ไม่สามารถเชื่อมต่อ server ได้");
     } finally {
