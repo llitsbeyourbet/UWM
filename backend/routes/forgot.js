@@ -23,7 +23,7 @@ router.post("/send-otp", async (req, res) => {
     await OTP.create({ email, otp, expiredAt });
 
     // 👈 เปลี่ยนมาใช้ Resend
-    await resend.emails.send({
+    const result = await resend.emails.send({
       from: "UWM <onboarding@resend.dev>",
       to: email,
       subject: "Until We Meet — รหัส OTP สำหรับรีเซ็ตรหัสผ่าน",
@@ -36,7 +36,7 @@ router.post("/send-otp", async (req, res) => {
         </div>
       `,
     });
-    console.log("Resend result:", result); // 👈 เพิ่มบรรทัดนี้
+    console.log("Resend result:", JSON.stringify(result)); // 👈 เพิ่มบรรทัดนี้
 
     res.json({ message: "ส่ง OTP สำเร็จ กรุณาเช็คอีเมล" });
   } catch (err) {
