@@ -9,6 +9,7 @@ const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
   secure: false, // 👈 ต้องเป็น false สำหรับ port 587
+  family: 4, // 👈 บังคับใช้ IPv4
   auth: {
     user: process.env.EMAIL,
     pass: process.env.EMAIL_PASSWORD,
