@@ -17,6 +17,7 @@ function ActivityDetail() {
   const [reportLoading, setReportLoading] = useState(false);
   const [activityRating, setActivityRating] = useState(null); // 👈 เพิ่ม
   const [comments, setComments] = useState([]);               // 👈 เพิ่ม
+  const [qrToken, setQrToken] = useState("");
 
   const reportReasons = [
     "เนื้อหาไม่เหมาะสม",
@@ -87,6 +88,41 @@ function ActivityDetail() {
 
     fetchActivity();
   }, []);
+
+  useEffect(() => {
+    if (!showQR || !activity || !isOwner) return;
+
+    const token = localStorage.getItem("token");
+
+    const loadQR = async () => {
+      try {
+        const res = await fetch(
+          `${API_URL}/api/activities/${activity.id}/qr`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await res.json();
+
+        if (res.ok) {
+          setQrToken(data.qrToken);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    // โหลดครั้งแรก
+    loadQR();
+
+    // เปลี่ยนทุก 10 วินาที
+    const interval = setInterval(loadQR, 8000);
+
+    return () => clearInterval(interval);
+  }, [showQR, activity, isOwner]);
 
   const handleJoin = async () => {
     const token = localStorage.getItem("token");
@@ -298,7 +334,7 @@ function ActivityDetail() {
             {showQR && (
               <div className="qr-container">
                 <p>QR Code สำหรับยืนยันการเข้าร่วม</p>
-                <QRCodeCanvas value={`http://localhost:5173/checkin/${activity.id}`} size={180} />
+                <QRCodeCanvas value={`${window.location.origin}/checkin/${activity.id}/${qrToken}`} size={180}/>
                 {activity.checkinStart && activity.checkinEnd && (
                   <p className="checkin-time-info">
                     ⏰ เช็คอินได้ {activity.checkinStart} - {activity.checkinEnd}

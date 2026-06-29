@@ -170,37 +170,102 @@ router.get("/:activityId/requests", auth, async (req, res) => {
 router.post("/:activityId/checkin", auth, async (req, res) => {
   try {
     const { activityId } = req.params;
+    const { qrToken } = req.body;
+
+    // ตรวจสอบ QR
+    try {
+      const payload = jwt.verify(
+        qrToken,
+        process.env.JWT_SECRET
+      );
+
+      if (Number(payload.activityId) !== Number(activityId)) {
+        return res.status(400).json({
+          message: "QR ไม่ถูกต้อง",
+        });
+      }
+    } catch {
+      return res.status(400).json({
+        message: "QR หมดอายุแล้ว",
+      });
+    }
 
     const joinRequest = await JoinRequest.findOne({
-      where: { activityId, userId: req.userId }
+      where: {
+        activityId,
+        userId: req.userId,
+      },
     });
 
-    if (!joinRequest)
-      return res.status(404).json({ message: "ไม่พบคำขอเข้าร่วม" });
+    if (!joinRequest) {
+      return res.status(404).json({
+        message: "ไม่พบคำขอเข้าร่วม",
+      });
+    }
 
-    if (joinRequest.status !== "approved")
-      return res.status(400).json({ message: "ยังไม่ได้รับการอนุมัติ" });
+    // เช็คอินไปแล้ว
+    if (joinRequest.status === "checked_in") {
+      return res.status(409).json({
+        message: "เช็คอินแล้ว",
+        status: "checked_in",
+      });
+    }
 
-    // 👈 เช็คช่วงเวลาเช็คอิน
+    // ยังไม่ได้รับอนุมัติ
+    if (joinRequest.status !== "approved") {
+      return res.status(400).json({
+        message: "ยังไม่ได้รับการอนุมัติ",
+      });
+    }
+
+    // เช็คช่วงเวลาเช็คอิน
     const activity = await Activity.findByPk(activityId);
+
     if (activity.checkinStart && activity.checkinEnd) {
       const now = new Date();
-      const currentTime = now.toTimeString().slice(0, 5); // HH:MM
+      const currentTime = now.toTimeString().slice(0, 5);
 
       if (currentTime < activity.checkinStart) {
-        return res.status(400).json({ message: `ยังไม่ถึงเวลาเช็คอิน (เริ่ม ${activity.checkinStart})` });
+        return res.status(400).json({
+          message: `ยังไม่ถึงเวลาเช็คอิน (เริ่ม ${activity.checkinStart})`,
+        });
       }
+
       if (currentTime > activity.checkinEnd) {
-        return res.status(400).json({ message: `หมดเขตเช็คอินแล้ว (ปิด ${activity.checkinEnd})` });
+        return res.status(400).json({
+          message: `หมดเขตเช็คอินแล้ว (ปิด ${activity.checkinEnd})`,
+        });
       }
     }
 
-    await joinRequest.update({ status: "checked_in" });
+    const [updated] = await JoinRequest.update(
+      { status: "checked_in" },
+      {
+        where: {
+          activityId,
+          userId: req.userId,
+          status: "approved",
+        },
+      }
+    );
 
-    res.json({ message: "ยืนยันการเข้าร่วมสำเร็จ" });
+    if (updated === 0) {
+      return res.status(409).json({
+        message: "เช็คอินแล้ว หรือไม่สามารถเช็คอินได้",
+        status: "checked_in",
+      });
+    }
+
+    res.json({
+      message: "ยืนยันการเข้าร่วมสำเร็จ",
+      status: "checked_in",
+    });
+
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+    res.status(500).json({
+      message: "เกิดข้อผิดพลาด",
+    });
   }
 });
 
