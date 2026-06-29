@@ -36,6 +36,7 @@ router.post("/send-otp", async (req, res) => {
         </div>
       `,
     });
+    console.log("Resend result:", result); // 👈 เพิ่มบรรทัดนี้
 
     res.json({ message: "ส่ง OTP สำเร็จ กรุณาเช็คอีเมล" });
   } catch (err) {
