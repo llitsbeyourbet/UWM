@@ -1,20 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend"); // 👈 เปลี่ยนเป็น Resend
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const OTP = require("../models/OTP");
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false, // 👈 ต้องเป็น false สำหรับ port 587
-  family: 4, // 👈 บังคับใช้ IPv4
-  auth: {
-    user: process.env.EMAIL,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY); // 👈 เปลี่ยน
 
 // ส่ง OTP ไปที่อีเมล
 router.post("/send-otp", async (req, res) => {
@@ -25,17 +16,15 @@ router.post("/send-otp", async (req, res) => {
     if (!user)
       return res.status(404).json({ message: "ไม่พบอีเมลนี้ในระบบ" });
 
-    // สร้าง OTP 6 หลัก
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiredAt = new Date(Date.now() + 10 * 60 * 1000); // หมดอายุใน 10 นาที
+    const expiredAt = new Date(Date.now() + 10 * 60 * 1000);
 
-    // บันทึก OTP ลง database
-    await OTP.destroy({ where: { email } }); // ลบ OTP เก่า
+    await OTP.destroy({ where: { email } });
     await OTP.create({ email, otp, expiredAt });
 
-    // ส่งอีเมล
-    await transporter.sendMail({
-      from: process.env.EMAIL,
+    // 👈 เปลี่ยนมาใช้ Resend
+    await resend.emails.send({
+      from: "UWM <onboarding@resend.dev>",
       to: email,
       subject: "Until We Meet — รหัส OTP สำหรับรีเซ็ตรหัสผ่าน",
       html: `
@@ -67,11 +56,9 @@ router.post("/reset-password", async (req, res) => {
     if (new Date() > otpRecord.expiredAt)
       return res.status(400).json({ message: "OTP หมดอายุแล้ว" });
 
-    // เปลี่ยนรหัสผ่าน
     const hashed = await bcrypt.hash(newPassword, 10);
     await User.update({ password: hashed }, { where: { email } });
 
-    // ลบ OTP
     await OTP.destroy({ where: { email } });
 
     res.json({ message: "รีเซ็ตรหัสผ่านสำเร็จ" });
