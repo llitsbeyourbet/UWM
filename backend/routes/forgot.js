@@ -1,14 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const SibApiV3Sdk = require("sib-api-v3-sdk");
+const Brevo = require("@getbrevo/brevo");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const OTP = require("../models/OTP");
 
-const defaultClient = SibApiV3Sdk.ApiClient.instance;
-const apiKey = defaultClient.authentications["api-key"];
-apiKey.apiKey = process.env.BREVO_API_KEY;
-const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+const apiInstance = new Brevo.TransactionalEmailsApi();
+apiInstance.authentications["apiKey"].apiKey = process.env.BREVO_API_KEY;
 
 router.post("/send-otp", async (req, res) => {
   try {
@@ -24,7 +22,7 @@ router.post("/send-otp", async (req, res) => {
     await OTP.destroy({ where: { email } });
     await OTP.create({ email, otp, expiredAt });
 
-    const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+    const sendSmtpEmail = new Brevo.SendSmtpEmail();
     sendSmtpEmail.subject = "Until We Meet — รหัส OTP สำหรับรีเซ็ตรหัสผ่าน";
     sendSmtpEmail.htmlContent = `
       <div style="font-family:sans-serif;padding:20px;">
