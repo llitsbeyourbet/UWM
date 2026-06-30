@@ -99,7 +99,7 @@ label {
 
 .input-icon input {
   width: 100%;
-  padding: 13px 55px 13px 46px;
+  padding: 13px 42px 13px 46px;
   color: #000;
   background: white;
   border-radius: 12px;
@@ -115,30 +115,16 @@ label {
   border-color: #1f6cff;
 }
 
-.password {
-  position: relative;
-}
-
 .password .toggle-password {
   position: absolute;
-  right: 16px;
+  right: 14px;
+  left: auto;
   top: 50%;
   transform: translateY(-50%);
-  
-  font-size: 20px;
-  color: #6b7280;
-
-  cursor: pointer;
-  z-index: 10;
-
-  width: 24px;
-  height: 24px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
   pointer-events: auto;
+  cursor: pointer;
+  color: #6b7280;
+  z-index: 3;
 }
 
 .forgot {

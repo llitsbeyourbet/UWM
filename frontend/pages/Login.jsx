@@ -102,7 +102,7 @@ export default function Login() {
               className="material-icons toggle-password"
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? "visibility_off" : "visibility"}
+              {showPassword ? "visibility" : "visibility_off"}
             </span>
           </div>
 
