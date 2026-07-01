@@ -13,7 +13,7 @@ function ScanQR() {
 
     scanner
       .start(
-        { facingMode: "user" },
+        { facingMode: "environment" },
         {
           fps: 10,
           qrbox: 250,
