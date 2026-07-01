@@ -1,0 +1,17 @@
+.scan-page {
+  text-align: center;
+  padding: 20px;
+}
+
+#reader {
+  width: 100%;
+  max-width: 350px;
+  margin: 20px auto;
+  overflow: hidden;
+  border-radius: 15px;
+}
+
+#reader video {
+  width: 100% !important;
+  border-radius: 15px;
+}
