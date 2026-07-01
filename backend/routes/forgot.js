@@ -1,14 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const SibApiV3Sdk = require("sib-api-v3-sdk");
+const Mailjet = require("node-mailjet");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const OTP = require("../models/OTP");
 
-const defaultClient = SibApiV3Sdk.ApiClient.instance;
-const apiKey = defaultClient.authentications["api-key"];
-apiKey.apiKey = process.env.BREVO_API_KEY;
-const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+const mailjet = Mailjet.apiConnect(
+  process.env.MJ_APIKEY_PUBLIC,
+  process.env.MJ_APIKEY_PRIVATE
+);
 
 router.post("/send-otp", async (req, res) => {
   try {
@@ -24,20 +24,26 @@ router.post("/send-otp", async (req, res) => {
     await OTP.destroy({ where: { email } });
     await OTP.create({ email, otp, expiredAt });
 
-    const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
-    sendSmtpEmail.subject = "Until We Meet — รหัส OTP สำหรับรีเซ็ตรหัสผ่าน";
-    sendSmtpEmail.htmlContent = `
-      <div style="font-family:sans-serif;padding:20px;">
-        <h2>รีเซ็ตรหัสผ่าน</h2>
-        <p>รหัส OTP ของคุณคือ</p>
-        <h1 style="color:#4A6FFF;letter-spacing:8px;">${otp}</h1>
-        <p>รหัสนี้จะหมดอายุใน 10 นาที</p>
-      </div>
-    `;
-    sendSmtpEmail.sender = { name: "Until We Meet", email: process.env.BREVO_EMAIL };
-    sendSmtpEmail.to = [{ email: email }];
-
-    await apiInstance.sendTransacEmail(sendSmtpEmail);
+    await mailjet.post("send", { version: "v3.1" }).request({
+      Messages: [
+        {
+          From: {
+            Email: process.env.MJ_SENDER_EMAIL,
+            Name: "Until We Meet",
+          },
+          To: [{ Email: email }],
+          Subject: "Until We Meet — รหัส OTP สำหรับรีเซ็ตรหัสผ่าน",
+          HTMLPart: `
+            <div style="font-family:sans-serif;padding:20px;">
+              <h2>รีเซ็ตรหัสผ่าน</h2>
+              <p>รหัส OTP ของคุณคือ</p>
+              <h1 style="color:#4A6FFF;letter-spacing:8px;">${otp}</h1>
+              <p>รหัสนี้จะหมดอายุใน 10 นาที</p>
+            </div>
+          `,
+        },
+      ],
+    });
 
     res.json({ message: "ส่ง OTP สำเร็จ กรุณาเช็คอีเมล" });
   } catch (err) {
