@@ -51,6 +51,24 @@ router.post("/send-otp", async (req, res) => {
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
 });
+// ยืนยัน OTP อย่างเดียว ยังไม่เปลี่ยนรหัสผ่าน
+router.post("/verify-otp", async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    const otpRecord = await OTP.findOne({ where: { email, otp } });
+    if (!otpRecord)
+      return res.status(400).json({ message: "OTP ไม่ถูกต้อง" });
+
+    if (new Date() > otpRecord.expiredAt)
+      return res.status(400).json({ message: "OTP หมดอายุแล้ว" });
+
+    res.json({ message: "OTP ถูกต้อง" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+  }
+});
 
 router.post("/reset-password", async (req, res) => {
   try {
