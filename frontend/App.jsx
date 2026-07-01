@@ -16,6 +16,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ReviewForm from "./pages/ReviewForm";
 import ForgotPassword from "./pages/ForgotPassword";
 import "./assets/AppLayout.css"
+import ScanQR from "./pages/ScanQR";
 
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/review/:activityId" element={<ReviewForm />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/scan" element={<ScanQR />} />
           </Routes>
 
         </div>
