@@ -36,7 +36,7 @@ function EditProfile() {
         setBirthdate(data.birthdate || "");
         setBio(data.bio || "");
         if (data.profileImage) {
-          setPreview({data.profileImage}`);
+          setPreview(data.profileImage);
         }
       } catch (err) {
         console.log(err);

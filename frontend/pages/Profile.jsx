@@ -108,7 +108,7 @@ function Profile() {
           <div className="profile-card-inner">
             <div className="profile-avatar-wrap">
               {user?.profileImage ? (
-                <img src={{user.profileImage}`} alt="avatar" className="profile-avatar-img" />
+                <img src={user.profileImage} alt="avatar" className="profile-avatar-img" />
               ) : (
                 <div className="profile-avatar-initials">
                   {getInitials(user?.name)}

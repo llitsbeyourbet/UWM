@@ -30,7 +30,7 @@ function EditActivity() {
         setLocation(data.location || "");
         setParticipantCount(data.participantCount || 1);
         setActivityType(data.activityType || "public");
-        if (data.cover) setPreview([{data.cover}`]);
+        if (data.cover) setPreview([data.cover]);
       } catch (err) {
         console.log(err);
       }
