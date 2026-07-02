@@ -21,9 +21,14 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage });
 
 router.post("/", upload.single("image"), (req, res) => {
-  if (!req.file) return res.status(400).json({ message: "ไม่มีไฟล์" });
-  console.log("file:", req.file); // 👈 เพิ่มดู log ก่อน
-  res.json({ filename: req.file.path }); // 👈 ส่ง URL จาก Cloudinary
+  try {
+    if (!req.file) return res.status(400).json({ message: "ไม่มีไฟล์" });
+    console.log("file:", JSON.stringify(req.file));
+    res.json({ filename: req.file.path });
+  } catch (err) {
+    console.log("upload error:", err);
+    res.status(500).json({ message: "เกิดข้อผิดพลาด", error: err.message });
+  }
 });
 
 module.exports = router;
