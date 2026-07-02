@@ -77,7 +77,7 @@ function Profile() {
   const ActivityCard = ({ item }) => (
     <div className="profile-activity-card" onClick={() => handleViewDetail(item)}>
       {item.cover ? (
-        <img src={`${API_URL}/uploads/${item.cover}`} alt="cover" className="profile-card-img" />
+        <img src={item.cover} alt="cover" className="profile-card-img" />
       ) : (
         <div className="profile-card-placeholder" />
       )}

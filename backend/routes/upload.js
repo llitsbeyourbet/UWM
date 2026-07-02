@@ -1,15 +1,20 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-const path = require("path");
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "../../uploads")); // 👈 ชี้ไปโฟลเดอร์นอก backend
-  },
-  filename: (req, file, cb) => {
-    const filename = `${Date.now()}-${file.originalname}`;
-    cb(null, filename);
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "uwm",
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
   },
 });
 
@@ -17,7 +22,7 @@ const upload = multer({ storage });
 
 router.post("/", upload.single("image"), (req, res) => {
   if (!req.file) return res.status(400).json({ message: "ไม่มีไฟล์" });
-  res.json({ filename: req.file.filename }); // 👈 ส่งแค่ชื่อไฟล์
+  res.json({ filename: req.file.path }); // 👈 ส่ง URL จาก Cloudinary
 });
 
 module.exports = router;

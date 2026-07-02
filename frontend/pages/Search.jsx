@@ -107,7 +107,7 @@ function Search() {
           filtered.map((item) => (
             <div key={item.id} className="activity-card" onClick={() => handleViewDetail(item)}>
               {item.cover ? (
-                <img src={`${API_URL}/uploads/${item.cover}`} alt="cover" className="card-cover" />
+                <img src={item.cover} alt="cover" className="card-cover" />
               ) : (
                 <div className="card-cover-placeholder" />
               )}

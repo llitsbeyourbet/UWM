@@ -139,7 +139,7 @@ function Home() {
                   <p className="card-meta">👥 {item.participantCount} คน</p>
                 </div>
                 {item.cover ? (
-                  <img src={`${API_URL}/uploads/${item.cover}`} alt="cover" className="card-emoji-img" />
+                  <img src={item.cover} alt="cover" className="card-emoji-img" />
                 ) : (
                   <span className="card-emoji">🎉</span>
                 )}
