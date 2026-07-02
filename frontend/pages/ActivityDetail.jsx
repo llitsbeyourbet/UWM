@@ -1,8 +1,8 @@
-import API_URL from "../config";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { QRCodeCanvas } from "qrcode.react";
 import "./ActivityDetail.css";
+import API_URL from "../config";
 
 function ActivityDetail() {
   const navigate = useNavigate();
@@ -15,9 +15,8 @@ function ActivityDetail() {
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportReason, setReportReason] = useState("");
   const [reportLoading, setReportLoading] = useState(false);
-  const [activityRating, setActivityRating] = useState(null); // 👈 เพิ่ม
-  const [comments, setComments] = useState([]);               // 👈 เพิ่ม
-  const [qrToken, setQrToken] = useState("");
+  const [activityRating, setActivityRating] = useState(null);
+  const [comments, setComments] = useState([]);
 
   const reportReasons = [
     "เนื้อหาไม่เหมาะสม",
@@ -51,7 +50,6 @@ function ActivityDetail() {
         const activityData = await res.json();
         setActivity(activityData);
 
-        // 👈 ดึงคะแนนเฉลี่ยกิจกรรม (ทุกคนเห็น)
         const ratingRes = await fetch(`${API_URL}/api/review/activity/${activityId}/rating`);
         const ratingData = await ratingRes.json();
         setActivityRating(ratingData);
@@ -59,7 +57,6 @@ function ActivityDetail() {
         if (user && activityData.createdBy === user.id) {
           setIsOwner(true);
 
-          // 👈 ถ้าเป็นเจ้าของ ดึง comment ด้วย
           const commentRes = await fetch(`${API_URL}/api/review/activity/${activityId}/comments`, {
             headers: { Authorization: `Bearer ${token}` },
           });
@@ -88,41 +85,6 @@ function ActivityDetail() {
 
     fetchActivity();
   }, []);
-
-  useEffect(() => {
-    if (!showQR || !activity || !isOwner) return;
-
-    const token = localStorage.getItem("token");
-
-    const loadQR = async () => {
-      try {
-        const res = await fetch(
-          `${API_URL}/api/activities/${activity.id}/qr`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const data = await res.json();
-
-        if (res.ok) {
-          setQrToken(data.qrToken);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    // โหลดครั้งแรก
-    loadQR();
-
-    // เปลี่ยนทุก 10 วินาที
-    const interval = setInterval(loadQR, 8000);
-
-    return () => clearInterval(interval);
-  }, [showQR, activity, isOwner]);
 
   const handleJoin = async () => {
     const token = localStorage.getItem("token");
@@ -247,6 +209,7 @@ function ActivityDetail() {
   return (
     <div className="activity-detail-page">
       <div className="activity-cover">
+        {/* 👈 แก้ตรงนี้ */}
         {activity.cover ? (
           <img src={activity.cover} alt="cover" className="activity-cover-img" />
         ) : (
@@ -315,7 +278,6 @@ function ActivityDetail() {
           </div>
         )}
 
-        {/* 👈 isOwner section */}
         {isOwner && (
           <div className="qr-owner-section">
             <div className="owner-actions">
@@ -334,7 +296,7 @@ function ActivityDetail() {
             {showQR && (
               <div className="qr-container">
                 <p>QR Code สำหรับยืนยันการเข้าร่วม</p>
-                <QRCodeCanvas value={`${window.location.origin}/checkin/${activity.id}/${qrToken}`} size={180}/>
+                <QRCodeCanvas value={`${window.location.origin}/checkin/${activity.id}`} size={180} />
                 {activity.checkinStart && activity.checkinEnd && (
                   <p className="checkin-time-info">
                     ⏰ เช็คอินได้ {activity.checkinStart} - {activity.checkinEnd}
@@ -345,14 +307,12 @@ function ActivityDetail() {
           </div>
         )}
 
-        {/* 👈 suspended banner อยู่นอก isOwner */}
         {activity.status === "suspended" && (
           <div className="suspended-banner">
             🚫 กิจกรรมนี้ถูกระงับโดย Admin
           </div>
         )}
 
-        {/* 👈 join section อยู่นอก isOwner */}
         {!isOwner && activity.status !== "suspended" && (
           <div className="join-section">
             {joinStatus === "checked_in" && (
@@ -370,6 +330,17 @@ function ActivityDetail() {
             {joinStatus === "approved" && (
               <>
                 <button className="join-btn joined" disabled>เข้าร่วมแล้ว ✓</button>
+                <button className="scan-btn" onClick={() => navigate("/scan")}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    <path d="M14 14h3v3h-3z"/>
+                    <path d="M17 17h4"/>
+                    <path d="M17 14v3"/>
+                  </svg>
+                  สแกน QR เช็คอิน
+                </button>
                 <button className="cancel-btn" onClick={handleCancel}>ยกเลิกการเข้าร่วม</button>
               </>
             )}
@@ -392,7 +363,6 @@ function ActivityDetail() {
         )}
       </div>
 
-      {/* 👈 Modal อยู่นอก activity-content */}
       {showReportModal && (
         <div className="modal-overlay" onClick={() => setShowReportModal(false)}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>

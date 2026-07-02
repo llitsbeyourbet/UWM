@@ -1,20 +1,18 @@
-import API_URL from "../config";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
+import API_URL from "../config";
 
 function Home() {
   const navigate = useNavigate();
   const [activities, setActivities] = useState([]);
-  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("ทั้งหมด");
-  const user = JSON.parse(localStorage.getItem("user"));
 
   const categories = ["ทั้งหมด", "กีฬา", "ดนตรี", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่"];
 
   const categoryEmoji = {
-    "ทั้งหมด": "",
+    "ทั้งหมด": "🌟",
     "กีฬา": "⚽",
     "ดนตรี": "🎵",
     "ท่องเที่ยว": "🏔",
@@ -23,18 +21,8 @@ function Home() {
     "เกม": "🎮",
     "คาเฟ่": "☕",
   };
- 
 
   const cardColors = ["#FFF176", "#B8E0FF", "#C8F5C8", "#E8D5F5", "#FFB3C6"];
-  const cardEmojis = {
-    "ทั้งหมด": "",
-    "กีฬา": "⚽",
-    "ดนตรี": "🎵",
-    "ท่องเที่ยว": "🏔",
-    "อาหาร": "🍜",
-    "ศิลปะ": "🎨",
-    "เกม": "🎮",
-    "คาเฟ่": "☕", };
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -58,8 +46,7 @@ function Home() {
 
   const filtered = activities
     .filter((item) => item.status !== "suspended")
-    .filter((item) => activeCategory === "ทั้งหมด" || item.category === activeCategory)
-    .filter((item) => item.activityName.toLowerCase().includes(search.toLowerCase()));
+    .filter((item) => activeCategory === "ทั้งหมด" || item.category === activeCategory);
 
   return (
     <div className="home">
@@ -68,24 +55,12 @@ function Home() {
       <div className="home-header">
         <div>
           <p className="home-greeting">สวัสดี 👋</p>
-          <p className="home-username">@{user?.username || "ผู้ใช้งาน"}</p>
         </div>
         <div className="home-icons">
           <div className="icon-btn" onClick={() => navigate("/search")}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round">
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
-          </div>
-          {/* ปุ่มสแกน QR */}
-          <div className="icon-btn" onClick={() => navigate("/scan")}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-              stroke="#111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 7V3h4"/>
-              <path d="M21 7V3h-4"/>
-              <path d="M3 17v4h4"/>
-              <path d="M21 17v4h-4"/>
-              <rect x="7" y="7" width="3" height="3"/>
-              <rect x="14" y="14" width="3" height="3"/>
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
           </div>
           <div className="icon-btn" onClick={() => navigate("/notifications")}>
@@ -138,6 +113,7 @@ function Home() {
                   <p className="card-meta">📍 {item.location || "-"} · {item.date || "-"}</p>
                   <p className="card-meta">👥 {item.participantCount} คน</p>
                 </div>
+                {/* 👈 แก้ตรงนี้ */}
                 {item.cover ? (
                   <img src={item.cover} alt="cover" className="card-emoji-img" />
                 ) : (
