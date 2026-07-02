@@ -105,7 +105,7 @@ function ReviewForm() {
         <div className="review-activity-card">
           <div className="review-activity-icon">
             {activity.cover ? (
-              <img src={`${API_URL}/uploads/${activity.cover}`} alt="cover" className="review-activity-img" />
+              <img src={{activity.cover}`} alt="cover" className="review-activity-img" />
             ) : (
               <span style={{ fontSize: 28 }}>🎉</span>
             )}

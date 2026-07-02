@@ -248,7 +248,7 @@ function ActivityDetail() {
     <div className="activity-detail-page">
       <div className="activity-cover">
         {activity.cover ? (
-          <img src={`${API_URL}/uploads/${activity.cover}`} alt="cover" className="activity-cover-img" />
+          <img src={{activity.cover}`} alt="cover" className="activity-cover-img" />
         ) : (
           <div className="activity-cover-placeholder" />
         )}
