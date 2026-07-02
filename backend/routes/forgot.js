@@ -72,19 +72,10 @@ router.post("/verify-otp", async (req, res) => {
 
 router.post("/reset-password", async (req, res) => {
   try {
-    const { email, otp, newPassword } = req.body;
-
-    const otpRecord = await OTP.findOne({ where: { email, otp } });
-    if (!otpRecord)
-      return res.status(400).json({ message: "OTP ไม่ถูกต้อง" });
-
-    if (new Date() > otpRecord.expiredAt)
-      return res.status(400).json({ message: "OTP หมดอายุแล้ว" });
+    const { email, newPassword } = req.bod
 
     const hashed = await bcrypt.hash(newPassword, 10);
     await User.update({ password: hashed }, { where: { email } });
-
-    await OTP.destroy({ where: { email } });
 
     res.json({ message: "รีเซ็ตรหัสผ่านสำเร็จ" });
   } catch (err) {

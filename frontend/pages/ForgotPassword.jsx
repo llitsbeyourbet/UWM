@@ -98,7 +98,7 @@ function ForgotPassword() {
       const res = await fetch(`${API_URL}/api/forgot/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, otp: otp.join(""), newPassword }),
+        body: JSON.stringify({ email, newPassword }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.message); return; }
