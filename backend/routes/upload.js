@@ -10,6 +10,12 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+console.log("Cloudinary config:", {
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY ? "set" : "not set",
+  api_secret: process.env.CLOUDINARY_API_SECRET ? "set" : "not set",
+});
+
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {
@@ -20,15 +26,16 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage });
 
-router.post("/", upload.single("image"), (req, res) => {
-  try {
+router.post("/", (req, res) => {
+  upload.single("image")(req, res, (err) => {
+    if (err) {
+      console.log("Multer error:", err);
+      return res.status(500).json({ message: err.message });
+    }
     if (!req.file) return res.status(400).json({ message: "ไม่มีไฟล์" });
     console.log("file:", JSON.stringify(req.file));
     res.json({ filename: req.file.path });
-  } catch (err) {
-    console.log("upload error:", err);
-    res.status(500).json({ message: "เกิดข้อผิดพลาด", error: err.message });
-  }
+  });
 });
 
 module.exports = router;
