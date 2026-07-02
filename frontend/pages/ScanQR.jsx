@@ -26,7 +26,11 @@ function ScanQR() {
         console.log(err);
       });
 
-    return () => {};
+    return () => {
+        if (scannerRef.current?.isScanning) {
+      scannerRef.current.stop().catch(() => {});
+    }
+    };
   }, []);
 
   return (
