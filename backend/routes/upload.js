@@ -22,6 +22,7 @@ const upload = multer({ storage });
 
 router.post("/", upload.single("image"), (req, res) => {
   if (!req.file) return res.status(400).json({ message: "ไม่มีไฟล์" });
+  console.log("file:", req.file); // 👈 เพิ่มดู log ก่อน
   res.json({ filename: req.file.path }); // 👈 ส่ง URL จาก Cloudinary
 });
 
