@@ -17,11 +17,6 @@ app.use(cors({
 
 app.use(express.json());
 
-const uploadsPath = path.join(__dirname, "../uploads");
-if (!fs.existsSync(uploadsPath)) fs.mkdirSync(uploadsPath);
-
-app.use("/uploads", express.static(uploadsPath));
-
 require("./models/User");
 require("./models/Activity");
 require("./models/Notification");
@@ -31,6 +26,7 @@ require("./models/ActivityReview");
 require("./models/HostReview");
 require("./models/Comment");
 require("./models/OTP");
+require("./models/Checkin")
 
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/activities", require("./routes/activities"));
@@ -46,7 +42,7 @@ sequelize.authenticate()
   .then(() => console.log("MySQL connected"))
   .catch((err) => console.log(err));
 
-sequelize.sync({ alter: true })
+sequelize.sync({ force: false })
   .then(() => console.log("Tables synced"))
   .catch((err) => console.log(err));
 
