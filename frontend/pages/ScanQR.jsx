@@ -4,34 +4,51 @@ import { Html5Qrcode } from "html5-qrcode";
 function ScanQR() {
   const scannerRef = useRef(null);
 
-  useEffect(() => {
-    // ถ้าสร้างแล้ว ไม่สร้างซ้ำ
-    if (scannerRef.current) return;
+  const isStartedRef = useRef(false);
 
-    const scanner = new Html5Qrcode("reader");
-    scannerRef.current = scanner;
+useEffect(() => {
+  if (scannerRef.current) return;
 
-    scanner
-      .start(
-        { facingMode: "environment" },
-        {
-          fps: 10,
-          qrbox: 250,
-        },
-        (decodedText) => {
-          console.log("QR:", decodedText);
-        }
-      )
-      .catch((err) => {
-        console.log(err);
-      });
+  const scanner = new Html5Qrcode("reader");
+  scannerRef.current = scanner;
 
-    return () => {
-        if (scannerRef.current?.isScanning) {
-      scannerRef.current.stop().catch(() => {});
+  scanner
+    .start(
+      { facingMode: "environment" },
+      {
+        fps: 10,
+        qrbox: 250,
+      },
+      async (decodedText) => {
+        console.log(decodedText);
+
+        try {
+          await scanner.stop();
+        } catch {}
+
+        // ทำงานต่อ
+      }
+    )
+    .then(() => {
+      isStartedRef.current = true;
+    })
+    .catch(console.error);
+
+  return () => {
+    if (
+      scannerRef.current &&
+      isStartedRef.current
+    ) {
+      scannerRef.current
+        .stop()
+        .catch(() => {})
+        .finally(() => {
+          scannerRef.current = null;
+          isStartedRef.current = false;
+        });
     }
-    };
-  }, []);
+  };
+}, []);
 
   return (
     <div className="scan-page">
