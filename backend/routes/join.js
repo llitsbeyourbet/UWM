@@ -5,6 +5,7 @@ const Activity = require("../models/Activity");
 const Notification = require("../models/Notification");
 const User = require("../models/User");
 const JoinRequest = require("../models/JoinRequest");
+const CheckIn = require("../models/CheckIn");
 
 const auth = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -203,6 +204,20 @@ router.post("/:activityId/checkin", auth, async (req, res) => {
       });
     }
 
+    const alreadyCheckIn = await CheckIn.findOne({
+      where: {
+        activityId,
+        userId: req.userId,
+      },
+    });
+
+    if (alreadyCheckIn) {
+      return res.status(409).json({
+        message: "เช็คอินแล้ว",
+        status: "checked_in",
+      });
+    }
+
     // เช็คอินไปแล้ว
     if (joinRequest.status === "checked_in") {
       return res.status(409).json({
@@ -256,6 +271,12 @@ router.post("/:activityId/checkin", auth, async (req, res) => {
       });
     }
 
+    // บันทึกประวัติการเช็คอิน
+    await CheckIn.create({
+      activityId,
+      userId: req.userId,
+    });
+
     res.json({
       message: "ยืนยันการเข้าร่วมสำเร็จ",
       status: "checked_in",
@@ -288,5 +309,7 @@ router.get("/checked-in", auth, async (req, res) => {
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
 });
+
+
 
 module.exports = router;

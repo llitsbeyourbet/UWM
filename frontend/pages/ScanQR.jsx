@@ -91,22 +91,29 @@ function ScanQR() {
 
   return (
     <div className="scan-page">
-      <button
-        className="scan-back-btn"
-        onClick={handleBack}
-      >
-        ←
-      </button>
+      <div className="scan-container">
+        <button className="scan-back-btn"
+          onClick={handleBack}>
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M15 18L9 12L15 6" />
+          </svg>
+        </button>
 
-      <div className="scan-header">
-        <h1 className="scan-title">สแกน QR</h1>
-        <p className="scan-subtitle">
-          นำ QR Code มาไว้ในกรอบเพื่อเช็คอินกิจกรรม
-        </p>
-      </div>
-
-      <div className="reader-wrapper">
-        <div id="reader"></div>
+        <div className="scan-header">
+          <h1 className="scan-title">สแกน QR</h1>
+          <p className="scan-subtitle">
+            นำ QR Code มาไว้ในกรอบเพื่อเช็คอินกิจกรรม
+          </p>
+        </div>
 
         <div className="reader-wrapper">
           <div id="reader"></div>
@@ -119,13 +126,13 @@ function ScanQR() {
             <div className="scan-line"></div>
           </div>
         </div>
-      </div>
 
-      <p className="scan-tip">
-        วาง QR Code ให้อยู่ในกรอบสี่เหลี่ยม
-        <br />
-        ระบบจะสแกนให้อัตโนมัติ
-      </p>
+        <p className="scan-tip">
+          วาง QR Code ให้อยู่ในกรอบสี่เหลี่ยม
+          <br />
+          ระบบจะสแกนให้อัตโนมัติ
+        </p>
+      </div>
     </div>
   );
 }
