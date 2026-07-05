@@ -1,52 +1,36 @@
 .scan-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #f0f0f5;
   min-height: 100vh;
-  font-family: 'Sarabun', sans-serif;
-}
-
-.scan-container {
-  width: 100%;
-  max-width: 520px;
-  min-height: 100vh;
-  background: #fff;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  background: #f7f7f7;
   padding: 24px;
-  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .scan-back-btn {
   position: absolute;
   top: 20px;
-  left: 20px;
+  left: 75px;
 
-  width: 42px;
-  height: 42px;
-  padding: 0;
+  width: 44px;
+  height: 44px;
 
   border: none;
   border-radius: 50%;
-  background: rgba(255,255,255,0.95);
+
   color: #111;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 
   display: flex;
   align-items: center;
   justify-content: center;
 
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.12);
-  z-index: 999;
-}
+  z-index: 1000;
 
-.scan-back-btn svg {
-  width: 22px;
-  height: 22px;
+  transition: all 0.2s ease;
 }
 
 .scan-back-btn:hover {
@@ -62,13 +46,6 @@
   font-size: 24px;
   line-height: 1;
   color: #111;
-}
-
-.scan-back-btn span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
 }
 
 .scan-header {
