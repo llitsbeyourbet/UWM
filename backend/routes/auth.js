@@ -7,7 +7,7 @@ const User = require("../models/User");
 
 router.post("/register", async (req, res) => {
   try {
-    const { username, name, email, password } = req.body;
+    const { username, name, email, password, phone, birthdate } = req.body;
     if (!username || !name || !email || !password)
       return res.status(400).json({ message: "กรุณากรอกข้อมูลให้ครบ" });
 
@@ -33,7 +33,8 @@ router.post("/login", async (req, res) => {
       where: {
         [Op.or]: [
           { email: email },
-          { username: email }
+          { username: email },
+          { phone: email}
         ]
       }
     });
