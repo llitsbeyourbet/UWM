@@ -17,7 +17,7 @@ const Activity = sequelize.define("Activity", {
   reportCount: { type: DataTypes.INTEGER, defaultValue: 0 },
   category: {type: DataTypes.ENUM("ทั้งหมด","กีฬา", "ดนตรี", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่"), defaultValue: "ทั้งหมด",},
   checkinStart: { type: DataTypes.STRING },  // เวลาที่เริ่มเช็คอินได้
-checkinEnd: { type: DataTypes.STRING },    // เวลาที่หมดเขตเช็คอิน
+  checkinEnd: { type: DataTypes.STRING },    // เวลาที่หมดเขตเช็คอิน
 });
 
 module.exports = Activity;
