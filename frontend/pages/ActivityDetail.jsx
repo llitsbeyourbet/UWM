@@ -87,6 +87,18 @@ function ActivityDetail() {
     fetchActivity();
   }, [searchParams]);
 
+  useEffect(() => {
+    if (!showQR || !activity) return;
+
+    getQR(); // โหลดครั้งแรก
+
+    const interval = setInterval(() => {
+      getQR();
+    }, 10000); // ทุก 10 วินาที
+
+    return () => clearInterval(interval);
+  }, [showQR, activity]);
+
   const getQR = async () => {
     const token = localStorage.getItem("token");
 
@@ -309,7 +321,10 @@ function ActivityDetail() {
               </button>
             </div>
 
-            <button className="show-qr-btn" onClick={async () => { if (!showQR) {await getQR();} setShowQR(!showQR);}}>
+            <button
+              className="show-qr-btn"
+              onClick={() => setShowQR(!showQR)}
+            >
               {showQR ? "ซ่อน QR Code" : "แสดง QR Code สำหรับยืนยันการเข้าร่วม"}
             </button>
 
