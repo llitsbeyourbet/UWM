@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { QRCodeCanvas } from "qrcode.react";
 import "./ActivityDetail.css";
 import API_URL from "../config";
 
 function ActivityDetail() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [activity, setActivity] = useState(null);
   const [isOwner, setIsOwner] = useState(false);
   const [showQR, setShowQR] = useState(false);
@@ -17,6 +18,7 @@ function ActivityDetail() {
   const [reportLoading, setReportLoading] = useState(false);
   const [activityRating, setActivityRating] = useState(null);
   const [comments, setComments] = useState([]);
+  const [qrToken, setQrToken] = useState("");
 
   const reportReasons = [
     "เนื้อหาไม่เหมาะสม",
@@ -28,12 +30,11 @@ function ActivityDetail() {
 
   useEffect(() => {
     const fetchActivity = async () => {
-      const data = localStorage.getItem("currentActivity");
       const token = localStorage.getItem("token");
-      if (!data) return;
 
-      const parsed = JSON.parse(data);
-      const activityId = parsed.id;
+      const activityId = searchParams.get("id");
+
+      if (!activityId) return;
 
       let user = null;
       try {
@@ -84,7 +85,26 @@ function ActivityDetail() {
     };
 
     fetchActivity();
-  }, []);
+  }, [searchParams]);
+
+  const getQR = async () => {
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(
+      `${API_URL}/api/activities/${activity.id}/qr`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await res.json();
+
+    if (res.ok) {
+      setQrToken(data.qrToken);
+    }
+  };
 
   const handleJoin = async () => {
     const token = localStorage.getItem("token");
@@ -289,14 +309,14 @@ function ActivityDetail() {
               </button>
             </div>
 
-            <button className="show-qr-btn" onClick={() => setShowQR(!showQR)}>
+            <button className="show-qr-btn" onClick={async () => { if (!showQR) {await getQR();} setShowQR(!showQR);}}>
               {showQR ? "ซ่อน QR Code" : "แสดง QR Code สำหรับยืนยันการเข้าร่วม"}
             </button>
 
             {showQR && (
               <div className="qr-container">
                 <p>QR Code สำหรับยืนยันการเข้าร่วม</p>
-                <QRCodeCanvas value={`${window.location.origin}/checkin/${activity.id}`} size={180} />
+                <QRCodeCanvas value={`${window.location.origin}/checkin/${activity.id}/${qrToken}`} size={180}/>
                 {activity.checkinStart && activity.checkinEnd && (
                   <p className="checkin-time-info">
                     ⏰ เช็คอินได้ {activity.checkinStart} - {activity.checkinEnd}
