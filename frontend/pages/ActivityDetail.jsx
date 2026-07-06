@@ -85,7 +85,7 @@ function ActivityDetail() {
     };
 
     fetchActivity();
-  }, []);
+  }, [searchParams]);
 
   const getQR = async () => {
     const token = localStorage.getItem("token");
