@@ -21,7 +21,7 @@ import ScanQR from "./pages/ScanQR";
 
 function App() {
   const location = useLocation();
-  const hideNavbar = location.pathname === "/login" || location.pathname === "/register";
+  const hideNavbar = ["/login", "/register", "/scan"].includes(location.pathname);
 
   return (
     <>
