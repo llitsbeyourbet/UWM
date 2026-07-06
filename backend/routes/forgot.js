@@ -10,6 +10,30 @@ const mailjet = Mailjet.connect(
   process.env.MJ_APIKEY_PRIVATE
 );
 
+const sendOTPEmail = async (email, otp, subject) => {
+  await mailjet.post("send", { version: "v3.1" }).request({
+    Messages: [
+      {
+        From: {
+          Email: process.env.MJ_SENDER_EMAIL,
+          Name: "Until We Meet",
+        },
+        To: [{ Email: email }],
+        Subject: subject,
+        HTMLPart: `
+          <div style="font-family:sans-serif;padding:20px;">
+            <h2>Until We Meet</h2>
+            <p>รหัส OTP ของคุณคือ</p>
+            <h1 style="color:#4A6FFF;letter-spacing:8px;">${otp}</h1>
+            <p>รหัสนี้จะหมดอายุใน 10 นาที</p>
+          </div>
+        `,
+      },
+    ],
+  });
+};
+
+// ส่ง OTP สำหรับลืมรหัสผ่าน
 router.post("/send-otp", async (req, res) => {
   try {
     const { email } = req.body;
@@ -24,26 +48,7 @@ router.post("/send-otp", async (req, res) => {
     await OTP.destroy({ where: { email } });
     await OTP.create({ email, otp, expiredAt });
 
-    await mailjet.post("send", { version: "v3.1" }).request({
-      Messages: [
-        {
-          From: {
-            Email: process.env.MJ_SENDER_EMAIL,
-            Name: "Until We Meet",
-          },
-          To: [{ Email: email }],
-          Subject: "Until We Meet — รหัส OTP สำหรับรีเซ็ตรหัสผ่าน",
-          HTMLPart: `
-            <div style="font-family:sans-serif;padding:20px;">
-              <h2>รีเซ็ตรหัสผ่าน</h2>
-              <p>รหัส OTP ของคุณคือ</p>
-              <h1 style="color:#4A6FFF;letter-spacing:8px;">${otp}</h1>
-              <p>รหัสนี้จะหมดอายุใน 10 นาที</p>
-            </div>
-          `,
-        },
-      ],
-    });
+    await sendOTPEmail(email, otp, "Until We Meet — รหัส OTP สำหรับรีเซ็ตรหัสผ่าน");
 
     res.json({ message: "ส่ง OTP สำเร็จ กรุณาเช็คอีเมล" });
   } catch (err) {
@@ -51,7 +56,33 @@ router.post("/send-otp", async (req, res) => {
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
 });
-// ยืนยัน OTP อย่างเดียว ยังไม่เปลี่ยนรหัสผ่าน
+
+// ส่ง OTP สำหรับสมัครสมาชิก
+router.post("/send-otp-register", async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // เช็คว่าอีเมลถูกใช้แล้วไหม
+    const existing = await User.findOne({ where: { email } });
+    if (existing)
+      return res.status(400).json({ message: "อีเมลนี้ถูกใช้แล้ว" });
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiredAt = new Date(Date.now() + 10 * 60 * 1000);
+
+    await OTP.destroy({ where: { email } });
+    await OTP.create({ email, otp, expiredAt });
+
+    await sendOTPEmail(email, otp, "Until We Meet — รหัส OTP สำหรับสมัครสมาชิก");
+
+    res.json({ message: "ส่ง OTP สำเร็จ กรุณาเช็คอีเมล" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+  }
+});
+
+// ยืนยัน OTP
 router.post("/verify-otp", async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -70,52 +101,15 @@ router.post("/verify-otp", async (req, res) => {
   }
 });
 
+// รีเซ็ตรหัสผ่าน
 router.post("/reset-password", async (req, res) => {
   try {
-    const { email, newPassword } = req.bod
+    const { email, newPassword } = req.body;
 
     const hashed = await bcrypt.hash(newPassword, 10);
     await User.update({ password: hashed }, { where: { email } });
 
     res.json({ message: "รีเซ็ตรหัสผ่านสำเร็จ" });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
-  }
-});
-
-// ส่ง OTP สำหรับสมัครสมาชิก (ไม่เช็คว่ามีอีเมลในระบบไหม)
-router.post("/send-otp-register", async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    // เช็คว่าอีเมลนี้ถูกใช้ไปแล้วไหม
-    const existing = await User.findOne({ where: { email } });
-    if (existing)
-      return res.status(400).json({ message: "อีเมลนี้ถูกใช้แล้ว" });
-
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiredAt = new Date(Date.now() + 10 * 60 * 1000);
-
-    await OTP.destroy({ where: { email } });
-    await OTP.create({ email, otp, expiredAt });
-
-    const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
-    sendSmtpEmail.subject = "Until We Meet — รหัส OTP สำหรับสมัครสมาชิก";
-    sendSmtpEmail.htmlContent = `
-      <div style="font-family:sans-serif;padding:20px;">
-        <h2>ยืนยันอีเมล</h2>
-        <p>รหัส OTP ของคุณคือ</p>
-        <h1 style="color:#4A6FFF;letter-spacing:8px;">${otp}</h1>
-        <p>รหัสนี้จะหมดอายุใน 10 นาที</p>
-      </div>
-    `;
-    sendSmtpEmail.sender = { name: "Until We Meet", email: process.env.BREVO_EMAIL };
-    sendSmtpEmail.to = [{ email }];
-
-    await apiInstance.sendTransacEmail(sendSmtpEmail);
-
-    res.json({ message: "ส่ง OTP สำเร็จ กรุณาเช็คอีเมล" });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
