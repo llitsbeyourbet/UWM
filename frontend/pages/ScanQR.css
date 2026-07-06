@@ -1,15 +1,22 @@
 .scan-page {
-  min-height: 100vh;
-  background: #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
-  box-sizing: border-box;
 
-  position: relative;   /* เพิ่มบรรทัดนี้ */
-  max-width: 520px;     /* ถ้าต้องการให้เหมือนแอป */
-  margin: 0 auto;       /* อยู่กลางจอ */
+  min-height: 100dvh;
+  width: 100%;
+  max-width: 480px;   /* ⭐ ต้องตรงทั้งแอป */
+  margin: 0 auto;
+
+  position: relative;
+  font-family: 'Sarabun', sans-serif;
+
+  padding: 16px;
+  padding-bottom: 80px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+
+  padding-bottom: calc(80px + env(safe-area-inset-bottom));
 }
 
 .scan-back-btn {
@@ -36,8 +43,7 @@
 }
 
 .scan-header {
-  margin-top: 90px;
-  text-align: center;
+  margin-top: clamp(40px, 6vh, 70px);
 }
 
 .scan-title {
@@ -55,7 +61,7 @@
 .reader-wrapper {
   width: 100%;
   max-width: 380px;
-  margin-top: 30px;
+  margin-top: 20px;
   position: relative;
 }
 
@@ -67,7 +73,7 @@
 
 #reader video {
   width: 100% !important;
-  height: 420px !important;
+  max-height: 420px;
   object-fit: cover;
   border-radius: 24px;
 }

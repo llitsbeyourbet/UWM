@@ -24,34 +24,30 @@ function App() {
   const hideNavbar = ["/login", "/register", "/scan"].includes(location.pathname);
 
   return (
-    <>
-      <div className="page-wrapper">
-        <div className="app-layout">
+    <div className="app-shell">
+      {!hideNavbar && <BottomNavbar />}
 
-          {!hideNavbar && <BottomNavbar />}
-
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-            <Route path="/CreateActivities" element={<CreateActivities />} />
-            <Route path="/activities" element={<ActivityDetail />} />
-            <Route path="/activity-detail" element={<ActivityDetail />} />
-            <Route path="/search" element={<Search />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/notifications" element={<Notifications />} />
-            <Route path="/edit-profile" element={<EditProfile />} />
-            <Route path="/edit-activity/:id" element={<EditActivity />} />
-            <Route path="/checkin" element={<CheckIn />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/review/:activityId" element={<ReviewForm />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/scan" element={<ScanQR />} />
-          </Routes>
-
-        </div>
+      <div className="app-content">
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+          <Route path="/CreateActivities" element={<CreateActivities />} />
+          <Route path="/activities" element={<ActivityDetail />} />
+          <Route path="/activity-detail" element={<ActivityDetail />} />
+          <Route path="/search" element={<Search />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/edit-profile" element={<EditProfile />} />
+          <Route path="/edit-activity/:id" element={<EditActivity />} />
+          <Route path="/checkin" element={<CheckIn />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/review/:activityId" element={<ReviewForm />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/scan" element={<ScanQR />} />
+        </Routes>
       </div>
-    </>
+    </div>
   );
 }
 
