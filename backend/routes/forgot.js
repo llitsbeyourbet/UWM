@@ -84,4 +84,42 @@ router.post("/reset-password", async (req, res) => {
   }
 });
 
+// ส่ง OTP สำหรับสมัครสมาชิก (ไม่เช็คว่ามีอีเมลในระบบไหม)
+router.post("/send-otp-register", async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // เช็คว่าอีเมลนี้ถูกใช้ไปแล้วไหม
+    const existing = await User.findOne({ where: { email } });
+    if (existing)
+      return res.status(400).json({ message: "อีเมลนี้ถูกใช้แล้ว" });
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiredAt = new Date(Date.now() + 10 * 60 * 1000);
+
+    await OTP.destroy({ where: { email } });
+    await OTP.create({ email, otp, expiredAt });
+
+    const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+    sendSmtpEmail.subject = "Until We Meet — รหัส OTP สำหรับสมัครสมาชิก";
+    sendSmtpEmail.htmlContent = `
+      <div style="font-family:sans-serif;padding:20px;">
+        <h2>ยืนยันอีเมล</h2>
+        <p>รหัส OTP ของคุณคือ</p>
+        <h1 style="color:#4A6FFF;letter-spacing:8px;">${otp}</h1>
+        <p>รหัสนี้จะหมดอายุใน 10 นาที</p>
+      </div>
+    `;
+    sendSmtpEmail.sender = { name: "Until We Meet", email: process.env.BREVO_EMAIL };
+    sendSmtpEmail.to = [{ email }];
+
+    await apiInstance.sendTransacEmail(sendSmtpEmail);
+
+    res.json({ message: "ส่ง OTP สำเร็จ กรุณาเช็คอีเมล" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+  }
+});
+
 module.exports = router;

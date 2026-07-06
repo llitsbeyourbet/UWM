@@ -48,7 +48,7 @@ function Register() {
     setLoading(true);
     try {
       // ส่ง OTP ไปที่อีเมล
-      const res = await fetch(`${API_URL}/api/forgot/send-otp`, {
+      const res = await fetch(`${API_URL}/api/forgot/send-otp-register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -132,7 +132,7 @@ function Register() {
     setTimer(600);
     startTimer();
     try {
-      await fetch(`${API_URL}/api/forgot/send-otp`, {
+      await fetch(`${API_URL}/api/forgot/send-otp-register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
