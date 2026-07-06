@@ -1,11 +1,14 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Html5Qrcode } from "html5-qrcode";
 import "./ScanQR.css";
 
 function ScanQR() {
   const scannerRef = useRef(null);
+  const [activityId, setActivityId] = useState(null);
   const navigate = useNavigate();
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [message, setMessage] = useState("");
   const isStartedRef = useRef(false);
   const isMountedRef = useRef(false);
 
@@ -39,12 +42,52 @@ function ScanQR() {
             }
 
             if (decodedText.includes("/checkin/")) {
-              navigate(
-                decodedText.replace(
-                  window.location.origin,
-                  ""
-                )
-              );
+
+              const url = new URL(decodedText);
+
+              const parts = url.pathname.split("/");
+                if (parts.length < 4) {
+                  alert("QR ไม่ถูกต้อง");
+                  return;
+                }
+
+              const activityId = parts[2];
+              const qrToken = parts[3];
+
+              setActivityId(activityId);
+
+              const token = localStorage.getItem("token");
+
+              try {
+
+                const res = await fetch(
+                  `https://uwm-production.up.railway.app/api/join/${activityId}/checkin`,
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                      qrToken,
+                    }),
+                  }
+                );
+
+                const data = await res.json();
+
+                setMessage(data.message);
+
+                if (res.ok) {
+                  setShowSuccess(true);
+                } else {
+                  alert(data.message);
+                }
+
+              } catch (err) {
+                console.log(err);
+                alert("ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์");
+              }
             }
           }
         );
@@ -107,17 +150,12 @@ function ScanQR() {
 
       <div className="reader-wrapper">
         <div id="reader"></div>
-
-        <div className="reader-wrapper">
-          <div id="reader"></div>
-
           <div className="scan-box">
             <div className="corner tl"></div>
             <div className="corner tr"></div>
             <div className="corner bl"></div>
             <div className="corner br"></div>
             <div className="scan-line"></div>
-          </div>
         </div>
       </div>
 
@@ -126,6 +164,24 @@ function ScanQR() {
         <br />
         ระบบจะสแกนให้อัตโนมัติ
       </p>
+      {showSuccess && (
+        <div className="modal-overlay">
+          <div className="success-modal">
+            <h2>✅ เช็คอินสำเร็จ</h2>
+
+            <p>{message}</p>
+
+            <button
+              onClick={() => {
+                setShowSuccess(false);
+                navigate(`/activities?id=${activityId}`);
+              }}
+            >
+              ตกลง
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
