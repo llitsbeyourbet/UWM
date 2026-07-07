@@ -88,7 +88,7 @@ function CheckIn() {
 
           <button
             className="checkin-btn done"
-            onClick={() => navigate(`/activity?id=${activityId}`)}
+            onClick={() => navigate(`/activity-detail?id=${activity.id}`)}
           >
             กลับหน้ากิจกรรม
           </button>
@@ -122,7 +122,7 @@ function CheckIn() {
             <p className="checkin-subtitle">{activity?.activityName}</p>
             <button
               className="checkin-btn done"
-              onClick={() => navigate(`/activity?id=${activityId}`)}>
+              onClick={() => navigate(`/activity-detail?id=${activity.id}`)}>
               กลับหน้ากิจกรรม
             </button>
           </>
@@ -159,7 +159,7 @@ function CheckIn() {
 
                 <button
                   className="checkin-btn done"
-                  onClick={() => navigate(`/activity?id=${activityId}`)}
+                  onClick={() => navigate(`/activity-detail?id=${activity.id}`)}
                 >
                   กลับหน้ากิจกรรม
                 </button>
