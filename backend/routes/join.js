@@ -5,7 +5,7 @@ const Activity = require("../models/Activity");
 const Notification = require("../models/Notification");
 const User = require("../models/User");
 const JoinRequest = require("../models/JoinRequest");
-const CheckIn = require("../models/CheckIn");
+const CheckIn = require("../models/Checkin");
 
 const auth = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
