@@ -5,6 +5,7 @@ const Activity = require("../models/Activity");
 const Notification = require("../models/Notification");
 const User = require("../models/User");
 const JoinRequest = require("../models/JoinRequest");
+const CheckIn = require("../models/CheckIn");
 
 const auth = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -266,6 +267,12 @@ router.post("/:activityId/checkin", auth, async (req, res) => {
         status: "checked_in",
       });
     }
+
+    await CheckIn.create({
+      activityId,
+      userId: req.userId,
+      checkedAt: new Date(),
+    });
 
     res.json({
       message: "ยืนยันการเข้าร่วมสำเร็จ",
