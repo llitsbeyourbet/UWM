@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { QRCodeCanvas } from "qrcode.react";
 import "./ActivityDetail.css";
 import API_URL from "../config";
 
 function ActivityDetail() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   const [activity, setActivity] = useState(null);
   const [isOwner, setIsOwner] = useState(false);
   const [showQR, setShowQR] = useState(false);
@@ -18,23 +17,21 @@ function ActivityDetail() {
   const [reportLoading, setReportLoading] = useState(false);
   const [activityRating, setActivityRating] = useState(null);
   const [comments, setComments] = useState([]);
-  const [qrToken, setQrToken] = useState("");
+  const [publicComments, setPublicComments] = useState([]);
+  const [host, setHost] = useState(null);
+  const [hostRating, setHostRating] = useState(null);
+  const [commentPublic, setCommentPublic] = useState(false);
 
-  const reportReasons = [
-    "เนื้อหาไม่เหมาะสม",
-    "ข้อมูลเป็นเท็จ",
-    "สแปม",
-    "เป็นอันตราย",
-    "อื่นๆ",
-  ];
+  const reportReasons = ["เนื้อหาไม่เหมาะสม", "ข้อมูลเป็นเท็จ", "สแปม", "เป็นอันตราย", "อื่นๆ"];
 
   useEffect(() => {
     const fetchActivity = async () => {
+      const data = localStorage.getItem("currentActivity");
       const token = localStorage.getItem("token");
+      if (!data) return;
 
-      const activityId = searchParams.get("id");
-
-      if (!activityId) return;
+      const parsed = JSON.parse(data);
+      const activityId = parsed.id;
 
       let user = null;
       try {
@@ -50,20 +47,39 @@ function ActivityDetail() {
         const res = await fetch(`${API_URL}/api/activities/${activityId}`);
         const activityData = await res.json();
         setActivity(activityData);
+        setCommentPublic(activityData.commentPublic);
 
+        // ดึงข้อมูล host
+        const hostRes = await fetch(`${API_URL}/api/auth/user/${activityData.createdBy}`);
+        if (hostRes.ok) {
+          const hostData = await hostRes.json();
+          setHost(hostData);
+        }
+
+        // ดึงคะแนน host
+        const hostRatingRes = await fetch(`${API_URL}/api/review/host/${activityData.createdBy}`);
+        const hostRatingData = await hostRatingRes.json();
+        setHostRating(hostRatingData.avgRating);
+
+        // ดึงคะแนนเฉลี่ยกิจกรรม
         const ratingRes = await fetch(`${API_URL}/api/review/activity/${activityId}/rating`);
         const ratingData = await ratingRes.json();
         setActivityRating(ratingData);
 
+        // ดึง comments สาธารณะ
+        const pubCommentRes = await fetch(`${API_URL}/api/review/activity/${activityId}/comments/public`);
+        const pubCommentData = await pubCommentRes.json();
+        setPublicComments(pubCommentData);
+
         if (user && activityData.createdBy === user.id) {
           setIsOwner(true);
 
+          // เจ้าของดึง comments ทั้งหมด
           const commentRes = await fetch(`${API_URL}/api/review/activity/${activityId}/comments`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           const commentData = await commentRes.json();
           setComments(commentData);
-
         } else if (user) {
           const statusRes = await fetch(`${API_URL}/api/join/${activityId}/status`, {
             headers: { Authorization: `Bearer ${token}` },
@@ -85,64 +101,27 @@ function ActivityDetail() {
     };
 
     fetchActivity();
-  }, [searchParams]);
-
-  const getQR = async () => {
-    const token = localStorage.getItem("token");
-
-    const res = await fetch(
-      `${API_URL}/api/activities/${activity.id}/qr`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    const data = await res.json();
-
-    if (res.ok) {
-      setQrToken(data.qrToken);
-    }
-  };
+  }, []);
 
   const handleJoin = async () => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      alert("กรุณาเข้าสู่ระบบก่อน");
-      navigate("/login");
-      return;
-    }
-
+    if (!token) { navigate("/login"); return; }
     setJoinLoading(true);
     try {
       const res = await fetch(`${API_URL}/api/join/${activity.id}`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
-
       const data = await res.json();
-      if (!res.ok) {
-        alert(data.message || "เกิดข้อผิดพลาด");
-        return;
-      }
-
+      if (!res.ok) { alert(data.message); return; }
       setJoinStatus(data.status);
-      if (data.status === "approved") {
-        alert("เข้าร่วมกิจกรรมสำเร็จ!");
-      } else {
-        alert("ส่งคำขอเข้าร่วมสำเร็จ! รอการอนุมัติ");
-      }
-    } catch (err) {
-      alert("ไม่สามารถเชื่อมต่อ server ได้");
-    } finally {
-      setJoinLoading(false);
-    }
+      alert(data.status === "approved" ? "เข้าร่วมกิจกรรมสำเร็จ!" : "ส่งคำขอเข้าร่วมสำเร็จ! รอการอนุมัติ");
+    } catch { alert("ไม่สามารถเชื่อมต่อ server ได้"); }
+    finally { setJoinLoading(false); }
   };
 
   const handleCancel = async () => {
     if (!window.confirm("ต้องการยกเลิกการเข้าร่วมไหม?")) return;
-
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(`${API_URL}/api/join/${activity.id}/cancel`, {
@@ -150,100 +129,100 @@ function ActivityDetail() {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      if (!res.ok) {
-        alert(data.message || "เกิดข้อผิดพลาด");
-        return;
-      }
+      if (!res.ok) { alert(data.message); return; }
       setJoinStatus("cancelled");
       alert("ยกเลิกการเข้าร่วมสำเร็จ");
-    } catch (err) {
-      alert("ไม่สามารถเชื่อมต่อ server ได้");
-    }
+    } catch { alert("ไม่สามารถเชื่อมต่อ server ได้"); }
   };
 
   const handleDelete = async () => {
     if (!window.confirm("ต้องการลบกิจกรรมนี้ไหม?")) return;
-
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(`${API_URL}/api/activities/${activity.id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
-
       const data = await res.json();
-      if (!res.ok) {
-        alert(data.message || "เกิดข้อผิดพลาด");
-        return;
-      }
-
+      if (!res.ok) { alert(data.message); return; }
       alert("ลบกิจกรรมสำเร็จ");
       navigate("/");
-    } catch (err) {
-      alert("ไม่สามารถเชื่อมต่อ server ได้");
-    }
+    } catch { alert("ไม่สามารถเชื่อมต่อ server ได้"); }
   };
 
   const handleReport = async () => {
-    if (!reportReason) {
-      alert("กรุณาเลือกเหตุผล");
-      return;
-    }
-
+    if (!reportReason) { alert("กรุณาเลือกเหตุผล"); return; }
     const token = localStorage.getItem("token");
     setReportLoading(true);
     try {
       const res = await fetch(`${API_URL}/api/report/${activity.id}`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ reason: reportReason }),
       });
-
       const data = await res.json();
-      if (!res.ok) {
-        alert(data.message || "เกิดข้อผิดพลาด");
-        return;
-      }
-
+      if (!res.ok) { alert(data.message); return; }
       alert("รายงานสำเร็จ ขอบคุณที่แจ้งเตือน");
       setShowReportModal(false);
       setReportReason("");
-    } catch (err) {
-      alert("ไม่สามารถเชื่อมต่อ server ได้");
-    } finally {
-      setReportLoading(false);
-    }
+    } catch { alert("ไม่สามารถเชื่อมต่อ server ได้"); }
+    finally { setReportLoading(false); }
+  };
+
+  const handleToggleCommentPublic = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`${API_URL}/api/activities/${activity.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ commentPublic: !commentPublic }),
+      });
+      if (!res.ok) return;
+      setCommentPublic(!commentPublic);
+    } catch { console.log("error"); }
   };
 
   if (!activity) return <div className="loading">ไม่พบข้อมูลกิจกรรม</div>;
 
   const getDayName = (dateStr) => {
     if (!dateStr) return "-";
-    const d = new Date(dateStr);
-    return d.toLocaleDateString("en-US", { weekday: "long" });
+    return new Date(dateStr).toLocaleDateString("en-US", { weekday: "long" });
   };
+
+  const displayComments = isOwner ? comments : publicComments;
 
   return (
     <div className="activity-detail-page">
+
+      {/* Cover */}
       <div className="activity-cover">
-        {/* 👈 แก้ตรงนี้ */}
         {activity.cover ? (
           <img src={activity.cover} alt="cover" className="activity-cover-img" />
         ) : (
           <div className="activity-cover-placeholder" />
         )}
         <button className="back-btn" onClick={() => navigate(-1)}>‹</button>
+        {/* 👈 เปลี่ยนจากหัวใจเป็นปุ่มรายงาน */}
+        {!isOwner && (
+          <button className="report-icon-btn" onClick={() => setShowReportModal(true)}>🚩</button>
+        )}
       </div>
 
       <div className="activity-content">
+
+        {/* Title & Rating */}
         <div className="activity-title-row">
           <h1 className="activity-title">{activity.activityName}</h1>
-          <span className="heart-btn">🤍</span>
+          {activityRating?.totalReviews > 0 && (
+            <div className="rating-badge">
+              <span>⭐</span>
+              <span className="rating-num">{activityRating.avgRating}</span>
+              <span className="rating-count">({activityRating.totalReviews})</span>
+            </div>
+          )}
         </div>
 
+        {/* Date & Time */}
         <div className="activity-info-row">
           <div className="date-box">
             <span className="date-month">
@@ -259,45 +238,95 @@ function ActivityDetail() {
           </div>
         </div>
 
+        {/* Info */}
+        <div className="activity-info-row">
+          <span className="icon">📍</span>
+          <span>{activity.location || "-"}</span>
+        </div>
+        <div className="activity-info-row">
+          <span className="icon">👥</span>
+          <span>{activity.activityType === "public" ? "สาธารณะ" : "ส่วนตัว"} · {activity.participantCount} คน</span>
+        </div>
+
+        {/* About */}
         <div className="activity-section">
           <h3>About</h3>
           <p>{activity.detail || "-"}</p>
         </div>
 
-        {activityRating?.totalReviews > 0 && (
-          <div className="activity-info-row">
-            <span className="icon">⭐</span>
-            <span>{activityRating.avgRating} ({activityRating.totalReviews} รีวิว)</span>
-          </div>
-        )}
-
-        <div className="activity-info-row">
-          <span className="icon">📍</span>
-          <span>{activity.location || "-"}</span>
-        </div>
-
-        <div className="activity-info-row">
-          <span className="icon">👥</span>
-          <span>{activity.activityType === "public" ? "สาธารณะ" : "ส่วนตัว"}</span>
-        </div>
-
-        <div className="activity-info-row">
-          <span className="icon">🚶</span>
-          <span>{activity.participantCount} คน</span>
-        </div>
-
-        {isOwner && comments.length > 0 && (
-          <div className="activity-section">
-            <h3>ความคิดเห็นจากผู้เข้าร่วม</h3>
-            {comments.map((c) => (
-              <div key={c.id} className="comment-card">
-                <p className="comment-text">"{c.comment}"</p>
-                <p className="comment-date">{new Date(c.createdAt).toLocaleDateString("th-TH")}</p>
+        {/* Host Card */}
+        {host && (
+          <div className="host-card" onClick={() => navigate(`/profile/${host.id}`)}>
+            <div className="host-avatar">
+              {host.profileImage ? (
+                <img src={host.profileImage} alt="host" className="host-avatar-img" />
+              ) : (
+                <div className="host-avatar-initials">
+                  {host.name?.charAt(0).toUpperCase()}
+                </div>
+              )}
+            </div>
+            <div className="host-info">
+              <p className="host-name">{host.name}</p>
+              <p className="host-username">@{host.username}</p>
+            </div>
+            {hostRating && (
+              <div className="host-rating">
+                <span>⭐</span>
+                <span>{hostRating}</span>
               </div>
-            ))}
+            )}
           </div>
         )}
 
+        {/* Reviews & Comments */}
+        {activityRating?.totalReviews > 0 && (
+          <div className="activity-section">
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h3>รีวิว ({activityRating.totalReviews})</h3>
+              {/* เจ้าของตั้งค่าความคิดเห็น */}
+              {isOwner && (
+                <div className="comment-toggle" onClick={handleToggleCommentPublic}>
+                  <span style={{ fontSize: 12, color: "#888" }}>ความคิดเห็น</span>
+                  <div className={`toggle-switch ${commentPublic ? "on" : ""}`}>
+                    <div className="toggle-thumb" />
+                  </div>
+                  <span style={{ fontSize: 12, color: commentPublic ? "#6BCB77" : "#aaa" }}>
+                    {commentPublic ? "สาธารณะ" : "ส่วนตัว"}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Comments */}
+            {displayComments.length > 0 && (
+              <div className="comments-list">
+                {displayComments.map((c) => (
+                  <div key={c.id} className="comment-card">
+                    <div className="comment-header">
+                      <div className="comment-avatar">
+                        {c.userId?.toString().slice(0, 1).toUpperCase() || "U"}
+                      </div>
+                      <p className="comment-date">
+                        {new Date(c.createdAt).toLocaleDateString("th-TH")}
+                      </p>
+                    </div>
+                    <p className="comment-text">"{c.comment}"</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Suspended Banner */}
+        {activity.status === "suspended" && (
+          <div className="suspended-banner">
+            🚫 กิจกรรมนี้ถูกระงับโดย Admin
+          </div>
+        )}
+
+        {/* Owner Actions */}
         {isOwner && (
           <div className="qr-owner-section">
             <div className="owner-actions">
@@ -308,31 +337,22 @@ function ActivityDetail() {
                 ลบกิจกรรม
               </button>
             </div>
-
-            <button className="show-qr-btn" onClick={async () => { if (!showQR) {await getQR();} setShowQR(!showQR);}}>
+            <button className="show-qr-btn" onClick={() => setShowQR(!showQR)}>
               {showQR ? "ซ่อน QR Code" : "แสดง QR Code สำหรับยืนยันการเข้าร่วม"}
             </button>
-
             {showQR && (
               <div className="qr-container">
                 <p>QR Code สำหรับยืนยันการเข้าร่วม</p>
-                <QRCodeCanvas value={`${window.location.origin}/checkin/${activity.id}/${qrToken}`} size={180}/>
+                <QRCodeCanvas value={`${window.location.origin}/checkin/${activity.id}`} size={180} />
                 {activity.checkinStart && activity.checkinEnd && (
-                  <p className="checkin-time-info">
-                    ⏰ เช็คอินได้ {activity.checkinStart} - {activity.checkinEnd}
-                  </p>
+                  <p className="checkin-time-info">⏰ เช็คอินได้ {activity.checkinStart} - {activity.checkinEnd}</p>
                 )}
               </div>
             )}
           </div>
         )}
 
-        {activity.status === "suspended" && (
-          <div className="suspended-banner">
-            🚫 กิจกรรมนี้ถูกระงับโดย Admin
-          </div>
-        )}
-
+        {/* Join Section */}
         {!isOwner && activity.status !== "suspended" && (
           <div className="join-section">
             {joinStatus === "checked_in" && (
@@ -375,20 +395,16 @@ function ActivityDetail() {
                 {joinLoading ? "กำลังส่ง..." : "Join"}
               </button>
             )}
-
-            <button className="report-btn" onClick={() => setShowReportModal(true)}>
-              🚩 รายงานกิจกรรม
-            </button>
           </div>
         )}
       </div>
 
+      {/* Report Modal */}
       {showReportModal && (
         <div className="modal-overlay" onClick={() => setShowReportModal(false)}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <h3 className="modal-title">รายงานกิจกรรม</h3>
             <p className="modal-subtitle">เลือกเหตุผลที่รายงาน</p>
-
             <div className="reason-list">
               {reportReasons.map((r) => (
                 <div
@@ -400,16 +416,9 @@ function ActivityDetail() {
                 </div>
               ))}
             </div>
-
             <div className="modal-actions">
-              <button className="modal-cancel-btn" onClick={() => setShowReportModal(false)}>
-                ยกเลิก
-              </button>
-              <button
-                className="modal-report-btn"
-                onClick={handleReport}
-                disabled={reportLoading}
-              >
+              <button className="modal-cancel-btn" onClick={() => setShowReportModal(false)}>ยกเลิก</button>
+              <button className="modal-report-btn" onClick={handleReport} disabled={reportLoading}>
                 {reportLoading ? "กำลังส่ง..." : "รายงาน"}
               </button>
             </div>

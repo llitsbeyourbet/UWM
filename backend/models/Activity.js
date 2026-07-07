@@ -18,6 +18,8 @@ const Activity = sequelize.define("Activity", {
   category: {type: DataTypes.ENUM("ทั้งหมด","กีฬา", "ดนตรี", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่"), defaultValue: "ทั้งหมด",},
   checkinStart: { type: DataTypes.STRING },  // เวลาที่เริ่มเช็คอินได้
   checkinEnd: { type: DataTypes.STRING },    // เวลาที่หมดเขตเช็คอิน
+  commentPublic: {type: DataTypes.BOOLEAN, defaultValue: false, // default ปิดไว้ เห็นแค่เจ้าของ
+}
 });
 
 module.exports = Activity;

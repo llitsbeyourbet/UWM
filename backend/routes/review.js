@@ -169,4 +169,24 @@ router.get("/activity/:activityId/rating", async (req, res) => {
   }
 });
 
+// ดึง comments สาธารณะ (ทุกคนเห็น)
+router.get("/activity/:activityId/comments/public", async (req, res) => {
+  try {
+    const activity = await Activity.findByPk(req.params.activityId);
+    if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
+
+    if (!activity.commentPublic)
+      return res.json([]); // ปิดสาธารณะ ส่ง array ว่างกลับ
+
+    const comments = await Comment.findAll({
+      where: { activityId: req.params.activityId },
+      order: [["createdAt", "DESC"]],
+    });
+
+    res.json(comments);
+  } catch (err) {
+    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+  }
+});
+
 module.exports = router;

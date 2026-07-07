@@ -16,7 +16,7 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ message: "Email นี้ถูกใช้แล้ว" });
 
     const hashed = await bcrypt.hash(password, 10);
-    await User.create({ username, name, email, password: hashed });
+    await User.create({ username, name, email, password: hashed, phone, birthdate });
 
     res.status(201).json({ message: "สมัครสมาชิกสำเร็จ" });
   } catch (err) {
@@ -105,6 +105,18 @@ router.put("/update", async (req, res) => {
     res.json({ message: "อัปเดตสำเร็จ" });
   } catch (err) {
     console.log(err);
+    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+  }
+});
+
+router.get("/user/:id", async (req, res) => {
+  try {
+    const user = await User.findByPk(req.params.id, {
+      attributes: { exclude: ["password"] }
+    });
+    if (!user) return res.status(404).json({ message: "ไม่พบผู้ใช้" });
+    res.json(user);
+  } catch (err) {
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
 });
