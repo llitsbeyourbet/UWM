@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { QRCodeCanvas } from "qrcode.react";
 import "./ActivityDetail.css";
 import API_URL from "../config";
 
 function ActivityDetail() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const activityId = searchParams.get("id");
+
   const [activity, setActivity] = useState(null);
   const [isOwner, setIsOwner] = useState(false);
   const [showQR, setShowQR] = useState(false);
@@ -26,12 +29,8 @@ function ActivityDetail() {
 
   useEffect(() => {
     const fetchActivity = async () => {
-      const data = localStorage.getItem("currentActivity");
+      if (!activityId) return;
       const token = localStorage.getItem("token");
-      if (!data) return;
-
-      const parsed = JSON.parse(data);
-      const activityId = parsed.id;
 
       let user = null;
       try {
@@ -74,12 +73,12 @@ function ActivityDetail() {
         if (user && activityData.createdBy === user.id) {
           setIsOwner(true);
 
-          // เจ้าของดึง comments ทั้งหมด
           const commentRes = await fetch(`${API_URL}/api/review/activity/${activityId}/comments`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           const commentData = await commentRes.json();
           setComments(commentData);
+
         } else if (user) {
           const statusRes = await fetch(`${API_URL}/api/join/${activityId}/status`, {
             headers: { Authorization: `Bearer ${token}` },
@@ -101,7 +100,7 @@ function ActivityDetail() {
     };
 
     fetchActivity();
-  }, []);
+  }, [activityId]);
 
   const handleJoin = async () => {
     const token = localStorage.getItem("token");
@@ -202,7 +201,6 @@ function ActivityDetail() {
           <div className="activity-cover-placeholder" />
         )}
         <button className="back-btn" onClick={() => navigate(-1)}>‹</button>
-        {/* 👈 เปลี่ยนจากหัวใจเป็นปุ่มรายงาน */}
         {!isOwner && (
           <button className="report-icon-btn" onClick={() => setShowReportModal(true)}>🚩</button>
         )}
@@ -256,7 +254,7 @@ function ActivityDetail() {
 
         {/* Host Card */}
         {host && (
-          <div className="host-card" onClick={() => navigate(`/profile/${host.id}`)}>
+          <div className="host-card">
             <div className="host-avatar">
               {host.profileImage ? (
                 <img src={host.profileImage} alt="host" className="host-avatar-img" />
@@ -284,7 +282,6 @@ function ActivityDetail() {
           <div className="activity-section">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <h3>รีวิว ({activityRating.totalReviews})</h3>
-              {/* เจ้าของตั้งค่าความคิดเห็น */}
               {isOwner && (
                 <div className="comment-toggle" onClick={handleToggleCommentPublic}>
                   <span style={{ fontSize: 12, color: "#888" }}>ความคิดเห็น</span>
@@ -298,7 +295,6 @@ function ActivityDetail() {
               )}
             </div>
 
-            {/* Comments */}
             {displayComments.length > 0 && (
               <div className="comments-list">
                 {displayComments.map((c) => (
