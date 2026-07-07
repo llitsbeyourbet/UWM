@@ -94,8 +94,8 @@ function CheckIn() {
           <>
             <h2 className="checkin-title">ยืนยันการเข้าร่วมสำเร็จ!</h2>
             <p className="checkin-subtitle">{activity?.activityName}</p>
-            <button className="checkin-btn done" onClick={() => navigate("/")}>
-              กลับหน้าหลัก
+            <button className="checkin-btn done" onClick={() => navigate(`/activities?id=${activityId}`)}>
+              กลับหน้ากิจกรรม
             </button>
           </>
         ) : (

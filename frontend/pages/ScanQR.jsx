@@ -5,10 +5,8 @@ import "./ScanQR.css";
 
 function ScanQR() {
   const scannerRef = useRef(null);
-  const [activityId, setActivityId] = useState(null);
+  const scannedRef = useRef(false);
   const navigate = useNavigate();
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [message, setMessage] = useState("");
   const isStartedRef = useRef(false);
   const isMountedRef = useRef(false);
 
@@ -30,64 +28,52 @@ function ScanQR() {
             qrbox: 220,
           },
           async (decodedText) => {
+            if (scannedRef.current) return;
+            scannedRef.current = true;
+
             console.log("QR :", decodedText);
 
-            if (
-              scannerRef.current &&
-              isStartedRef.current
-            ) {
-              await scannerRef.current.stop();
+            if (scannerRef.current && isStartedRef.current) {
+              try {
+                await scannerRef.current.stop();
+              } catch {}
+
+              try {
+                await scannerRef.current.clear();
+              } catch {}
+
               isStartedRef.current = false;
               scannerRef.current = null;
             }
 
-            if (decodedText.includes("/checkin/")) {
-
+            try {
               const url = new URL(decodedText);
 
+              if (!url.pathname.startsWith("/checkin/")) {
+                alert("QR นี้ไม่ใช่ QR สำหรับเช็คอิน");
+                return;
+              }
+
               const parts = url.pathname.split("/");
-                if (parts.length < 4) {
-                  alert("QR ไม่ถูกต้อง");
-                  return;
-                }
+
+              if (parts.length !== 4) {
+                alert("QR ไม่ถูกต้อง");
+                return;
+              }
 
               const activityId = parts[2];
               const qrToken = parts[3];
 
-              setActivityId(activityId);
-
-              const token = localStorage.getItem("token");
-
-              try {
-
-                const res = await fetch(
-                  `https://uwm-production.up.railway.app/api/join/${activityId}/checkin`,
-                  {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                      Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify({
-                      qrToken,
-                    }),
-                  }
-                );
-
-                const data = await res.json();
-
-                setMessage(data.message);
-
-                if (res.ok) {
-                  setShowSuccess(true);
-                } else {
-                  alert(data.message);
-                }
-
-              } catch (err) {
-                console.log(err);
-                alert("ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์");
+              if (!activityId || !qrToken) {
+                alert("QR ไม่ถูกต้อง");
+                return;
               }
+
+              navigate(`/checkin/${activityId}/${qrToken}`);
+
+            } catch (err) {
+              console.log(err);
+              alert("QR ไม่ถูกต้อง");
             }
           }
         );
@@ -101,34 +87,39 @@ function ScanQR() {
     startScanner();
 
     return () => {
-      if (
-        scannerRef.current &&
-        isStartedRef.current
-      ) {
+      if (scannerRef.current && isStartedRef.current) {
         scannerRef.current
           .stop()
+          .then(() => scannerRef.current?.clear())
           .catch(() => {})
           .finally(() => {
             scannerRef.current = null;
             isStartedRef.current = false;
             isMountedRef.current = false;
+            scannedRef.current = false;
           });
+      } else {
+        isMountedRef.current = false;
+        scannedRef.current = false;
       }
     };
   }, [navigate]);
 
   const handleBack = async () => {
-    try {
-      if (
-        scannerRef.current &&
-        isStartedRef.current
-      ) {
+    if (scannerRef.current && isStartedRef.current) {
+      try {
         await scannerRef.current.stop();
-        isStartedRef.current = false;
-        scannerRef.current = null;
-      }
-    } catch {}
+      } catch {}
 
+      try {
+        await scannerRef.current.clear();
+      } catch {}
+
+      scannerRef.current = null;
+      isStartedRef.current = false;
+    }
+
+    scannedRef.current = false;
     navigate(-1);
   };
 
@@ -160,24 +151,6 @@ function ScanQR() {
         <br />
         ระบบจะสแกนให้อัตโนมัติ
       </p>
-      {showSuccess && (
-        <div className="modal-overlay">
-          <div className="success-modal">
-            <h2>✅ เช็คอินสำเร็จ</h2>
-
-            <p>{message}</p>
-
-            <button
-              onClick={() => {
-                setShowSuccess(false);
-                navigate(`/activities?id=${activityId}`);
-              }}
-            >
-              ตกลง
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

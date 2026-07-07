@@ -12,6 +12,7 @@ function ActivityDetail() {
   const [activity, setActivity] = useState(null);
   const [isOwner, setIsOwner] = useState(false);
   const [showQR, setShowQR] = useState(false);
+  const [qrToken, setQrToken] = useState("");
   const [joinStatus, setJoinStatus] = useState(null);
   const [joinLoading, setJoinLoading] = useState(false);
   const [reviewed, setReviewed] = useState(false);
@@ -101,6 +102,53 @@ function ActivityDetail() {
 
     fetchActivity();
   }, [activityId]);
+
+  useEffect(() => {
+
+    if (!showQR) return;
+
+    if (!isOwner) return;
+
+    if (!activity) return;
+
+    loadQR();
+
+    const interval = setInterval(() => {
+
+      loadQR();
+
+    }, 8000);
+
+    return () => clearInterval(interval);
+
+  }, [showQR, activity, isOwner]);
+
+  const loadQR = async () => {
+    if (!activity) return;
+
+    const token = localStorage.getItem("token");
+
+    try {
+      const res = await fetch(
+        `${API_URL}/api/activities/${activity.id}/qr`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setQrToken(data.qrToken);
+      } else {
+        console.log(data.message);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const handleJoin = async () => {
     const token = localStorage.getItem("token");
@@ -339,7 +387,7 @@ function ActivityDetail() {
             {showQR && (
               <div className="qr-container">
                 <p>QR Code สำหรับยืนยันการเข้าร่วม</p>
-                <QRCodeCanvas value={`${window.location.origin}/checkin/${activity.id}`} size={180} />
+                <QRCodeCanvas value={`${window.location.origin}/checkin/${activity.id}/${qrToken}`} size={180}/>
                 {activity.checkinStart && activity.checkinEnd && (
                   <p className="checkin-time-info">⏰ เช็คอินได้ {activity.checkinStart} - {activity.checkinEnd}</p>
                 )}

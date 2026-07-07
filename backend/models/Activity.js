@@ -11,7 +11,6 @@ const Activity = sequelize.define("Activity", {
   participantCount: { type: DataTypes.INTEGER, defaultValue: 1 },
   activityType: { type: DataTypes.ENUM("public", "private"), defaultValue: "public" },
   cover: { type: DataTypes.STRING, defaultValue: null },
-  qrCode: { type: DataTypes.TEXT },
   createdBy: { type: DataTypes.INTEGER },
   status: {type: DataTypes.ENUM("active", "suspended"),defaultValue: "active",},
   reportCount: { type: DataTypes.INTEGER, defaultValue: 0 },
