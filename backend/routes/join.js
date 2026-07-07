@@ -222,18 +222,29 @@ router.post("/:activityId/checkin", auth, async (req, res) => {
     const activity = await Activity.findByPk(activityId);
 
     if (activity.checkinStart && activity.checkinEnd) {
-      const now = new Date();
-      const currentTime = now.toTimeString().slice(0, 5);
+      const currentTime = new Date().toLocaleTimeString("en-GB", {
+        timeZone: "Asia/Bangkok",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      });
 
-      if (currentTime < activity.checkinStart) {
+      const start = activity.checkinStart.slice(0, 5);
+      const end = activity.checkinEnd.slice(0, 5);
+
+      console.log("Current:", currentTime);
+      console.log("Start:", start);
+      console.log("End:", end);
+
+      if (currentTime < start) {
         return res.status(400).json({
-          message: `ยังไม่ถึงเวลาเช็คอิน (เริ่ม ${activity.checkinStart})`,
+          message: `ยังไม่ถึงเวลาเช็คอิน (เริ่ม ${start})`,
         });
       }
 
-      if (currentTime > activity.checkinEnd) {
+      if (currentTime > end) {
         return res.status(400).json({
-          message: `หมดเขตเช็คอินแล้ว (ปิด ${activity.checkinEnd})`,
+          message: `หมดเขตเช็คอินแล้ว (ปิด ${end})`,
         });
       }
     }

@@ -51,8 +51,7 @@ function Profile() {
   };
 
   const handleViewDetail = (activity) => {
-    localStorage.setItem("currentActivity", JSON.stringify(activity));
-    navigate("/activity-detail");
+    navigate(`/activity-detail?id=${activity.id}`);
   };
 
   const getInitials = (name) => {

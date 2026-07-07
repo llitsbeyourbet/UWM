@@ -134,12 +134,8 @@ function ScanQR() {
 
   return (
     <div className="scan-page">
-      <button
-        className="scan-back-btn"
-        onClick={handleBack}
-      >
-        ←
-      </button>
+      <button className="scan-back-btn" onClick={handleBack}>‹</button>
+      
 
       <div className="scan-header">
         <h1 className="scan-title">สแกน QR</h1>

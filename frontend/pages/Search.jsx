@@ -55,8 +55,7 @@ function Search() {
   }, [search, activities, activeCategory]); // 👈 เพิ่ม activeCategory
 
   const handleViewDetail = (activity) => {
-    localStorage.setItem("currentActivity", JSON.stringify(activity));
-    navigate("/activity-detail");
+    navigate(`/activity-detail?id=${activity.id}`);
   };
 
   const formatDate = (dateStr) => {
