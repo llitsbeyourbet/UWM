@@ -101,26 +101,7 @@ function ActivityDetail() {
     };
 
     fetchActivity();
-  }, [searchParams]);
-
-  const getQR = async () => {
-    const token = localStorage.getItem("token");
-
-    const res = await fetch(
-      `${API_URL}/api/activities/${activity.id}/qr`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    const data = await res.json();
-
-    if (res.ok) {
-      setQrToken(data.qrToken);
-    }
-  };
+  }, []);
 
   const handleJoin = async () => {
     const token = localStorage.getItem("token");
@@ -356,8 +337,7 @@ function ActivityDetail() {
                 ลบกิจกรรม
               </button>
             </div>
-
-            <button className="show-qr-btn" onClick={async () => { if (!showQR) {await getQR();} setShowQR(!showQR);}}>
+            <button className="show-qr-btn" onClick={() => setShowQR(!showQR)}>
               {showQR ? "ซ่อน QR Code" : "แสดง QR Code สำหรับยืนยันการเข้าร่วม"}
             </button>
             {showQR && (
