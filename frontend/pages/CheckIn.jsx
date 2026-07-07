@@ -11,6 +11,7 @@ function CheckIn() {
   const [loading, setLoading] = useState(true);
   const [checkinLoading, setCheckinLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,18 +60,43 @@ function CheckIn() {
 
       const data = await res.json();
       if (!res.ok) {
-        alert(data.message || "เกิดข้อผิดพลาด");
+        setErrorMessage(data.message || "เกิดข้อผิดพลาด");
         return;
       }
 
       setDone(true);
       setJoinStatus("checked_in");
     } catch (err) {
-      alert("ไม่สามารถเชื่อมต่อ server ได้");
+      setErrorMessage("ไม่สามารถเชื่อมต่อ server ได้");
     } finally {
       setCheckinLoading(false);
     }
   };
+
+  if (errorMessage) {
+    return (
+      <div className="checkin-page">
+        <div className="checkin-card">
+
+          <div className="checkin-icon">
+            <div className="icon-error">✕</div>
+          </div>
+
+          <h2 className="checkin-title">ไม่สามารถเช็คอินได้</h2>
+
+          <p className="checkin-subtitle">{errorMessage}</p>
+
+          <button
+            className="checkin-btn done"
+            onClick={() => navigate(`/activity/${activityId}`)}
+          >
+            กลับหน้ากิจกรรม
+          </button>
+
+        </div>
+      </div>
+    );
+  }
 
   if (loading) return (
     <div className="checkin-page">
@@ -94,7 +120,9 @@ function CheckIn() {
           <>
             <h2 className="checkin-title">ยืนยันการเข้าร่วมสำเร็จ!</h2>
             <p className="checkin-subtitle">{activity?.activityName}</p>
-            <button className="checkin-btn done" onClick={() => navigate(`/activities?id=${activityId}`)}>
+            <button
+              className="checkin-btn done"
+              onClick={() => navigate(`/activity/${activityId}`)}>
               กลับหน้ากิจกรรม
             </button>
           </>
@@ -118,12 +146,23 @@ function CheckIn() {
             ) : (
               <div className="checkin-error">
                 <p>ไม่สามารถ check-in ได้</p>
+
                 <p className="checkin-error-sub">
-                  {joinStatus === "pending" ? "คำขอยังรอการอนุมัติ" :
-                   joinStatus === "rejected" ? "คำขอถูกปฏิเสธ" :
-                   joinStatus === "cancelled" ? "คำขอถูกยกเลิกแล้ว" :
-                   "ยังไม่ได้ส่งคำขอเข้าร่วม"}
+                  {joinStatus === "pending"
+                    ? "คำขอยังรอการอนุมัติ"
+                    : joinStatus === "rejected"
+                    ? "คำขอถูกปฏิเสธ"
+                    : joinStatus === "cancelled"
+                    ? "คำขอถูกยกเลิกแล้ว"
+                    : "ยังไม่ได้ส่งคำขอเข้าร่วม"}
                 </p>
+
+                <button
+                  className="checkin-btn done"
+                  onClick={() => navigate(`/activity/${activityId}`)}
+                >
+                  กลับหน้ากิจกรรม
+                </button>
               </div>
             )}
           </>
