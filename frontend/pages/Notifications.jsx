@@ -117,7 +117,7 @@ function Notifications() {
 
   const renderMessage = (n) => {
     if (n.type === "join_request")
-      return <><span className="bold">{n.fromUsername}</span> ส่งขอเข้าร่วมกิจกรรม <span className="bold">{n.activityName}</span></>;
+      return <><span className="bold">{n.fromUsername}</span> ส่งคำขอเข้าร่วมกิจกรรม <span className="bold">{n.activityName}</span></>;
     if (n.type === "join_confirmed")
       return <><span className="bold">{n.fromUsername}</span> ตอบรับคำขอเข้าร่วมกิจกรรม <span className="bold">{n.activityName}</span> แล้ว</>;
     if (n.type === "join_rejected")

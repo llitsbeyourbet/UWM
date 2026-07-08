@@ -1,7 +1,7 @@
-import API_URL from "../config";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AdminDashboard.css";
+import API_URL from "../config";
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -21,14 +21,12 @@ function AdminDashboard() {
   const fetchData = async () => {
     const token = localStorage.getItem("token");
     try {
-      // ดึงสถิติ
       const statsRes = await fetch(`${API_URL}/api/admin/dashboard`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const statsData = await statsRes.json();
       setStats(statsData);
 
-      // ดึงรายงาน
       const reportsRes = await fetch(`${API_URL}/api/admin/reports`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -53,7 +51,7 @@ function AdminDashboard() {
       if (!res.ok) { alert(data.message); return; }
       alert("ระงับกิจกรรมสำเร็จ");
       fetchData();
-    } catch (err) {
+    } catch {
       alert("ไม่สามารถเชื่อมต่อ server ได้");
     }
   };
@@ -69,12 +67,11 @@ function AdminDashboard() {
       if (!res.ok) { alert(data.message); return; }
       alert("ยกเลิกรายงานสำเร็จ");
       fetchData();
-    } catch (err) {
+    } catch {
       alert("ไม่สามารถเชื่อมต่อ server ได้");
     }
   };
 
-  // grouping reports by activityId
   const groupedReports = reports.reduce((acc, r) => {
     if (!acc[r.activityId]) acc[r.activityId] = [];
     acc[r.activityId].push(r);
@@ -85,65 +82,72 @@ function AdminDashboard() {
 
   return (
     <div className="admin-page">
+
       {/* Header */}
       <div className="admin-header">
         <div>
-          <p className="admin-title">Admin Dashboard</p>
-          <p className="admin-subtitle">Until We Meet</p>
+          <p className="admin-sub">Admin</p>
+          <h1 className="admin-title">Dashboard</h1>
         </div>
-        <button className="admin-back-btn" onClick={() => navigate("/")}>
-          ออก
-        </button>
+        <div className="admin-back-btn" onClick={() => navigate("/")}>↩</div>
       </div>
 
-      {/* สถิติ */}
-      <div className="stats-grid">
-        <div className="stat-card blue">
-          <p className="stat-number">{stats?.totalUsers || 0}</p>
-          <p className="stat-label">ผู้ใช้ทั้งหมด</p>
+      {/* Stats Grid */}
+      <div className="admin-stats-grid">
+        <div className="stat-card" style={{ background: "#FFF176" }}>
+          <div className="stat-circle" />
+          <p className="stat-num">{stats?.totalUsers || 0}</p>
+          <p className="stat-lbl">ผู้ใช้ทั้งหมด</p>
         </div>
-        <div className="stat-card green">
-          <p className="stat-number">{stats?.totalActivities || 0}</p>
-          <p className="stat-label">กิจกรรมทั้งหมด</p>
+        <div className="stat-card" style={{ background: "#B8E0FF" }}>
+          <div className="stat-circle" />
+          <p className="stat-num">{stats?.totalActivities || 0}</p>
+          <p className="stat-lbl">กิจกรรมทั้งหมด</p>
         </div>
-        <div className="stat-card red">
-          <p className="stat-number">{stats?.pendingReports || 0}</p>
-          <p className="stat-label">รายงานรอตรวจ</p>
+        <div className="stat-card" style={{ background: "#FFB3C6" }}>
+          <div className="stat-circle" />
+          <p className="stat-num">{stats?.pendingReports || 0}</p>
+          <p className="stat-lbl">รายงานรอตรวจ</p>
         </div>
-        <div className="stat-card amber">
-          <p className="stat-number">{stats?.suspendedActivities || 0}</p>
-          <p className="stat-label">กิจกรรมถูกระงับ</p>
+        <div className="stat-card" style={{ background: "#C8F5C8" }}>
+          <div className="stat-circle" />
+          <p className="stat-num">{stats?.totalCheckins || 0}</p>
+          <p className="stat-lbl">Check-in ทั้งหมด</p>
         </div>
-        <div className="stat-card purple">
-          <p className="stat-number">{stats?.totalCheckins || 0}</p>
-          <p className="stat-label">Check-in ทั้งหมด</p>
+        <div className="stat-card" style={{ background: "#E8D5F5" }}>
+          <div className="stat-circle" />
+          <p className="stat-num">{stats?.suspendedActivities || 0}</p>
+          <p className="stat-lbl">ถูกระงับ</p>
         </div>
-        <div className="stat-card gray">
-          <p className="stat-number">{stats?.totalReports || 0}</p>
-          <p className="stat-label">รายงานทั้งหมด</p>
+        <div className="stat-card" style={{ background: "#FFD4B8" }}>
+          <div className="stat-circle" />
+          <p className="stat-num">{stats?.totalReports || 0}</p>
+          <p className="stat-lbl">รายงานทั้งหมด</p>
         </div>
       </div>
 
-      {/* รายงานที่รอตรวจ */}
+      {/* Reports */}
       <div className="admin-section">
-        <p className="section-title">รายงานที่รอตรวจสอบ</p>
+        <p className="admin-section-title">รายงานที่รอตรวจสอบ</p>
 
         {Object.keys(groupedReports).length === 0 ? (
-          <p className="empty-text">ไม่มีรายงาน</p>
+          <p className="admin-empty">ไม่มีรายงาน</p>
         ) : (
           Object.entries(groupedReports).map(([activityId, reportList]) => (
             <div key={activityId} className="report-card">
               <div className="report-info">
-                <p className="report-activity">{reportList[0].activityId} — กิจกรรม #{activityId}</p>
+                <p className="report-activity">กิจกรรม #{activityId}</p>
                 <p className="report-count">ถูกรายงาน {reportList.length} ครั้ง</p>
                 <div className="report-reasons">
                   {reportList.map((r, i) => (
-                    <p key={i} className="report-reason">
-                      • {r.reason}
-                      <span className="report-status">{r.status === "pending" ? " (รอตรวจ)" : " (ตรวจแล้ว)"}</span>
-                    </p>
+                    <span key={i} className="report-reason-tag">
+                      {r.reason}
+                    </span>
                   ))}
                 </div>
+                <button className="inspect-btn" onClick={() => navigate(`/activity-detail?id=${activityId}`)}>
+                  🔍 ตรวจสอบ
+                </button>
               </div>
               <div className="report-actions">
                 <button className="suspend-btn" onClick={() => handleSuspend(activityId)}>
@@ -157,6 +161,7 @@ function AdminDashboard() {
           ))
         )}
       </div>
+
     </div>
   );
 }

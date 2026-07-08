@@ -1,97 +1,105 @@
 .admin-page {
   min-height: 100vh;
-  background: #f5f5f5;
+  background: #F5F0E8;
   font-family: 'Sarabun', sans-serif;
   padding-bottom: 80px;
 }
 
 .admin-header {
-  background: #000;
-  padding: 16px;
+  padding: 48px 20px 0; /* 👈 เพิ่ม padding top */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+}
+
+.admin-sub {
+  margin: 0 0 4px;
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .admin-title {
   margin: 0;
-  font-size: 18px;
-  font-weight: 500;
-  color: #fff;
-}
-
-.admin-subtitle {
-  margin: 4px 0 0;
-  font-size: 12px;
-  color: #aaa;
+  font-size: 28px;
+  font-weight: 800;
+  color: #111;
 }
 
 .admin-back-btn {
-  padding: 6px 14px;
-  background: #333;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 13px;
+  width: 36px;
+  height: 36px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  font-family: 'Sarabun', sans-serif;
+  font-size: 16px;
 }
 
-.stats-grid {
+.admin-stats-grid {
+  padding: 14px 20px 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  padding: 12px;
 }
 
 .stat-card {
-  background: #fff;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 14px;
+  position: relative;
+  overflow: hidden;
 }
 
-.stat-number {
+.stat-circle {
+  position: absolute;
+  right: -10px;
+  top: -10px;
+  width: 60px;
+  height: 60px;
+  background: rgba(0,0,0,0.05);
+  border-radius: 50%;
+}
+
+.stat-num {
   margin: 0;
-  font-size: 26px;
-  font-weight: 500;
+  font-size: 28px;
+  font-weight: 800;
+  color: #111;
+  position: relative;
+  z-index: 1;
 }
 
-.stat-label {
+.stat-lbl {
   margin: 4px 0 0;
   font-size: 12px;
-  color: #888;
+  color: #555;
+  position: relative;
+  z-index: 1;
 }
-
-.stat-card.blue .stat-number { color: #4A6FFF; }
-.stat-card.green .stat-number { color: #6BCB77; }
-.stat-card.red .stat-number { color: #FF6B6B; }
-.stat-card.amber .stat-number { color: #FFD93D; }
-.stat-card.purple .stat-number { color: #9B59B6; }
-.stat-card.gray .stat-number { color: #888; }
 
 .admin-section {
-  padding: 0 12px;
+  padding: 16px 20px 0;
 }
 
-.section-title {
-  font-size: 15px;
-  font-weight: 500;
+.admin-section-title {
+  font-size: 16px;
+  font-weight: 700;
   color: #111;
   margin: 0 0 10px;
 }
 
 .report-card {
-  background: #fff;
-  border-radius: 12px;
+  background: white;
+  border-radius: 16px;
   padding: 14px;
   margin-bottom: 10px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
+  gap: 10px;
 }
 
 .report-info {
@@ -101,30 +109,28 @@
 .report-activity {
   margin: 0;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 700;
   color: #111;
 }
 
 .report-count {
-  margin: 4px 0;
+  margin: 4px 0 6px;
   font-size: 12px;
-  color: #e53935;
+  color: #888;
 }
 
 .report-reasons {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 
-.report-reason {
-  margin: 0;
-  font-size: 12px;
-  color: #555;
-}
-
-.report-status {
-  color: #aaa;
+.report-reason-tag {
+  padding: 2px 8px;
+  background: #fff0f0;
+  color: #e53935;
+  border-radius: 20px;
+  font-size: 11px;
 }
 
 .report-actions {
@@ -135,11 +141,12 @@
 
 .suspend-btn {
   padding: 6px 12px;
-  background: #fff0f0;
-  color: #e53935;
-  border: 1px solid #e53935;
+  background: #FFB3C6;
+  color: #111;
+  border: none;
   border-radius: 8px;
   font-size: 12px;
+  font-weight: 600;
   cursor: pointer;
   font-family: 'Sarabun', sans-serif;
   white-space: nowrap;
@@ -156,7 +163,7 @@
   font-family: 'Sarabun', sans-serif;
 }
 
-.empty-text {
+.admin-empty {
   text-align: center;
   color: #aaa;
   font-size: 14px;
@@ -170,5 +177,18 @@
   height: 100vh;
   font-size: 14px;
   color: #888;
+  font-family: 'Sarabun', sans-serif;
+}
+
+.inspect-btn {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: #f0f4ff;
+  color: #4A6FFF;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
   font-family: 'Sarabun', sans-serif;
 }
