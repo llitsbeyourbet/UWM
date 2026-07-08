@@ -24,6 +24,24 @@ function Home() {
 
   const cardColors = ["#FFF176", "#B8E0FF", "#C8F5C8", "#E8D5F5", "#FFB3C6"];
 
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const res = await fetch(`${API_URL}/api/auth/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        setUsername(data.username || "");
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchUser();
+  }, []);
+
   useEffect(() => {
     const fetchActivities = async () => {
       try {
@@ -54,12 +72,13 @@ function Home() {
       <div className="home-header">
         <div>
           <p className="home-greeting">สวัสดี 👋</p>
+          <p className="home-username">@{username}</p>
         </div>
         <div className="home-icons">
           <div className="icon-btn" onClick={() => navigate("/search")}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round">
-              <circle cx="11" cy="11" r="8"/>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
           </div>
           {/* สแกน QR */}
@@ -75,8 +94,8 @@ function Home() {
           </div>
           <div className="icon-btn" onClick={() => navigate("/notifications")}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
             </svg>
           </div>
         </div>
@@ -84,7 +103,7 @@ function Home() {
 
       {/* Title */}
       <div className="home-title">
-        <h1>Discover,<br/>Create, <em>Enjoy</em></h1>
+        <h1>Discover,<br />Create, <em>Enjoy</em></h1>
         <p>หากิจกรรมสนุก ๆ กับเพื่อนใหม่</p>
       </div>
 
