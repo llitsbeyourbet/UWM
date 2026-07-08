@@ -17,6 +17,7 @@ import ReviewForm from "./pages/ReviewForm";
 import ForgotPassword from "./pages/ForgotPassword";
 import "./assets/AppLayout.css"
 import ScanQR from "./pages/ScanQR";
+import UserProfile from "./pages/UserProfile";
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
           <Route path="/activity-detail" element={<ActivityDetail />} />
           <Route path="/search" element={<Search />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/user/:id" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/edit-profile" element={<EditProfile />} />
           <Route path="/edit-activity/:id" element={<EditActivity />} />

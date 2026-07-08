@@ -25,6 +25,25 @@ router.get("/", async (req, res) => {
   }
 });
 
+// ดึงกิจกรรมของผู้ใช้
+router.get("/user/:id", async (req, res) => {
+  try {
+    const activities = await Activity.findAll({
+      where: {
+        createdBy: req.params.id,
+      },
+      order: [["createdAt", "DESC"]],
+    });
+
+    res.json(activities);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "เกิดข้อผิดพลาด",
+    });
+  }
+});
+
 // ดึงกิจกรรมตาม id
 router.get("/:id", async (req, res) => {
   try {
