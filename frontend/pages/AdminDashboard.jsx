@@ -8,6 +8,7 @@ function AdminDashboard() {
   const [stats, setStats] = useState(null);
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activities, setActivities] = useState({});
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -32,6 +33,13 @@ function AdminDashboard() {
       });
       const reportsData = await reportsRes.json();
       setReports(reportsData);
+
+      const actRes = await fetch(`${API_URL}/api/activities`);
+      const actData = await actRes.json();
+      const actMap = {};
+      actData.forEach((a) => { actMap[a.id] = a; });
+      setActivities(actMap);
+
     } catch (err) {
       console.log(err);
     } finally {
@@ -136,7 +144,7 @@ function AdminDashboard() {
           Object.entries(groupedReports).map(([activityId, reportList]) => (
             <div key={activityId} className="report-card">
               <div className="report-info">
-                <p className="report-activity">กิจกรรม #{activityId}</p>
+                <p className="report-activity">{activities[activityId]?.activityName}</p>
                 <p className="report-count">ถูกรายงาน {reportList.length} ครั้ง</p>
                 <div className="report-reasons">
                   {reportList.map((r, i) => (
