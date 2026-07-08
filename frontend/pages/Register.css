@@ -23,7 +23,7 @@
 }
 
 .register-sub {
-  margin: 30px 0 4px;
+  margin: 45px 7px 4px;
   font-size: 12px;
   color: #888;
   text-transform: uppercase;
@@ -31,15 +31,15 @@
 }
 
 .register-title {
-  margin: 0 0 8px;
+  margin: 40px 6px 8px;
   font-size: 24px;
   font-weight: 800;
-  color: #111;
+  color: #008cff;
   line-height: 1.3;
 }
 
 .register-desc {
-  margin: 0 0 16px;
+  margin: 0 7px 16px;
   font-size: 13px;
   color: #888;
 }
@@ -80,7 +80,7 @@
 .reg-btn {
   width: 100%;
   padding: 13px;
-  background: #111;
+  background: #000000;
   color: white;
   border: none;
   border-radius: 50px;
@@ -104,7 +104,7 @@
 }
 
 .reg-login-text {
-  margin: 0;
+  margin: 5px 0 0;
   font-size: 12px;
   color: #888;
   text-align: center;

@@ -64,7 +64,7 @@ export default function Login() {
         <img src="/logo.png" alt="Logo" className="logo" />
       </div>
       <div className="login-hero">
-        <h1>Meet Friends,<br />Meet Activities</h1>
+        <h1>Meet Friends, Meet Activities</h1>
         <p>Until We Meet ช่วยให้คุณค้นหาและเข้าร่วมกิจกรรมได้ง่ายขึ้น</p>
       </div>
 

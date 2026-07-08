@@ -147,8 +147,7 @@ function Register() {
 
       {step === 1 ? (
         <div className="register-content">
-          <p className="register-sub">สร้างบัญชี</p>
-          <h1 className="register-title">ยินดีต้อนรับสู่<br/>Until We Meet 👋</h1>
+          <h1 className="register-title">ยินดีต้อนรับสู่ Until We Meet</h1>
           <p className="register-desc">กรอกข้อมูลเพื่อสร้างบัญชีใหม่</p>
 
           <div className="register-card">
