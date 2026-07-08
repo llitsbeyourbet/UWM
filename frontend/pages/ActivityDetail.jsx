@@ -12,6 +12,8 @@ function ActivityDetail() {
   const [activity, setActivity] = useState(null);
   const [isOwner, setIsOwner] = useState(false);
   const [showQR, setShowQR] = useState(false);
+  const [qrToken, setQrToken] = useState("");
+  const [qrCountdown, setQrCountdown] = useState(10);
   const [joinStatus, setJoinStatus] = useState(null);
   const [joinLoading, setJoinLoading] = useState(false);
   const [reviewed, setReviewed] = useState(false);
@@ -101,6 +103,54 @@ function ActivityDetail() {
 
     fetchActivity();
   }, [activityId]);
+
+  useEffect(() => {
+    if (!showQR || !isOwner || !activity) return;
+
+    loadQR();
+
+    const interval = setInterval(() => {
+      setQrCountdown((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+
+  }, [showQR, activity, isOwner]);
+
+
+  useEffect(() => {
+    if (qrCountdown === 0) {
+      loadQR();
+      setQrCountdown(10);
+    }
+  }, [qrCountdown]);
+
+  const loadQR = async () => {
+    if (!activity) return;
+
+    const token = localStorage.getItem("token");
+
+    try {
+      const res = await fetch(
+        `${API_URL}/api/activities/${activity.id}/qr`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setQrToken(data.qrToken);
+      } else {
+        console.log(data.message);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const handleJoin = async () => {
     const token = localStorage.getItem("token");
@@ -333,13 +383,20 @@ function ActivityDetail() {
                 ลบกิจกรรม
               </button>
             </div>
-            <button className="show-qr-btn" onClick={() => setShowQR(!showQR)}>
+            <button className="show-qr-btn" onClick={() => { setShowQR(!showQR); setQrCountdown(10);}}>
               {showQR ? "ซ่อน QR Code" : "แสดง QR Code สำหรับยืนยันการเข้าร่วม"}
             </button>
             {showQR && (
               <div className="qr-container">
                 <p>QR Code สำหรับยืนยันการเข้าร่วม</p>
-                <QRCodeCanvas value={`${window.location.origin}/checkin/${activity.id}`} size={180} />
+                <QRCodeCanvas 
+                  value={`${window.location.origin}/checkin/${activity.id}/${qrToken}`} 
+                  size={180}
+                />
+
+                <p className="qr-countdown">
+                  🔄 QR Code จะเปลี่ยนใหม่ใน {qrCountdown} วินาที
+                </p>
                 {activity.checkinStart && activity.checkinEnd && (
                   <p className="checkin-time-info">⏰ เช็คอินได้ {activity.checkinStart} - {activity.checkinEnd}</p>
                 )}
