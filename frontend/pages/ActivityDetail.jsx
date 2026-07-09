@@ -250,7 +250,7 @@ function ActivityDetail() {
         ) : (
           <div className="activity-cover-placeholder" />
         )}
-        <button className="back-btn" onClick={() => navigate(-1)}>‹</button>
+        <button className="back-btn" onClick={() => navigate("/")}>‹</button>
         {!isOwner && (
           <button className="report-icon-btn" onClick={() => setShowReportModal(true)}>🚩</button>
         )}
@@ -304,7 +304,7 @@ function ActivityDetail() {
 
         {/* Host Card */}
         {host && (
-          <div className="host-card">
+          <div className="host-card" onClick={() => navigate(`/user/${host.id}`)}>
             <div className="host-avatar">
               {host.profileImage ? (
                 <img src={host.profileImage} alt="host" className="host-avatar-img" />
