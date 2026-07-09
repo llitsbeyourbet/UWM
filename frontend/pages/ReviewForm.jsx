@@ -98,7 +98,7 @@ function ReviewForm() {
 
         {/* Title */}
         <div className="review-title-section">
-          <h1 className="review-title">How was<br/>your<br/><em>experience?</em></h1>
+          <h1 className="review-title">How was your experience? </h1>
         </div>
 
         {/* Activity Info */}

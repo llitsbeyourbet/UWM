@@ -40,7 +40,7 @@ function Search() {
   // 👈 แก้ useEffect ให้กรองตาม category ด้วย
   useEffect(() => {
     let result = activities.filter((item) => item.status !== "suspended");
-
+    
     if (activeCategory !== "ทั้งหมด") {
       result = result.filter((item) => item.category === activeCategory);
     }
@@ -50,9 +50,10 @@ function Search() {
         item.activityName.toLowerCase().includes(search.toLowerCase())
       );
     }
+    result = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     setFiltered(result);
-  }, [search, activities, activeCategory]); // 👈 เพิ่ม activeCategory
+  }, [search, activities, activeCategory]);
 
   const handleViewDetail = (activity) => {
     navigate(`/activity-detail?id=${activity.id}`);

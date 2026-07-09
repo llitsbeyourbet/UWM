@@ -145,6 +145,11 @@ function Register() {
   return (
     <div className="register-page">
 
+      {/* Logo */}
+      <div className="register-logo">
+        <img src="/logo.png" alt="logo" className="reg-logo-img" />
+      </div>
+
       {step === 1 ? (
         <div className="register-content">
           <h1 className="register-title">ยินดีต้อนรับสู่ Until We Meet</h1>
@@ -196,12 +201,12 @@ function Register() {
         <div className="register-content">
           <div className="reg-back-btn" onClick={() => setStep(1)}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.5" strokeLinecap="round">
-              <polyline points="15 18 9 12 15 6"/>
+              <polyline points="15 18 9 12 15 6" />
             </svg>
           </div>
 
           <p className="register-sub">ยืนยันอีเมล</p>
-          <h1 className="register-title">ตรวจสอบ email<br/>ของคุณ 📧</h1>
+          <h1 className="register-title">ตรวจสอบ email<br />ของคุณ 📧</h1>
           <p className="register-desc">ส่งรหัส OTP ไปที่ {email} แล้ว</p>
 
           <div className="register-card">
