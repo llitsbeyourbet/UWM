@@ -25,32 +25,7 @@ function Home() {
   };
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const token = localStorage.getItem("token");
-      try {
-        const res = await fetch(`${API_URL}/api/auth/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        setUsername(data.username || "");
-      } catch (err) {
-        console.log(err);
-      }
-    };
 
-    const fetchActivities = async () => {
-      try {
-        const res = await fetch(`${API_URL}/api/activities`);
-        const data = await res.json();
-        setActivities(data);
-        fetchJoinCounts(data);
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    // ดึงจำนวนคนที่เข้าร่วมทุกกิจกรรม
     const fetchJoinCounts = async (activities) => {
       const counts = {};
       await Promise.all(
@@ -67,6 +42,31 @@ function Home() {
       setJoinCounts(counts);
     };
 
+    const fetchActivities = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/activities`);
+        const data = await res.json();
+        setActivities(data);
+        await fetchJoinCounts(data);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    const fetchUser = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const res = await fetch(`${API_URL}/api/auth/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        setUsername(data.username || "");
+      } catch (err) {
+        console.log(err);
+      }
+    };
     fetchUser();
     fetchActivities();
   }, []);
@@ -161,20 +161,20 @@ function Home() {
                 </div>
 
                 <div className="card-bottom">
-                    <div className="card-days-badge">
-                      {(() => {
-                        if (!item.date) return "-";
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        const eventDate = new Date(item.date);
-                        eventDate.setHours(0, 0, 0, 0);
-                        const diff = Math.round((eventDate - today) / (1000 * 60 * 60 * 24));
-                        if (diff < 0) return "ผ่านไปแล้ว";
-                        if (diff === 0) return "🔥 วันนี้";
-                        return `📅 อีก ${diff} วัน`;
-                      })()}
-                    </div>
-                    <div className="card-btn">ดูรายละเอียด →</div>
+                  <div className="card-days-badge">
+                    {(() => {
+                      if (!item.date) return "-";
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      const eventDate = new Date(item.date);
+                      eventDate.setHours(0, 0, 0, 0);
+                      const diff = Math.round((eventDate - today) / (1000 * 60 * 60 * 24));
+                      if (diff < 0) return "ผ่านไปแล้ว";
+                      if (diff === 0) return "🔥 วันนี้";
+                      return `📅 อีก ${diff} วัน`;
+                    })()}
+                  </div>
+                  <div className="card-btn">ดูรายละเอียด →</div>
                 </div>
               </div>
             </div>
