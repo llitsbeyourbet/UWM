@@ -173,6 +173,11 @@ label {
   margin: 0;
 }
 
+@keyframes loginBounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-10px) scale(1.03); }
+}
+
 .login-btn {
   width: 100%;
   padding: 14px 0;
@@ -184,13 +189,34 @@ label {
   cursor: pointer;
   font-weight: 700;
   font-family: 'Sarabun', sans-serif;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.login-btn:hover:not(:disabled)::before {
+  width: 300px;
+  height: 300px;
 }
 
 .login-btn:hover:not(:disabled) {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.5);
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+  animation: loginBounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .login-btn:disabled {
