@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #f0f0f5;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f7f5 100%);
   min-height: 100vh;
   font-family: 'Sarabun', sans-serif;
 }
@@ -23,23 +23,30 @@
 .activity-cover-placeholder {
   width: 100%;
   height: 100%;
-  background-color: #c0c0d0;
+  background: linear-gradient(135deg, #f5f5f5, #eeeeee);
 }
 
 .back-btn {
   position: absolute;
   top: 16px;
   left: 16px;
-  background: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.95);
   border: none;
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  font-size: 22px;
+  border-radius: 10px;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.back-btn:hover {
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .activity-content {
@@ -51,6 +58,7 @@
   flex-direction: column;
   gap: 16px;
   flex: 1;
+  border-top: 1px solid rgba(0,0,0,0.04);
 }
 
 .activity-title-row {
@@ -63,6 +71,8 @@
   font-size: 22px;
   font-weight: 700;
   margin: 0;
+  color: #0a0a0a;
+  letter-spacing: -0.3px;
 }
 
 .heart-btn {
@@ -80,17 +90,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #f0f0f5;
-  border-radius: 8px;
+  background-color: rgba(0,0,0,0.04);
+  border-radius: 10px;
   padding: 8px 12px;
   min-width: 48px;
 }
 
 .date-month {
-  font-size: 12px;
-  color: #7b61ff;
+  font-size: 11px;
+  color: #999;
   font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .date-day {
@@ -118,13 +129,15 @@
 .activity-section h3 {
   font-size: 16px;
   font-weight: 700;
-  margin: 0 0 4px;
+  margin: 0 0 8px;
+  color: #0a0a0a;
 }
 
 .activity-section p {
-  color: #555;
+  color: #666;
   font-size: 14px;
   margin: 0;
+  line-height: 1.5;
 }
 
 .icon {
@@ -135,10 +148,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   padding: 16px;
-  background-color: #f5f5ff;
+  background-color: rgba(0,0,0,0.02);
   border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.04);
 }
 
 .qr-container p {
@@ -150,22 +164,24 @@
 .join-btn {
   width: 100%;
   padding: 14px;
-  background-color: #7b61ff;
+  background-color: #0a0a0a;
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.25s ease;
 }
 .join-btn.joined {
-  background-color: #aaa;
+  background-color: #999;
   cursor: not-allowed;
 }
 
-.join-btn:hover {
-  background-color: #5a3fe0;
+.join-btn:hover:not(:disabled) {
+  background-color: #333;
+  box-shadow: 0 4px 12px rgba(10, 10, 10, 0.2);
+  transform: translateY(-1px);
 }
 
 .loading {
@@ -180,17 +196,18 @@
 .show-qr-btn {
   width: 100%;
   padding: 12px;
-  background-color: #f0f0ff;
-  color: #7b61ff;
-  border: 1px solid #7b61ff;
-  border-radius: 12px;
+  background-color: rgba(0,0,0,0.05);
+  color: #0a0a0a;
+  border: none;
+  border-radius: 10px;
   font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
+  font-weight: 500;
 }
 
 .show-qr-btn:hover {
-  background-color: #e0e0ff;
+  background-color: rgba(0,0,0,0.1);
 }
 
 .qr-owner-section {
@@ -209,25 +226,37 @@
 .edit-activity-btn {
   flex: 1;
   padding: 10px;
-  background: #f0f0ff;
-  color: #4A6FFF;
-  border: 1px solid #4A6FFF;
+  background: rgba(0,0,0,0.05);
+  color: #0a0a0a;
+  border: none;
   border-radius: 10px;
   font-size: 14px;
   cursor: pointer;
   font-family: 'Sarabun', sans-serif;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.edit-activity-btn:hover {
+  background: rgba(0,0,0,0.1);
 }
 
 .delete-activity-btn {
   flex: 1;
   padding: 10px;
-  background: #fff0f0;
-  color: #e53935;
-  border: 1px solid #e53935;
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+  border: none;
   border-radius: 10px;
   font-size: 14px;
   cursor: pointer;
   font-family: 'Sarabun', sans-serif;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.delete-activity-btn:hover {
+  background: rgba(231, 76, 60, 0.2);
 }
 
 .join-section {
@@ -246,13 +275,19 @@
 .cancel-btn {
   width: 100%;
   padding: 12px;
-  background: #fff0f0;
-  color: #e53935;
-  border: 1px solid #e53935;
-  border-radius: 12px;
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+  border: none;
+  border-radius: 10px;
   font-size: 14px;
   cursor: pointer;
   font-family: 'Sarabun', sans-serif;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.cancel-btn:hover {
+  background: rgba(231, 76, 60, 0.2);
 }
 
 .report-btn {
@@ -283,7 +318,7 @@
 
 .modal-card {
   background: #fff;
-  border-radius: 20px 20px 0 0;
+  border-radius: 16px 16px 0 0;
   padding: 24px;
   padding-bottom: 80px;
   width: 100%;
@@ -316,19 +351,19 @@
   padding: 12px;
   border-radius: 8px;
   font-size: 14px;
-  color: #333;
+  color: #555;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
 }
 
 .reason-item:hover {
-  background: #f5f5f5;
+  background: rgba(0,0,0,0.04);
 }
 
 .reason-item.selected {
-  background: #f0f0ff;
-  color: #4A6FFF;
-  font-weight: 500;
+  background: rgba(0,0,0,0.08);
+  color: #0a0a0a;
+  font-weight: 600;
 }
 
 .modal-actions {
@@ -340,54 +375,75 @@
 .modal-cancel-btn {
   flex: 1;
   padding: 12px;
-  background: #f5f5f5;
-  color: #555;
+  background: rgba(0,0,0,0.05);
+  color: #666;
   border: none;
   border-radius: 10px;
   font-size: 14px;
   cursor: pointer;
   font-family: 'Sarabun', sans-serif;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.modal-cancel-btn:hover {
+  background: rgba(0,0,0,0.1);
 }
 
 .modal-report-btn {
   flex: 1;
   padding: 12px;
-  background: #e53935;
+  background: #e74c3c;
   color: #fff;
   border: none;
   border-radius: 10px;
   font-size: 14px;
   cursor: pointer;
   font-family: 'Sarabun', sans-serif;
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
+.modal-report-btn:hover:not(:disabled) {
+  background: #c0392b;
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
 }
 
 .modal-report-btn:disabled {
-  background: #aaa;
+  background: #ddd;
   cursor: not-allowed;
 }
 
 .suspended-banner {
   width: 100%;
   padding: 12px;
-  background: #fff0f0;
-  color: #e53935;
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
   border-radius: 10px;
   font-size: 14px;
   text-align: center;
-  border: 1px solid #e53935;
+  border: none;
+  border-left: 3px solid #e74c3c;
+  font-weight: 500;
 }
 
 .review-btn {
   width: 100%;
   padding: 12px;
   background: #FFF176;
-  color: #111;
+  color: #0a0a0a;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   font-family: 'Sarabun', sans-serif;
+  transition: all 0.2s ease;
+}
+
+.review-btn:hover {
+  box-shadow: 0 4px 12px rgba(255, 241, 118, 0.4);
+  transform: translateY(-1px);
 }
 
 .reviewed-text {
@@ -406,10 +462,11 @@
 }
 
 .comment-card {
-  background: #f9f9f9;
+  background: rgba(0,0,0,0.02);
   border-radius: 10px;
-  padding: 10px 12px;
+  padding: 12px;
   margin-bottom: 8px;
+  border: 1px solid rgba(0,0,0,0.04);
 }
 
 .comment-text {
@@ -417,12 +474,13 @@
   font-size: 13px;
   color: #333;
   line-height: 1.5;
+  font-weight: 400;
 }
 
 .comment-date {
   margin: 4px 0 0;
   font-size: 11px;
-  color: #aaa;
+  color: #bbb;
 }
 .checkin-time-info {
   font-size: 12px;
@@ -434,16 +492,23 @@
   position: absolute;
   top: 16px;
   right: 16px;
-  width: 36px;
-  height: 36px;
-  background: rgba(255,255,255,0.9);
+  width: 40px;
+  height: 40px;
+  background: rgba(255,255,255,0.95);
   border: none;
-  border-radius: 50%;
-  font-size: 16px;
+  border-radius: 10px;
+  font-size: 18px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.report-icon-btn:hover {
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .rating-badge {
@@ -451,30 +516,37 @@
   align-items: center;
   gap: 4px;
   background: #FFF176;
-  padding: 4px 10px;
-  border-radius: 20px;
+  padding: 5px 10px;
+  border-radius: 8px;
   flex-shrink: 0;
 }
 
 .rating-num {
   font-size: 13px;
   font-weight: 700;
-  color: #111;
+  color: #0a0a0a;
 }
 
 .rating-count {
   font-size: 11px;
-  color: #888;
+  color: #999;
 }
 
 .host-card {
-  background: white;
-  border-radius: 14px;
+  background: rgba(0,0,0,0.02);
+  border-radius: 12px;
   padding: 12px;
   display: flex;
   align-items: center;
   gap: 12px;
   cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(0,0,0,0.04);
+}
+
+.host-card:hover {
+  background: rgba(0,0,0,0.04);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 .host-avatar {
@@ -525,11 +597,11 @@
   align-items: center;
   gap: 4px;
   background: #FFF176;
-  padding: 4px 10px;
-  border-radius: 20px;
+  padding: 5px 10px;
+  border-radius: 8px;
   font-size: 13px;
   font-weight: 700;
-  color: #111;
+  color: #0a0a0a;
 }
 
 .comment-toggle {
