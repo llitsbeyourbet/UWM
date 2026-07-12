@@ -6,10 +6,14 @@
 
   width: 100%;
   max-width: 480px;
-  height: 60px;
+  height: 64px;
 
-  background: #ffffff;
-  border-top: 0.5px solid #e0e0e0;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(180, 154, 122, 0.2);
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -6px 24px rgba(120, 90, 60, 0.12);
 
   display: flex;
   justify-content: space-around;
@@ -25,17 +29,34 @@
   justify-content: center;
   cursor: pointer;
   padding: 8px;
+  border-radius: 12px;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.nav-item:hover {
+  transform: translateY(-3px);
+}
+
+.nav-item:active {
+  transform: scale(0.9);
 }
 
 .create-btn {
-  width: 44px;
-  height: 44px;
-  background: #000;
-  border-radius: 12px;
+  width: 46px;
+  height: 46px;
+  background: linear-gradient(135deg, #C98A4B, #A9683A);
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 8px;
+  box-shadow: 0 6px 16px rgba(169, 104, 58, 0.4);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+}
+
+.create-btn:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 10px 24px rgba(169, 104, 58, 0.5);
 }
 
 .notification-item {
