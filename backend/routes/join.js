@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
+const { Op } = require("sequelize");
 const Activity = require("../models/Activity");
 const Notification = require("../models/Notification");
 const User = require("../models/User");
@@ -306,5 +307,39 @@ router.get("/checked-in", auth, async (req, res) => {
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
 });
+
+router.get("/user/:id", async (req, res) => {
+  try {
+    const requests = await JoinRequest.findAll({
+      where: {
+        userId: req.params.id,
+        status: {
+          [Op.in]: ["approved", "checked_in"],
+        },
+      },
+    });
+
+    const activityIds = requests.map((r) => r.activityId);
+
+    if (activityIds.length === 0) {
+      return res.json([]);
+    }
+
+    const activities = await Activity.findAll({
+      where: {
+        id: activityIds,
+      },
+    });
+
+    res.json(activities);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "เกิดข้อผิดพลาด",
+    });
+  }
+});
+
+
 
 module.exports = router;
