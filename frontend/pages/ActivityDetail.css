@@ -170,11 +170,6 @@
   margin: 0;
 }
 
-@keyframes buttonGlow {
-  0%, 100% { box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); }
-  50% { box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6); }
-}
-
 .join-btn {
   width: 100%;
   padding: 14px;
@@ -218,7 +213,6 @@
 .join-btn:hover:not(:disabled) {
   transform: translateY(-4px) scale(1.02);
   box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
-  animation: buttonGlow 0.8s ease-in-out infinite;
 }
 
 .loading {
@@ -464,11 +458,6 @@
   font-weight: 500;
 }
 
-@keyframes reviewBounce {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-8px) scale(1.05); }
-}
-
 .review-btn {
   width: 100%;
   padding: 12px;
@@ -484,23 +473,6 @@
   box-shadow: 0 4px 15px rgba(255, 241, 118, 0.3);
   position: relative;
   overflow: hidden;
-}
-
-.review-btn::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
-  transform: rotate(45deg);
-  animation: none;
-  transition: animation 0.3s;
-}
-
-.review-btn:hover::before {
-  animation: shimmer 0.6s;
 }
 
 .review-btn:hover {

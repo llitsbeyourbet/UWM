@@ -423,11 +423,6 @@
   border: none;
 }
 
-@keyframes buttonGlow {
-  0%, 100% { box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); }
-  50% { box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6); }
-}
-
 .card-btn {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
@@ -465,7 +460,6 @@
 .card-btn:hover {
   transform: translateY(-3px) scale(1.05);
   box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
-  animation: buttonGlow 1s ease-in-out infinite;
 }
 
 /* มือถือ (480px) */
