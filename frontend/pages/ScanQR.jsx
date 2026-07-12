@@ -14,16 +14,37 @@ function ScanQR() {
     scanner.start(
       { facingMode: "environment" },
       { fps: 10, qrbox: { width: 200, height: 200 } },
-      (decodedText) => {
-        scanner.stop();
-        // navigate ไปหน้า checkin
-        const url = new URL(decodedText);
-        const paths = url.pathname.split("/");
-        const activityId = paths[paths.length - 1];
-        navigate(`/checkin/${activityId}`);
+      async (decodedText) => {
+        try {
+          const url = new URL(decodedText);
+          const pathname = url.pathname;
+
+          if (!pathname.startsWith("/checkin/")) {
+            alert("QR นี้ไม่ใช่ QR สำหรับเช็คอิน");
+            return;
+          }
+
+          const paths = pathname.split("/").filter(Boolean);
+          if (paths.length < 2) {
+            alert("QR ไม่ถูกต้อง");
+            return;
+          }
+
+          const activityId = paths[1];
+          if (!activityId) {
+            alert("QR ไม่ถูกต้อง");
+            return;
+          }
+
+          await scanner.stop();
+          navigate(`/checkin/${activityId}`);
+        } catch (err) {
+          console.error("QR scan error:", err);
+          alert("QR ไม่ถูกต้อง");
+        }
       },
       () => {}
-    ).catch((err) => console.log(err));
+    ).catch((err) => console.error("Scanner error:", err));
 
     return () => {
       scanner.stop().catch(() => {});
