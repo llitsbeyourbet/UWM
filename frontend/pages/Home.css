@@ -49,7 +49,7 @@
 
 .home {
   min-height: 100vh;
-  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background: linear-gradient(-45deg, #E8DCC8, #D4B5A0, #E5DAD0, #C9B19F);
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
   font-family: 'Sarabun', sans-serif;
