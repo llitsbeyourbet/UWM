@@ -4,14 +4,13 @@
 
 .activity-detail-page {
     min-height: 100vh;
-    background: #F5F0E8;
+
+    /* พื้นตรงกลางทั้งหมดเป็นสีขาว */
+    background: #fff;
 
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    /* ลบ padding-bottom: 80px */
-    padding-bottom: 0;
 
     font-family: 'Sarabun', sans-serif;
 }
@@ -101,23 +100,23 @@
     width: 100%;
     max-width: 480px;
 
-    /* ให้พื้นขาวต่อเนื่องเต็มหน้าจอ */
-    min-height: calc(100vh - 80px);
-
+    /* ให้พื้นที่ด้านในต่อเนื่องเป็นสีขาว */
     background: #fff;
 
-    /* ไม่ต้องมนด้านล่าง เพราะให้ต่อถึง navbar */
-    border-radius: 0;
-
-    padding: 18px 18px 120px;
     box-sizing: border-box;
-
     display: flex;
     flex-direction: column;
     gap: 18px;
 
+    /* เว้นพื้นที่สำหรับ Bottom Navigation */
+    padding: 18px 18px 100px;
+
     margin: 0 auto;
 
+    /* ให้กินความสูงอย่างน้อยเต็มหน้าจอ */
+    min-height: 100vh;
+
+    border-radius: 0;
     box-shadow: none;
 }
 
@@ -1000,9 +999,8 @@
 }
 
 @media (max-width: 480px) {
-
     .activity-content {
-        padding: 16px 16px 110px;
+        padding: 16px 16px 100px;
     }
 
     .activity-cover {
