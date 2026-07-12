@@ -1,6 +1,12 @@
 .profile-page {
   min-height: 100vh;
-  background: #F5F0E8;
+  background-color: #F3ECE1;
+  background-image:
+    radial-gradient(circle at 15% 15%, rgba(224, 178, 138, 0.35) 0%, transparent 45%),
+    radial-gradient(circle at 85% 20%, rgba(201, 168, 190, 0.28) 0%, transparent 45%),
+    radial-gradient(circle at 50% 95%, rgba(180, 154, 122, 0.30) 0%, transparent 50%),
+    linear-gradient(160deg, #F7F1E7 0%, #EDE0CF 55%, #E4D2BE 100%);
+  background-attachment: fixed;
   font-family: 'Sarabun', sans-serif;
   padding-bottom: 80px;
 }
@@ -41,7 +47,7 @@
 }
 
 .profile-gradient-card {
-  background: linear-gradient(135deg, #FFB3C6 0%, #C8B8FF 50%, #B8E0FF 100%);
+  background: linear-gradient(135deg, #E0B28A 0%, #C9A8BE 50%, #D9A679 100%);
   border-radius: 24px;
   padding: 18px;
   position: relative;
@@ -82,7 +88,7 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #FF69B4, #FF1493);
+  background: linear-gradient(135deg, #C98A4B, #A9683A);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -165,8 +171,8 @@
   color: #111;
 }
 
-.stat-num.blue { color: #4A6FFF; }
-.stat-num.pink { color: #FF69B4; }
+.stat-num.blue { color: #A9683A; }
+.stat-num.pink { color: #C98A4B; }
 
 .stat-lbl {
   margin: 2px 0 0;
@@ -197,7 +203,7 @@
 }
 
 .profile-tab.active {
-  background: #6BCB77;
+  background: linear-gradient(135deg, #C98A4B, #A9683A);
   color: white;
   font-weight: 600;
 }

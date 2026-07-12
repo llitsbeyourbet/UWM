@@ -2,14 +2,20 @@
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  background: #f0f0f5;
+  background: #E4D2BE;
 }
 
 .app-content {
   width: 100%;
   max-width: 480px;
   min-height: 100vh;
-  background: #F5F0E8;
+  background-color: #F3ECE1;
+  background-image:
+    radial-gradient(circle at 15% 15%, rgba(224, 178, 138, 0.35) 0%, transparent 45%),
+    radial-gradient(circle at 85% 20%, rgba(201, 168, 190, 0.28) 0%, transparent 45%),
+    radial-gradient(circle at 50% 95%, rgba(180, 154, 122, 0.30) 0%, transparent 50%),
+    linear-gradient(160deg, #F7F1E7 0%, #EDE0CF 55%, #E4D2BE 100%);
+  background-attachment: fixed;
 
   display: flex;
   flex-direction: column;

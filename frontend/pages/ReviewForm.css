@@ -1,6 +1,12 @@
 .review-page {
   min-height: 100vh;
-  background: #F5F0E8;
+  background-color: #F3ECE1;
+  background-image:
+    radial-gradient(circle at 15% 15%, rgba(224, 178, 138, 0.35) 0%, transparent 45%),
+    radial-gradient(circle at 85% 20%, rgba(201, 168, 190, 0.28) 0%, transparent 45%),
+    radial-gradient(circle at 50% 95%, rgba(180, 154, 122, 0.30) 0%, transparent 50%),
+    linear-gradient(160deg, #F7F1E7 0%, #EDE0CF 55%, #E4D2BE 100%);
+  background-attachment: fixed;
   font-family: 'Sarabun', sans-serif;
   padding-bottom: 40px;
 }
@@ -61,14 +67,14 @@
   display: flex;
   gap: 12px;
   align-items: center;
-  border: 2px solid #e8eeff;
+  border: 2px solid #EFE2D0;
 }
 
 .review-activity-icon {
   width: 52px;
   height: 52px;
   border-radius: 14px;
-  background: #e8eeff;
+  background: #EFE2D0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -180,7 +186,7 @@
 .review-submit-btn {
   width: 100%;
   padding: 16px;
-  background: #111;
+  background: linear-gradient(135deg, #C98A4B, #A9683A);
   color: white;
   border: none;
   border-radius: 50px;
@@ -193,7 +199,7 @@
 }
 
 .review-submit-btn:hover {
-  background: #333;
+  background: linear-gradient(135deg, #A9683A, #8A5730);
 }
 
 .review-submit-btn:disabled {
