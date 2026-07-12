@@ -28,7 +28,6 @@ function ActivityDetail() {
   const [host, setHost] = useState(null);
   const [hostRating, setHostRating] = useState(null);
   const [participants, setParticipants] = useState([]);
-  const [commentPublic, setCommentPublic] = useState(false);
 
   const reportReasons = ["เนื้อหาไม่เหมาะสม", "ข้อมูลเป็นเท็จ", "สแปม", "เป็นอันตราย", "อื่นๆ"];
 
@@ -50,7 +49,6 @@ function ActivityDetail() {
       const res = await fetch(`${API_URL}/api/activities/${activityId}`);
       const activityData = await res.json();
       setActivity(activityData);
-      setCommentPublic(activityData.commentPublic);
 
       // ดึงข้อมูล host
       const hostRes = await fetch(`${API_URL}/api/auth/user/${activityData.createdBy}`);
@@ -228,17 +226,56 @@ function ActivityDetail() {
     finally { setReportLoading(false); }
   };
 
-  const handleToggleCommentPublic = async () => {
+  const handleToggleCommentVisibility = async (commentId, currentIsPublic) => {
     const token = localStorage.getItem("token");
+
     try {
-      const res = await fetch(`${API_URL}/api/activities/${activity.id}`, {
+      const res = await fetch(`${API_URL}/api/review/comment/${commentId}/visibility`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ commentPublic: !commentPublic }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ isPublic: !currentIsPublic }),
       });
-      if (!res.ok) return;
-      setCommentPublic(!commentPublic);
-    } catch { console.log("error"); }
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "ไม่สามารถเปลี่ยนการมองเห็นความคิดเห็นได้");
+        return;
+      }
+
+      setComments((prev) =>
+        prev.map((comment) =>
+          comment.id === commentId
+            ? { ...comment, isPublic: !currentIsPublic }
+            : comment
+        )
+      );
+
+      if (currentIsPublic) {
+        // สาธารณะ → ส่วนตัว
+        setPublicComments((prev) =>
+          prev.filter((comment) => comment.id !== commentId)
+        );
+      } else {
+        // ส่วนตัว → สาธารณะ
+        const updatedComment = comments.find(
+          (comment) => comment.id === commentId
+        );
+
+        if (updatedComment) {
+          setPublicComments((prev) => [
+            { ...updatedComment, isPublic: true },
+            ...prev.filter((comment) => comment.id !== commentId),
+          ]);
+        }
+      }
+    } catch (err) {
+      console.log(err);
+      alert("ไม่สามารถเชื่อมต่อ server ได้");
+    }
   };
 
   if (!activity) return <div className="loading">ไม่พบข้อมูลกิจกรรม</div>;
@@ -481,38 +518,89 @@ function ActivityDetail() {
 
         {/* Reviews & Comments */}
         {activityRating?.totalReviews > 0 && (
-          <div className="activity-section">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div className="activity-section reviews-section">
+            <div className="reviews-title-row">
               <h3>รีวิว ({activityRating.totalReviews})</h3>
-              {isOwner && (
-                <div className="comment-toggle" onClick={handleToggleCommentPublic}>
-                  <span style={{ fontSize: 12, color: "#888" }}>ความคิดเห็น</span>
-                  <div className={`toggle-switch ${commentPublic ? "on" : ""}`}>
-                    <div className="toggle-thumb" />
-                  </div>
-                  <span style={{ fontSize: 12, color: commentPublic ? "#6BCB77" : "#aaa" }}>
-                    {commentPublic ? "สาธารณะ" : "ส่วนตัว"}
-                  </span>
-                </div>
-              )}
             </div>
 
-            {displayComments.length > 0 && (
+            {displayComments.length > 0 ? (
               <div className="comments-list">
-                {displayComments.map((c) => (
-                  <div key={c.id} className="comment-card">
-                    <div className="comment-header">
-                      <div className="comment-avatar">
-                        {c.userId?.toString().slice(0, 1).toUpperCase() || "U"}
+                {displayComments.map((c) => {
+                  const reviewer = c.user || c.reviewer || {};
+                  const reviewerId = reviewer.id || c.userId || c.reviewerId;
+                  const reviewerName =
+                    reviewer.name || c.userName || c.reviewerName || "ผู้ใช้งาน";
+                  const reviewerUsername =
+                    reviewer.username || c.username || c.reviewerUsername;
+                  const reviewerImage =
+                    reviewer.profileImage || c.profileImage || c.reviewerProfileImage;
+
+                  const imageUrl = reviewerImage
+                    ? reviewerImage.startsWith("http")
+                      ? reviewerImage
+                      : `${API_URL}/uploads/${reviewerImage}`
+                    : null;
+
+                  const isPublic = Boolean(c.isPublic);
+
+                  return (
+                    <div key={c.id} className="comment-card">
+                      <div className="comment-header">
+                        <button
+                          type="button"
+                          className="reviewer-profile"
+                          onClick={() => reviewerId && navigate(`/user/${reviewerId}`)}
+                          disabled={!reviewerId}
+                        >
+                          <div className="comment-avatar">
+                            {imageUrl ? (
+                              <img src={imageUrl} alt={reviewerName} />
+                            ) : (
+                              <span>{reviewerName?.charAt(0).toUpperCase() || "U"}</span>
+                            )}
+                          </div>
+
+                          <div className="reviewer-info">
+                            <span className="reviewer-name">{reviewerName}</span>
+                            {reviewerUsername && (
+                              <span className="reviewer-username">
+                                @{reviewerUsername}
+                              </span>
+                            )}
+                          </div>
+                        </button>
+
+                        <p className="comment-date">
+                          {new Date(c.createdAt).toLocaleDateString("th-TH")}
+                        </p>
                       </div>
-                      <p className="comment-date">
-                        {new Date(c.createdAt).toLocaleDateString("th-TH")}
-                      </p>
+
+                      <p className="comment-text">"{c.comment}"</p>
+
+                      {isOwner && (
+                        <div className="comment-visibility-row">
+                          <span className="visibility-label">
+                            {isPublic ? "สาธารณะ" : "ส่วนตัว"}
+                          </span>
+
+                          <button
+                            type="button"
+                            className={`comment-toggle-button ${isPublic ? "public" : ""}`}
+                            onClick={() =>
+                              handleToggleCommentVisibility(c.id, isPublic)
+                            }
+                            aria-pressed={isPublic}
+                          >
+                            <span className="toggle-thumb" />
+                          </button>
+                        </div>
+                      )}
                     </div>
-                    <p className="comment-text">"{c.comment}"</p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
+            ) : (
+              <p className="no-comments">ยังไม่มีความคิดเห็นที่แสดงได้</p>
             )}
           </div>
         )}
