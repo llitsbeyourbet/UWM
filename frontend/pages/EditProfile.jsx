@@ -1,6 +1,7 @@
 import API_URL from "../config";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import AvatarCropper from "../components/AvatarCropper";
 import "./EditProfile.css";
 
 function EditProfile() {
@@ -14,6 +15,7 @@ function EditProfile() {
   const [profileImage, setProfileImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [rawImage, setRawImage] = useState(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -46,14 +48,20 @@ function EditProfile() {
     fetchUser();
   }, []);
 
-  const handleImageChange = async (e) => {
+  // เลือกไฟล์ → เปิดหน้าต่างครอปก่อน (ยังไม่อัปโหลด)
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    setRawImage(URL.createObjectURL(file));
+    e.target.value = ""; // ให้เลือกไฟล์เดิมซ้ำได้
+  };
 
-    setPreview(URL.createObjectURL(file));
+  // ครอปเสร็จ → แสดง preview แล้วอัปโหลดรูปที่ครอปแล้ว
+  const handleCropConfirm = async (blob) => {
+    setPreview(URL.createObjectURL(blob));
 
     const formData = new FormData();
-    formData.append("image", file);
+    formData.append("image", blob, "avatar.jpg");
 
     try {
       const res = await fetch(`${API_URL}/api/upload`, {
@@ -64,6 +72,8 @@ function EditProfile() {
       setProfileImage(data.filename);
     } catch (err) {
       console.log(err);
+    } finally {
+      setRawImage(null);
     }
   };
 
@@ -119,6 +129,14 @@ function EditProfile() {
 
   return (
     <div className="edit-profile-page">
+      {rawImage && (
+        <AvatarCropper
+          imageSrc={rawImage}
+          onCancel={() => setRawImage(null)}
+          onConfirm={handleCropConfirm}
+        />
+      )}
+
       <div className="edit-header">
         <div className="back-btn" onClick={() => navigate(-1)}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round">
