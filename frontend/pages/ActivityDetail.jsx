@@ -18,6 +18,8 @@ function ActivityDetail() {
   const [joinLoading, setJoinLoading] = useState(false);
   const [reviewed, setReviewed] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showReportMenu, setShowReportMenu] = useState(false);
+  const [showAllParticipants, setShowAllParticipants] = useState(false);
   const [reportReason, setReportReason] = useState("");
   const [reportLoading, setReportLoading] = useState(false);
   const [activityRating, setActivityRating] = useState(null);
@@ -25,82 +27,90 @@ function ActivityDetail() {
   const [publicComments, setPublicComments] = useState([]);
   const [host, setHost] = useState(null);
   const [hostRating, setHostRating] = useState(null);
+  const [participants, setParticipants] = useState([]);
   const [commentPublic, setCommentPublic] = useState(false);
 
   const reportReasons = ["เนื้อหาไม่เหมาะสม", "ข้อมูลเป็นเท็จ", "สแปม", "เป็นอันตราย", "อื่นๆ"];
 
-  useEffect(() => {
-    const fetchActivity = async () => {
-      if (!activityId) return;
-      const token = localStorage.getItem("token");
+  const fetchActivity = async () => {
+    if (!activityId) return;
+    const token = localStorage.getItem("token");
 
-      let user = null;
-      try {
-        const userRes = await fetch(`${API_URL}/api/auth/me`, {
+    let user = null;
+    try {
+      const userRes = await fetch(`${API_URL}/api/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      user = await userRes.json();
+    } catch (err) {
+      console.log(err);
+    }
+
+    try {
+      const res = await fetch(`${API_URL}/api/activities/${activityId}`);
+      const activityData = await res.json();
+      setActivity(activityData);
+      setCommentPublic(activityData.commentPublic);
+
+      // ดึงข้อมูล host
+      const hostRes = await fetch(`${API_URL}/api/auth/user/${activityData.createdBy}`);
+      if (hostRes.ok) {
+        const hostData = await hostRes.json();
+        setHost(hostData);
+      }
+
+      // ดึงคะแนน host
+      const hostRatingRes = await fetch(`${API_URL}/api/review/host/${activityData.createdBy}`);
+      const hostRatingData = await hostRatingRes.json();
+      setHostRating(hostRatingData.avgRating);
+
+      // ดึงคะแนนเฉลี่ยกิจกรรม
+      const ratingRes = await fetch(`${API_URL}/api/review/activity/${activityId}/rating`);
+      const ratingData = await ratingRes.json();
+      setActivityRating(ratingData);
+
+      // ดึง comments สาธารณะ
+      const pubCommentRes = await fetch(`${API_URL}/api/review/activity/${activityId}/comments/public`);
+      const pubCommentData = await pubCommentRes.json();
+      setPublicComments(pubCommentData);
+
+      // ดึงรายชื่อผู้เข้าร่วม
+      const participantsRes = await fetch(`${API_URL}/api/activities/${activityId}/participants`);
+      if (participantsRes.ok) {
+        const participantsData = await participantsRes.json();
+        setParticipants(participantsData);
+      }
+
+      if (user && activityData.createdBy === user.id) {
+        setIsOwner(true);
+
+        const commentRes = await fetch(`${API_URL}/api/review/activity/${activityId}/comments`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        user = await userRes.json();
-      } catch (err) {
-        console.log(err);
-      }
+        const commentData = await commentRes.json();
+        setComments(commentData);
 
-      try {
-        const res = await fetch(`${API_URL}/api/activities/${activityId}`);
-        const activityData = await res.json();
-        setActivity(activityData);
-        setCommentPublic(activityData.commentPublic);
+      } else if (user) {
+        const statusRes = await fetch(`${API_URL}/api/join/${activityId}/status`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const statusData = await statusRes.json();
+        setJoinStatus(statusData.status);
 
-        // ดึงข้อมูล host
-        const hostRes = await fetch(`${API_URL}/api/auth/user/${activityData.createdBy}`);
-        if (hostRes.ok) {
-          const hostData = await hostRes.json();
-          setHost(hostData);
-        }
-
-        // ดึงคะแนน host
-        const hostRatingRes = await fetch(`${API_URL}/api/review/host/${activityData.createdBy}`);
-        const hostRatingData = await hostRatingRes.json();
-        setHostRating(hostRatingData.avgRating);
-
-        // ดึงคะแนนเฉลี่ยกิจกรรม
-        const ratingRes = await fetch(`${API_URL}/api/review/activity/${activityId}/rating`);
-        const ratingData = await ratingRes.json();
-        setActivityRating(ratingData);
-
-        // ดึง comments สาธารณะ
-        const pubCommentRes = await fetch(`${API_URL}/api/review/activity/${activityId}/comments/public`);
-        const pubCommentData = await pubCommentRes.json();
-        setPublicComments(pubCommentData);
-
-        if (user && activityData.createdBy === user.id) {
-          setIsOwner(true);
-
-          const commentRes = await fetch(`${API_URL}/api/review/activity/${activityId}/comments`, {
+        if (statusData.status === "checked_in") {
+          const reviewRes = await fetch(`${API_URL}/api/review/${activityId}/status`, {
             headers: { Authorization: `Bearer ${token}` },
           });
-          const commentData = await commentRes.json();
-          setComments(commentData);
-
-        } else if (user) {
-          const statusRes = await fetch(`${API_URL}/api/join/${activityId}/status`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const statusData = await statusRes.json();
-          setJoinStatus(statusData.status);
-
-          if (statusData.status === "checked_in") {
-            const reviewRes = await fetch(`${API_URL}/api/review/${activityId}/status`, {
-              headers: { Authorization: `Bearer ${token}` },
-            });
-            const reviewData = await reviewRes.json();
-            setReviewed(reviewData.reviewed);
-          }
+          const reviewData = await reviewRes.json();
+          setReviewed(reviewData.reviewed);
         }
-      } catch (err) {
-        console.log(err);
       }
-    };
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
+  useEffect(() => {
     fetchActivity();
   }, [activityId]);
 
@@ -243,21 +253,93 @@ function ActivityDetail() {
   return (
     <div className="activity-detail-page">
 
-      {/* Cover */}
-      <div className="activity-cover">
-        {activity.cover ? (
-          <img src={activity.cover} alt="cover" className="activity-cover-img" />
-        ) : (
-          <div className="activity-cover-placeholder" />
-        )}
-        <button className="back-btn" onClick={() => navigate("/")}>‹</button>
-        {!isOwner && (
-          <button className="report-icon-btn" onClick={() => setShowReportModal(true)}>🚩</button>
-        )}
-      </div>
-
       <div className="activity-content">
 
+        {/* Top Bar */}
+      <div className="detail-topbar">
+        <button
+          className="user-back-btn"
+          onClick={() => navigate(-1)}
+          aria-label="ย้อนกลับ"
+        >
+          ‹
+        </button>
+
+        <div className="report-menu-wrapper">
+          <button
+            className="report-icon-btn"
+            onClick={() => setShowReportMenu((prev) => !prev)}
+            aria-label="เมนูเพิ่มเติม"
+            aria-expanded={showReportMenu}
+          >
+            ⋮
+          </button>
+
+          {showReportMenu && (
+            <>
+              <button
+                className="menu-backdrop"
+                aria-label="ปิดเมนู"
+                onClick={() => setShowReportMenu(false)}
+              />
+
+              <div className="report-dropdown">
+                {isOwner ? (
+                  <>
+                    <button
+                      className="menu-action-btn"
+                      onClick={() => {
+                        setShowReportMenu(false);
+                        navigate(`/edit-activity/${activity.id}`);
+                      }}
+                    >
+                      <span className="menu-action-icon">✎</span>
+                      แก้ไขกิจกรรม
+                    </button>
+
+                    <button
+                      className="menu-action-btn delete"
+                      onClick={() => {
+                        setShowReportMenu(false);
+                        handleDelete();
+                      }}
+                    >
+                      <span className="menu-action-icon">⌫</span>
+                      ลบกิจกรรม
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    className="menu-action-btn report"
+                    onClick={() => {
+                      setShowReportMenu(false);
+                      setShowReportModal(true);
+                    }}
+                  >
+                    <span className="menu-action-icon">⚑</span>
+                    รายงานกิจกรรม
+                  </button>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Cover */}
+      <div className="activity-cover-wrapper">
+
+        <div className="activity-cover">
+
+          <img
+            src={activity.cover}
+            alt={activity.activityName}
+            className="activity-main-image"
+          />
+        </div>
+
+      </div>
+        
         {/* Title & Rating */}
         <div className="activity-title-row">
           <h1 className="activity-title">{activity.activityName}</h1>
@@ -293,7 +375,7 @@ function ActivityDetail() {
         </div>
         <div className="activity-info-row">
           <span className="icon">👥</span>
-          <span>{activity.activityType === "public" ? "สาธารณะ" : "ส่วนตัว"} · {activity.participantCount} คน</span>
+          <span>{activity.activityType === "public" ? "สาธารณะ" : "ส่วนตัว"} · {activity.joinedCount || 0}/{activity.participantCount} คน</span>
         </div>
 
         {/* About */}
@@ -301,31 +383,101 @@ function ActivityDetail() {
           <h3>About</h3>
           <p>{activity.detail || "-"}</p>
         </div>
-
-        {/* Host Card */}
+         
+        {/* Host */}
         {host && (
-          <div className="host-card" onClick={() => navigate(`/user/${host.id}`)}>
-            <div className="host-avatar">
-              {host.profileImage ? (
-                <img src={host.profileImage} alt="host" className="host-avatar-img" />
-              ) : (
-                <div className="host-avatar-initials">
-                  {host.name?.charAt(0).toUpperCase()}
+          <div className="host-section">
+            <h3 className="section-title">จัดโดย</h3>
+
+            <div
+              className="host-card"
+              onClick={() => navigate(`/user/${host.id}`)}
+            >
+              <div className="host-avatar">
+                {host.profileImage ? (
+                  <img
+                    src={host.profileImage.startsWith("http") ? host.profileImage : `${API_URL}/uploads/${host.profileImage}`}
+                    alt={host.name}
+                    className="host-avatar-img"
+                  />
+                ) : (
+                  <div className="host-avatar-initials">
+                    {host.name?.charAt(0).toUpperCase()}
+                  </div>
+                )}
+              </div>
+
+              <div className="host-info">
+                <p className="host-name">{host.name}</p>
+                <p className="host-username">@{host.username}</p>
+              </div>
+
+              {hostRating && (
+                <div className="host-rating">
+                  <span>⭐</span>
+                  <span>{hostRating}</span>
                 </div>
               )}
             </div>
-            <div className="host-info">
-              <p className="host-name">{host.name}</p>
-              <p className="host-username">@{host.username}</p>
-            </div>
-            {hostRating && (
-              <div className="host-rating">
-                <span>⭐</span>
-                <span>{hostRating}</span>
-              </div>
-            )}
           </div>
         )}
+
+        {/* Participants */}
+        <div className="participants-section">
+          <div className="participants-header">
+            <h3>ผู้เข้าร่วม ({participants.length})</h3>
+
+            {participants.length > 3 && (
+              <button
+                className="view-all-btn"
+                onClick={() => setShowAllParticipants((prev) => !prev)}
+              >
+                {showAllParticipants ? "ย่อรายการ" : "ดูทั้งหมด"}
+              </button>
+            )}
+          </div>
+
+          {participants.length > 0 ? (
+            <div className="participants-list">
+              {(showAllParticipants ? participants : participants.slice(0, 3)).map((p) => (
+                <div
+                  key={p.id}
+                  className="participant-item"
+                  onClick={() => navigate(`/user/${p.id}`)}
+                >
+                  <div className="p-avatar">
+                    {p.profileImage ? (
+                      <img
+                        src={
+                          p.profileImage.startsWith("http")
+                            ? p.profileImage
+                            : `${API_URL}/uploads/${p.profileImage}`
+                        }
+                        alt={p.name}
+                      />
+                    ) : (
+                      <div className="p-avatar-initials">
+                        {p.name?.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="participant-info">
+                    <span className="p-name">{p.name}</span>
+
+                    {p.username && (
+                      <span className="p-username">
+                        @{p.username}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="no-participants">ยังไม่มีผู้เข้าร่วม</p>
+          )}
+        </div>
 
         {/* Reviews & Comments */}
         {activityRating?.totalReviews > 0 && (
@@ -372,17 +524,9 @@ function ActivityDetail() {
           </div>
         )}
 
-        {/* Owner Actions */}
+        {/* Owner QR */}
         {isOwner && (
           <div className="qr-owner-section">
-            <div className="owner-actions">
-              <button className="edit-activity-btn" onClick={() => navigate(`/edit-activity/${activity.id}`)}>
-                แก้ไขกิจกรรม
-              </button>
-              <button className="delete-activity-btn" onClick={handleDelete}>
-                ลบกิจกรรม
-              </button>
-            </div>
             <button className="show-qr-btn" onClick={() => { setShowQR(!showQR); setQrCountdown(10);}}>
               {showQR ? "ซ่อน QR Code" : "แสดง QR Code สำหรับยืนยันการเข้าร่วม"}
             </button>
@@ -479,6 +623,7 @@ function ActivityDetail() {
         </div>
       )}
     </div>
+
   );
 }
 
