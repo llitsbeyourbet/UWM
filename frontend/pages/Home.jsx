@@ -43,7 +43,7 @@ function Home() {
         const res = await fetch(`${API_URL}/api/activities`);
         const data = await res.json();
         setActivities(data);
-        
+        fetchJoinCounts(data);
       } catch (err) {
         console.log(err);
       } finally {
@@ -69,7 +69,6 @@ function Home() {
 
     fetchUser();
     fetchActivities();
-    fetchJoinCounts(data);
   }, []);
 
   const handleViewDetail = (activity) => {
