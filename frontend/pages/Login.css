@@ -1,6 +1,6 @@
 .login-page {
   min-height: 100dvh;
-  background: #F5F0E8;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f7f5 100%);
   font-family: 'Sarabun', sans-serif;
   display: flex;
   flex-direction: column;
@@ -27,34 +27,38 @@
 
 .login-hero h1 {
   font-size: 24px;
-  font-weight: 800;
-  color: #008cff;
+  font-weight: 700;
+  background: linear-gradient(120deg, #0a0a0a, #666);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin: -30px 0px 8px;
   line-height: 1.2;
-
 }
 
 .login-hero p {
-  font-size: 12px;
-  color: #7a7070;
-  margin: 0 0 0;
+  font-size: 13px;
+  color: #999;
+  margin: 4px 0 0;
+  font-weight: 400;
 }
 
 .login-card {
   width: 100%;
   max-width: 420px;
   background: white;
-  border-radius: 24px;
+  border-radius: 16px;
   padding: 28px 24px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border: 1px solid rgba(0,0,0,0.04);
 }
 
 .tab {
   display: flex;
-  background: #e5e7eb;
-  border-radius: 14px;
+  background: rgba(0,0,0,0.04);
+  border-radius: 10px;
   margin-bottom: 24px;
-  padding: 4px;
+  padding: 3px;
 }
 
 .tab button {
@@ -64,13 +68,19 @@
   background: transparent;
   font-size: 15px;
   cursor: pointer;
-  border-radius: 10px;
-  color: #6b7280;
+  border-radius: 8px;
+  color: #999;
   font-family: 'Sarabun', sans-serif;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.tab button:hover {
+  color: #666;
 }
 
 .tab button.active {
-  background: #1f6cff;
+  background: #0a0a0a;
   color: white;
   font-weight: 600;
 }
@@ -101,19 +111,21 @@ label {
 .input-icon input {
   width: 100%;
   padding: 13px 42px 13px 46px;
-  color: #000;
+  color: #0a0a0a;
   background: white;
-  border-radius: 12px;
-  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  border: 1px solid #e5e5e5;
   font-size: 15px;
   font-family: 'Sarabun', sans-serif;
   box-sizing: border-box;
   z-index: 1;
+  transition: all 0.2s ease;
 }
 
 .input-icon input:focus {
   outline: none;
-  border-color: #1f6cff;
+  border-color: #0a0a0a;
+  box-shadow: 0 0 0 3px rgba(10, 10, 10, 0.1);
 }
 
 .password .toggle-password {
@@ -143,44 +155,53 @@ label {
 .login-btn {
   width: 100%;
   padding: 14px 0;
-  background: #1f6cff;
+  background: #0a0a0a;
   color: white;
   font-size: 16px;
   border: none;
-  border-radius: 14px;
+  border-radius: 10px;
   cursor: pointer;
   font-weight: 600;
   font-family: 'Sarabun', sans-serif;
-  transition: 0.2s;
+  transition: all 0.25s ease;
 }
 
-.login-btn:hover {
-  background: #1858d8;
+.login-btn:hover:not(:disabled) {
+  background: #333;
+  box-shadow: 0 4px 12px rgba(10, 10, 10, 0.2);
+  transform: translateY(-1px);
 }
 
 .login-btn:disabled {
-  background: #aaa;
+  background: #ddd;
   cursor: not-allowed;
 }
 
 .error-text {
-  color: #e53935;
+  color: #e74c3c;
   font-size: 13px;
   text-align: center;
   margin-top: 8px;
+  font-weight: 500;
 }
 
 .register-text {
   text-align: center;
   margin-top: 20px;
-  font-size: 14px;
-  color: #374151;
+  font-size: 13px;
+  color: #999;
+  font-weight: 400;
 }
 
 .register-text span {
-  color: #1f6cff;
+  color: #0a0a0a;
   cursor: pointer;
-  font-weight: 500;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.register-text span:hover {
+  color: #333;
 }
 
 input::-ms-reveal,

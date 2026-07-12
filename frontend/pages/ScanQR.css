@@ -1,12 +1,12 @@
 .scanner-page {
   min-height: 100vh;
-  background: #F5F0E8;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f7f5 100%);
   font-family: 'Sarabun', sans-serif;
   padding-bottom: 40px;
 }
 
 .scanner-header {
-  padding: 48px 20px 0;
+  padding: 40px 20px 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -15,12 +15,19 @@
 .scanner-back-btn {
   width: 40px;
   height: 40px;
-  background: white;
-  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.scanner-back-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+  transform: scale(1.05);
 }
 
 .scanner-header-text {
@@ -170,15 +177,17 @@
 
 .scanner-steps-card {
   background: white;
-  border-radius: 20px;
+  border-radius: 12px;
   padding: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .scanner-steps-title {
   margin: 0 0 12px;
   font-size: 14px;
-  font-weight: 700;
-  color: #111;
+  font-weight: 600;
+  color: #0a0a0a;
 }
 
 .scanner-steps {
@@ -201,13 +210,15 @@
   align-items: center;
   justify-content: center;
   font-size: 13px;
-  font-weight: 800;
-  color: #111;
+  font-weight: 600;
+  color: #0a0a0a;
   flex-shrink: 0;
+  font-feature-settings: "tnum";
 }
 
 .step-text {
   margin: 0;
   font-size: 13px;
-  color: #555;
+  color: #666;
+  font-weight: 400;
 }
