@@ -8,6 +8,8 @@ function Home() {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("ทั้งหมด");
+  const [username, setUsername] = useState("");
+  const [joinCounts, setJoinCounts] = useState({});
 
   const categories = ["ทั้งหมด", "กีฬา", "ดนตรี", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่"];
 
@@ -22,10 +24,6 @@ function Home() {
     "คาเฟ่": "☕",
   };
 
-  const cardColors = ["#FFF176", "#B8E0FF", "#C8F5C8", "#E8D5F5", "#FFB3C6"];
-
-  const [username, setUsername] = useState("");
-
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("token");
@@ -39,21 +37,37 @@ function Home() {
         console.log(err);
       }
     };
-    fetchUser();
-  }, []);
 
-  useEffect(() => {
     const fetchActivities = async () => {
       try {
         const res = await fetch(`${API_URL}/api/activities`);
         const data = await res.json();
         setActivities(data);
+        fetchJoinCounts(data);
       } catch (err) {
         console.log(err);
       } finally {
         setLoading(false);
       }
     };
+    // ดึงจำนวนคนที่เข้าร่วมทุกกิจกรรม
+    const fetchJoinCounts = async (activities) => {
+      const counts = {};
+      await Promise.all(
+        activities.map(async (item) => {
+          try {
+            const res = await fetch(`${API_URL}/api/join/${item.id}/count`);
+            const data = await res.json();
+            counts[item.id] = data.count || 0;
+          } catch {
+            counts[item.id] = 0;
+          }
+        })
+      );
+      setJoinCounts(counts);
+    };
+
+    fetchUser();
     fetchActivities();
   }, []);
 
@@ -76,29 +90,6 @@ function Home() {
           <p className="home-username">@{username}</p>
         </div>
         <div className="home-icons">
-          <div className="icon-btn" onClick={() => navigate("/search")}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round">
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-          </div>
-          {/* สแกน QR */}
-          <div className="icon-btn scan-btn" onClick={() => navigate("/scan")}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-              stroke="#010101" strokeWidth="2" strokeLinecap="round">
-              <path d="M3 7V3h4" />
-              <path d="M21 7V3h-4" />
-              <path d="M3 17v4h4" />
-              <path d="M21 17v4h-4" />
-              <line x1="8" y1="12" x2="16" y2="12" />
-            </svg>
-          </div>
-          <div className="icon-btn" onClick={() => navigate("/notifications")}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-            </svg>
-          </div>
         </div>
       </div>
 
@@ -128,30 +119,52 @@ function Home() {
         ) : filtered.length === 0 ? (
           <p className="empty-text">ไม่พบกิจกรรม</p>
         ) : (
-          filtered.map((item, index) => (
-            <div
-              key={item.id}
-              className="home-card"
-              style={{ background: cardColors[index % cardColors.length] }}
-              onClick={() => handleViewDetail(item)}
-            >
-              <div className="card-circle" />
-              <div className="card-top">
-                <div>
-                  <span className="card-tag">{item.activityType === "public" ? "สาธารณะ" : "ส่วนตัว"}</span>
-                  <p className="card-name">{item.activityName}</p>
-                  <p className="card-meta">📍 {item.location || "-"} · {item.date || "-"}</p>
-                  <p className="card-meta">👥 {item.participantCount} คน</p>
-                </div>
-                {/* 👈 แก้ตรงนี้ */}
+          filtered.map((item) => (
+            <div key={item.id} className="home-card" onClick={() => handleViewDetail(item)}>
+              {/* รูปภาพ */}
+              <div className="card-image-wrap">
                 {item.cover ? (
-                  <img src={item.cover} alt="cover" className="card-emoji-img" />
+                  <img src={item.cover} alt="cover" className="card-image" />
                 ) : (
-                  <span className="card-emoji">🎉</span>
+                  <div className="card-image-placeholder">🎉</div>
                 )}
+                <span className={`card-tag ${item.activityType === "public" ? "tag-public" : "tag-private"}`}>
+                  {item.activityType === "public" ? "สาธารณะ" : "ส่วนตัว"}
+                </span>
               </div>
-              <div className="card-bottom">
-                <div className="card-btn">ดูรายละเอียด →</div>
+
+              {/* เนื้อหา */}
+              <div className="card-content">
+                <div className="card-content-top">
+                  <p className="card-name">{item.activityName}</p>
+                </div>
+                <p className="card-meta">📍 {item.location || "-"}</p>
+                <p className="card-meta">📅 {item.date || "-"}</p>
+                <p className="card-meta">⏰ {item.time || "-"} - {item.endTime || "-"}</p>
+                <p className="card-meta">👥 {joinCounts[item.id] ?? 0} / {item.participantCount} คน</p>
+
+                <div className="card-tags">
+                  {item.category && (
+                    <span className="card-tag-chip">{categoryEmoji[item.category]} {item.category}</span>
+                  )}
+                </div>
+
+                <div className="card-bottom">
+                    <div className="card-days-badge">
+                      {(() => {
+                        if (!item.date) return "-";
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        const eventDate = new Date(item.date);
+                        eventDate.setHours(0, 0, 0, 0);
+                        const diff = Math.round((eventDate - today) / (1000 * 60 * 60 * 24));
+                        if (diff < 0) return "ผ่านไปแล้ว";
+                        if (diff === 0) return "🔥 วันนี้";
+                        return `📅 อีก ${diff} วัน`;
+                      })()}
+                    </div>
+                    <div className="card-btn">ดูรายละเอียด →</div>
+                </div>
               </div>
             </div>
           ))

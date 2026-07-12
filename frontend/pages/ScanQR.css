@@ -1,233 +1,213 @@
-.scan-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  min-height: 100dvh;
-  width: 100%;
-  max-width: 480px;   /* ⭐ ต้องตรงทั้งแอป */
-  margin: 0 auto;
-
-  position: relative;
+.scanner-page {
+  min-height: 100vh;
+  background: #F5F0E8;
   font-family: 'Sarabun', sans-serif;
-
-  padding: 16px;
-  padding-bottom: 80px;
-  box-sizing: border-box;
-  overflow-x: hidden;
-
-  padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  padding-bottom: 40px;
 }
 
-.scan-back-btn {
-  position: absolute;
-  top: 16px;
-  left: 16px;
+.scanner-header {
+  padding: 48px 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-  width: 36px;
-  height: 36px;
-
+.scanner-back-btn {
+  width: 40px;
+  height: 40px;
+  background: white;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  border: none;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 4px 12px rgba(0,0,0,.15);
-
-  font-size: 22px;
-  color: #333;
   cursor: pointer;
-  z-index: 1000;
 }
 
-.scan-header {
-  margin-top: clamp(40px, 6vh, 70px);
+.scanner-header-text {
+  text-align: center;
 }
 
-.scan-title {
-  font-size: 48px;
-  font-weight: 700;
-  color: #222;
-  margin-bottom: 10px;
-}
-
-.scan-subtitle {
+.scanner-sub {
+  margin: 0;
+  font-size: 12px;
   color: #888;
-  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.reader-wrapper {
-  width: 100%;
-  max-width: 380px;
-  margin-top: 20px;
-  position: relative;
+.scanner-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #111;
 }
 
-#reader {
-  width: 100%;
+.scanner-camera-wrap {
+  margin: 24px 20px 0;
+  border-radius: 28px;
   overflow: hidden;
-  border-radius: 24px;
+  position: relative;
+  background: #0f0f1a;
+  aspect-ratio: 1;
 }
 
-#reader video {
-  width: 100% !important;
-  max-height: 420px;
-  object-fit: cover;
-  border-radius: 24px;
+.scanner-camera {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
 }
 
 /* ซ่อน UI ของ html5-qrcode */
-
-#reader button,
-#reader select,
-#reader img,
-#reader svg {
-  display: none !important;
-}
-
-#reader__dashboard {
-  display: none !important;
-}
-
-#reader__scan_region {
+.scanner-camera > * {
   border: none !important;
-  position: relative;
 }
 
-/* กรอบสแกน */
+#qr-reader__scan_region {
+  background: transparent !important;
+}
 
-.scan-box {
+#qr-reader__dashboard {
+  display: none !important;
+}
+
+.scanner-overlay {
   position: absolute;
   inset: 0;
+  z-index: 3;
   pointer-events: none;
 }
 
-.tl{
-    top:16%;
-    left:16%;
+.scanner-top-fade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to bottom, rgba(15,15,26,0.8), transparent);
 }
 
-.tr{
-    top:16%;
-    right:16%;
+.scanner-bottom-fade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to top, rgba(15,15,26,0.8), transparent);
 }
 
-.bl{
-    bottom:16%;
-    left:16%;
-}
-
-.br{
-    bottom:16%;
-    right:16%;
-}
-
-/* เส้นสแกน */
-
-.scan-line{
-    position:absolute;
-    left:18%;
-    right:18%;
-    height:3px;
-    background:#00ff6a;
-    border-radius:5px;
-    animation:scan 2.2s linear infinite;
-}
-
-@keyframes scan{
-    0%{
-        top:18%;
-    }
-
-    50%{
-        top:82%;
-    }
-
-    100%{
-        top:18%;
-    }
-}
-
-.scan-tip {
-  margin-top: 28px;
-  text-align: center;
-  color: #777;
-  font-size: 15px;
-  line-height: 1.8;
-}
-
-/* Modal */
-
-.modal-overlay {
-  position: fixed;
+.scanner-frame-wrap {
+  position: absolute;
   inset: 0;
-  background: rgba(0,0,0,.45);
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 2000;
+  justify-content: center;
 }
 
-.success-modal {
-  width: 320px;
-  background: #fff;
+.scanner-frame {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.corner {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+}
+
+.corner.tl {
+  top: 0;
+  left: 0;
+  border-top: 3px solid #FFF176;
+  border-left: 3px solid #FFF176;
+  border-radius: 4px 0 0 0;
+}
+
+.corner.tr {
+  top: 0;
+  right: 0;
+  border-top: 3px solid #FFF176;
+  border-right: 3px solid #FFF176;
+  border-radius: 0 4px 0 0;
+}
+
+.corner.bl {
+  bottom: 0;
+  left: 0;
+  border-bottom: 3px solid #FFF176;
+  border-left: 3px solid #FFF176;
+  border-radius: 0 0 0 4px;
+}
+
+.corner.br {
+  bottom: 0;
+  right: 0;
+  border-bottom: 3px solid #FFF176;
+  border-right: 3px solid #FFF176;
+  border-radius: 0 0 4px 0;
+}
+
+.scan-line {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #FFF176, white, #FFF176, transparent);
+  border-radius: 999px;
+  animation: scanMove 2s ease-in-out infinite;
+}
+
+@keyframes scanMove {
+  0% { top: 4px; }
+  50% { top: 192px; }
+  100% { top: 4px; }
+}
+
+.scanner-info {
+  padding: 16px 20px 0;
+}
+
+.scanner-steps-card {
+  background: white;
   border-radius: 20px;
-  padding: 28px;
-  text-align: center;
+  padding: 16px;
 }
 
-.success-modal h2 {
-  margin-bottom: 10px;
+.scanner-steps-title {
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #111;
 }
 
-.success-modal p {
-  color: #666;
-  margin-bottom: 18px;
+.scanner-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.success-modal button {
-  width: 100%;
-  height: 46px;
-  border: none;
-  border-radius: 10px;
-  background: #2563eb;
-  color: #fff;
-  font-size: 16px;
-  cursor: pointer;
+.scanner-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.success-modal button:hover {
-  background: #1d4ed8;
+.step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  color: #111;
+  flex-shrink: 0;
 }
 
-/* มือถือ */
-
-@media (max-width: 768px) {
-
-  .scan-page {
-    padding: 16px;
-  }
-
-  .scan-header {
-    margin-top: 70px;
-  }
-
-  .scan-title {
-    font-size: 38px;
-  }
-
-  .scan-subtitle {
-    font-size: 15px;
-  }
-
-  .reader-wrapper {
-    max-width: 340px;
-  }
-
-  #reader video {
-    height: 360px !important;
-  }
-
+.step-text {
+  margin: 0;
+  font-size: 13px;
+  color: #555;
 }

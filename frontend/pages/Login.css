@@ -12,6 +12,7 @@
   width: 100%;
   display: flex;
   justify-content: center;
+  margin: 20px 0 0;
 }
 
 .logo {
@@ -25,18 +26,18 @@
 }
 
 .login-hero h1 {
-  font-size: 30px;
+  font-size: 24px;
   font-weight: 800;
   color: #008cff;
-  margin: -30px 5px 8px;
+  margin: -30px 0px 8px;
   line-height: 1.2;
 
 }
 
 .login-hero p {
-  font-size: 14px;
+  font-size: 12px;
   color: #7a7070;
-  margin: 0 7px 0;
+  margin: 0 0 0;
 }
 
 .login-card {
