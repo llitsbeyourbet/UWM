@@ -255,9 +255,22 @@ function ActivityDetail() {
       );
 
       if (currentIsPublic) {
+        // สาธารณะ → ส่วนตัว
         setPublicComments((prev) =>
           prev.filter((comment) => comment.id !== commentId)
         );
+      } else {
+        // ส่วนตัว → สาธารณะ
+        const updatedComment = comments.find(
+          (comment) => comment.id === commentId
+        );
+
+        if (updatedComment) {
+          setPublicComments((prev) => [
+            { ...updatedComment, isPublic: true },
+            ...prev.filter((comment) => comment.id !== commentId),
+          ]);
+        }
       }
     } catch (err) {
       console.log(err);
