@@ -1,6 +1,25 @@
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .login-page {
   min-height: 100dvh;
-  background: linear-gradient(135deg, #ffffff 0%, #f8f7f5 100%);
+  background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #4facfe);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
   font-family: 'Sarabun', sans-serif;
   display: flex;
   flex-direction: column;
@@ -46,11 +65,13 @@
 .login-card {
   width: 100%;
   max-width: 420px;
-  background: white;
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
   padding: 28px 24px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  border: 1px solid rgba(0,0,0,0.04);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(4px);
+  animation: slideInUp 0.6s ease-out;
 }
 
 .tab {
@@ -155,26 +176,27 @@ label {
 .login-btn {
   width: 100%;
   padding: 14px 0;
-  background: #0a0a0a;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   font-size: 16px;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
   font-family: 'Sarabun', sans-serif;
-  transition: all 0.25s ease;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
 .login-btn:hover:not(:disabled) {
-  background: #333;
-  box-shadow: 0 4px 12px rgba(10, 10, 10, 0.2);
-  transform: translateY(-1px);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.5);
 }
 
 .login-btn:disabled {
   background: #ddd;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .error-text {

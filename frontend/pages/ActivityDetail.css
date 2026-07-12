@@ -1,8 +1,16 @@
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 .activity-detail-page {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: linear-gradient(135deg, #ffffff 0%, #f8f7f5 100%);
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
   min-height: 100vh;
   font-family: 'Sarabun', sans-serif;
 }
@@ -30,23 +38,24 @@
   position: absolute;
   top: 16px;
   left: 16px;
-  background: rgba(255,255,255,0.95);
+  background: rgba(255,255,255,0.98);
   border: none;
-  border-radius: 10px;
-  width: 40px;
-  height: 40px;
+  border-radius: 12px;
+  width: 44px;
+  height: 44px;
   font-size: 20px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
 }
 
 .back-btn:hover {
   background: white;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
 }
 
 .activity-content {
@@ -164,24 +173,26 @@
 .join-btn {
   width: 100%;
   padding: 14px;
-  background-color: #0a0a0a;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
+
 .join-btn.joined {
-  background-color: #999;
+  background: #999;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .join-btn:hover:not(:disabled) {
-  background-color: #333;
-  box-shadow: 0 4px 12px rgba(10, 10, 10, 0.2);
-  transform: translateY(-1px);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.5);
 }
 
 .loading {
