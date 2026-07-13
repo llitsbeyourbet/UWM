@@ -92,7 +92,6 @@
 
 .detail-card input[type="text"],
 .detail-card input[type="date"],
-.detail-card input[type="time"],
 .detail-card select {
   width: 100%;
   max-width: 100%;
@@ -104,7 +103,17 @@
   background-color: #fafafa;
   outline: none;
 }
-
+.detail-card input[type="time"]{
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #fafafa;
+  outline: none;
+}
 .detail-card input:focus,
 .detail-card select:focus {
   border-color: #7b61ff;
