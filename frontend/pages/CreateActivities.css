@@ -179,10 +179,14 @@
 
 /* Row Group */
 .row-group{
-    display:grid;
-    grid-template-columns:repeat(2, minmax(0, 1fr));
-    gap:10px;
+    display:flex;
+    gap:12px;
     width:100%;
+}
+
+.row-group .input-group{
+    flex:1 1 0;
+    min-width:0;
 }
 
 .input-group{
@@ -273,23 +277,17 @@ input[type="time"]::-webkit-calendar-picker-indicator {
         height:180px;
     }
 
-    .detail-card{
-        padding:10px;
-    }
-
     .submit-btn{
         font-size:14px;
         padding:10px;
     }
 
     .row-group{
-        display:grid;
-        grid-template-columns:repeat(2,minmax(0,1fr));
-        gap:8px;
+        gap:6px;
     }
 
-    .row-group .input-group{
-        min-width:0;
+    .detail-card{
+        padding:12px;
     }
 
     .detail-card input[type="time"],
@@ -298,5 +296,32 @@ input[type="time"]::-webkit-calendar-picker-indicator {
         height:38px;
         padding:6px;
         font-size:12px;
+    }
+}
+
+/* Safari iPhone */
+@supports (-webkit-touch-callout:none){
+
+    .row-group{
+        display:flex;
+        gap:8px;
+        width:100%;
+    }
+
+    .row-group .input-group{
+        flex:1;
+        min-width:0;
+    }
+
+    input[type="time"],
+    input[type="date"]{
+        width:100%;
+        min-width:0;
+        max-width:100%;
+
+        font-size:16px;
+        padding:8px;
+
+        box-sizing:border-box;
     }
 }
