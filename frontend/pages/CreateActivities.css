@@ -95,7 +95,9 @@
 .detail-card input[type="time"],
 .detail-card select {
   width: 100%;
-  padding: 8px 12px;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
   border: 1px solid #ddd;
   border-radius: 8px;
   font-size: 14px;
@@ -125,22 +127,85 @@
   accent-color: #7b61ff;
 }
 
-/* Row Group */
-.row-group {
-  display: flex;
-  gap: 12px;
-  width: 100%;
+.participant-control{
+    display:flex;
+    align-items:center;
+    gap:12px;
 }
 
-.input-group {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  gap: 4px;
+.participant-control input[type="range"]{
+    flex:1;
+}
+
+/* ช่องกรอกจำนวน */
+.participant-control input[type="number"]{
+    width:70px;
+    height:40px;
+
+    padding:8px;
+
+    background:#ffffff;
+    color:#333;
+
+    border:1px solid #ddd;
+    border-radius:10px;
+
+    text-align:center;
+    font-size:15px;
+    font-weight:500;
+
+    outline:none;
+    transition:.2s;
+}
+
+/* ตอนกด */
+.participant-control input[type="number"]:focus{
+    border-color:#7b61ff;
+    box-shadow:0 0 0 3px rgba(123,97,255,.15);
+}
+
+/* ซ่อนลูกศรของ Chrome / Edge */
+.participant-control input[type="number"]::-webkit-inner-spin-button,
+.participant-control input[type="number"]::-webkit-outer-spin-button{
+    -webkit-appearance:none;
+    margin:0;
+}
+
+/* Firefox */
+.participant-control input[type="number"]{
+    appearance:textfield;
+    -moz-appearance:textfield;
+}
+
+/* Row Group */
+.row-group{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:10px;
+    width:100%;
+}
+
+.input-group{
+    width:100%;
+    min-width:0;
+}
+
+.input-group input{
+    width:100%;
+    min-width:0;
+}
+
+
+
+.input-group input[type="time"],
+.input-group input[type="date"]{
+    width:100%;
+    min-width:0;
+    font-size:14px;
 }
 
 /* Image Preview */
-.image-preview-container {
+.image-preview-container { 
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -151,6 +216,18 @@
   width: calc(50% - 4px);
   border-radius: 8px;
   object-fit: cover;
+}
+
+/* ไอคอนปฏิทิน */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: brightness(0);
+}
+
+/* ไอคอนเวลา */
+input[type="time"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: brightness(0);
 }
 
 /* Submit Button */
@@ -190,18 +267,36 @@
   color: #555;
 }
 
-/* Responsive */
-@media (max-width: 480px) {
-  .cover-image {
-    height: 180px;
-  }
+@media (max-width:480px){
 
-  .detail-card {
-    padding: 10px;
-  }
+    .cover-image{
+        height:180px;
+    }
 
-  .submit-btn {
-    font-size: 14px;
-    padding: 10px;
-  }
+    .detail-card{
+        padding:10px;
+    }
+
+    .submit-btn{
+        font-size:14px;
+        padding:10px;
+    }
+
+    .row-group{
+        display:grid;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:8px;
+    }
+
+    .row-group .input-group{
+        min-width:0;
+    }
+
+    .detail-card input[type="time"],
+    .detail-card input[type="date"]{
+        width:100%;
+        height:38px;
+        padding:6px;
+        font-size:12px;
+    }
 }

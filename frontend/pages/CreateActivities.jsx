@@ -13,7 +13,7 @@ function CreateActivities() {
   const [time, setTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [location, setLocation] = useState("");
-  const [participantCount, setParticipantCount] = useState(1);
+  const [participantCount, setParticipantCount] = useState("1");
   const [activityType, setActivityType] = useState("public");
   const [category, setCategory] = useState("กีฬา");
   const [checkinStart, setCheckinStart] = useState("");
@@ -67,7 +67,7 @@ function CreateActivities() {
           time,
           endTime,
           location,
-          participantCount,
+          participantCount: Number(participantCount) || 1,
           activityType,
           cover: coverFilename || null, // 👈 ส่งแค่ชื่อไฟล์
           category,
@@ -91,7 +91,7 @@ function CreateActivities() {
       setTime("");
       setEndTime("");
       setLocation("");
-      setParticipantCount(1);
+      setParticipantCount("1");
       setActivityType("public");
       setPreview([]);
       setCoverFilename(null); // 👈 reset coverFilename ด้วย
@@ -182,16 +182,49 @@ function CreateActivities() {
           onChange={(e) => setLocation(e.target.value)}
         />
 
-        <label>จำนวนผู้เข้าร่วม</label>
         <div className="slider-container">
-          <span>Number of people {participantCount}</span>
-          <input
-            type="range"
-            min={1}
-            max={100}
-            value={participantCount}
-            onChange={(e) => setParticipantCount(Number(e.target.value))}
-          />
+          <label>จำนวนผู้เข้าร่วม</label>
+
+          <div className="participant-control">
+            <input
+              type="range"
+              min="1"
+              max="100"
+              value={Number(participantCount) || 1}
+              onChange={(e) => setParticipantCount(e.target.value)}
+            />
+
+            <input
+              type="number"
+              min="1"
+              max="100"
+              value={participantCount}
+              onChange={(e) => {
+                const value = e.target.value;
+
+                // อนุญาตให้ลบเลขทั้งหมดได้
+                if (value === "") {
+                  setParticipantCount("");
+                  return;
+                }
+
+                // รับเฉพาะตัวเลข
+                if (!/^\d+$/.test(value)) return;
+
+                const num = Number(value);
+
+                // จำกัดไม่เกิน 100
+                if (num <= 100) {
+                  setParticipantCount(value);
+                }
+              }}
+              onBlur={() => {
+                if (participantCount === "" || Number(participantCount) < 1) {
+                  setParticipantCount("1");
+                }
+              }}
+            />
+          </div>
         </div>
 
         <div className="input-group">
