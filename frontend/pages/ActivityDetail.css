@@ -1178,3 +1178,16 @@
     color: #999;
     font-size: 14px;
 }
+
+.suspend-btn-big {
+  width: 100%;
+  padding: 14px;
+  background: #FFB3C6;
+  color: #111;
+  border: none;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Sarabun', sans-serif;
+}

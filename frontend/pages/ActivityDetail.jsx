@@ -8,6 +8,7 @@ function ActivityDetail() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const activityId = searchParams.get("id");
+  const fromAdmin = searchParams.get("from") === "admin";
 
   const [activity, setActivity] = useState(null);
   const [isOwner, setIsOwner] = useState(false);
@@ -293,90 +294,90 @@ function ActivityDetail() {
       <div className="activity-content">
 
         {/* Top Bar */}
-      <div className="detail-topbar">
-        <button
-          className="user-back-btn"
-          onClick={() => navigate(-1)}
-          aria-label="ย้อนกลับ"
-        >
-          ‹
-        </button>
-
-        <div className="report-menu-wrapper">
+        <div className="detail-topbar">
           <button
-            className="report-icon-btn"
-            onClick={() => setShowReportMenu((prev) => !prev)}
-            aria-label="เมนูเพิ่มเติม"
-            aria-expanded={showReportMenu}
+            className="user-back-btn"
+            onClick={() => navigate(-1)}
+            aria-label="ย้อนกลับ"
           >
-            ⋮
+            ‹
           </button>
 
-          {showReportMenu && (
-            <>
-              <button
-                className="menu-backdrop"
-                aria-label="ปิดเมนู"
-                onClick={() => setShowReportMenu(false)}
-              />
+          <div className="report-menu-wrapper">
+            <button
+              className="report-icon-btn"
+              onClick={() => setShowReportMenu((prev) => !prev)}
+              aria-label="เมนูเพิ่มเติม"
+              aria-expanded={showReportMenu}
+            >
+              ⋮
+            </button>
 
-              <div className="report-dropdown">
-                {isOwner ? (
-                  <>
+            {showReportMenu && (
+              <>
+                <button
+                  className="menu-backdrop"
+                  aria-label="ปิดเมนู"
+                  onClick={() => setShowReportMenu(false)}
+                />
+
+                <div className="report-dropdown">
+                  {isOwner ? (
+                    <>
+                      <button
+                        className="menu-action-btn"
+                        onClick={() => {
+                          setShowReportMenu(false);
+                          navigate(`/edit-activity/${activity.id}`);
+                        }}
+                      >
+                        <span className="menu-action-icon">✎</span>
+                        แก้ไขกิจกรรม
+                      </button>
+
+                      <button
+                        className="menu-action-btn delete"
+                        onClick={() => {
+                          setShowReportMenu(false);
+                          handleDelete();
+                        }}
+                      >
+                        <span className="menu-action-icon">⌫</span>
+                        ลบกิจกรรม
+                      </button>
+                    </>
+                  ) : (
                     <button
-                      className="menu-action-btn"
+                      className="menu-action-btn report"
                       onClick={() => {
                         setShowReportMenu(false);
-                        navigate(`/edit-activity/${activity.id}`);
+                        setShowReportModal(true);
                       }}
                     >
-                      <span className="menu-action-icon">✎</span>
-                      แก้ไขกิจกรรม
+                      <span className="menu-action-icon">⚑</span>
+                      รายงานกิจกรรม
                     </button>
-
-                    <button
-                      className="menu-action-btn delete"
-                      onClick={() => {
-                        setShowReportMenu(false);
-                        handleDelete();
-                      }}
-                    >
-                      <span className="menu-action-icon">⌫</span>
-                      ลบกิจกรรม
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    className="menu-action-btn report"
-                    onClick={() => {
-                      setShowReportMenu(false);
-                      setShowReportModal(true);
-                    }}
-                  >
-                    <span className="menu-action-icon">⚑</span>
-                    รายงานกิจกรรม
-                  </button>
-                )}
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Cover */}
-      <div className="activity-cover-wrapper">
-
-        <div className="activity-cover">
-
-          <img
-            src={activity.cover}
-            alt={activity.activityName}
-            className="activity-main-image"
-          />
+                  )}
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
-      </div>
-        
+        {/* Cover */}
+        <div className="activity-cover-wrapper">
+
+          <div className="activity-cover">
+
+            <img
+              src={activity.cover}
+              alt={activity.activityName}
+              className="activity-main-image"
+            />
+          </div>
+
+        </div>
+
         {/* Title & Rating */}
         <div className="activity-title-row">
           <h1 className="activity-title">{activity.activityName}</h1>
@@ -420,7 +421,7 @@ function ActivityDetail() {
           <h3>About</h3>
           <p>{activity.detail || "-"}</p>
         </div>
-         
+
         {/* Host */}
         {host && (
           <div className="host-section">
@@ -615,14 +616,14 @@ function ActivityDetail() {
         {/* Owner QR */}
         {isOwner && (
           <div className="qr-owner-section">
-            <button className="show-qr-btn" onClick={() => { setShowQR(!showQR); setQrCountdown(10);}}>
+            <button className="show-qr-btn" onClick={() => { setShowQR(!showQR); setQrCountdown(10); }}>
               {showQR ? "ซ่อน QR Code" : "แสดง QR Code สำหรับยืนยันการเข้าร่วม"}
             </button>
             {showQR && (
               <div className="qr-container">
                 <p>QR Code สำหรับยืนยันการเข้าร่วม</p>
-                <QRCodeCanvas 
-                  value={`${window.location.origin}/checkin/${activity.id}/${qrToken}`} 
+                <QRCodeCanvas
+                  value={`${window.location.origin}/checkin/${activity.id}/${qrToken}`}
                   size={180}
                 />
 
@@ -638,49 +639,75 @@ function ActivityDetail() {
         )}
 
         {/* Join Section */}
-        {!isOwner && activity.status !== "suspended" && (
+
+        {fromAdmin ? (
           <div className="join-section">
-            {joinStatus === "checked_in" && (
-              <>
-                <button className="join-btn joined" disabled>เข้าร่วมแล้ว ✓</button>
-                {!reviewed ? (
-                  <button className="review-btn" onClick={() => navigate(`/review/${activity.id}`)}>
-                    ⭐ รีวิวกิจกรรม
-                  </button>
-                ) : (
-                  <p className="reviewed-text">✓ รีวิวแล้ว</p>
-                )}
-              </>
-            )}
-            {joinStatus === "approved" && (
-              <>
-                <button className="join-btn joined" disabled>เข้าร่วมแล้ว ✓</button>
-                <button className="scan-btn" onClick={() => navigate("/scan")}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-                    <rect x="3" y="3" width="7" height="7" rx="1"/>
-                    <rect x="14" y="3" width="7" height="7" rx="1"/>
-                    <rect x="3" y="14" width="7" height="7" rx="1"/>
-                    <path d="M14 14h3v3h-3z"/>
-                    <path d="M17 17h4"/>
-                    <path d="M17 14v3"/>
-                  </svg>
-                  สแกน QR เช็คอิน
-                </button>
-                <button className="cancel-btn" onClick={handleCancel}>ยกเลิกการเข้าร่วม</button>
-              </>
-            )}
-            {joinStatus === "pending" && (
-              <>
-                <button className="join-btn pending" disabled>รอการอนุมัติ...</button>
-                <button className="cancel-btn" onClick={handleCancel}>ยกเลิกคำขอ</button>
-              </>
-            )}
-            {(joinStatus === null || joinStatus === "cancelled") && (
-              <button className="join-btn" onClick={handleJoin} disabled={joinLoading}>
-                {joinLoading ? "กำลังส่ง..." : "Join"}
-              </button>
-            )}
+            <button
+              className="suspend-btn-big"
+              onClick={async () => {
+                if (!window.confirm("ต้องการระงับกิจกรรมนี้ไหม?")) return;
+                const token = localStorage.getItem("token");
+                const res = await fetch(`${API_URL}/api/admin/suspend/${activity.id}`, {
+                  method: "PUT",
+                  headers: { Authorization: `Bearer ${token}` },
+                });
+                if (res.ok) {
+                  alert("ระงับกิจกรรมสำเร็จ");
+                  navigate("/admin");
+                }
+              }}
+            >
+              🚫 ระงับกิจกรรม
+            </button>
+            <button className="cancel-btn" onClick={() => navigate("/admin")}>
+              ← กลับ Dashboard
+            </button>
           </div>
+        ) : (
+          !isOwner && activity.status !== "suspended" && (
+            <div className="join-section">
+              {joinStatus === "checked_in" && (
+                <>
+                  <button className="join-btn joined" disabled>เข้าร่วมแล้ว ✓</button>
+                  {!reviewed ? (
+                    <button className="review-btn" onClick={() => navigate(`/review/${activity.id}`)}>
+                      ⭐ รีวิวกิจกรรม
+                    </button>
+                  ) : (
+                    <p className="reviewed-text">✓ รีวิวแล้ว</p>
+                  )}
+                </>
+              )}
+              {joinStatus === "approved" && (
+                <>
+                  <button className="join-btn joined" disabled>เข้าร่วมแล้ว ✓</button>
+                  <button className="scan-btn" onClick={() => navigate("/scan")}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
+                      <rect x="3" y="3" width="7" height="7" rx="1" />
+                      <rect x="14" y="3" width="7" height="7" rx="1" />
+                      <rect x="3" y="14" width="7" height="7" rx="1" />
+                      <path d="M14 14h3v3h-3z" />
+                      <path d="M17 17h4" />
+                      <path d="M17 14v3" />
+                    </svg>
+                    สแกน QR เช็คอิน
+                  </button>
+                  <button className="cancel-btn" onClick={handleCancel}>ยกเลิกการเข้าร่วม</button>
+                </>
+              )}
+              {joinStatus === "pending" && (
+                <>
+                  <button className="join-btn pending" disabled>รอการอนุมัติ...</button>
+                  <button className="cancel-btn" onClick={handleCancel}>ยกเลิกคำขอ</button>
+                </>
+              )}
+              {(joinStatus === null || joinStatus === "cancelled") && (
+                <button className="join-btn" onClick={handleJoin} disabled={joinLoading}>
+                  {joinLoading ? "กำลังส่ง..." : "Join"}
+                </button>
+              )}
+            </div>
+          )
         )}
       </div>
 

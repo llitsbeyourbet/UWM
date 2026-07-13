@@ -22,13 +22,18 @@ import UserProfile from "./pages/UserProfile";
 
 function App() {
   const location = useLocation();
-  const hideNavbar = ["/login", "/register", "/scan"].includes(location.pathname);
+  
+  const isAdmin = location.pathname === "/admin" ||
+  (location.pathname === "/activity-detail" && new URLSearchParams(location.search).get("from") === "admin");
+  
+  const hideNavbar = ["/login", "/register", "/scan", "/admin"].includes(location.pathname) || isAdmin;
+  
 
   return (
-    <div className="app-shell">
+    <div className= {isAdmin ? "" : "app-shell"}>
       {!hideNavbar && <BottomNavbar />}
 
-      <div className="app-content">
+      <div className={isAdmin ? "" : "app-content"}>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

@@ -138,6 +138,7 @@ function CreateActivities() {
         <select value={category} onChange={(e) => setCategory(e.target.value)}>
           <option value="กีฬา">⚽ กีฬา</option>
           <option value="ดนตรี">🎵 ดนตรี</option>
+          <option value="ภาพยนตร์">🎥 ภาพยนตร์</option>
           <option value="ท่องเที่ยว">🏔 ท่องเที่ยว</option>
           <option value="อาหาร">🍜 อาหาร</option>
           <option value="ศิลปะ">🎨 ศิลปะ</option>

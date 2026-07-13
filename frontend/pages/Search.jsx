@@ -10,12 +10,13 @@ function Search() {
   const [filtered, setFiltered] = useState([]);
   const [activeCategory, setActiveCategory] = useState("ทั้งหมด");
 
-  const categories = ["ทั้งหมด", "กีฬา", "ดนตรี", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่"];
+  const categories = ["ทั้งหมด", "กีฬา", "ดนตรี", "ภาพยนตร์", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่"];
 
   const categoryEmoji = {
     "ทั้งหมด": "🌟",
     "กีฬา": "⚽",
     "ดนตรี": "🎵",
+    "ภาพยนตร์":"🎥",
     "ท่องเที่ยว": "🏔",
     "อาหาร": "🍜",
     "ศิลปะ": "🎨",
