@@ -18,15 +18,18 @@ import ForgotPassword from "./pages/ForgotPassword";
 import "./assets/AppLayout.css"
 import ScanQR from "./pages/ScanQR";
 import UserProfile from "./pages/UserProfile";
+import AdminReports from "./pages/AdminReports";
+import AdminUsers from "./pages/AdminUsers";
+import AdminActivities from "./pages/AdminActivities";
 
 
 function App() {
   const location = useLocation();
   
-  const isAdmin = location.pathname === "/admin" ||
+  const isAdmin = location.pathname.startsWith ("/admin") ||
   (location.pathname === "/activity-detail" && new URLSearchParams(location.search).get("from") === "admin");
   
-  const hideNavbar = ["/login", "/register", "/scan", "/admin"].includes(location.pathname) || isAdmin;
+  const hideNavbar = ["/login", "/register", "/scan"].includes(location.pathname) || isAdmin;
   
 
   return (
@@ -52,6 +55,9 @@ function App() {
           <Route path="/review/:activityId" element={<ReviewForm />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/scan" element={<ScanQR />} />
+          <Route path="/admin/reports" element={<AdminReports />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/activities" element={<AdminActivities />} />
         </Routes>
       </div>
     </div>
