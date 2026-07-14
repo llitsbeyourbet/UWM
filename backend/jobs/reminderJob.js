@@ -12,7 +12,7 @@ cron.schedule("* * * * *", async () => {
 
     const now = new Date();
 
-    // ดึงกิจกรรมที่ยัง active
+
     const activities = await Activity.findAll({
       where: {
         status: "active",
@@ -23,17 +23,41 @@ cron.schedule("* * * * *", async () => {
     for (const activity of activities) {
 
 
-      // ถ้าไม่มีวันหรือเวลา ข้าม
       if (!activity.date || !activity.time) continue;
 
 
-      // รวมวันที่กับเวลา
+      // แปลงวันที่ mm/dd/yy -> yyyy-mm-dd
+      const [month, day, year] = activity.date.split("/");
+
+
+      if (!month || !day || !year) {
+        console.log("Date format error:", activity.date);
+        continue;
+      }
+
+
+      // รองรับเวลา HH:mm หรือ HH:mm:ss
+      const time = activity.time.length === 5
+        ? `${activity.time}:00`
+        : activity.time;
+
+
+      // สร้างเวลาไทย
       const activityStart = new Date(
-        `${activity.date}T${activity.time}:00`
+        `20${year}-${month}-${day}T${time}+07:00`
       );
 
 
-      // เวลาที่เหลือ (นาที)
+      if (isNaN(activityStart)) {
+        console.log(
+          "Invalid date:",
+          activity.date,
+          activity.time
+        );
+        continue;
+      }
+
+
       const diffMinutes = Math.floor(
         (activityStart - now) / 1000 / 60
       );
@@ -41,17 +65,19 @@ cron.schedule("* * * * *", async () => {
 
       console.log(
         activity.activityName,
-        "เหลือ",
+        "เริ่ม:",
+        activityStart,
+        "เหลือ:",
         diffMinutes,
         "นาที"
       );
 
 
-      // แจ้งเตือนช่วงก่อนเริ่ม 59-60 นาที
-      if (diffMinutes >= 59 && diffMinutes <= 60) {
+
+      // แจ้งเตือนก่อนเริ่มภายใน 1 ชั่วโมง
+      if (diffMinutes <= 60 && diffMinutes >= 0) {
 
 
-        // หาเฉพาะคนที่เข้าร่วมแล้ว
         const members = await JoinRequest.findAll({
           where: {
             activityId: activity.id,
@@ -64,7 +90,6 @@ cron.schedule("* * * * *", async () => {
         for (const member of members) {
 
 
-          // เช็กว่าเคยแจ้งเตือนหรือยัง
           const exists = await Notification.findOne({
             where: {
               type: "reminder",
@@ -91,6 +116,7 @@ cron.schedule("* * * * *", async () => {
               isRead: false,
 
             });
+
 
 
             console.log(
