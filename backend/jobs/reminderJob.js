@@ -1,82 +1,52 @@
-const cron = require("node-cron");
-
 const Activity = require("../models/Activity");
 const JoinRequest = require("../models/JoinRequest");
 const Notification = require("../models/Notification");
 
-
-// ทำงานทุก 1 นาที
-cron.schedule("* * * * *", async () => {
-
+async function checkReminder() {
   try {
-
     const now = new Date();
 
-
+    // ดึงกิจกรรมที่ยัง Active
     const activities = await Activity.findAll({
       where: {
         status: "active",
       },
     });
 
-
     for (const activity of activities) {
-
 
       if (!activity.date || !activity.time) continue;
 
+      // รองรับทั้ง HH:mm และ HH:mm:ss
+      const time =
+        activity.time.length === 5
+          ? `${activity.time}:00`
+          : activity.time;
 
-      // แปลงวันที่ mm/dd/yy -> yyyy-mm-dd
-      const [month, day, year] = activity.date.split("/");
+      // สร้างวันเวลาเริ่มกิจกรรม
+      const activityStart = new Date(`${activity.date}T${time}+07:00`);
 
-
-      if (!month || !day || !year) {
-        console.log("Date format error:", activity.date);
-        continue;
-      }
-
-
-      // รองรับเวลา HH:mm หรือ HH:mm:ss
-      const time = activity.time.length === 5
-        ? `${activity.time}:00`
-        : activity.time;
-
-
-      // สร้างเวลาไทย
-      const activityStart = new Date(
-        `20${year}-${month}-${day}T${time}+07:00`
-      );
-
-
-      if (isNaN(activityStart)) {
+      if (isNaN(activityStart.getTime())) {
         console.log(
-          "Invalid date:",
+          "Invalid Date:",
+          activity.activityName,
           activity.date,
           activity.time
         );
         continue;
       }
 
-
+      // เวลาที่เหลือ (นาที)
       const diffMinutes = Math.floor(
-        (activityStart - now) / 1000 / 60
+        (activityStart.getTime() - now.getTime()) / 1000 / 60
       );
-
 
       console.log(
-        activity.activityName,
-        "เริ่ม:",
-        activityStart,
-        "เหลือ:",
-        diffMinutes,
-        "นาที"
+        `[Reminder] ${activity.activityName} | เหลือ ${diffMinutes} นาที`
       );
 
-
-
-      // แจ้งเตือนก่อนเริ่มภายใน 1 ชั่วโมง
-      if (diffMinutes <= 60 && diffMinutes >= 0) {
-
+      // แจ้งเตือนเมื่อเหลือไม่เกิน 60 นาที
+      if (diffMinutes >= 0 && diffMinutes <= 60) {
 
         const members = await JoinRequest.findAll({
           where: {
@@ -85,11 +55,9 @@ cron.schedule("* * * * *", async () => {
           },
         });
 
-
-
         for (const member of members) {
 
-
+          // กันแจ้งเตือนซ้ำ
           const exists = await Notification.findOne({
             where: {
               type: "reminder",
@@ -98,50 +66,30 @@ cron.schedule("* * * * *", async () => {
             },
           });
 
+          if (exists) continue;
 
+          await Notification.create({
+            type: "reminder",
+            toUserId: member.userId,
+            activityId: activity.id,
+            activityName: activity.activityName,
+            isRead: false,
+          });
 
-          if (!exists) {
-
-
-            await Notification.create({
-
-              type: "reminder",
-
-              toUserId: member.userId,
-
-              activityId: activity.id,
-
-              activityName: activity.activityName,
-
-              isRead: false,
-
-            });
-
-
-
-            console.log(
-              "สร้าง Reminder ให้ User:",
-              member.userId,
-              "กิจกรรม:",
-              activity.activityName
-            );
-
-          }
-
+          console.log(
+            `สร้าง Reminder -> User ${member.userId} | ${activity.activityName}`
+          );
         }
-
       }
-
     }
 
-
   } catch (error) {
-
-    console.log(
-      "Reminder Job Error:",
-      error.message
-    );
-
+    console.log("Reminder Job Error:", error.message);
   }
+}
 
-});
+// ตรวจทันทีเมื่อเปิด Server
+checkReminder();
+
+// ตรวจทุก 1 นาที
+setInterval(checkReminder, 60000);
