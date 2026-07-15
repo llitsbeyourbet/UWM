@@ -84,7 +84,7 @@ function CreateActivities() {
         return;
       }
 
-      localStorage.setItem("currentActivity", JSON.stringify(data));
+      navigate(`/activity-detail?id=${data.id}`);
 
       setActivityName("");
       setDetail("");
