@@ -27,6 +27,7 @@ require("./models/HostReview");
 require("./models/Comment");
 require("./models/OTP");
 require("./models/Checkin")
+require("./jobs/reminderJob");
 
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/activities", require("./routes/activities"));

@@ -10,58 +10,75 @@ function Notifications() {
     fetchNotifications();
   }, []);
 
-  const fetchNotifications = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_URL}/api/notifications`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      setNotifications(data);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // 👈 แก้ handleAccept ให้เรียก API join/respond
   const handleAccept = async (n) => {
     try {
       const token = localStorage.getItem("token");
-      await fetch(`${API_URL}/api/join/${n.activityId}/respond/${n.fromUserId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status: "approved" }),
-      });
-      setNotifications((prev) =>
-        prev.map((item) => item.id === n.id ? { ...item, type: "join_confirmed" } : item)
+
+      const res = await fetch(
+        `${API_URL}/api/join/${n.activityId}/respond/${n.fromUserId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ status: "approved" }),
+        }
       );
+
+      if (!res.ok) {
+        throw new Error("อนุมัติไม่สำเร็จ");
+      }
+
+      await fetchNotifications();
+
     } catch (err) {
       console.log(err);
     }
   };
+
 
   // 👈 แก้ handleReject ให้เรียก API join/respond
   const handleReject = async (n) => {
     try {
       const token = localStorage.getItem("token");
-      await fetch(`${API_URL}/api/join/${n.activityId}/respond/${n.fromUserId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status: "rejected" }),
-      });
-      setNotifications((prev) =>
-        prev.map((item) => item.id === n.id ? { ...item, type: "join_rejected" } : item)
+
+      await fetch(
+        `${API_URL}/api/join/${n.activityId}/respond/${n.fromUserId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ status: "rejected" }),
+        }
       );
+
+      await fetchNotifications();
+
     } catch (err) {
       console.log(err);
+    }
+  };
+
+  const fetchNotifications = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`${API_URL}/api/notifications`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      setNotifications(data);
+
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -86,6 +103,14 @@ function Notifications() {
         </svg>
       </div>
     );
+    if (type === "member_joined") return (
+        <div className="notif-icon green">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#44aa66" strokeWidth="2" strokeLinecap="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+    );
+    
     if (type === "reminder") return (
       <div className="notif-icon amber">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cc8833" strokeWidth="2" strokeLinecap="round">
@@ -119,9 +144,11 @@ function Notifications() {
     if (n.type === "join_request")
       return <><span className="bold">{n.fromUsername}</span> ส่งคำขอเข้าร่วมกิจกรรม <span className="bold">{n.activityName}</span></>;
     if (n.type === "join_confirmed")
-      return <><span className="bold">{n.fromUsername}</span> ตอบรับคำขอเข้าร่วมกิจกรรม <span className="bold">{n.activityName}</span> แล้ว</>;
+      return <><span className="bold">{n.fromUsername}</span> เข้าร่วมกิจกรรม{" "} <span className="bold">{n.activityName}</span> แล้ว</>;
     if (n.type === "join_rejected")
-      return <><span className="bold">{n.fromUsername}</span> ปฏิเสธคำขอเข้าร่วมกิจกรรม <span className="bold">{n.activityName}</span></>;
+      return <><span className="bold">{n.fromUsername}</span>{" "} ปฏิเสธคำขอเข้าร่วมกิจกรรม{" "} <span className="bold">{n.activityName}</span> </>;
+    if (n.type === "member_joined")
+      return <><span className="bold">{n.fromUsername}</span>{" "} เข้าร่วมกิจกรรม{" "}<span className="bold">{n.activityName}</span>{" "} แล้ว </>;
     if (n.type === "reminder")
       return <>กิจกรรม <span className="bold">{n.activityName}</span> จะเริ่มในอีก <span className="bold">1 ชั่วโมง</span></>;
     if (n.type === "report")

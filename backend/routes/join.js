@@ -115,17 +115,57 @@ router.put("/:activityId/respond/:userId", auth, async (req, res) => {
 
     await joinRequest.update({ status });
 
+    // ลบ Notification คำขอเดิมของเจ้าของ
+    await Notification.destroy({
+      where: {
+        activityId,
+        fromUserId: userId,
+        toUserId: req.userId,
+        type: "join_request",
+      },
+    });
+
     const owner = await User.findByPk(req.userId);
 
-    await Notification.create({
-      type: status === "approved" ? "join_confirmed" : "join_rejected",
-      fromUserId: req.userId,
-      toUserId: userId,
-      activityId: activity.id,
-      activityName: activity.activityName,
-      fromUsername: owner.username,
-      isRead: false,
-    });
+    if (status === "approved") {
+
+      // แจ้งผู้เข้าร่วม
+      await Notification.create({
+        type: "join_confirmed",
+        fromUserId: req.userId,
+        toUserId: userId,
+        activityId: activity.id,
+        activityName: activity.activityName,
+        fromUsername: owner.username,
+        isRead: false,
+      });
+
+      // แจ้งเจ้าของกิจกรรม
+      const joinedUser = await User.findByPk(userId);
+
+      await Notification.create({
+        type: "member_joined",
+        fromUserId: userId,
+        toUserId: req.userId,
+        activityId: activity.id,
+        activityName: activity.activityName,
+        fromUsername: joinedUser.username,
+        isRead: false,
+      });
+
+    } else {
+
+      await Notification.create({
+        type: "join_rejected",
+        fromUserId: req.userId,
+        toUserId: userId,
+        activityId: activity.id,
+        activityName: activity.activityName,
+        fromUsername: owner.username,
+        isRead: false,
+      });
+
+    }
 
     res.json({ message: status === "approved" ? "อนุมัติสำเร็จ" : "ปฏิเสธสำเร็จ" });
   } catch (err) {
