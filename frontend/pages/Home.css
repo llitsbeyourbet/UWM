@@ -267,7 +267,7 @@
 }
 
 .tag-public { background: #2f80ed; }
-.tag-private { background: #111; }
+.tag-private { background: #f7d04e; }
 
 .card-content {
   flex: 1;

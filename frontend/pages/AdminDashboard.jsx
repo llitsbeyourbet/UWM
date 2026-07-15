@@ -1,235 +1,533 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AdminDashboard.css";
 import API_URL from "../config";
 
-function AdminDashboard() {
+export default function AdminDashboard() {
   const navigate = useNavigate();
-  const [stats, setStats] = useState(null);
-  const [reports, setReports] = useState([]);
-  const [activities, setActivities] = useState({});
-  const [users, setUsers] = useState({});
+
   const [loading, setLoading] = useState(true);
+
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    totalActivities: 0,
+    pendingReports: 0,
+    suspendedActivities: 0,
+    totalReports: 0,
+    totalCheckins: 0,
+  });
+
+  const [users, setUsers] = useState([]);
+  const [activities, setActivities] = useState([]);
+  const [reports, setReports] = useState([]);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
+
     if (!user || user.role !== "admin") {
       navigate("/");
       return;
     }
-    fetchData();
+
+    fetchDashboard();
   }, []);
 
-  const fetchData = async () => {
+  const fetchDashboard = async () => {
     const token = localStorage.getItem("token");
+
     try {
-      const [statsRes, reportsRes, actRes, usersRes] = await Promise.all([
-        fetch(`${API_URL}/api/admin/dashboard`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`${API_URL}/api/admin/reports`, { headers: { Authorization: `Bearer ${token}` } }),
+      setLoading(true);
+
+      const [
+        statsRes,
+        usersRes,
+        reportsRes,
+        activitiesRes,
+      ] = await Promise.all([
+        fetch(`${API_URL}/api/admin/dashboard`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+
+        fetch(`${API_URL}/api/admin/users`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+
+        fetch(`${API_URL}/api/admin/reports`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+
         fetch(`${API_URL}/api/activities`),
-        fetch(`${API_URL}/api/admin/users`, { headers: { Authorization: `Bearer ${token}` } }),
       ]);
 
       const statsData = await statsRes.json();
-      const reportsData = await reportsRes.json();
-      const actData = await actRes.json();
       const usersData = await usersRes.json();
+      const reportsData = await reportsRes.json();
+      const activitiesData = await activitiesRes.json();
 
       setStats(statsData);
+      setUsers(usersData);
       setReports(reportsData);
-
-      const actMap = {};
-      actData.forEach((a) => { actMap[a.id] = a; });
-      setActivities(actMap);
-
-      const userMap = {};
-      usersData.forEach((u) => { userMap[u.id] = u; });
-      setUsers(userMap);
-
+      setActivities(activitiesData);
     } catch (err) {
       console.log(err);
+      alert("โหลดข้อมูลไม่สำเร็จ");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSuspend = async (activityId) => {
-    if (!window.confirm("ต้องการระงับกิจกรรมนี้ไหม?")) return;
+  const userMap = useMemo(() => {
+    const map = {};
+
+    users.forEach((u) => {
+      map[u.id] = u;
+    });
+
+    return map;
+  }, [users]);
+
+  const groupedReports = useMemo(() => {
+    const map = {};
+
+    reports.forEach((r) => {
+      if (!map[r.activityId]) {
+        map[r.activityId] = [];
+      }
+
+      map[r.activityId].push(r);
+    });
+
+    return map;
+  }, [reports]);
+
+  const suspendActivity = async (activityId) => {
+    if (!window.confirm("ต้องการระงับกิจกรรมนี้ใช่หรือไม่"))
+      return;
+
     const token = localStorage.getItem("token");
+
     try {
-      const res = await fetch(`${API_URL}/api/admin/suspend/${activityId}`, {
-        method: "PUT",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) return;
-      alert("ระงับกิจกรรมสำเร็จ");
-      fetchData();
-    } catch { alert("ไม่สามารถเชื่อมต่อ server ได้"); }
+      const res = await fetch(
+        `${API_URL}/api/admin/suspend/${activityId}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error();
+      }
+
+      fetchDashboard();
+    } catch {
+      alert("เกิดข้อผิดพลาด");
+    }
   };
 
-  const handleDismiss = async (activityId) => {
+  const unsuspendActivity = async (activityId) => {
     const token = localStorage.getItem("token");
+
     try {
-      const res = await fetch(`${API_URL}/api/admin/unsuspend/${activityId}`, {
-        method: "PUT",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) return;
-      alert("ยกเลิกรายงานสำเร็จ");
-      fetchData();
-    } catch { alert("ไม่สามารถเชื่อมต่อ server ได้"); }
+      const res = await fetch(
+        `${API_URL}/api/admin/unsuspend/${activityId}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error();
+      }
+
+      fetchDashboard();
+    } catch {
+      alert("เกิดข้อผิดพลาด");
+    }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/login");
-  };
-
-  const groupedReports = reports.reduce((acc, r) => {
-    if (!acc[r.activityId]) acc[r.activityId] = [];
-    acc[r.activityId].push(r);
-    return acc;
-  }, {});
-
-  if (loading) return <div className="admin-loading">กำลังโหลด...</div>;
-
+  if (loading) {
+    return (
+      <div className="admin-loading">
+        กำลังโหลดข้อมูล...
+      </div>
+    );
+  }
   return (
-    <div className="admin-layout">
+  <div className="admin-page">
 
-      {/* Sidebar */}
-      <div className="admin-sidebar">
-        <div className="sidebar-brand">
-          <p className="sidebar-brand-sub">Until We Meet</p>
-          <p className="sidebar-brand-title">Admin Panel</p>
-        </div>
+    <div className="admin-header">
 
-        <nav className="sidebar-nav">
-          <div className="sidebar-nav-item active">
-            <span>📊</span>
-            <span>Dashboard</span>
-          </div>
-          <div className="sidebar-nav-item">
-            <span>🚩</span>
-            <span>รายงาน</span>
-          </div>
-          <div className="sidebar-nav-item">
-            <span>👥</span>
-            <span>ผู้ใช้</span>
-          </div>
-          <div className="sidebar-nav-item">
-            <span>🎯</span>
-            <span>กิจกรรม</span>
-          </div>
-        </nav>
-
-        {/* Logout */}
-        <div className="sidebar-logout" onClick={handleLogout}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e53935" strokeWidth="2" strokeLinecap="round">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-            <polyline points="16 17 21 12 16 7"/>
-            <line x1="21" y1="12" x2="9" y2="12"/>
-          </svg>
-          <span>ออกจากระบบ</span>
-        </div>
+      <div>
+        <h1>Admin Dashboard</h1>
+        <p>Until We Meet Management System</p>
       </div>
 
-      {/* Main */}
-      <div className="admin-main">
+      <button
+        className="logout-btn"
+        onClick={() => {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          navigate("/login");
+        }}
+      >
+        Logout
+      </button>
 
-        {/* Header */}
-        <div className="admin-topbar">
-          <div>
-            <p className="admin-sub">Overview</p>
-            <h1 className="admin-title">Dashboard</h1>
-          </div>
-          <div className="admin-user-badge">
-            <div className="admin-avatar">A</div>
-            <span>Admin</span>
-          </div>
-        </div>
+    </div>
 
-        {/* Stats */}
-        <div className="admin-stats-grid">
-          <div className="stat-card" style={{ background: "#FFF176" }}>
-            <div className="stat-circle" />
-            <p className="stat-num">{stats?.totalUsers || 0}</p>
-            <p className="stat-lbl">ผู้ใช้ทั้งหมด</p>
-          </div>
-          <div className="stat-card" style={{ background: "#B8E0FF" }}>
-            <div className="stat-circle" />
-            <p className="stat-num">{stats?.totalActivities || 0}</p>
-            <p className="stat-lbl">กิจกรรมทั้งหมด</p>
-          </div>
-          <div className="stat-card" style={{ background: "#FFB3C6" }}>
-            <div className="stat-circle" />
-            <p className="stat-num">{stats?.pendingReports || 0}</p>
-            <p className="stat-lbl">รายงานรอตรวจ</p>
-          </div>
-          <div className="stat-card" style={{ background: "#C8F5C8" }}>
-            <div className="stat-circle" />
-            <p className="stat-num">{stats?.totalCheckins || 0}</p>
-            <p className="stat-lbl">Check-in ทั้งหมด</p>
-          </div>
-          <div className="stat-card" style={{ background: "#E8D5F5" }}>
-            <div className="stat-circle" />
-            <p className="stat-num">{stats?.suspendedActivities || 0}</p>
-            <p className="stat-lbl">ถูกระงับ</p>
-          </div>
-          <div className="stat-card" style={{ background: "#FFD4B8" }}>
-            <div className="stat-circle" />
-            <p className="stat-num">{stats?.totalReports || 0}</p>
-            <p className="stat-lbl">รายงานทั้งหมด</p>
-          </div>
-        </div>
+    {/* ================= Stats ================= */}
 
-        {/* Reports Table */}
-        <div className="admin-table-card">
-          <p className="admin-table-title">รายงานที่รอตรวจสอบ</p>
+    <div className="stats-grid">
 
-          <div className="admin-table-header">
-            <span>ชื่อกิจกรรม</span>
-            <span>ผู้สร้าง</span>
-            <span>จำนวนรายงาน</span>
-            <span>เหตุผล</span>
-            <span>การจัดการ</span>
-          </div>
+      <div className="stat-card users-card">
+        <h2>{stats.totalUsers}</h2>
+        <span>Users</span>
+      </div>
+
+      <div className="stat-card activities-card">
+        <h2>{stats.totalActivities}</h2>
+        <span>Activities</span>
+      </div>
+
+      <div className="stat-card reports-card">
+        <h2>{stats.pendingReports}</h2>
+        <span>Pending Reports</span>
+      </div>
+
+      <div className="stat-card suspended-card">
+        <h2>{stats.suspendedActivities}</h2>
+        <span>Suspended</span>
+      </div>
+
+    </div>
+
+    {/* ================= Users ================= */}
+
+    <section className="admin-card">
+
+      <h2>Users</h2>
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>Name</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          {users.length === 0 ? (
+
+            <tr>
+              <td colSpan="4">
+                ไม่มีข้อมูล
+              </td>
+            </tr>
+
+          ) : (
+
+            users.map((user) => (
+
+              <tr key={user.id}>
+
+                <td>{user.name}</td>
+
+                <td>@{user.username}</td>
+
+                <td>{user.email}</td>
+
+                <td>
+
+                  <span
+                    className={
+                      user.role === "admin"
+                        ? "role admin"
+                        : "role user"
+                    }
+                  >
+                    {user.role}
+                  </span>
+
+                </td>
+
+              </tr>
+
+            ))
+
+          )}
+
+        </tbody>
+
+      </table>
+
+    </section>
+
+    {/* ================= Activities ================= */}
+
+    <section className="admin-card">
+
+      <h2>Activities</h2>
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>Activity</th>
+            <th>Creator</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Action</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          {activities.map((activity) => {
+
+            const creator = userMap[activity.createdBy];
+
+            return (
+
+              <tr key={activity.id}>
+
+                <td>{activity.activityName}</td>
+
+                <td>{creator?.name || "-"}</td>
+
+                <td>{activity.category}</td>
+
+                <td>
+
+                  <span
+                    className={
+                      activity.isSuspended
+                        ? "status suspended"
+                        : "status active"
+                    }
+                  >
+                    {activity.isSuspended
+                      ? "Suspended"
+                      : "Active"}
+                  </span>
+
+                </td>
+
+                <td>
+
+                  {activity.isSuspended ? (
+
+                    <button
+                      className="unsuspend-btn"
+                      onClick={() =>
+                        unsuspendActivity(activity.id)
+                      }
+                    >
+                      Unsuspend
+                    </button>
+
+                  ) : (
+
+                    <button
+                      className="suspend-btn"
+                      onClick={() =>
+                        suspendActivity(activity.id)
+                      }
+                    >
+                      Suspend
+                    </button>
+
+                  )}
+
+                  <button
+                    className="detail-btn"
+                    onClick={() =>
+                      navigate(
+                        `/activity-detail?id=${activity.id}&from=admin`
+                      )
+                    }
+                  >
+                    Detail
+                  </button>
+
+                </td>
+
+              </tr>
+
+            );
+
+          })}
+
+        </tbody>
+
+      </table>
+
+    </section>
+        {/* ================= Reports ================= */}
+
+    <section className="admin-card">
+
+      <h2>Reports</h2>
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Activity</th>
+            <th>Creator</th>
+            <th>Reports</th>
+            <th>Reasons</th>
+            <th>Action</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
 
           {Object.keys(groupedReports).length === 0 ? (
-            <p className="admin-empty">ไม่มีรายงาน</p>
+
+            <tr>
+
+              <td colSpan="5">
+                ไม่มีรายงาน
+              </td>
+
+            </tr>
+
           ) : (
-            Object.entries(groupedReports).map(([activityId, reportList]) => {
-              const act = activities[activityId];
-              const creator = act ? users[act.createdBy] : null;
-              return (
-                <div key={activityId} className="admin-table-row">
-                  <div>
-                    <p className="row-activity-name">{act?.activityName || "-"}</p>
-                  </div>
-                  <div>
-                    <p className="row-creator">{creator?.name || "-"}</p>
-                    <p className="row-creator-username">@{creator?.username || "-"}</p>
-                  </div>
-                  <span className="row-count">{reportList.length} ครั้ง</span>
-                  <div className="row-reasons">
-                    {reportList.map((r, i) => (
-                      <span key={i} className="report-reason-tag">{r.reason}</span>
-                    ))}
-                  </div>
-                  <div className="row-actions">
-                    <button className="suspend-btn" onClick={() => handleSuspend(activityId)}>ระงับ</button>
-                    <button className="dismiss-btn" onClick={() => handleDismiss(activityId)}>ยกเลิก</button>
-                    <button className="inspect-btn" onClick={() => navigate(`/activity-detail?id=${activityId}&from=admin`)}>🔍</button>
-                  </div>
-                </div>
-              );
-            })
+
+            Object.entries(groupedReports).map(
+              ([activityId, reportList]) => {
+
+                const activity = activities.find(
+                  (item) => item.id === Number(activityId)
+                );
+
+                const creator = activity
+                  ? userMap[activity.createdBy]
+                  : null;
+
+                return (
+
+                  <tr key={activityId}>
+
+                    <td>
+                      {activity?.activityName || "-"}
+                    </td>
+
+                    <td>
+                      {creator?.name || "-"}
+                    </td>
+
+                    <td>
+
+                      <span className="report-count">
+
+                        {reportList.length}
+
+                      </span>
+
+                    </td>
+
+                    <td>
+
+                      <div className="reason-list">
+
+                        {reportList.map((report) => (
+
+                          <span
+                            key={report.id}
+                            className="reason-tag"
+                          >
+                            {report.reason}
+                          </span>
+
+                        ))}
+
+                      </div>
+
+                    </td>
+
+                    <td>
+
+                      {activity?.isSuspended ? (
+
+                        <button
+                          className="unsuspend-btn"
+                          onClick={() =>
+                            unsuspendActivity(activity.id)
+                          }
+                        >
+                          Unsuspend
+                        </button>
+
+                      ) : (
+
+                        <button
+                          className="suspend-btn"
+                          onClick={() =>
+                            suspendActivity(activity.id)
+                          }
+                        >
+                          Suspend
+                        </button>
+
+                      )}
+
+                      <button
+                        className="detail-btn"
+                        onClick={() =>
+                          navigate(
+                            `/activity-detail?id=${activityId}&from=admin`
+                          )
+                        }
+                      >
+                        Detail
+                      </button>
+
+                    </td>
+
+                  </tr>
+
+                );
+
+              }
+            )
+
           )}
-        </div>
 
-      </div>
-    </div>
-  );
+        </tbody>
+
+      </table>
+
+    </section>
+
+  </div>
+
+);
+
 }
-
-export default AdminDashboard;
