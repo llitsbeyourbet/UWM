@@ -42,6 +42,29 @@
   position: relative;
 }
 
+.notification-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -2px;
+  right: -6px;
+  background: red;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  border-radius: 10px;
+  padding: 2px 5px;
+  min-width: 16px;
+  text-align: center;
+  border: 1px solid #fff;
+  z-index: 1;
+}
+
 .notification-dot {
   position: absolute;
   top: 4px;
