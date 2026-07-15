@@ -92,7 +92,7 @@ function Home() {
         </div>
         <div className="home-icons">
           {/* สแกน QR */}
-          <div className="icon-btn scan-btn" onClick={() => navigate("/scan")}>
+          <div className="icon-btn" onClick={() => navigate("/scan")}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
               stroke="#010101" strokeWidth="2" strokeLinecap="round">
               <path d="M3 7V3h4" />

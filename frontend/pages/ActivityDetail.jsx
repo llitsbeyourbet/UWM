@@ -425,7 +425,7 @@ function ActivityDetail() {
         {/* Host */}
         {host && (
           <div className="host-section">
-            <h3 className="section-title">จัดโดย</h3>
+            <h3 className="section-title">ผู้สร้างกิจกรรม</h3>
 
             <div
               className="host-card"
