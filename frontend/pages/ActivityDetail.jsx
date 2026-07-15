@@ -366,16 +366,25 @@ function ActivityDetail() {
 
         {/* Cover */}
         <div className="activity-cover-wrapper">
-
           <div className="activity-cover">
-
-            <img
-              src={activity.cover}
-              alt={activity.activityName}
-              className="activity-main-image"
-            />
+            {activity.cover ? (
+              <img
+                src={activity.cover.startsWith("http") ? activity.cover : `${API_URL}/uploads/${activity.cover}`}
+                alt={activity.activityName}
+                className="activity-main-image"
+              />
+            ) : (
+              <div className="activity-cover-placeholder">
+                <div className="placeholder-icon">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#bcc6d4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                    <circle cx="8.5" cy="8.5" r="1.5" />
+                    <polyline points="21 15 16 10 5 15" />
+                  </svg>
+                </div>
+              </div>
+            )}
           </div>
-
         </div>
 
         {/* Title & Rating */}
