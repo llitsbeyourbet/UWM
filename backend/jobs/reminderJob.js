@@ -1,6 +1,7 @@
 const Activity = require("../models/Activity");
 const JoinRequest = require("../models/JoinRequest");
 const Notification = require("../models/Notification");
+const notificationService = require("../services/notificationService");
 
 async function checkReminder() {
   try {
@@ -56,30 +57,27 @@ async function checkReminder() {
         });
 
         for (const member of members) {
-
-          // กันแจ้งเตือนซ้ำ
-          const exists = await Notification.findOne({
-            where: {
-              type: "reminder",
-              activityId: activity.id,
-              toUserId: member.userId,
-            },
-          });
-
-          if (exists) continue;
-
-          await Notification.create({
-            type: "reminder",
-            toUserId: member.userId,
-            activityId: activity.id,
-            activityName: activity.activityName,
-            isRead: false,
-          });
-
-          console.log(
-            `สร้าง Reminder -> User ${member.userId} | ${activity.activityName}`
+          await notificationService.createNotification(
+            member.userId,
+            "reminder",
+            activity.id,
+            activity.activityName,
+            null,
+            null,
+            { deduplicate: true }
           );
         }
+
+        // แจ้งเจ้าของกิจกรรมด้วย
+        await notificationService.createNotification(
+          activity.createdBy,
+          "reminder",
+          activity.id,
+          activity.activityName,
+          null,
+          null,
+          { deduplicate: true }
+        );
       }
     }
 

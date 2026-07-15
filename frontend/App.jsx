@@ -21,7 +21,7 @@ import UserProfile from "./pages/UserProfile";
 import AdminReports from "./pages/AdminReports";
 import AdminUsers from "./pages/AdminUsers";
 import AdminActivities from "./pages/AdminActivities";
-
+import { SocketProvider } from "./src/context/SocketContext";
 
 function App() {
   const location = useLocation();
@@ -33,34 +33,36 @@ function App() {
   
 
   return (
-    <div className= {isAdmin ? "" : "app-shell"}>
-      {!hideNavbar && <BottomNavbar />}
+    <SocketProvider>
+      <div className= {isAdmin ? "" : "app-shell"}>
+        {!hideNavbar && <BottomNavbar />}
 
-      <div className={isAdmin ? "" : "app-content"}>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-          <Route path="/CreateActivities" element={<CreateActivities />} />
-          <Route path="/activities" element={<ActivityDetail />} />
-          <Route path="/activity-detail" element={<ActivityDetail />} />
-          <Route path="/search" element={<Search />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/user/:id" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/edit-profile" element={<EditProfile />} />
-          <Route path="/edit-activity/:id" element={<EditActivity />} />
-          <Route path="/checkin/:activityId/:qrToken" element={<CheckIn />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/review/:activityId" element={<ReviewForm />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/scan" element={<ScanQR />} />
-          <Route path="/admin/reports" element={<AdminReports />} />
-          <Route path="/admin/users" element={<AdminUsers />} />
-          <Route path="/admin/activities" element={<AdminActivities />} />
-        </Routes>
+        <div className={isAdmin ? "" : "app-content"}>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+            <Route path="/CreateActivities" element={<CreateActivities />} />
+            <Route path="/activities" element={<ActivityDetail />} />
+            <Route path="/activity-detail" element={<ActivityDetail />} />
+            <Route path="/search" element={<Search />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/user/:id" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/edit-profile" element={<EditProfile />} />
+            <Route path="/edit-activity/:id" element={<EditActivity />} />
+            <Route path="/checkin/:activityId/:qrToken" element={<CheckIn />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/review/:activityId" element={<ReviewForm />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/scan" element={<ScanQR />} />
+            <Route path="/admin/reports" element={<AdminReports />} />
+            <Route path="/admin/users" element={<AdminUsers />} />
+            <Route path="/admin/activities" element={<AdminActivities />} />
+          </Routes>
+        </div>
       </div>
-    </div>
+    </SocketProvider>
   );
 }
 

@@ -7,6 +7,8 @@ const Comment = require("../models/Comment");
 const JoinRequest = require("../models/JoinRequest");
 const Activity = require("../models/Activity");
 const User = require("../models/User");
+const Notification = require("../models/Notification");
+const notificationService = require("../services/notificationService");
 
 const auth = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -79,6 +81,17 @@ router.post("/:activityId", auth, async (req, res) => {
       activityId,
       rating: hostRating,
     });
+
+    const user = await User.findByPk(req.userId);
+
+    await notificationService.createNotification(
+      activity.createdBy,
+      "review",
+      activity.id,
+      activity.activityName,
+      req.userId,
+      user.username
+    );
 
     // บันทึก Comment (ถ้ามี)
     if (comment && comment.trim()) {

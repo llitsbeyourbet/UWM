@@ -3,8 +3,8 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const Report = require("../models/Report");
 const Activity = require("../models/Activity");
-const Notification = require("../models/Notification"); // 👈 เพิ่ม
-const User = require("../models/User"); // 👈 เพิ่ม
+const User = require("../models/User");
+const notificationService = require("../services/notificationService");
 
 const auth = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -40,15 +40,14 @@ router.post("/:activityId", auth, async (req, res) => {
     // 👈 ส่งแจ้งเตือนไปหา admin ทุกคน
     const admins = await User.findAll({ where: { role: "admin" } });
     for (const admin of admins) {
-      await Notification.create({
-        type: "report",
-        fromUserId: req.userId,
-        toUserId: admin.id,
-        activityId: activity.id,
-        activityName: activity.activityName,
-        fromUsername: reporter.username,
-        isRead: false,
-      });
+      await notificationService.createNotification(
+        admin.id,
+        "report",
+        activity.id,
+        activity.activityName,
+        req.userId,
+        reporter.username
+      );
     }
 
     res.status(201).json({ message: "รายงานสำเร็จ" });
