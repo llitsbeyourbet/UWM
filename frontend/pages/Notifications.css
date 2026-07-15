@@ -20,6 +20,17 @@
   color: #111;
 }
 
+.read-all-btn {
+  padding: 6px 12px;
+  background: #f0f0f0;
+  color: #555;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Sarabun', sans-serif;
+}
+
 .notif-list {
   padding: 12px;
   display: flex;
@@ -34,16 +45,17 @@
 }
 
 .notif-card {
-  background: #fff;
+  background: #fafafa;
   border-radius: 12px;
   padding: 12px;
   display: flex;
   gap: 12px;
   align-items: flex-start;
+  transition: background-color 0.3s ease;
 }
 
 .notif-card.new {
-  background: #f0f0ff;
+  background: #eef2ff;
 }
 
 .notif-icon {

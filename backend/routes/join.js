@@ -7,6 +7,7 @@ const Notification = require("../models/Notification");
 const User = require("../models/User");
 const JoinRequest = require("../models/JoinRequest");
 const CheckIn = require("../models/Checkin");
+const notificationService = require("../services/notificationService");
 
 const auth = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -46,15 +47,14 @@ router.post("/:activityId", auth, async (req, res) => {
         await JoinRequest.create({ activityId, userId: req.userId, status: "approved" });
       }
 
-      await Notification.create({
-        type: "join_confirmed",
-        fromUserId: req.userId,
-        toUserId: activity.createdBy,
-        activityId: activity.id,
-        activityName: activity.activityName,
-        fromUsername: user.username,
-        isRead: false,
-      });
+      await notificationService.createNotification(
+        activity.createdBy,
+        "member_joined",
+        activity.id,
+        activity.activityName,
+        req.userId,
+        user.username
+      );
 
       return res.status(201).json({ message: "เข้าร่วมกิจกรรมสำเร็จ", status: "approved" });
     }
@@ -65,15 +65,14 @@ router.post("/:activityId", auth, async (req, res) => {
       await JoinRequest.create({ activityId, userId: req.userId, status: "pending" });
     }
 
-    await Notification.create({
-      type: "join_request",
-      fromUserId: req.userId,
-      toUserId: activity.createdBy,
-      activityId: activity.id,
-      activityName: activity.activityName,
-      fromUsername: user.username,
-      isRead: false,
-    });
+    await notificationService.createNotification(
+      activity.createdBy,
+      "join_request",
+      activity.id,
+      activity.activityName,
+      req.userId,
+      user.username
+    );
 
     res.status(201).json({ message: "ส่งคำขอเข้าร่วมสำเร็จ รอการอนุมัติ", status: "pending" });
   } catch (err) {
@@ -129,41 +128,40 @@ router.put("/:activityId/respond/:userId", auth, async (req, res) => {
 
     if (status === "approved") {
 
-      // แจ้งผู้เข้าร่วม
-      await Notification.create({
-        type: "join_confirmed",
-        fromUserId: req.userId,
-        toUserId: userId,
-        activityId: activity.id,
-        activityName: activity.activityName,
-        fromUsername: owner.username,
-        isRead: false,
-      });
-
-      // แจ้งเจ้าของกิจกรรม
+      // ดึงข้อมูลคนที่เข้าร่วม
       const joinedUser = await User.findByPk(userId);
 
-      await Notification.create({
-        type: "member_joined",
-        fromUserId: userId,
-        toUserId: req.userId,
-        activityId: activity.id,
-        activityName: activity.activityName,
-        fromUsername: joinedUser.username,
-        isRead: false,
-      });
+      // แจ้งผู้เข้าร่วมว่าเจ้าของอนุมัติแล้ว
+      await notificationService.createNotification(
+        userId,
+        "join_confirmed",
+        activity.id,
+        activity.activityName,
+        req.userId,
+        owner.username
+      );
+
+      // เปลี่ยน Notification เดิมของเจ้าของ
+      await notificationService.createNotification(
+        req.userId,
+        "member_joined",
+        activity.id,
+        activity.activityName,
+        userId,
+        joinedUser.username
+      );
+
 
     } else {
 
-      await Notification.create({
-        type: "join_rejected",
-        fromUserId: req.userId,
-        toUserId: userId,
-        activityId: activity.id,
-        activityName: activity.activityName,
-        fromUsername: owner.username,
-        isRead: false,
-      });
+      await notificationService.createNotification(
+        userId,
+        "join_rejected",
+        activity.id,
+        activity.activityName,
+        req.userId,
+        owner.username
+      );
 
     }
 
@@ -227,71 +225,230 @@ router.get("/:activityId/count", async (req, res) => {
 });
 
 // Check-in ด้วย QR Code
+// Check-in ด้วย QR Code
 router.post("/:activityId/checkin", auth, async (req, res) => {
   try {
     const { activityId } = req.params;
     const { qrToken } = req.body;
 
+
+    // ตรวจสอบ QR Token
     try {
-      const payload = jwt.verify(qrToken, process.env.JWT_SECRET);
-      if (Number(payload.activityId) !== Number(activityId)) {
-        return res.status(400).json({ message: "QR ไม่ถูกต้อง" });
+
+      const payload = jwt.verify(
+        qrToken,
+        process.env.JWT_SECRET
+      );
+
+
+      if(Number(payload.activityId) !== Number(activityId)){
+        return res.status(400).json({
+          message:"QR ไม่ถูกต้อง"
+        });
       }
-    } catch {
-      return res.status(400).json({ message: "QR หมดอายุแล้ว" });
+
+
+    } catch(err){
+
+      return res.status(400).json({
+        message:"QR หมดอายุแล้ว"
+      });
+
     }
 
+
+
+    // ตรวจสอบว่ามีสิทธิ์เข้าร่วมไหม
     const joinRequest = await JoinRequest.findOne({
-      where: { activityId, userId: req.userId },
+      where:{
+        activityId,
+        userId:req.userId
+      }
     });
 
-    if (!joinRequest)
-      return res.status(404).json({ message: "ไม่พบคำขอเข้าร่วม" });
 
-    if (joinRequest.status === "checked_in")
-      return res.status(409).json({ message: "เช็คอินแล้ว", status: "checked_in" });
+    if(!joinRequest){
 
-    if (joinRequest.status !== "approved")
-      return res.status(400).json({ message: "ยังไม่ได้รับการอนุมัติ" });
+      return res.status(404).json({
+        message:"ไม่พบคำขอเข้าร่วม"
+      });
+
+    }
+
+
+
+    if(joinRequest.status === "checked_in"){
+
+      return res.status(409).json({
+        message:"เช็คอินแล้ว",
+        status:"checked_in"
+      });
+
+    }
+
+
+
+    if(joinRequest.status !== "approved"){
+
+      return res.status(400).json({
+        message:"ยังไม่ได้รับการอนุมัติ"
+      });
+
+    }
+
+
 
     const activity = await Activity.findByPk(activityId);
 
-    if (activity.checkinStart && activity.checkinEnd) {
-      const currentTime = new Date().toLocaleTimeString("en-GB", {
-        timeZone: "Asia/Bangkok",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
+
+    if(!activity){
+
+      return res.status(404).json({
+        message:"ไม่พบกิจกรรม"
       });
 
-      const start = activity.checkinStart.slice(0, 5);
-      const end = activity.checkinEnd.slice(0, 5);
-
-      if (currentTime < start)
-        return res.status(400).json({ message: `ยังไม่ถึงเวลาเช็คอิน (เริ่ม ${start})` });
-
-      if (currentTime > end)
-        return res.status(400).json({ message: `หมดเขตเช็คอินแล้ว (ปิด ${end})` });
     }
 
+
+
+    // ตรวจสอบเวลา Check-in
+    if(activity.checkinStart && activity.checkinEnd){
+
+
+      const currentTime =
+        new Date().toLocaleTimeString(
+          "en-GB",
+          {
+            timeZone:"Asia/Bangkok",
+            hour:"2-digit",
+            minute:"2-digit",
+            hour12:false
+          }
+        );
+
+
+      const start =
+        activity.checkinStart.slice(0,5);
+
+
+      const end =
+        activity.checkinEnd.slice(0,5);
+
+
+
+      if(currentTime < start){
+
+        return res.status(400).json({
+          message:`ยังไม่ถึงเวลาเช็คอิน (เริ่ม ${start})`
+        });
+
+      }
+
+
+
+      if(currentTime > end){
+
+        return res.status(400).json({
+          message:`หมดเขตเช็คอินแล้ว (ปิด ${end})`
+        });
+
+      }
+
+    }
+
+
+
+
+    // เปลี่ยนสถานะเป็น checked_in
     const [updated] = await JoinRequest.update(
-      { status: "checked_in" },
-      { where: { activityId, userId: req.userId, status: "approved" } }
+      {
+        status:"checked_in"
+      },
+      {
+        where:{
+          activityId,
+          userId:req.userId,
+          status:"approved"
+        }
+      }
     );
 
-    if (updated === 0)
-      return res.status(409).json({ message: "เช็คอินแล้ว หรือไม่สามารถเช็คอินได้", status: "checked_in" });
 
+
+    if(updated === 0){
+
+      return res.status(409).json({
+        message:"เช็คอินแล้ว"
+      });
+
+    }
+
+
+
+    // บันทึก CheckIn
     await CheckIn.create({
+
       activityId,
-      userId: req.userId,
-      checkedAt: new Date(),
+
+      userId:req.userId,
+
+      checkedAt:new Date()
+
     });
 
-    res.json({ message: "ยืนยันการเข้าร่วมสำเร็จ", status: "checked_in" });
-  } catch (err) {
+
+
+
+    const user = await User.findByPk(req.userId);
+
+
+
+    // แจ้งเจ้าของกิจกรรม
+    await notificationService.createNotification(
+      activity.createdBy,
+      "checkin",
+      activity.id,
+      activity.activityName,
+      req.userId,
+      user ? user.username : ""
+    );
+
+
+
+
+    // แจ้งเตือนให้รีวิว
+    await notificationService.createNotification(
+      req.userId,
+      "review_request",
+      activity.id,
+      activity.activityName,
+      activity.createdBy,
+      ""
+    );
+
+
+
+    return res.json({
+
+      message:"ยืนยันการเข้าร่วมสำเร็จ",
+
+      status:"checked_in"
+
+    });
+
+
+
+  } catch(err){
+
     console.log(err);
-    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+
+
+    return res.status(500).json({
+
+      message:"เกิดข้อผิดพลาด"
+
+    });
+
   }
 });
 

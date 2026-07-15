@@ -16,6 +16,28 @@ const auth = (req, res, next) => {
   }
 };
 
+// ดึงจำนวนการแจ้งเตือนที่ยังไม่ได้อ่าน
+router.get("/unread-count", auth, async (req, res) => {
+  try {
+    const count = await Notification.count({
+      where: { toUserId: req.userId, isRead: false },
+    });
+    res.json({ unreadCount: count });
+  } catch (err) {
+    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+  }
+});
+
+// อ่านแจ้งเตือนทั้งหมด
+router.put("/read-all", auth, async (req, res) => {
+  try {
+    await Notification.update({ isRead: true }, { where: { toUserId: req.userId } });
+    res.json({ message: "ทำเครื่องหมายว่าอ่านแล้วทั้งหมด" });
+  } catch (err) {
+    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+  }
+});
+
 // ดึงการแจ้งเตือนของ user
 router.get("/", auth, async (req, res) => {
   try {

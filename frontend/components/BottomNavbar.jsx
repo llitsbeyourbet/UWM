@@ -1,10 +1,42 @@
 import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useSocket } from "../src/context/SocketContext";
+import API_URL from "../config";
 import "./BottomNavbar.css";
 
 function BottomNavbar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { socket } = useSocket();
+  const [unreadCount, setUnreadCount] = useState(0);
   const user = JSON.parse(localStorage.getItem("user"));
+
+  useEffect(() => {
+    const fetchCount = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(`${API_URL}/api/notifications/unread-count`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        setUnreadCount(data.unreadCount);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchCount();
+
+    if (socket) {
+      socket.on("notification", () => {
+        fetchCount();
+      });
+    }
+
+    return () => {
+      if (socket) socket.off("notification");
+    };
+  }, [socket]);
 
   const isActive = (path) => location.pathname === path;
 
@@ -62,7 +94,9 @@ function BottomNavbar() {
           <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
           <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
         </svg>
-        <div className="notification-dot" />
+        {unreadCount > 0 && (
+          <div className="notification-badge">{unreadCount}</div>
+        )}
       </div>
 
       {/* โปรไฟล์ */}
