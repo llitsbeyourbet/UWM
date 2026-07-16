@@ -84,8 +84,7 @@ function CreateActivities() {
         return;
       }
 
-      navigate(`/activity-detail?id=${data.id}`);
-
+      
       setActivityName("");
       setDetail("");
       setDate("");
@@ -97,7 +96,8 @@ function CreateActivities() {
       setPreview([]);
       setCoverFilename(null); // 👈 reset coverFilename ด้วย
 
-      navigate("/activity-detail");
+      navigate(`/activity-detail?id=${data.id}`);
+
     } catch (err) {
       console.log(err);
       alert("ไม่สามารถเชื่อมต่อ server ได้");
