@@ -279,7 +279,7 @@ function ActivityDetail() {
     }
   };
 
-  if (!activity) return <div className="loading">ไม่พบข้อมูลกิจกรรม</div>;
+  if (!activity) return <div className="loading">กำลังโหลด...</div>;
 
   const getDayName = (dateStr) => {
     if (!dateStr) return "-";
