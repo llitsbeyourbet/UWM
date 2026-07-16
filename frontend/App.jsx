@@ -18,9 +18,6 @@ import ForgotPassword from "./pages/ForgotPassword";
 import "./assets/AppLayout.css"
 import ScanQR from "./pages/ScanQR";
 import UserProfile from "./pages/UserProfile";
-import AdminReports from "./pages/AdminReports";
-import AdminUsers from "./pages/AdminUsers";
-import AdminActivities from "./pages/AdminActivities";
 import { SocketProvider } from "./src/context/SocketContext";
 
 function App() {
@@ -56,9 +53,6 @@ function App() {
             <Route path="/review/:activityId" element={<ReviewForm />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/scan" element={<ScanQR />} />
-            <Route path="/admin/reports" element={<AdminReports />} />
-            <Route path="/admin/users" element={<AdminUsers />} />
-            <Route path="/admin/activities" element={<AdminActivities />} />
           </Routes>
         </div>
       </div>
