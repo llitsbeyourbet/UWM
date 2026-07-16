@@ -1,25 +1,31 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {FiBell, FiCalendar, FiUsers, FiFlag,} from "react-icons/fi";
+import { MdEvent, MdGroups } from "react-icons/md";
+import {ResponsiveContainer,LineChart,Line,XAxis,Tooltip,CartesianGrid,} from "recharts";
 import "./AdminDashboard.css";
 import API_URL from "../config";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
 
+  const token = localStorage.getItem("token");
+
   const [loading, setLoading] = useState(true);
 
-  const [stats, setStats] = useState({
-    totalUsers: 0,
-    totalActivities: 0,
-    pendingReports: 0,
-    suspendedActivities: 0,
-    totalReports: 0,
-    totalCheckins: 0,
-  });
+  const [stats, setStats] = useState({});
 
   const [users, setUsers] = useState([]);
+
   const [activities, setActivities] = useState([]);
+
   const [reports, setReports] = useState([]);
+
+  const [chartData, setChartData] = useState([]);
+
+  const [latestActivities, setLatestActivities] = useState([]);
+
+  const [latestReports, setLatestReports] = useState([]);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -29,195 +35,536 @@ export default function AdminDashboard() {
       return;
     }
 
-    fetchDashboard();
+    loadDashboard();
   }, []);
 
-  const fetchDashboard = async () => {
-    const token = localStorage.getItem("token");
+  const authHeader = {
+    Authorization: `Bearer ${token}`,
+  };
 
+  async function loadDashboard() {
     try {
       setLoading(true);
 
       const [
-        statsRes,
+        dashboardRes,
         usersRes,
         reportsRes,
         activitiesRes,
+        chartRes,
+        latestActivitiesRes,
+        latestReportsRes,
       ] = await Promise.all([
         fetch(`${API_URL}/api/admin/dashboard`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: authHeader,
         }),
 
         fetch(`${API_URL}/api/admin/users`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: authHeader,
         }),
 
         fetch(`${API_URL}/api/admin/reports`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: authHeader,
         }),
 
         fetch(`${API_URL}/api/activities`),
+
+        fetch(`${API_URL}/api/admin/chart`, {
+          headers: authHeader,
+        }),
+
+        fetch(`${API_URL}/api/admin/latest-activities`, {
+          headers: authHeader,
+        }),
+
+        fetch(`${API_URL}/api/admin/latest-reports`, {
+          headers: authHeader,
+        }),
       ]);
 
-      const statsData = await statsRes.json();
-      const usersData = await usersRes.json();
-      const reportsData = await reportsRes.json();
-      const activitiesData = await activitiesRes.json();
+      const dashboard = await dashboardRes.json();
 
-      setStats(statsData);
-      setUsers(usersData);
-      setReports(reportsData);
-      setActivities(activitiesData);
+      const userData = await usersRes.json();
+
+      const reportData = await reportsRes.json();
+
+      const activityData = await activitiesRes.json();
+
+      const chart = await chartRes.json();
+
+      const latestActivity = await latestActivitiesRes.json();
+
+      const latestReport = await latestReportsRes.json();
+
+      setStats(dashboard);
+
+      setUsers(userData);
+
+      setReports(reportData);
+
+      setActivities(activityData);
+
+      setChartData(chart);
+
+      setLatestActivities(latestActivity);
+
+      setLatestReports(latestReport);
     } catch (err) {
       console.log(err);
-      alert("โหลดข้อมูลไม่สำเร็จ");
+
+      alert("ไม่สามารถโหลดข้อมูล Dashboard ได้");
     } finally {
       setLoading(false);
     }
-  };
+  }
+
+  async function suspendActivity(id) {
+    if (!window.confirm("ต้องการระงับกิจกรรมนี้หรือไม่")) return;
+
+    try {
+      await fetch(`${API_URL}/api/admin/suspend/${id}`, {
+        method: "PUT",
+        headers: authHeader,
+      });
+
+      loadDashboard();
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async function unsuspendActivity(id) {
+    try {
+      await fetch(`${API_URL}/api/admin/unsuspend/${id}`, {
+        method: "PUT",
+        headers: authHeader,
+      });
+
+      loadDashboard();
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   const userMap = useMemo(() => {
     const map = {};
 
-    users.forEach((u) => {
-      map[u.id] = u;
+    users.forEach((user) => {
+      map[user.id] = user;
     });
 
     return map;
   }, [users]);
 
-  const groupedReports = useMemo(() => {
-    const map = {};
-
-    reports.forEach((r) => {
-      if (!map[r.activityId]) {
-        map[r.activityId] = [];
-      }
-
-      map[r.activityId].push(r);
-    });
-
-    return map;
-  }, [reports]);
-
-  const suspendActivity = async (activityId) => {
-    if (!window.confirm("ต้องการระงับกิจกรรมนี้ใช่หรือไม่"))
-      return;
-
-    const token = localStorage.getItem("token");
-
-    try {
-      const res = await fetch(
-        `${API_URL}/api/admin/suspend/${activityId}`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!res.ok) {
-        throw new Error();
-      }
-
-      fetchDashboard();
-    } catch {
-      alert("เกิดข้อผิดพลาด");
-    }
-  };
-
-  const unsuspendActivity = async (activityId) => {
-    const token = localStorage.getItem("token");
-
-    try {
-      const res = await fetch(
-        `${API_URL}/api/admin/unsuspend/${activityId}`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!res.ok) {
-        throw new Error();
-      }
-
-      fetchDashboard();
-    } catch {
-      alert("เกิดข้อผิดพลาด");
-    }
-  };
+  const activeActivities = useMemo(() => {
+    return activities.filter(
+      (activity) => activity.status === "active"
+    ).length;
+  }, [activities]);
 
   if (loading) {
     return (
       <div className="admin-loading">
-        กำลังโหลดข้อมูล...
+        กำลังโหลด Dashboard...
       </div>
     );
   }
+
   return (
-  <div className="admin-page">
+    <div className="dashboard">
 
-    <div className="admin-header">
+  {/* ================= Header ================= */}
 
-      <div>
-        <h1>Admin Dashboard</h1>
-        <p>Until We Meet Management System</p>
-      </div>
+  <header className="dashboard-header">
 
-      <button
-        className="logout-btn"
-        onClick={() => {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          navigate("/login");
-        }}
-      >
-        Logout
+    <div>
+
+      <h1>สวัสดี, Admin 👋</h1>
+
+      <p>Until We Meet Dashboard</p>
+
+    </div>
+
+    <div className="header-right">
+
+      <button className="notification-btn">
+
+        <FiBell />
+
+        {stats.pendingReports > 0 && (
+
+          <span>{stats.pendingReports}</span>
+
+        )}
+
       </button>
 
+      <div className="profile-card">
+
+        <div className="profile-avatar">
+
+          A
+
+        </div>
+
+        <div>
+
+          <h4>Administrator</h4>
+
+          <small>Until We Meet</small>
+
+        </div>
+
+      </div>
+
     </div>
 
-    {/* ================= Stats ================= */}
+  </header>
 
-    <div className="stats-grid">
+  {/* ================= Date ================= */}
 
-      <div className="stat-card users-card">
+  <div className="date-card">
+
+    <FiCalendar />
+
+    <span>
+
+      {new Date().toLocaleDateString("th-TH", {
+
+        day: "numeric",
+
+        month: "long",
+
+        year: "numeric",
+
+      })}
+
+    </span>
+
+  </div>
+
+  {/* ================= Cards ================= */}
+
+  <section className="dashboard-cards">
+
+    <div className="dashboard-card">
+
+      <div className="card-icon blue">
+
+        <FiUsers />
+
+      </div>
+
+      <div>
+
+        <p>ผู้ใช้งานทั้งหมด</p>
+
         <h2>{stats.totalUsers}</h2>
-        <span>Users</span>
-      </div>
 
-      <div className="stat-card activities-card">
-        <h2>{stats.totalActivities}</h2>
-        <span>Activities</span>
-      </div>
-
-      <div className="stat-card reports-card">
-        <h2>{stats.pendingReports}</h2>
-        <span>Pending Reports</span>
-      </div>
-
-      <div className="stat-card suspended-card">
-        <h2>{stats.suspendedActivities}</h2>
-        <span>Suspended</span>
       </div>
 
     </div>
 
-    {/* ================= Users ================= */}
+    <div className="dashboard-card">
 
-    <section className="admin-card">
+      <div className="card-icon green">
 
-      <h2>Users</h2>
+        <MdEvent />
+
+      </div>
+
+      <div>
+
+        <p>กิจกรรมทั้งหมด</p>
+
+        <h2>{stats.totalActivities}</h2>
+
+      </div>
+
+    </div>
+
+    <div className="dashboard-card">
+
+      <div className="card-icon orange">
+
+        <MdGroups />
+
+      </div>
+
+      <div>
+
+        <p>กำลังดำเนินอยู่</p>
+
+        <h2>{activeActivities}</h2>
+
+      </div>
+
+    </div>
+
+    <div className="dashboard-card">
+
+      <div className="card-icon pink">
+
+        <FiFlag />
+
+      </div>
+
+      <div>
+
+        <p>Pending Reports</p>
+
+        <h2>{stats.pendingReports}</h2>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  {/* ================= Row ================= */}
+
+  <div className="dashboard-row">
+
+    {/* =============== Chart =============== */}
+
+    <div className="chart-card">
+
+      <div className="card-header">
+
+        <div>
+
+          <h3>Activity Overview</h3>
+
+          <p>จำนวนกิจกรรมที่ถูกสร้าง</p>
+
+        </div>
+
+      </div>
+
+      <div className="chart-wrapper">
+
+        <ResponsiveContainer
+          width="100%"
+          height={320}
+        >
+
+          <LineChart data={chartData}>
+
+            <CartesianGrid
+              strokeDasharray="4 4"
+              vertical={false}
+            />
+
+            <XAxis dataKey="day" />
+
+            <Tooltip />
+
+            <Line
+              dataKey="value"
+              stroke="#6366F1"
+              strokeWidth={4}
+              type="monotone"
+            />
+
+          </LineChart>
+
+        </ResponsiveContainer>
+
+      </div>
+
+    </div>
+
+    {/* =============== Latest Activities =============== */}
+
+    <div className="latest-card">
+
+      <div className="card-header">
+
+        <div>
+
+          <h3>Latest Activities</h3>
+
+          <p>กิจกรรมล่าสุด</p>
+
+        </div>
+
+      </div>
+
+      <div className="latest-list">
+
+        {latestActivities.map((activity) => (
+
+          <div
+            key={activity.id}
+            className="latest-item"
+            onClick={() =>
+              navigate(
+                `/activity-detail?id=${activity.id}&from=admin`
+              )
+            }
+          >
+
+            <img
+              src={`${API_URL}/uploads/${activity.cover}`}
+              alt={activity.activityName}
+              onError={(e) => {
+                e.target.src =
+                  "/default-cover.png";
+              }}
+            />
+
+            <div className="latest-info">
+
+              <h4>
+
+                {activity.activityName}
+
+              </h4>
+
+              <span>
+
+                {activity.creator}
+
+              </span>
+
+              <small>
+
+                {activity.category}
+
+              </small>
+
+            </div>
+
+          </div>
+
+        ))}
+
+      </div>
+
+    </div>
+
+  </div>
+    {/* ================= Summary + Latest Reports ================= */}
+
+  <div className="dashboard-row">
+
+    <div className="summary-card">
+
+      <div className="card-header">
+
+        <div>
+
+          <h3>System Summary</h3>
+
+          <p>ภาพรวมของระบบ</p>
+
+        </div>
+
+      </div>
+
+      <div className="summary-grid">
+
+        <div>
+
+          <span>Users</span>
+
+          <h2>{stats.totalUsers}</h2>
+
+        </div>
+
+        <div>
+
+          <span>Activities</span>
+
+          <h2>{stats.totalActivities}</h2>
+
+        </div>
+
+        <div>
+
+          <span>Reports</span>
+
+          <h2>{stats.totalReports}</h2>
+
+        </div>
+
+        <div>
+
+          <span>Suspended</span>
+
+          <h2>{stats.suspendedActivities}</h2>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div className="report-card">
+
+      <div className="card-header">
+
+        <div>
+
+          <h3>Latest Reports</h3>
+
+          <p>รายงานล่าสุด</p>
+
+        </div>
+
+      </div>
+
+      <div className="report-list">
+
+        {latestReports.map((report) => (
+
+          <div
+            key={report.id}
+            className="report-item"
+            onClick={() =>
+              navigate(
+                `/activity-detail?id=${report.activityId}&from=admin`
+              )
+            }
+          >
+
+            <div className="report-icon">🚩</div>
+
+            <div>
+
+              <h4>{report.activityName}</h4>
+
+              <p>{report.reason}</p>
+
+            </div>
+
+          </div>
+
+        ))}
+
+      </div>
+
+    </div>
+
+  </div>
+
+  {/* ================= Users Table ================= */}
+
+  <section className="admin-card">
+
+    <div className="card-header">
+
+      <div>
+
+        <h3>Users</h3>
+
+        <p>ผู้ใช้งานทั้งหมด</p>
+
+      </div>
+
+    </div>
+
+    <div className="table-wrapper">
 
       <table>
 
@@ -226,8 +573,11 @@ export default function AdminDashboard() {
           <tr>
 
             <th>Name</th>
+
             <th>Username</th>
+
             <th>Email</th>
+
             <th>Role</th>
 
           </tr>
@@ -236,57 +586,60 @@ export default function AdminDashboard() {
 
         <tbody>
 
-          {users.length === 0 ? (
+          {users.map((user) => (
 
-            <tr>
-              <td colSpan="4">
-                ไม่มีข้อมูล
+            <tr key={user.id}>
+
+              <td>{user.name}</td>
+
+              <td>@{user.username}</td>
+
+              <td>{user.email}</td>
+
+              <td>
+
+                <span
+                  className={
+                    user.role === "admin"
+                      ? "role admin"
+                      : "role user"
+                  }
+                >
+                  {user.role}
+
+                </span>
+
               </td>
+
             </tr>
 
-          ) : (
-
-            users.map((user) => (
-
-              <tr key={user.id}>
-
-                <td>{user.name}</td>
-
-                <td>@{user.username}</td>
-
-                <td>{user.email}</td>
-
-                <td>
-
-                  <span
-                    className={
-                      user.role === "admin"
-                        ? "role admin"
-                        : "role user"
-                    }
-                  >
-                    {user.role}
-                  </span>
-
-                </td>
-
-              </tr>
-
-            ))
-
-          )}
+          ))}
 
         </tbody>
 
       </table>
 
-    </section>
+    </div>
 
-    {/* ================= Activities ================= */}
+  </section>
 
-    <section className="admin-card">
+  {/* ================= Activities Table ================= */}
 
-      <h2>Activities</h2>
+  <section className="admin-card">
+
+    <div className="card-header">
+
+      <div>
+
+        <h3>Activities</h3>
+
+        <p>กิจกรรมทั้งหมด</p>
+
+      </div>
+
+    </div>
+
+    <div className="table-wrapper">
 
       <table>
 
@@ -295,9 +648,13 @@ export default function AdminDashboard() {
           <tr>
 
             <th>Activity</th>
+
             <th>Creator</th>
+
             <th>Category</th>
+
             <th>Status</th>
+
             <th>Action</th>
 
           </tr>
@@ -306,39 +663,36 @@ export default function AdminDashboard() {
 
         <tbody>
 
-          {activities.map((activity) => {
+          {activities.map((activity) => (
 
-            const creator = userMap[activity.createdBy];
+            <tr key={activity.id}>
 
-            return (
+              <td>{activity.activityName}</td>
 
-              <tr key={activity.id}>
+              <td>{userMap[activity.createdBy]?.name || "-"}</td>
 
-                <td>{activity.activityName}</td>
+              <td>{activity.category}</td>
 
-                <td>{creator?.name || "-"}</td>
+              <td>
 
-                <td>{activity.category}</td>
+                <span
+                  className={
+                    activity.status === "suspended"
+                      ? "status suspended"
+                      : "status active"
+                  }
+                >
+                  {activity.status}
 
-                <td>
+                </span>
 
-                  <span
-                    className={
-                      activity.isSuspended
-                        ? "status suspended"
-                        : "status active"
-                    }
-                  >
-                    {activity.isSuspended
-                      ? "Suspended"
-                      : "Active"}
-                  </span>
+              </td>
 
-                </td>
+              <td>
 
-                <td>
+                <div className="action-group">
 
-                  {activity.isSuspended ? (
+                  {activity.status === "suspended" ? (
 
                     <button
                       className="unsuspend-btn"
@@ -373,6 +727,89 @@ export default function AdminDashboard() {
                     Detail
                   </button>
 
+                </div>
+
+              </td>
+
+            </tr>
+
+          ))}
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+  {/* ================= Reports Table ================= */}
+
+  <section className="admin-card">
+
+    <div className="card-header">
+
+      <div>
+
+        <h3>Reports</h3>
+
+        <p>รายงานทั้งหมด</p>
+
+      </div>
+
+    </div>
+
+    <div className="table-wrapper">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>Activity</th>
+
+            <th>Reason</th>
+
+            <th>Status</th>
+
+            <th>Action</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          {reports.map((report) => {
+
+            const activity = activities.find(
+              (a) => a.id === report.activityId
+            );
+
+            return (
+
+              <tr key={report.id}>
+
+                <td>{activity?.activityName || "-"}</td>
+
+                <td>{report.reason}</td>
+
+                <td>{report.status}</td>
+
+                <td>
+
+                  <button
+                    className="detail-btn"
+                    onClick={() =>
+                      navigate(
+                        `/activity-detail?id=${report.activityId}&from=admin`
+                      )
+                    }
+                  >
+                    View
+                  </button>
+
                 </td>
 
               </tr>
@@ -385,149 +822,11 @@ export default function AdminDashboard() {
 
       </table>
 
-    </section>
-        {/* ================= Reports ================= */}
+    </div>
 
-    <section className="admin-card">
+  </section>
 
-      <h2>Reports</h2>
+</div>
 
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Activity</th>
-            <th>Creator</th>
-            <th>Reports</th>
-            <th>Reasons</th>
-            <th>Action</th>
-          </tr>
-
-        </thead>
-
-        <tbody>
-
-          {Object.keys(groupedReports).length === 0 ? (
-
-            <tr>
-
-              <td colSpan="5">
-                ไม่มีรายงาน
-              </td>
-
-            </tr>
-
-          ) : (
-
-            Object.entries(groupedReports).map(
-              ([activityId, reportList]) => {
-
-                const activity = activities.find(
-                  (item) => item.id === Number(activityId)
-                );
-
-                const creator = activity
-                  ? userMap[activity.createdBy]
-                  : null;
-
-                return (
-
-                  <tr key={activityId}>
-
-                    <td>
-                      {activity?.activityName || "-"}
-                    </td>
-
-                    <td>
-                      {creator?.name || "-"}
-                    </td>
-
-                    <td>
-
-                      <span className="report-count">
-
-                        {reportList.length}
-
-                      </span>
-
-                    </td>
-
-                    <td>
-
-                      <div className="reason-list">
-
-                        {reportList.map((report) => (
-
-                          <span
-                            key={report.id}
-                            className="reason-tag"
-                          >
-                            {report.reason}
-                          </span>
-
-                        ))}
-
-                      </div>
-
-                    </td>
-
-                    <td>
-
-                      {activity?.isSuspended ? (
-
-                        <button
-                          className="unsuspend-btn"
-                          onClick={() =>
-                            unsuspendActivity(activity.id)
-                          }
-                        >
-                          Unsuspend
-                        </button>
-
-                      ) : (
-
-                        <button
-                          className="suspend-btn"
-                          onClick={() =>
-                            suspendActivity(activity.id)
-                          }
-                        >
-                          Suspend
-                        </button>
-
-                      )}
-
-                      <button
-                        className="detail-btn"
-                        onClick={() =>
-                          navigate(
-                            `/activity-detail?id=${activityId}&from=admin`
-                          )
-                        }
-                      >
-                        Detail
-                      </button>
-
-                    </td>
-
-                  </tr>
-
-                );
-
-              }
-            )
-
-          )}
-
-        </tbody>
-
-      </table>
-
-    </section>
-
-  </div>
-
-);
-
+  );
 }
