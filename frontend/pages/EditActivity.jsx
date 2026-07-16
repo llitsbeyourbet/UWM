@@ -95,9 +95,8 @@ function EditActivity() {
         return;
       }
 
-      localStorage.setItem("currentActivity", JSON.stringify(data));
       alert("แก้ไขกิจกรรมสำเร็จ");
-      navigate("/activity-detail");
+      navigate(`/activity-detail?id=${data.id}`);
     } catch (err) {
       alert("ไม่สามารถเชื่อมต่อ server ได้");
     }
