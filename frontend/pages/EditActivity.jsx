@@ -25,7 +25,7 @@ function EditActivity() {
         setActivityName(data.activityName || "");
         setDetail(data.detail || "");
         setDate(data.date || "");
-        setTime(data.startTime || "");
+        setTime(data.time || "");
         setEndTime(data.endTime || "");
         setLocation(data.location || "");
         setParticipantCount(data.participantCount || 1);

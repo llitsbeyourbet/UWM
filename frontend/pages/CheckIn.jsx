@@ -35,6 +35,7 @@ function CheckIn() {
         if (statusData.status === "checked_in") setDone(true);
       } catch (err) {
         console.log(err);
+        setErrorMessage("ไม่สามารถโหลดข้อมูลกิจกรรมได้");
       } finally {
         setLoading(false);
       }
@@ -88,7 +89,7 @@ function CheckIn() {
 
           <button
             className="checkin-btn done"
-            onClick={() => navigate(`/activity-detail?id=${activity.id}`)}
+            onClick={() => activity && navigate(`/activity-detail?id=${activity.id}`)}
           >
             กลับหน้ากิจกรรม
           </button>
@@ -122,7 +123,7 @@ function CheckIn() {
             <p className="checkin-subtitle">{activity?.activityName}</p>
             <button
               className="checkin-btn done"
-              onClick={() => navigate(`/activity-detail?id=${activity.id}`)}>
+              onClick={() => activity && navigate(`/activity-detail?id=${activity.id}`)}>
               กลับหน้ากิจกรรม
             </button>
           </>
@@ -159,7 +160,7 @@ function CheckIn() {
 
                 <button
                   className="checkin-btn done"
-                  onClick={() => navigate(`/activity-detail?id=${activity.id}`)}
+                  onClick={() => activity && navigate(`/activity-detail?id=${activity.id}`)}
                 >
                   กลับหน้ากิจกรรม
                 </button>

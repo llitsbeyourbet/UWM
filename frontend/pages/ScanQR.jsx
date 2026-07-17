@@ -16,11 +16,20 @@ function ScanQR() {
       { fps: 10, qrbox: { width: 200, height: 200 } },
       (decodedText) => {
         scanner.stop();
-        // navigate ไปหน้า checkin
-        const url = new URL(decodedText);
-        const paths = url.pathname.split("/");
-        const activityId = paths[paths.length - 1];
-        navigate(`/checkin/${activityId}`);
+        try {
+          const url = new URL(decodedText);
+          const paths = url.pathname.split("/");
+          const checkinIndex = paths.indexOf("checkin");
+          if (checkinIndex !== -1 && paths[checkinIndex + 1] && paths[checkinIndex + 2]) {
+            const activityId = paths[checkinIndex + 1];
+            const qrToken = paths[checkinIndex + 2];
+            navigate(`/checkin/${activityId}/${qrToken}`);
+          } else {
+            alert("QR Code ไม่ถูกต้อง");
+          }
+        } catch (e) {
+          alert("QR Code ไม่ถูกต้อง");
+        }
       },
       () => {}
     ).catch((err) => console.log(err));
