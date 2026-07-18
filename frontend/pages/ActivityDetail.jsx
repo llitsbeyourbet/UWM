@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { QRCodeCanvas } from "qrcode.react";
 import "./ActivityDetail.css";
@@ -34,7 +34,7 @@ function ActivityDetail() {
 
   const reportReasons = ["เนื้อหาไม่เหมาะสม", "ข้อมูลเป็นเท็จ", "สแปม", "เป็นอันตราย", "อื่นๆ"];
 
-  const fetchActivity = async () => {
+  const fetchActivity = useCallback(async () => {
     if (!activityId) return;
     const token = localStorage.getItem("token");
 
@@ -60,35 +60,30 @@ function ActivityDetail() {
       setActivity(activityData);
       setNotFound(false);
 
-      // ดึงข้อมูล host
       const hostRes = await fetch(`${API_URL}/api/auth/user/${activityData.createdBy}`);
       if (hostRes.ok) {
         const hostData = await hostRes.json();
         setHost(hostData);
       }
 
-      // ดึงคะแนน host
       const hostRatingRes = await fetch(`${API_URL}/api/review/host/${activityData.createdBy}`);
       if (hostRatingRes.ok) {
         const hostRatingData = await hostRatingRes.json();
         setHostRating(hostRatingData.avgRating);
       }
 
-      // ดึงคะแนนเฉลี่ยกิจกรรม
       const ratingRes = await fetch(`${API_URL}/api/review/activity/${activityId}/rating`);
       if (ratingRes.ok) {
         const ratingData = await ratingRes.json();
         setActivityRating(ratingData);
       }
 
-      // ดึง comments สาธารณะ
       const pubCommentRes = await fetch(`${API_URL}/api/review/activity/${activityId}/comments/public`);
       if (pubCommentRes.ok) {
         const pubCommentData = await pubCommentRes.json();
         setPublicComments(pubCommentData);
       }
 
-      // ดึงรายชื่อผู้เข้าร่วม
       const participantsRes = await fetch(`${API_URL}/api/activities/${activityId}/participants`);
       if (participantsRes.ok) {
         const participantsData = await participantsRes.json();
@@ -127,11 +122,21 @@ function ActivityDetail() {
     } catch (err) {
       console.log(err);
     }
-  };
+  }, [activityId, navigate]);
 
   useEffect(() => {
     fetchActivity();
-  }, [activityId]);
+
+    // Listen for update event from EditActivity page
+    const handleUpdate = () => {
+      fetchActivity();
+    };
+    window.addEventListener("activityUpdated", handleUpdate);
+
+    return () => {
+      window.removeEventListener("activityUpdated", handleUpdate);
+    };
+  }, [fetchActivity]);
 
   useEffect(() => {
     if (!showQR || !isOwner || !activity) return;
@@ -143,9 +148,7 @@ function ActivityDetail() {
     }, 1000);
 
     return () => clearInterval(interval);
-
   }, [showQR, activity, isOwner]);
-
 
   useEffect(() => {
     if (qrCountdown === 0) {
@@ -278,12 +281,10 @@ function ActivityDetail() {
       );
 
       if (currentIsPublic) {
-        // สาธารณะ → ส่วนตัว
         setPublicComments((prev) =>
           prev.filter((comment) => comment.id !== commentId)
         );
       } else {
-        // ส่วนตัว → สาธารณะ
         const updatedComment = comments.find(
           (comment) => comment.id === commentId
         );
@@ -291,7 +292,7 @@ function ActivityDetail() {
         if (updatedComment) {
           setPublicComments((prev) => [
             { ...updatedComment, isPublic: true },
-            ...prev.filter((comment) => comment.id !== commentId),
+            ...prev.filter((comment) => comment.id !== commentId으로),
           ]);
         }
       }
@@ -707,7 +708,7 @@ function ActivityDetail() {
                       ⭐ รีวิวกิจกรรม
                     </button>
                   ) : (
-                    <p className="reviewed-text">✓ รีวิวแล้ว</p>
+                    <p className la-reviewed-text>✓ รีวิวแล้ว</p>
                   )}
                 </>
               )}
@@ -786,7 +787,6 @@ function ActivityDetail() {
         </div>
       )}
     </div>
-
   );
 }
 

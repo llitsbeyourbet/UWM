@@ -15,12 +15,13 @@ function EditActivity() {
   const [participantCount, setParticipantCount] = useState(1);
   const [activityType, setActivityType] = useState("public");
   const [coverFilename, setCoverFilename] = useState(null);
-  const [preview, setPreview] = useState([]);
+  const [preview, setPreview] = useState(null);
 
   useEffect(() => {
     const fetchActivity = async () => {
       try {
         const res = await fetch(`${API_URL}/api/activities/${id}`);
+        if (!res.ok) return;
         const data = await res.json();
         setActivityName(data.activityName || "");
         setCoverFilename(data.cover || null);
@@ -31,37 +32,51 @@ function EditActivity() {
         setLocation(data.location || "");
         setParticipantCount(data.participantCount || 1);
         setActivityType(data.activityType || "public");
-        if (data.cover) setPreview([data.cover]);
+
+        if (data.cover) {
+          const coverUrl = data.cover.startsWith("http")
+            ? data.cover
+            : `${API_URL}/uploads/${data.cover}`;
+          setPreview(coverUrl);
+        }
       } catch (err) {
-        console.log(err);
+        console.log("Error fetching activity:", err);
       }
     };
     fetchActivity();
   }, [id]);
 
   const handleImage = async (e) => {
-    const files = Array.from(e.target.files);
-    const urls = files.map((file) => URL.createObjectURL(file));
-    setPreview(urls);
+    const file = e.target.files[0];
+    if (!file) return;
 
-    if (files[0]) {
-      const formData = new FormData();
-      formData.append("image", files[0]);
-      try {
-        const res = await fetch(`${API_URL}/api/upload`, {
-          method: "POST",
-          body: formData,
-        });
-        const data = await res.json();
+    const objectUrl = URL.createObjectURL(file);
+    setPreview(objectUrl);
+
+    const formData = new FormData();
+    formData.append("image", file);
+    try {
+      const res = await fetch(`${API_URL}/api/upload`, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (res.ok) {
         setCoverFilename(data.filename);
-      } catch (err) {
-        console.log(err);
+      } else {
+        alert(data.message || "Upload failed");
       }
+    } catch (err) {
+      console.error("Upload error:", err);
+      alert("ไม่สามารถอัปโหลดรูปภาพได้");
     }
   };
 
   const handleSubmit = async () => {
-    if (!activityName) return;
+    if (!activityName) {
+      alert("กรุณากรอกชื่อกิจกรรม");
+      return;
+    }
 
     const token = localStorage.getItem("token");
     if (!token) {
@@ -70,35 +85,45 @@ function EditActivity() {
     }
 
     try {
+      const payload = {
+        activityName,
+        detail,
+        date,
+        time,
+        endTime,
+        location,
+        participantCount,
+        activityType,
+      };
+
+      if (coverFilename) {
+        payload.cover = coverFilename;
+      }
+
       const res = await fetch(`${API_URL}/api/activities/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          activityName,
-          detail,
-          date,
-          time,
-          endTime,
-          location,
-          participantCount,
-          activityType,
-          ...(coverFilename && { cover: coverFilename }),
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message || "เกิดข้อผิดพลาด");
+        alert(data.message || "เกิดข้อผิดพลาดในการบันทึก");
         return;
       }
 
       alert("แก้ไขกิจกรรมสำเร็จ");
-      navigate(`/activity-detail?id=${data.id}`);
+
+      // ส่งสัญญาณบอกหน้า ActivityDetail ให้รีเฟรชข้อมูล
+      window.dispatchEvent(new Event("activityUpdated"));
+      // กลับไปยังหน้าก่อนหน้า (ซึ่งคือหน้า ActivityDetail)
+      navigate(-1);
     } catch (err) {
+      console.error("Submit error:", err);
       alert("ไม่สามารถเชื่อมต่อ server ได้");
     }
   };
@@ -106,8 +131,8 @@ function EditActivity() {
   return (
     <div className="create-page">
       <div className="cover-image">
-        {preview.length > 0 ? (
-          <img src={preview[0]} alt="cover" className="cover-img" />
+        {preview ? (
+          <img src={preview} alt="cover" className="cover-img" />
         ) : (
           <div className="cover-placeholder" />
         )}
