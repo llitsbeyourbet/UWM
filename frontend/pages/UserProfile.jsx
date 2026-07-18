@@ -199,7 +199,7 @@ function UserProfile() {
                 <div className="stat-divider" />
 
                 <div className="stat-item">
-                <p className="stat-num blue">
+                <p className="stat-num text-blue">
                     {joinedActivities.length}
                 </p>
                 <p className="stat-lbl">
@@ -210,7 +210,7 @@ function UserProfile() {
                 <div className="stat-divider" />
 
                 <div className="stat-item">
-                <p className="stat-num pink">
+                <p className="stat-num text-pink">
                     {hostRating !== null ? Number(hostRating).toFixed(1) : "-"}
                 </p>
                 <p className="stat-lbl">

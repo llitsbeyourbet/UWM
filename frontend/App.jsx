@@ -19,6 +19,8 @@ import "./assets/AppLayout.css"
 import ScanQR from "./pages/ScanQR";
 import UserProfile from "./pages/UserProfile";
 import { SocketProvider } from "./src/context/SocketContext";
+import ActivitySummary from "./pages/ActivitySummary";
+import ActivitySummaryDetail from "./pages/ActivitySummaryDetail";
 
 function App() {
   const location = useLocation();
@@ -53,6 +55,8 @@ function App() {
             <Route path="/review/:activityId" element={<ReviewForm />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/scan" element={<ScanQR />} />
+            <Route path="/activity-summary" element={<ActivitySummary />}/>
+            <Route path="/activity-summary/:id" element={<ActivitySummaryDetail />}/>
           </Routes>
         </div>
       </div>

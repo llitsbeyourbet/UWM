@@ -165,8 +165,8 @@
   color: #111;
 }
 
-.stat-num.blue { color: #4A6FFF; }
-.stat-num.pink { color: #FF69B4; }
+.stat-num.text-blue { color: #4A6FFF; }
+.stat-num.text-pink { color: #FF69B4; }
 
 .stat-lbl {
   margin: 2px 0 0;
