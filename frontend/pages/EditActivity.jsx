@@ -23,6 +23,7 @@ function EditActivity() {
         const res = await fetch(`${API_URL}/api/activities/${id}`);
         const data = await res.json();
         setActivityName(data.activityName || "");
+        setCoverFilename(data.cover || null);
         setDetail(data.detail || "");
         setDate(data.date || "");
         setTime(data.time || "");
