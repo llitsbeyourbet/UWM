@@ -280,7 +280,7 @@ router.post("/:activityId/checkin", auth, async (req, res) => {
     if(joinRequest.status === "checked_in"){
 
       return res.status(409).json({
-        message:"เช็คอินแล้ว",
+        message:"คุณได้เช็คอินกิจกรรมนี้เรียบร้อยแล้ว ไม่สามารถเช็คอินซ้ำได้อีก",
         status:"checked_in"
       });
 
