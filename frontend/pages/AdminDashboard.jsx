@@ -1,31 +1,23 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {FiBell, FiCalendar, FiUsers, FiFlag,} from "react-icons/fi";
+import { FiBell, FiCalendar, FiUsers, FiFlag, } from "react-icons/fi";
 import { MdEvent, MdGroups } from "react-icons/md";
-import {ResponsiveContainer,LineChart,Line,XAxis,Tooltip,CartesianGrid,} from "recharts";
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, } from "recharts";
 import "./AdminDashboard.css";
 import API_URL from "../config";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-
   const token = localStorage.getItem("token");
-
   const [loading, setLoading] = useState(true);
-
   const [stats, setStats] = useState({});
-
   const [users, setUsers] = useState([]);
-
   const [activities, setActivities] = useState([]);
-
   const [reports, setReports] = useState([]);
-
   const [chartData, setChartData] = useState([]);
-
   const [latestActivities, setLatestActivities] = useState([]);
-
   const [latestReports, setLatestReports] = useState([]);
+  const [days, setDays] = useState(7);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -36,7 +28,7 @@ export default function AdminDashboard() {
     }
 
     loadDashboard();
-  }, []);
+  }, [days]);
 
   const authHeader = {
     Authorization: `Bearer ${token}`,
@@ -69,7 +61,7 @@ export default function AdminDashboard() {
 
         fetch(`${API_URL}/api/activities`),
 
-        fetch(`${API_URL}/api/admin/chart`, {
+        fetch(`${API_URL}/api/admin/chart?days=${days}`, {
           headers: authHeader,
         }),
 
@@ -173,660 +165,435 @@ export default function AdminDashboard() {
   return (
     <div className="dashboard">
 
-  {/* ================= Header ================= */}
+      {/* ================= Header ================= */}
 
-  <header className="dashboard-header">
-
-    <div>
-
-      <h1>สวัสดี, Admin 👋</h1>
-
-      <p>Until We Meet Dashboard</p>
-
-    </div>
-
-    <div className="header-right">
-
-      <button className="notification-btn">
-
-        <FiBell />
-
-        {stats.pendingReports > 0 && (
-
-          <span>{stats.pendingReports}</span>
-
-        )}
-
-      </button>
-
-      <div className="profile-card">
-
-        <div className="profile-avatar">
-
-          A
-
-        </div>
+      <header className="dashboard-header">
 
         <div>
 
-          <h4>Administrator</h4>
+          <h1>สวัสดี, Admin 👋</h1>
 
-          <small>Until We Meet</small>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </header>
-
-  {/* ================= Date ================= */}
-
-  <div className="date-card">
-
-    <FiCalendar />
-
-    <span>
-
-      {new Date().toLocaleDateString("th-TH", {
-
-        day: "numeric",
-
-        month: "long",
-
-        year: "numeric",
-
-      })}
-
-    </span>
-
-  </div>
-
-  {/* ================= Cards ================= */}
-
-  <section className="dashboard-cards">
-
-    <div className="dashboard-card">
-
-      <div className="card-icon blue">
-
-        <FiUsers />
-
-      </div>
-
-      <div>
-
-        <p>ผู้ใช้งานทั้งหมด</p>
-
-        <h2>{stats.totalUsers}</h2>
-
-      </div>
-
-    </div>
-
-    <div className="dashboard-card">
-
-      <div className="card-icon green">
-
-        <MdEvent />
-
-      </div>
-
-      <div>
-
-        <p>กิจกรรมทั้งหมด</p>
-
-        <h2>{stats.totalActivities}</h2>
-
-      </div>
-
-    </div>
-
-    <div className="dashboard-card">
-
-      <div className="card-icon orange">
-
-        <MdGroups />
-
-      </div>
-
-      <div>
-
-        <p>กำลังดำเนินอยู่</p>
-
-        <h2>{activeActivities}</h2>
-
-      </div>
-
-    </div>
-
-    <div className="dashboard-card">
-
-      <div className="card-icon pink">
-
-        <FiFlag />
-
-      </div>
-
-      <div>
-
-        <p>Pending Reports</p>
-
-        <h2>{stats.pendingReports}</h2>
-
-      </div>
-
-    </div>
-
-  </section>
-
-  {/* ================= Row ================= */}
-
-  <div className="dashboard-row">
-
-    {/* =============== Chart =============== */}
-
-    <div className="chart-card">
-
-      <div className="card-header">
-
-        <div>
-
-          <h3>Activity Overview</h3>
-
-          <p>จำนวนกิจกรรมที่ถูกสร้าง</p>
+          <p>Until We Meet Dashboard</p>
 
         </div>
 
-      </div>
+        <div className="header-right">
 
-      <div className="chart-wrapper">
+          <button className="btn notification-btn">
 
-        <ResponsiveContainer
-          width="100%"
-          height={320}
-        >
+            <FiBell />
 
-          <LineChart data={chartData}>
+            {stats.pendingReports > 0 && (
 
-            <CartesianGrid
-              strokeDasharray="4 4"
-              vertical={false}
-            />
+              <span>{stats.pendingReports}</span>
 
-            <XAxis dataKey="day" />
+            )}
 
-            <Tooltip />
+          </button>
 
-            <Line
-              dataKey="value"
-              stroke="#6366F1"
-              strokeWidth={4}
-              type="monotone"
-            />
+          <div className="profile-card">
 
-          </LineChart>
-
-        </ResponsiveContainer>
-
-      </div>
-
-    </div>
-
-    {/* =============== Latest Activities =============== */}
-
-    <div className="latest-card">
-
-      <div className="card-header">
-
-        <div>
-
-          <h3>Latest Activities</h3>
-
-          <p>กิจกรรมล่าสุด</p>
-
-        </div>
-
-      </div>
-
-      <div className="latest-list">
-
-        {latestActivities.map((activity) => (
-
-          <div
-            key={activity.id}
-            className="latest-item"
-            onClick={() =>
-              navigate(
-                `/activity-detail?id=${activity.id}&from=admin`
-              )
-            }
-          >
-
-            <img
-              src={`${API_URL}/uploads/${activity.cover}`}
-              alt={activity.activityName}
-              onError={(e) => {
-                e.target.src =
-                  "/default-cover.png";
-              }}
-            />
-
-            <div className="latest-info">
-
-              <h4>
-
-                {activity.activityName}
-
-              </h4>
-
-              <span>
-
-                {activity.creator}
-
-              </span>
-
-              <small>
-
-                {activity.category}
-
-              </small>
-
-            </div>
-
-          </div>
-
-        ))}
-
-      </div>
-
-    </div>
-
-  </div>
-    {/* ================= Summary + Latest Reports ================= */}
-
-  <div className="dashboard-row">
-
-    <div className="summary-card">
-
-      <div className="card-header">
-
-        <div>
-
-          <h3>System Summary</h3>
-
-          <p>ภาพรวมของระบบ</p>
-
-        </div>
-
-      </div>
-
-      <div className="summary-grid">
-
-        <div>
-
-          <span>Users</span>
-
-          <h2>{stats.totalUsers}</h2>
-
-        </div>
-
-        <div>
-
-          <span>Activities</span>
-
-          <h2>{stats.totalActivities}</h2>
-
-        </div>
-
-        <div>
-
-          <span>Reports</span>
-
-          <h2>{stats.totalReports}</h2>
-
-        </div>
-
-        <div>
-
-          <span>Suspended</span>
-
-          <h2>{stats.suspendedActivities}</h2>
-
-        </div>
-
-      </div>
-
-    </div>
-
-    <div className="report-card">
-
-      <div className="card-header">
-
-        <div>
-
-          <h3>Latest Reports</h3>
-
-          <p>รายงานล่าสุด</p>
-
-        </div>
-
-      </div>
-
-      <div className="report-list">
-
-        {latestReports.map((report) => (
-
-          <div
-            key={report.id}
-            className="report-item"
-            onClick={() =>
-              navigate(
-                `/activity-detail?id=${report.activityId}&from=admin`
-              )
-            }
-          >
-
-            <div className="report-icon">🚩</div>
+            <div className="profile-avatar">A</div>
 
             <div>
 
-              <h4>{report.activityName}</h4>
+              <h4>Administrator</h4>
 
-              <p>{report.reason}</p>
+              <small>Until We Meet</small>
 
             </div>
 
           </div>
 
-        ))}
+        </div>
 
-      </div>
+      </header>
 
-    </div>
+      {/* ================= Date ================= */}
 
-  </div>
+      <div className="date-card">
 
-  {/* ================= Users Table ================= */}
+        <FiCalendar />
 
-  <section className="admin-card">
+        <span>
 
-    <div className="card-header">
+          {new Date().toLocaleDateString("th-TH", {
 
-      <div>
+            day: "numeric",
 
-        <h3>Users</h3>
+            month: "long",
 
-        <p>ผู้ใช้งานทั้งหมด</p>
-
-      </div>
-
-    </div>
-
-    <div className="table-wrapper">
-
-      <table>
-
-        <thead>
-
-          <tr>
-
-            <th>Name</th>
-
-            <th>Username</th>
-
-            <th>Email</th>
-
-            <th>Role</th>
-
-          </tr>
-
-        </thead>
-
-        <tbody>
-
-          {users.map((user) => (
-
-            <tr key={user.id}>
-
-              <td>{user.name}</td>
-
-              <td>@{user.username}</td>
-
-              <td>{user.email}</td>
-
-              <td>
-
-                <span
-                  className={
-                    user.role === "admin"
-                      ? "role admin"
-                      : "role user"
-                  }
-                >
-                  {user.role}
-
-                </span>
-
-              </td>
-
-            </tr>
-
-          ))}
-
-        </tbody>
-
-      </table>
-
-    </div>
-
-  </section>
-
-  {/* ================= Activities Table ================= */}
-
-  <section className="admin-card">
-
-    <div className="card-header">
-
-      <div>
-
-        <h3>Activities</h3>
-
-        <p>กิจกรรมทั้งหมด</p>
-
-      </div>
-
-    </div>
-
-    <div className="table-wrapper">
-
-      <table>
-
-        <thead>
-
-          <tr>
-
-            <th>Activity</th>
-
-            <th>Creator</th>
-
-            <th>Category</th>
-
-            <th>Status</th>
-
-            <th>Action</th>
-
-          </tr>
-
-        </thead>
-
-        <tbody>
-
-          {activities.map((activity) => (
-
-            <tr key={activity.id}>
-
-              <td>{activity.activityName}</td>
-
-              <td>{userMap[activity.createdBy]?.name || "-"}</td>
-
-              <td>{activity.category}</td>
-
-              <td>
-
-                <span
-                  className={
-                    activity.status === "suspended"
-                      ? "status suspended"
-                      : "status active"
-                  }
-                >
-                  {activity.status}
-
-                </span>
-
-              </td>
-
-              <td>
-
-                <div className="action-group">
-
-                  {activity.status === "suspended" ? (
-
-                    <button
-                      className="unsuspend-btn"
-                      onClick={() =>
-                        unsuspendActivity(activity.id)
-                      }
-                    >
-                      Unsuspend
-                    </button>
-
-                  ) : (
-
-                    <button
-                      className="suspend-btn"
-                      onClick={() =>
-                        suspendActivity(activity.id)
-                      }
-                    >
-                      Suspend
-                    </button>
-
-                  )}
-
-                  <button
-                    className="detail-btn"
-                    onClick={() =>
-                      navigate(
-                        `/activity-detail?id=${activity.id}&from=admin`
-                      )
-                    }
-                  >
-                    Detail
-                  </button>
-
-                </div>
-
-              </td>
-
-            </tr>
-
-          ))}
-
-        </tbody>
-
-      </table>
-
-    </div>
-
-  </section>
-
-  {/* ================= Reports Table ================= */}
-
-  <section className="admin-card">
-
-    <div className="card-header">
-
-      <div>
-
-        <h3>Reports</h3>
-
-        <p>รายงานทั้งหมด</p>
-
-      </div>
-
-    </div>
-
-    <div className="table-wrapper">
-
-      <table>
-
-        <thead>
-
-          <tr>
-
-            <th>Activity</th>
-
-            <th>Reason</th>
-
-            <th>Status</th>
-
-            <th>Action</th>
-
-          </tr>
-
-        </thead>
-
-        <tbody>
-
-          {reports.map((report) => {
-
-            const activity = activities.find(
-              (a) => a.id === report.activityId
-            );
-
-            return (
-
-              <tr key={report.id}>
-
-                <td>{activity?.activityName || "-"}</td>
-
-                <td>{report.reason}</td>
-
-                <td>{report.status}</td>
-
-                <td>
-
-                  <button
-                    className="detail-btn"
-                    onClick={() =>
-                      navigate(
-                        `/activity-detail?id=${report.activityId}&from=admin`
-                      )
-                    }
-                  >
-                    View
-                  </button>
-
-                </td>
-
-              </tr>
-
-            );
+            year: "numeric",
 
           })}
 
-        </tbody>
+        </span>
 
-      </table>
+      </div>
 
+      {/* ================= Cards ================= */}
+
+      <section className="dashboard-cards">
+
+        <div className="dashboard-card">
+
+          <div className="card-icon blue">
+
+            <FiUsers />
+
+          </div>
+
+          <div>
+
+            <p>ผู้ใช้งานทั้งหมด</p>
+
+            <h2>{stats.totalUsers}</h2>
+
+          </div>
+
+        </div>
+
+        <div className="dashboard-card">
+
+          <div className="card-icon green">
+
+            <MdEvent />
+
+          </div>
+
+          <div>
+
+            <p>กิจกรรมทั้งหมด</p>
+
+            <h2>{stats.totalActivities}</h2>
+
+          </div>
+
+        </div>
+
+        <div className="dashboard-card">
+
+          <div className="card-icon orange">
+
+            <MdGroups />
+
+          </div>
+
+          <div>
+
+            <p>กำลังดำเนินอยู่</p>
+
+            <h2>{activeActivities}</h2>
+
+          </div>
+
+        </div>
+
+        <div className="dashboard-card">
+
+          <div className="card-icon pink">
+
+            <FiFlag />
+
+          </div>
+
+          <div>
+
+            <p>Pending Reports</p>
+
+            <h2>{stats.pendingReports}</h2>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* ================= Row ================= */}
+
+      <div className="dashboard-row">
+
+        {/* =============== Chart =============== */}
+
+        <div className="chart-card">
+
+          <div className="card-header">
+
+            <div>
+
+              <h3>Activity Overview</h3>
+
+              <p>จำนวนกิจกรรมที่ถูกสร้าง</p>
+
+            </div>
+            <select value={days} onChange={(e) => setDays(Number(e.target.value))} className="chart-filter">
+              <option value={7}>7 วันล่าสุด</option>
+              <option value={30}>30 วันล่าสุด</option>
+              <option value={90}>90 วันล่าสุด</option>
+              <option value={365}>365 วันล่าสุด</option>
+            </select>
+
+          </div>
+
+          <div className="chart-wrapper">
+
+            <ResponsiveContainer width="100%" height={320}>
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="day" />
+                <YAxis />
+                <Tooltip />
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#4F46E5"
+                  strokeWidth={3}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+
+          </div>
+
+        </div>
+
+        {/* =============== Latest Activities =============== */}
+
+        <div className="latest-card">
+
+          <div className="card-header">
+
+            <div>
+
+              <h3>Latest Activities</h3>
+
+              <p>กิจกรรมล่าสุด</p>
+
+            </div>
+
+          </div>
+
+          <div className="latest-list">
+
+            {latestActivities.map((activity) => (
+
+              <div
+                key={activity.id}
+                className="latest-item"
+                onClick={() =>
+                  navigate(
+                    `/activity-detail?id=${activity.id}&from=admin`
+                  )
+                }
+              >
+                {activity.cover ? (
+                  <img
+                    src={activity.cover}
+                    alt={activity.activityName}
+                    onError={(e) => {
+                      e.target.style.display = "none";
+                      e.target.nextSibling.style.display = "flex";
+                    }}
+                  />
+                ) : null}
+
+                <div className="default-cover" style={{ display: activity.cover ? "none" : "flex" }}></div>
+
+
+                <div className="latest-info">
+                  <h4>{activity.activityName}</h4>
+                  <span>{activity.creator}</span>
+                  <small>{activity.category}</small>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      {/* ================= Summary + Latest Reports ================= */}
+
+      <div className="dashboard-row">
+        <div className="summary-card">
+          <div className="card-header">
+            <div>
+              <h3>System Summary</h3>
+              <p>ภาพรวมของระบบ</p>
+            </div>
+          </div>
+          <div className="summary-grid">
+            <div>
+              <span>Users</span>
+              <h2>{stats.totalUsers}</h2>
+            </div>
+            <div>
+              <span>Activities</span>
+              <h2>{stats.totalActivities}</h2>
+            </div>
+            <div>
+              <span>Reports</span>
+              <h2>{stats.totalReports}</h2>
+            </div>
+            <div>
+              <span>Suspended</span>
+              <h2>{stats.suspendedActivities}</h2>
+            </div>
+          </div>
+        </div>
+        <div className="report-card">
+          <div className="card-header">
+            <div>
+              <h3>Latest Reports</h3>
+              <p>รายงานล่าสุด</p>
+            </div>
+          </div>
+          <div className="report-list">
+            {latestReports.map((report) => (
+              <div key={report.id} className="report-item" onClick={() => navigate(`/activity-detail?id=${report.activityId}&from=admin`)}>
+                <div className="report-icon">🚩</div>
+                <div>
+                  <h4>{report.activityName}</h4>
+                  <p>{report.reason}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ================= Users Table ================= */}
+
+      <section className="table-card">
+        <div className="card-header">
+          <div>
+            <h3>Users</h3>
+            <p>ผู้ใช้งานทั้งหมด</p>
+          </div>
+        </div>
+
+        <div className="table-wrapper">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+
+                <th>Username</th>
+
+                <th>Email</th>
+
+                <th>Role</th>
+                <th>Create At</th>
+
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              {users.map((user) => (
+
+                <tr key={user.id}>
+
+                  <td>{user.name}</td>
+
+                  <td>@{user.username}</td>
+
+                  <td>{user.email}</td>
+
+                  <td>
+
+                    <span className={user.role === "admin" ? "role-badge role-admin" : "role-badge role-user"}>{user.role}</span>
+
+                  </td>
+                  <td>{new Date(user.createdAt).toLocaleDateString("en-GB")}</td>
+
+                </tr>
+
+              ))}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </section>
+
+      {/* ================= Activities Table ================= */}
+
+      <section className="table-card">
+        <div className="card-header">
+          <div>
+            <h3>Activities</h3>
+            <p>กิจกรรมทั้งหมด</p>
+          </div>
+        </div>
+        <div className="table-wrapper">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Activity</th>
+                <th>Creator</th>
+                <th>Category</th>
+                <th>Participant</th>
+                <th>Type</th>
+                <th>Create At</th>
+              </tr>
+            </thead>
+            <tbody>
+              {activities.map((activity) => (
+                <tr key={activity.id}>
+                  <td>{activity.activityName}</td>
+                  <td>{userMap[activity.createdBy]?.name || "-"}</td>
+                  <td>{activity.category}</td>
+                  <td>{activity.participantCount}</td>
+                  <td>{activity.activityType}</td>
+                  <td>{new Date(activity.createdAt).toLocaleDateString("en-GB")}</td>
+
+
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* ================= Reports Table ================= */}
+
+      <section className="table-card">
+        <div className="card-header">
+          <div>
+            <h3>Reports</h3>
+            <p>รายงานทั้งหมด</p>
+          </div>
+        </div>
+        <div className="table-wrapper">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Activity</th>
+                <th>Reason</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {reports.map((report) => {
+                const activity = activities.find((a) => a.id === report.activityId
+                );
+                return (
+                  <tr key={report.id}>
+                    <td>{activity?.activityName || "-"}</td>
+                    <td>{report.reason}</td>
+                    <td>{report.status}</td>
+                    <td>
+                      <button className="btn btn-detail" onClick={() => navigate(`/activity-detail?id=${report.activityId}&from=admin`)}>View</button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </section>
     </div>
-
-  </section>
-
-</div>
-
   );
 }

@@ -146,39 +146,57 @@ router.get("/latest-reports", auth, isAdmin, async (req, res) => {
 });
 
 router.get("/chart", auth, isAdmin, async (req, res) => {
+  try {
+    const { sequelize } = Activity;
 
-  try{
+    const days = Number(req.query.days || 7);
 
-    const activities = await Activity.findAll();
+    const [rows] = await sequelize.query(
+      `
+      SELECT
+        DATE(createdAt) AS day,
+        COUNT(*) AS value
+      FROM Activities
+      WHERE createdAt >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+      GROUP BY DATE(createdAt)
+      ORDER BY day ASC
+      `,
+      {
+        replacements: [days - 1],
+      }
+    );
 
-    const chart = {};
+    // แปลงผลลัพธ์เป็น Map
+    const map = new Map();
 
-    activities.forEach((a)=>{
-
-      const day = a.createdAt.toISOString().split("T")[0];
-
-      chart[day] = (chart[day] || 0) + 1;
-
+    rows.forEach((row) => {
+      const key = new Date(row.day).toISOString().split("T")[0];
+      map.set(key, Number(row.value));
     });
 
-    const result = Object.keys(chart).map(date=>({
+    // สร้างข้อมูลครบทุกวัน
+    const result = [];
 
-      day:date,
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-      value:chart[date]
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(today.getDate() - i);
 
-    }));
+      const key = d.toISOString().split("T")[0];
 
+      result.push({
+        day: key,
+        value: map.get(key) || 0,
+      });
+    }
+    console.table(result);
     res.json(result);
-
-  }catch(err){
-
-    res.status(500).json({
-      message:"เกิดข้อผิดพลาด"
-    });
-
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "error" });
   }
-
 });
 
 module.exports = router;
