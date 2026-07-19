@@ -1,15 +1,15 @@
 .scanner-page {
   min-height: 100vh;
   background: #F5F0E8;
-  font-family: 'Sarabun', sans-serif;
-  padding-bottom: 40px;
+  font-family: "Sarabun", sans-serif;
+  padding: 48px 20px 40px;
 }
 
 .scanner-header {
-  padding: 48px 20px 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 28px;
 }
 
 .scanner-back-btn {
@@ -23,6 +23,18 @@
   cursor: pointer;
 }
 
+.scanner-back-btn:hover {
+  background: #fcfcfc;
+  box-shadow: 0 6px 16px rgba(0,0,0,.12);
+  transform: translateY(-1px);
+}
+
+.scanner-back-btn:active {
+  transform: scale(0.92);
+  box-shadow: 0 2px 6px rgba(0,0,0,.06);
+  background: #f5f5f5;
+}
+
 .scanner-header-text {
   text-align: center;
 }
@@ -30,184 +42,204 @@
 .scanner-sub {
   margin: 0;
   font-size: 12px;
-  color: #888;
+  color: #8c8c8c;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  letter-spacing: 1px;
 }
 
 .scanner-title {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 800;
+  margin: 5px 0 0;
+  font-size: 26px;
+  font-weight: 700;
   color: #111;
 }
 
+/* ---------------- Camera ---------------- */
+
 .scanner-camera-wrap {
-  margin: 24px 20px 0;
-  border-radius: 28px;
-  overflow: hidden;
   position: relative;
-  background: #0f0f1a;
+  width: 100%;
   aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 30px;
+  background: #111;
+  box-shadow: 0 10px 30px rgba(0,0,0,.18);
 }
 
 .scanner-camera {
   width: 100%;
   height: 100%;
-  position: absolute;
-  inset: 0;
 }
 
 /* ซ่อน UI ของ html5-qrcode */
-.scanner-camera > * {
+
+#reader {
+  width: 100%;
+  height: 100%;
+}
+
+#reader > div {
   border: none !important;
 }
 
-#qr-reader__scan_region {
-  background: transparent !important;
+#reader video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  border-radius: 30px;
 }
 
-#qr-reader__dashboard {
+#reader__dashboard {
   display: none !important;
 }
+
+#reader__scan_region {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* ---------------- Overlay ---------------- */
 
 .scanner-overlay {
   position: absolute;
   inset: 0;
-  z-index: 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   pointer-events: none;
 }
 
-.scanner-top-fade {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 80px;
-  background: linear-gradient(to bottom, rgba(15,15,26,0.8), transparent);
-}
-
-.scanner-bottom-fade {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 80px;
-  background: linear-gradient(to top, rgba(15,15,26,0.8), transparent);
-}
-
-.scanner-frame-wrap {
+.scanner-overlay::before {
+  content: "";
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: rgba(0,0,0,.25);
 }
 
 .scanner-frame {
   position: relative;
-  width: 200px;
-  height: 200px;
+  width: 220px;
+  height: 220px;
+  z-index: 2;
 }
 
 .corner {
   position: absolute;
-  width: 32px;
-  height: 32px;
+  width: 42px;
+  height: 42px;
+  border: 4px solid #FFF176;
 }
 
 .corner.tl {
   top: 0;
   left: 0;
-  border-top: 3px solid #FFF176;
-  border-left: 3px solid #FFF176;
-  border-radius: 4px 0 0 0;
+  border-right: none;
+  border-bottom: none;
 }
 
 .corner.tr {
   top: 0;
   right: 0;
-  border-top: 3px solid #FFF176;
-  border-right: 3px solid #FFF176;
-  border-radius: 0 4px 0 0;
+  border-left: none;
+  border-bottom: none;
 }
 
 .corner.bl {
-  bottom: 0;
   left: 0;
-  border-bottom: 3px solid #FFF176;
-  border-left: 3px solid #FFF176;
-  border-radius: 0 0 0 4px;
+  bottom: 0;
+  border-right: none;
+  border-top: none;
 }
 
 .corner.br {
-  bottom: 0;
   right: 0;
-  border-bottom: 3px solid #FFF176;
-  border-right: 3px solid #FFF176;
-  border-radius: 0 0 4px 0;
+  bottom: 0;
+  border-left: none;
+  border-top: none;
 }
 
 .scan-line {
   position: absolute;
-  left: 4px;
-  right: 4px;
-  height: 2px;
-  background: linear-gradient(to right, transparent, #FFF176, white, #FFF176, transparent);
+  left: 10px;
+  right: 10px;
+  height: 3px;
   border-radius: 999px;
-  animation: scanMove 2s ease-in-out infinite;
+  background: linear-gradient(
+    to right,
+    transparent,
+    #FFF176,
+    #fff,
+    #FFF176,
+    transparent
+  );
+  animation: scannerMove 2s ease-in-out infinite;
 }
 
-@keyframes scanMove {
-  0% { top: 4px; }
-  50% { top: 192px; }
-  100% { top: 4px; }
+@keyframes scannerMove {
+  0% {
+    top: 8px;
+  }
+  50% {
+    top: 205px;
+  }
+  100% {
+    top: 8px;
+  }
 }
 
-.scanner-info {
-  padding: 16px 20px 0;
+/* ---------------- Card ---------------- */
+
+.scanner-card {
+  margin-top: 26px;
+  background: #fff;
+  border-radius: 24px;
+  padding: 22px;
+  box-shadow: 0 8px 22px rgba(0,0,0,.05);
 }
 
-.scanner-steps-card {
-  background: white;
-  border-radius: 20px;
-  padding: 16px;
-}
-
-.scanner-steps-title {
-  margin: 0 0 12px;
-  font-size: 14px;
+.scanner-card h3 {
+  margin: 0 0 20px;
+  font-size: 18px;
   font-weight: 700;
-  color: #111;
 }
 
-.scanner-steps {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.scanner-step {
+.step {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 16px;
 }
 
-.step-num {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
+.step:not(:last-child) {
+  margin-bottom: 18px;
+}
+
+.step-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
-  font-weight: 800;
-  color: #111;
+  font-size: 20px;
+  font-weight: 700;
   flex-shrink: 0;
 }
 
-.step-text {
+.yellow {
+  background: #FFF176;
+}
+
+.blue {
+  background: #B8E0FF;
+}
+
+.green {
+  background: #C8F5C8;
+}
+
+.step p {
   margin: 0;
-  font-size: 13px;
   color: #555;
+  font-size: 15px;
+  line-height: 1.45;
 }

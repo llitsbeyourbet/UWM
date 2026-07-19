@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { QRCodeCanvas } from "qrcode.react";
 import "./ActivityDetail.css";
@@ -22,6 +22,7 @@ function ActivityDetail() {
   const [showReportMenu, setShowReportMenu] = useState(false);
   const [showAllParticipants, setShowAllParticipants] = useState(false);
   const [reportReason, setReportReason] = useState("");
+  const [otherReason, setOtherReason] = useState("");
   const [reportLoading, setReportLoading] = useState(false);
   const [activityRating, setActivityRating] = useState(null);
   const [comments, setComments] = useState([]);
@@ -29,10 +30,11 @@ function ActivityDetail() {
   const [host, setHost] = useState(null);
   const [hostRating, setHostRating] = useState(null);
   const [participants, setParticipants] = useState([]);
+  const [notFound, setNotFound] = useState(false);
 
   const reportReasons = ["เนื้อหาไม่เหมาะสม", "ข้อมูลเป็นเท็จ", "สแปม", "เป็นอันตราย", "อื่นๆ"];
 
-  const fetchActivity = async () => {
+  const fetchActivity = useCallback(async () => {
     if (!activityId) return;
     const token = localStorage.getItem("token");
 
@@ -41,39 +43,47 @@ function ActivityDetail() {
       const userRes = await fetch(`${API_URL}/api/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      user = await userRes.json();
+      if (userRes.ok) {
+        user = await userRes.json();
+      }
     } catch (err) {
       console.log(err);
     }
 
     try {
       const res = await fetch(`${API_URL}/api/activities/${activityId}`);
+      if (!res.ok) {
+        if (res.status === 404) setNotFound(true);
+        return;
+      }
       const activityData = await res.json();
       setActivity(activityData);
+      setNotFound(false);
 
-      // ดึงข้อมูล host
       const hostRes = await fetch(`${API_URL}/api/auth/user/${activityData.createdBy}`);
       if (hostRes.ok) {
         const hostData = await hostRes.json();
         setHost(hostData);
       }
 
-      // ดึงคะแนน host
       const hostRatingRes = await fetch(`${API_URL}/api/review/host/${activityData.createdBy}`);
-      const hostRatingData = await hostRatingRes.json();
-      setHostRating(hostRatingData.avgRating);
+      if (hostRatingRes.ok) {
+        const hostRatingData = await hostRatingRes.json();
+        setHostRating(hostRatingData.avgRating);
+      }
 
-      // ดึงคะแนนเฉลี่ยกิจกรรม
       const ratingRes = await fetch(`${API_URL}/api/review/activity/${activityId}/rating`);
-      const ratingData = await ratingRes.json();
-      setActivityRating(ratingData);
+      if (ratingRes.ok) {
+        const ratingData = await ratingRes.json();
+        setActivityRating(ratingData);
+      }
 
-      // ดึง comments สาธารณะ
       const pubCommentRes = await fetch(`${API_URL}/api/review/activity/${activityId}/comments/public`);
-      const pubCommentData = await pubCommentRes.json();
-      setPublicComments(pubCommentData);
+      if (pubCommentRes.ok) {
+        const pubCommentData = await pubCommentRes.json();
+        setPublicComments(pubCommentData);
+      }
 
-      // ดึงรายชื่อผู้เข้าร่วม
       const participantsRes = await fetch(`${API_URL}/api/activities/${activityId}/participants`);
       if (participantsRes.ok) {
         const participantsData = await participantsRes.json();
@@ -86,32 +96,47 @@ function ActivityDetail() {
         const commentRes = await fetch(`${API_URL}/api/review/activity/${activityId}/comments`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const commentData = await commentRes.json();
-        setComments(commentData);
-
+        if (commentRes.ok) {
+          const commentData = await commentRes.json();
+          setComments(commentData);
+        }
       } else if (user) {
         const statusRes = await fetch(`${API_URL}/api/join/${activityId}/status`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const statusData = await statusRes.json();
-        setJoinStatus(statusData.status);
+        if (statusRes.ok) {
+          const statusData = await statusRes.json();
+          setJoinStatus(statusData.status);
 
-        if (statusData.status === "checked_in") {
-          const reviewRes = await fetch(`${API_URL}/api/review/${activityId}/status`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const reviewData = await reviewRes.json();
-          setReviewed(reviewData.reviewed);
+          if (statusData.status === "checked_in") {
+            const reviewRes = await fetch(`${API_URL}/api/review/${activityId}/status`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            if (reviewRes.ok) {
+              const reviewData = await reviewRes.json();
+              setReviewed(reviewData.reviewed);
+            }
+          }
         }
       }
     } catch (err) {
       console.log(err);
     }
-  };
+  }, [activityId, navigate]);
 
   useEffect(() => {
     fetchActivity();
-  }, [activityId]);
+
+    // Listen for update event from EditActivity page
+    const handleUpdate = () => {
+      fetchActivity();
+    };
+    window.addEventListener("activityUpdated", handleUpdate);
+
+    return () => {
+      window.removeEventListener("activityUpdated", handleUpdate);
+    };
+  }, [fetchActivity]);
 
   useEffect(() => {
     if (!showQR || !isOwner || !activity) return;
@@ -123,14 +148,12 @@ function ActivityDetail() {
     }, 1000);
 
     return () => clearInterval(interval);
-
   }, [showQR, activity, isOwner]);
-
 
   useEffect(() => {
     if (qrCountdown === 0) {
       loadQR();
-      setQrCountdown(10);
+      setQrCountdown(15);
     }
   }, [qrCountdown]);
 
@@ -210,19 +233,21 @@ function ActivityDetail() {
 
   const handleReport = async () => {
     if (!reportReason) { alert("กรุณาเลือกเหตุผล"); return; }
+    if (reportReason === "อื่นๆ" && !otherReason.trim()) { alert("กรุณาระบุเหตุผลเพิ่มเติม"); return; }
     const token = localStorage.getItem("token");
     setReportLoading(true);
     try {
       const res = await fetch(`${API_URL}/api/report/${activity.id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ reason: reportReason }),
+        body: JSON.stringify({ reason: reportReason === "อื่นๆ" ? otherReason : reportReason }),
       });
       const data = await res.json();
       if (!res.ok) { alert(data.message); return; }
       alert("รายงานสำเร็จ ขอบคุณที่แจ้งเตือน");
       setShowReportModal(false);
       setReportReason("");
+      setOtherReason("");
     } catch { alert("ไม่สามารถเชื่อมต่อ server ได้"); }
     finally { setReportLoading(false); }
   };
@@ -256,12 +281,10 @@ function ActivityDetail() {
       );
 
       if (currentIsPublic) {
-        // สาธารณะ → ส่วนตัว
         setPublicComments((prev) =>
           prev.filter((comment) => comment.id !== commentId)
         );
       } else {
-        // ส่วนตัว → สาธารณะ
         const updatedComment = comments.find(
           (comment) => comment.id === commentId
         );
@@ -269,7 +292,7 @@ function ActivityDetail() {
         if (updatedComment) {
           setPublicComments((prev) => [
             { ...updatedComment, isPublic: true },
-            ...prev.filter((comment) => comment.id !== commentId),
+            ...prev.filter((comment) => comment.id !== commentId으로),
           ]);
         }
       }
@@ -279,6 +302,8 @@ function ActivityDetail() {
     }
   };
 
+  if (!activityId) return <div className="loading">ไม่พบ ID กิจกรรม</div>;
+  if (notFound) return <div className="loading">ไม่พบกิจกรรมที่คุณต้องการดู</div>;
   if (!activity) return <div className="loading">กำลังโหลด...</div>;
 
   const getDayName = (dateStr) => {
@@ -625,7 +650,7 @@ function ActivityDetail() {
         {/* Owner QR */}
         {isOwner && (
           <div className="qr-owner-section">
-            <button className="show-qr-btn" onClick={() => { setShowQR(!showQR); setQrCountdown(10); }}>
+            <button className="show-qr-btn" onClick={() => { setShowQR(!showQR); setQrCountdown(15); }}>
               {showQR ? "ซ่อน QR Code" : "แสดง QR Code สำหรับยืนยันการเข้าร่วม"}
             </button>
             {showQR && (
@@ -683,7 +708,7 @@ function ActivityDetail() {
                       ⭐ รีวิวกิจกรรม
                     </button>
                   ) : (
-                    <p className="reviewed-text">✓ รีวิวแล้ว</p>
+                    <p className la-reviewed-text>✓ รีวิวแล้ว</p>
                   )}
                 </>
               )}
@@ -737,9 +762,24 @@ function ActivityDetail() {
                 </div>
               ))}
             </div>
+            {reportReason === "อื่นๆ" && (
+              <div className="other-reason-wrap">
+                <p className="other-reason-lbl">โปรดระบุเหตุผลเพิ่มเติม</p>
+                <textarea
+                  className="other-reason-input"
+                  placeholder="ระบุเหตุผลที่นี่..."
+                  value={otherReason}
+                  onChange={(e) => setOtherReason(e.target.value)}
+                />
+              </div>
+            )}
             <div className="modal-actions">
-              <button className="modal-cancel-btn" onClick={() => setShowReportModal(false)}>ยกเลิก</button>
-              <button className="modal-report-btn" onClick={handleReport} disabled={reportLoading}>
+              <button className="modal-cancel-btn" onClick={() => { setShowReportModal(false); setReportReason(""); setOtherReason(""); }}>ยกเลิก</button>
+              <button
+                className="modal-report-btn"
+                onClick={handleReport}
+                disabled={reportLoading || (reportReason === "อื่นๆ" && !otherReason.trim())}
+              >
                 {reportLoading ? "กำลังส่ง..." : "รายงาน"}
               </button>
             </div>
@@ -747,7 +787,6 @@ function ActivityDetail() {
         </div>
       )}
     </div>
-
   );
 }
 

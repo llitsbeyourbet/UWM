@@ -991,6 +991,40 @@
     cursor: default;
 }
 
+.other-reason-wrap {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.other-reason-lbl {
+    margin: 0;
+    font-size: 13px;
+    color: #666;
+    font-weight: 600;
+}
+
+.other-reason-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    color: #333;
+    background-color: #ffffff;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 14px;
+    resize: none;
+    height: 80px;
+    box-sizing: border-box;
+}
+
+.other-reason-input:focus {
+    outline: none;
+    border-color: #4A6FFF;
+    box-shadow: 0 0 0 2px rgba(74, 111, 255, 0.1);
+}
+
 /* QR text */
 .qr-container p {
     margin: 0;

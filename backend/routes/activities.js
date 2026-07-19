@@ -139,7 +139,7 @@ router.get("/:id/qr", auth, async (req, res) => {
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: "10s",
+        expiresIn: "15s",
       }
     );
 
@@ -149,6 +149,82 @@ router.get("/:id/qr", auth, async (req, res) => {
     res.status(500).json({
       message: "เกิดข้อผิดพลาด",
     });
+  }
+});
+
+// ดึงข้อมูลสรุปผู้เข้าร่วม (แยกกลุ่มเช็คอินและยังไม่เช็คอิน)
+router.get("/:id/summary-participants", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const JoinRequest = require("../models/JoinRequest");
+    const User = require("../models/User");
+
+    const requests = await JoinRequest.findAll({
+      where: {
+        activityId: id,
+        status: { [require("sequelize").Op.in]: ["approved", "checked_in"] },
+      },
+    });
+
+    const userIds = requests.map((r) => r.userId);
+    const users = await User.findAll({
+      where: { id: { [require("sequelize").Op.in]: userIds } },
+      attributes: ["id", "name", "username", "profileImage"],
+    });
+
+    const userMap = {};
+    users.forEach(u => { userMap[u.id] = u });
+
+    const checkedIn = [];
+    const approved = [];
+
+    requests.forEach(r => {
+      const user = userMap[r.userId];
+      if (user) {
+        if (r.status === "checked_in") {
+          checkedIn.push(user);
+        } else if (r.status === "approved") {
+          approved.push(user);
+        }
+      }
+    });
+
+    res.json({
+      checkedIn,
+      approved,
+      totalJoined: requests.length
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+  }
+});
+
+// ดึงรายชื่อผู้ที่เช็คอินแล้ว
+router.get("/:id/participants/checked-in", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const JoinRequest = require("../models/JoinRequest");
+    const User = require("../models/User");
+
+    const requests = await JoinRequest.findAll({
+      where: { activityId: id, status: "checked_in" },
+    });
+
+    const userIds = requests.map((r) => r.userId);
+    const participants = await User.findAll({
+      where: {
+        id: {
+          [require("sequelize").Op.in]: userIds,
+        },
+      },
+      attributes: ["id", "name", "username", "profileImage"],
+    });
+
+    res.json(participants);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
 });
 

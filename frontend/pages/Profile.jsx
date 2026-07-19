@@ -95,6 +95,17 @@ function Profile() {
                   </svg>
                   แก้ไขโปรไฟล์
                 </div>
+                <div className="dropdown-item" onClick={() => { setShowMenu(false); navigate("/activity-summary"); }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round">
+                    <path d="M3 3v18h18" />
+                    <path d="M7 14l3-3 3 2 4-5" />
+                    <circle cx="7" cy="14" r="1" />
+                    <circle cx="10" cy="11" r="1" />
+                    <circle cx="13" cy="13" r="1" />
+                    <circle cx="17" cy="8" r="1" />
+                  </svg>
+                  สรุปผลกิจกรรม
+                </div>
                 <div className="dropdown-divider" />
                 <div className="dropdown-item red" onClick={() => { setShowMenu(false); handleLogout(); }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e53935" strokeWidth="2" strokeLinecap="round">
@@ -120,7 +131,7 @@ function Profile() {
               ) : (
                 <div className="profile-avatar-initials">{getInitials(user?.name)}</div>
               )}
-              <div className="profile-online-dot" />
+              
             </div>
             <div className="profile-info">
               <p className="profile-display-name">{user?.name || "ผู้ใช้งาน"}</p>
@@ -143,12 +154,12 @@ function Profile() {
           </div>
           <div className="stat-divider" />
           <div className="stat-item">
-            <p className="stat-num blue">{joinedActivities.length}</p>
+            <p className="stat-num text-blue">{joinedActivities.length}</p>
             <p className="stat-lbl">เข้าร่วม</p>
           </div>
           <div className="stat-divider" />
           <div className="stat-item">
-            <p className="stat-num pink">{hostRating || "-"}</p>
+            <p className="stat-num text-pink">{hostRating || "-"}</p>
             <p className="stat-lbl">คะแนน</p>
           </div>
         </div>

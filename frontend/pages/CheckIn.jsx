@@ -23,18 +23,25 @@ function CheckIn() {
 
       try {
         const actRes = await fetch(`${API_URL}/api/activities/${activityId}`);
+        if (!actRes.ok) {
+          throw new Error("ไม่พบข้อมูลกิจกรรม");
+        }
         const actData = await actRes.json();
         setActivity(actData);
 
         const statusRes = await fetch(`${API_URL}/api/join/${activityId}/status`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        if (!statusRes.ok) {
+          throw new Error("ไม่สามารถตรวจสอบสถานะการเข้าร่วมได้");
+        }
         const statusData = await statusRes.json();
         setJoinStatus(statusData.status);
 
         if (statusData.status === "checked_in") setDone(true);
       } catch (err) {
         console.log(err);
+        setErrorMessage(err.message || "ไม่สามารถโหลดข้อมูลกิจกรรมได้");
       } finally {
         setLoading(false);
       }
@@ -88,7 +95,7 @@ function CheckIn() {
 
           <button
             className="checkin-btn done"
-            onClick={() => navigate(`/activity-detail?id=${activity.id}`)}
+            onClick={() => activity && navigate(`/activity-detail?id=${activity.id}`)}
           >
             กลับหน้ากิจกรรม
           </button>
@@ -122,7 +129,7 @@ function CheckIn() {
             <p className="checkin-subtitle">{activity?.activityName}</p>
             <button
               className="checkin-btn done"
-              onClick={() => navigate(`/activity-detail?id=${activity.id}`)}>
+              onClick={() => activity && navigate(`/activity-detail?id=${activity.id}`)}>
               กลับหน้ากิจกรรม
             </button>
           </>
@@ -159,7 +166,7 @@ function CheckIn() {
 
                 <button
                   className="checkin-btn done"
-                  onClick={() => navigate(`/activity-detail?id=${activity.id}`)}
+                  onClick={() => activity && navigate(`/activity-detail?id=${activity.id}`)}
                 >
                   กลับหน้ากิจกรรม
                 </button>
