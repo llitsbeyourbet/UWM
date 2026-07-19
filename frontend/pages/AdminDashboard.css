@@ -243,6 +243,14 @@
   width: 100%;
   height: 330px;
 }
+.chart-filter{
+    padding:10px 15px;
+    border-radius:10px;
+    border:1px solid #ddd;
+    background:#fff;
+    font-size:14px;
+    cursor:pointer;
+}
 
 /* =========================================
    Latest Activities
@@ -703,6 +711,17 @@
 
 .table-footer button:hover{
     background:#4f46e5;
+}
+.default-cover{
+    width:72px;
+    height:72px;
+    border-radius:18px;
+    background:#eef2ff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:30px;
+    color:#6366f1;
 }
 
 /* ===========================================
