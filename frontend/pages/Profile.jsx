@@ -131,7 +131,7 @@ function Profile() {
               ) : (
                 <div className="profile-avatar-initials">{getInitials(user?.name)}</div>
               )}
-              <div className="profile-online-dot" />
+              
             </div>
             <div className="profile-info">
               <p className="profile-display-name">{user?.name || "ผู้ใช้งาน"}</p>

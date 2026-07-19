@@ -92,17 +92,6 @@
   border: 3px solid white;
 }
 
-.profile-online-dot {
-  position: absolute;
-  bottom: 2px;
-  right: 2px;
-  width: 16px;
-  height: 16px;
-  background: #6BCB77;
-  border-radius: 50%;
-  border: 2px solid white;
-}
-
 .profile-info {
   flex: 1;
 }

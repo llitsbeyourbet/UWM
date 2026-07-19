@@ -9,8 +9,9 @@ function ActivitySummaryDetail() {
 
   const [activity, setActivity] = useState(null);
   const [rating, setRating] = useState(null);
-  const [participants, setParticipants] = useState([]);
+  const [attendance, setAttendance] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [isOwner, setIsOwner] = useState(false);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
@@ -18,14 +19,23 @@ function ActivitySummaryDetail() {
     const fetchDetails = async () => {
       try {
         const token = localStorage.getItem("token");
-        
-        // ถอดแบบการ fetch มาจากไฟล์ ActivityDetail
+
+        let user = null;
+        try {
+          const userRes = await fetch(`${API_URL}/api/auth/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (userRes.ok) {
+            user = await userRes.json();
+          }
+        } catch (err) {
+          console.log("Error checking user context:", err);
+        }
+
         const [actRes, ratingRes, partRes, revRes] = await Promise.all([
           fetch(`${API_URL}/api/activities/${id}`),
           fetch(`${API_URL}/api/review/activity/${id}/rating`),
-          fetch(`${API_URL}/api/activities/${id}/participants`), // ใช้ endpoint เดียวกับผู้เข้าร่วมในไฟล์ ActivityDetail
-          //fetch(`${API_URL}/api/review/activity/${id}/comments/public`), // ดึงรีวิวสาธารณะมาแสดงตามภาพ UI
-          //fetch(`${API_URL}/api/review/activity/${id}`), // ดึงรีวิวทั้งหมดมาแสดงตามภาพ UI
+          fetch(`${API_URL}/api/activities/${id}/summary-participants`),
           fetch(`${API_URL}/api/review/activity/${id}/detailed-reviews`)
         ]);
 
@@ -43,14 +53,17 @@ function ActivitySummaryDetail() {
         }
 
         if (partRes.ok) {
-          const participantsData = await partRes.json();
-          setParticipants(participantsData);
+          const attendanceData = await partRes.json();
+          setAttendance(attendanceData);
         }
 
         if (revRes.ok) {
           const revData = await revRes.json();
-          // รองรับทั้งแบบ array ตรงๆ และแบบ nesting object ตามพฤติกรรม API ในไฟล์ ActivityDetail
           setReviews(Array.isArray(revData) ? revData : revData.reviews || []);
+        }
+
+        if (user && activityData.createdBy === user.id) {
+          setIsOwner(true);
         }
       } catch (err) {
         console.error("Error fetching summary details:", err);
@@ -65,10 +78,9 @@ function ActivitySummaryDetail() {
   if (loading) return <div className="detail-loading">กำลังโหลดข้อมูล...</div>;
   if (notFound || !activity) return <div className="detail-loading">ไม่พบข้อมูลสรุปผลกิจกรรม</div>;
 
-  // ส่วนคำนวณคณิตศาสตร์สำหรับ Dashboard
-  const total = activity.participantCount || 0;
-  const checkedIn = activity.joinedCount || 0;
-  const notCheckedIn = Math.max(0, total - checkedIn);
+  const total = attendance?.totalJoined || 0;
+  const checkedIn = attendance?.checkedIn?.length || 0;
+  const notCheckedIn = attendance?.approved?.length || 0;
   const checkInRate = total > 0 ? Math.round((checkedIn / total) * 100) : 0;
 
   return (
@@ -105,12 +117,26 @@ function ActivitySummaryDetail() {
 
       {/* 3. สรุปผลการเข้าร่วม */}
       <div className="section-card">
-        <h4 className="section-title">สรุปผลการเข้าร่วม</h4>
+        <div className="section-header-flex">
+          <h4 className="section-title">สรุปผลการเข้าร่วม</h4>
+          <span className="opened-seats-badge">เปิดรับ {activity.participantCount || 0} คน</span>
+        </div>
         <div className="attendance-overview">
+          <div className="attendance-box gray-text">
+            <span className="box-label">เข้าร่วมทั้งหมด</span>
+            <span className="box-value">{total} <small>คน</small></span>
+          </div>
           <div className="attendance-box green-text">
             <span className="box-label">เช็คอินแล้ว</span>
             <span className="box-value">{checkedIn} <small>คน</small></span>
           </div>
+          <div className="attendance-box gray-text">
+            <span className="box-label">ยังไม่เช็คอิน</span>
+            <span className="box-value">{notCheckedIn} <small>คน</small></span>
+          </div>
+        </div>
+
+        <div className="attendance-visuals-row">
           <div className="circle-progress-wrap">
             <div className="circle-progress" style={{ background: `conic-gradient(#2ecc71 ${checkInRate}%, #edf2f7 0)` }}>
               <div className="circle-inner">
@@ -119,30 +145,33 @@ function ActivitySummaryDetail() {
               </div>
             </div>
           </div>
-          <div className="attendance-box gray-text">
-            <span className="box-label">ยังไม่เช็คอิน</span>
-            <span className="box-value">{notCheckedIn} <small>คน</small></span>
+          <div className="attendance-bar-side">
+            <div className="progress-bar-bg">
+              <div className="progress-bar-fill" style={{ width: `${checkInRate}%` }}></div>
+            </div>
+            <p className="attendance-calc-hint">สัดส่วนเช็คอิน: <strong>{checkedIn}</strong> จาก <strong>{total}</strong> คน</p>
           </div>
-        </div>
-        <p className="total-hint-text">จากผู้เข้าร่วมทั้งหมด {total} คน</p>
-        <div className="progress-bar-bg">
-          <div className="progress-bar-fill" style={{ width: `${checkInRate}%` }}></div>
         </div>
       </div>
 
-      {/* 4. รายชื่อผู้เข้าร่วม/เช็คอิน */}
+      {/* 4. รายชื่อผู้เช็คอิน */}
       <div className="section-card">
-        <h4 className="section-title">รายชื่อผู้เช็คอิน ({participants.length})</h4>
+        <h4 className="section-title">รายชื่อผู้เช็คอิน ({checkedIn})</h4>
         <div className="participants-avatars-list">
-          {participants.length > 0 ? (
-            participants.map((p) => {
+          {attendance?.checkedIn?.length > 0 ? (
+            attendance.checkedIn.map((p) => {
               const pImage = p.profileImage;
               const imageUrl = pImage
                 ? pImage.startsWith("http") ? pImage : `${API_URL}/uploads/${pImage}`
                 : null;
 
               return (
-                <div key={p.id} className="participant-avatar-item" title={`${p.name} (@${p.username || ""})`}>
+                <div
+                  key={p.id}
+                  className="participant-avatar-item"
+                  title={`${p.name} (@${p.username || ""})`}
+                  onClick={() => navigate(`/user/${p.id}`)}
+                >
                   {imageUrl ? (
                     <img src={imageUrl} alt={p.name} />
                   ) : (
@@ -161,15 +190,16 @@ function ActivitySummaryDetail() {
       {/* 5. สรุปผลการรีวิวและความคิดเห็น */}
       <div className="section-card">
         <h4 className="section-title">สรุปผลการรีวิว</h4>
+        
         <div className="review-dashboard">
           <div className="rating-score-box">
-            <span className="score-title">คะแนนเฉลี่ย</span>
+            <span className="score-title">คะแนนกิจกรรม</span>
             <div className="score-big">
-              {rating?.avgRating || "0.0"} <span className="score-max">/ 5</span>
+              {rating?.avgActivityRating || rating?.avgRating || "0.0"} <span className="score-max">/ 5</span>
             </div>
             <div className="stars-row">
               {Array.from({ length: 5 }).map((_, i) => (
-                <span key={i} className={`star-icon ${i < Math.round(rating?.avgRating || 0) ? 'active' : ''}`}>★</span>
+                <span key={i} className={`star-icon ${i < Math.round(rating?.avgActivityRating || rating?.avgRating || 0) ? 'active' : ''}`}>★</span>
               ))}
             </div>
           </div>
@@ -180,32 +210,62 @@ function ActivitySummaryDetail() {
           </div>
         </div>
 
-        {/* รายการรีวิวแบบแมปค่าโครงสร้าง User Object ซ้อนแบบเดียวกับไฟล์ ActivityDetail */}
+        {/* รายการฟีดความคิดเห็นที่คลีนขึ้น แสดงเฉพาะดาวและคอมเมนต์รายบุคคล */}
         <div className="reviews-feed-list">
-          <h5 className="sub-section-title">ความคิดเห็นจากผู้เข้าร่วม</h5>
+          <h5 className="sub-section-title">รายละเอียดรีวิวจากผู้เข้าร่วม</h5>
           {reviews.length > 0 ? (
             reviews.map((c) => {
-              // ดึงโครงสร้างข้อมูลตาม fallback logic ของไฟล์เดเทลหลัก
-              const reviewer = c.user || {};
-              const reviewerName = reviewer.name || "ผู้ใช้งานทั่วไป";
-              const ratingValue = c.activityRating || 0;
+              const reviewer = c.user || c.reviewer || {
+                id: c.userId || c.reviewerId
+              };
+              const reviewerName = reviewer.name || c.userName || c.reviewerName || "ผู้ใช้งานทั่วไป";
+              
+              // ตรวจสอบข้อมูลคะแนนจากฟิลด์
+              const ratingValue = c.rating !== undefined && c.rating !== null ? c.rating : (c.activityRating || 0);
+              
+              const pImage = reviewer.profileImage || c.profileImage;
+              const imageUrl = pImage
+                ? pImage.startsWith("http") ? pImage : `${API_URL}/uploads/${pImage}`
+                : null;
 
               return (
                 <div key={c.id} className="review-feed-item">
                   <div className="review-feed-header">
-                    <div className="feed-user-info">
-                      <span className="feed-user-name">{reviewerName}</span>
-                      <div className="feed-stars-row">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <span key={i} className={`star-icon ${i < ratingValue ? 'active' : ''}`}>★</span> 
-                        ))}
+                    <div 
+                      className="feed-user-wrap"
+                      onClick={() => navigate(`/user/${reviewer.id}`)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <div className="feed-avatar-wrap">
+                        {imageUrl ? (
+                          <img src={imageUrl} alt={reviewerName} className="feed-user-avatar" />
+                        ) : (
+                          <div className="feed-avatar-placeholder">{reviewerName.charAt(0).toUpperCase()}</div>
+                        )}
+                      </div>
+                      <div className="feed-user-info">
+                        <span className="feed-user-name">{reviewerName}</span>
+                        <div className="feed-stars-row">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <span key={i} className={`star-icon ${i < ratingValue ? 'active' : ''}`}>★</span> 
+                          ))}
+                        </div>
                       </div>
                     </div>
-                    <span className="feed-date">{new Date(c.createdAt).toLocaleDateString("th-TH")}</span>
                   </div>
+                  
                   <p className="feed-comment-text">
                     {c.comment ? `"${c.comment}"` : `ให้คะแนนกิจกรรมนี้ ${ratingValue} ดาว`}
                   </p>
+
+                  <div className="feed-footer-row">
+                    <span className="feed-date">{c.createdAt ? new Date(c.createdAt).toLocaleDateString("th-TH") : "-"}</span>
+                    {isOwner && (
+                      <span className={`visibility-badge ${c.isPublic ? "public-type" : "private-type"}`}>
+                        {c.isPublic ? "แสดงสาธารณะ" : "เห็นเฉพาะเจ้าของ"}
+                      </span>
+                    )}
+                  </div>
                 </div>
               );
             })

@@ -242,15 +242,6 @@ function UserProfile() {
                 เข้าร่วมแล้ว
             </div>
 
-            <div
-                className={`profile-tab ${
-                activeTab === "reviews" ? "active" : ""
-                }`}
-                onClick={() => setActiveTab("reviews")}
-            >
-                รีวิว
-            </div>
-
         </div>
 
         <div className="profile-grid">
@@ -285,71 +276,7 @@ function UserProfile() {
                 )
             )}
 
-            {activeTab === "reviews" && (
-                reviews.length === 0 ? (
-                <p className="profile-empty">
-                    ยังไม่มีรีวิว
-                </p>
-                ) : (
-                reviews.map((review) => (
-                    <div
-                    key={review.id}
-                    className="review-card"
-                    >
-
-                    <div className="review-top">
-
-                        <div className="review-user">
-
-                        {review.User?.profileImage ? (
-                            <img
-                            src={
-                                review.User.profileImage.startsWith("http")
-                                ? review.User.profileImage
-                                : `${API_URL}/uploads/${review.User.profileImage}`
-                            }
-                            alt=""
-                            className="review-avatar"
-                            />
-                        ) : (
-                            <div className="review-avatar-placeholder">
-                            {review.User?.name
-                                ?.split(" ")
-                                .map((n) => n[0])
-                                .join("")
-                                .toUpperCase()
-                                .slice(0, 2)}
-                            </div>
-                        )}
-
-                        <div>
-                            <div className="review-name">
-                            {review.User?.name}
-                            </div>
-
-                            <div className="review-date">
-                            {new Date(review.createdAt).toLocaleDateString("th-TH")}
-                            </div>
-                        </div>
-
-                        </div>
-
-                        <div className="review-score">
-                        ⭐ {review.rating}
-                        </div>
-
-                    </div>
-
-                    {review.comment && (
-                        <div className="review-comment">
-                        {review.comment}
-                        </div>
-                    )}
-
-                    </div>
-                ))
-                )
-            )}
+            
 
         </div>
 
