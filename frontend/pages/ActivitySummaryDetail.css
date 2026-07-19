@@ -375,6 +375,11 @@
   gap: 1px;
 }
 
+.feed-stars-row {
+  display: flex;
+  gap: 1px;
+}
+
 .feed-star {
   font-size: 0.65rem;
   color: #e2e8f0;

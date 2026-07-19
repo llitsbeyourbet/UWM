@@ -24,7 +24,9 @@ function ActivitySummaryDetail() {
           fetch(`${API_URL}/api/activities/${id}`),
           fetch(`${API_URL}/api/review/activity/${id}/rating`),
           fetch(`${API_URL}/api/activities/${id}/participants`), // ใช้ endpoint เดียวกับผู้เข้าร่วมในไฟล์ ActivityDetail
-          fetch(`${API_URL}/api/review/activity/${id}/comments/public`), // ดึงรีวิวสาธารณะมาแสดงตามภาพ UI
+          //fetch(`${API_URL}/api/review/activity/${id}/comments/public`), // ดึงรีวิวสาธารณะมาแสดงตามภาพ UI
+          //fetch(`${API_URL}/api/review/activity/${id}`), // ดึงรีวิวทั้งหมดมาแสดงตามภาพ UI
+          fetch(`${API_URL}/api/review/activity/${id}/detailed-reviews`)
         ]);
 
         if (!actRes.ok) {
@@ -184,22 +186,22 @@ function ActivitySummaryDetail() {
           {reviews.length > 0 ? (
             reviews.map((c) => {
               // ดึงโครงสร้างข้อมูลตาม fallback logic ของไฟล์เดเทลหลัก
-              const reviewer = c.user || c.reviewer || {};
-              const reviewerName = reviewer.name || c.userName || c.reviewerName || "ผู้ใช้งานทั่วไป";
-              const ratingValue = c.rating || 0;
+              const reviewer = c.user || {};
+              const reviewerName = reviewer.name || "ผู้ใช้งานทั่วไป";
+              const ratingValue = c.activityRating || 0;
 
               return (
                 <div key={c.id} className="review-feed-item">
                   <div className="review-feed-header">
                     <div className="feed-user-info">
                       <span className="feed-user-name">{reviewerName}</span>
-                      <div className="feed-stars">
+                      <div className="feed-stars-row">
                         {Array.from({ length: 5 }).map((_, i) => (
-                          <span key={i} className={`feed-star ${i < ratingValue ? 'active' : ''}`}>★</span>
+                          <span key={i} className={`star-icon ${i < ratingValue ? 'active' : ''}`}>★</span> 
                         ))}
                       </div>
                     </div>
-                    <span className="feed-rating-tag">⭐ {ratingValue} ดาว</span>
+                    <span className="feed-date">{new Date(c.createdAt).toLocaleDateString("th-TH")}</span>
                   </div>
                   <p className="feed-comment-text">
                     {c.comment ? `"${c.comment}"` : `ให้คะแนนกิจกรรมนี้ ${ratingValue} ดาว`}
