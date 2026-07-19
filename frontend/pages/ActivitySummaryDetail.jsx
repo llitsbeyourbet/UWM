@@ -210,7 +210,7 @@ function ActivitySummaryDetail() {
           </div>
         </div>
 
-        {/* รายการฟีดความคิดเห็นที่คลีนขึ้น แสดงเฉพาะดาวและคอมเมนต์รายบุคคล */}
+        {/* รายการฟีดความคิดเห็นที่มีการตรวจจับค่าคะแนนผู้ใช้ถูกต้อง */}
         <div className="reviews-feed-list">
           <h5 className="sub-section-title">รายละเอียดรีวิวจากผู้เข้าร่วม</h5>
           {reviews.length > 0 ? (
@@ -236,11 +236,14 @@ function ActivitySummaryDetail() {
                       onClick={() => navigate(`/user/${reviewer.id}`)}
                       style={{ cursor: "pointer" }}
                     >
+                      {/* เปลี่ยนให้รูปวงกลมมีหน้าตาและสีม่วงพาสเทลเหมือนกันกับรายชื่อด้านบน */}
                       <div className="feed-avatar-wrap">
                         {imageUrl ? (
                           <img src={imageUrl} alt={reviewerName} className="feed-user-avatar" />
                         ) : (
-                          <div className="feed-avatar-placeholder">{reviewerName.charAt(0).toUpperCase()}</div>
+                          <div className="avatar-placeholder" style={{ width: '100%', height: '100%', fontSize: '0.9rem' }}>
+                            {reviewerName.charAt(0).toUpperCase()}
+                          </div>
                         )}
                       </div>
                       <div className="feed-user-info">
@@ -252,6 +255,7 @@ function ActivitySummaryDetail() {
                         </div>
                       </div>
                     </div>
+                    
                   </div>
                   
                   <p className="feed-comment-text">
