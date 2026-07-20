@@ -18,7 +18,7 @@ function CreateActivities() {
   const [category, setCategory] = useState("กีฬา");
   const [checkinStart, setCheckinStart] = useState("");
   const [checkinEnd, setCheckinEnd] = useState("");
-  const isIPhone = /iPhone|iPod/i.test(navigator.userAgent);
+  const isIOS = /iPhone|iPod|iPad/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
 
   // 👈 แก้ handleImage ให้อัปโหลดรูปไป server
@@ -147,14 +147,14 @@ function CreateActivities() {
           <option value="คาเฟ่">☕ คาเฟ่</option>
         </select>
 
-        <div className={`row-group ${isIPhone ? "ios" : ""}`}>
+        <div className={`row-group ${isIOS ? "ios" : ""}`}>
           <div className="input-group">
             <label>วันที่</label>
             <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
           </div>
         </div>
 
-        <div className={`row-group ${isIPhone ? "ios" : ""}`}>
+        <div className={`row-group ${isIOS ? "ios" : ""}`}>
           <div className="input-group">
             <label>เวลาเริ่มต้น</label>
             <input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
@@ -165,7 +165,7 @@ function CreateActivities() {
           </div>
         </div>
 
-        <div className={`row-group ${isIPhone ? "ios" : ""}`}>
+        <div className={`row-group ${isIOS ? "ios" : ""}`}>
           <div className="input-group">
             <label>เวลาเริ่มเช็คอิน</label>
             <input type="time" value={checkinStart} onChange={(e) => setCheckinStart(e.target.value)} />

@@ -92,6 +92,7 @@
 
 .detail-card input[type="text"],
 .detail-card input[type="date"],
+.detail-card input[type="time"],
 .detail-card select {
   width: 100%;
   max-width: 100%;
@@ -102,18 +103,11 @@
   font-size: 14px;
   background-color: #fafafa;
   outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
-.detail-card input[type="time"]{
-  width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-  padding: 8px 10px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 14px;
-  background-color: #fafafa;
-  outline: none;
-}
+
 .detail-card input:focus,
 .detail-card select:focus {
   border-color: #7b61ff;
@@ -194,14 +188,18 @@
     width:100%;
 }
 
-.row-group.ios {
-    grid-template-columns: 1fr;
+/* ปรับให้เรียงลงมา 1 คอลัมน์สำหรับแท็บเล็ตและมือถือ (รวมถึง iPad ทุกรุ่น) */
+@media (max-width: 1024px) {
+    .row-group {
+        grid-template-columns: 1fr;
+    }
 }
 
 .input-group{
     width:100%;
     min-width:0;
 }
+
 
 .input-group input{
     width:100%;
@@ -297,19 +295,17 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
     .row-group{
         display:grid;
-        grid-template-columns:repeat(2,minmax(0,1fr));
+        grid-template-columns: 1fr;
         gap:8px;
     }
+
 
     .row-group .input-group{
         min-width:0;
     }
 
-    .detail-card input[type="time"],
-    .detail-card input[type="date"]{
-        width:100%;
-        height:38px;
-        padding:6px;
-        font-size:12px;
+    .detail-card input:focus,
+    .detail-card select:focus {
+        border-color: #7b61ff;
     }
 }

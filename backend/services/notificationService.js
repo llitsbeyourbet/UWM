@@ -65,7 +65,15 @@ const createNotification = async (toUserId, type, activityId, activityName, from
   }
 };
 
+const emitCountUpdate = (userId) => {
+  const socketId = userSockets.get(userId);
+  if (socketId && io) {
+    io.to(socketId).emit("unreadCountUpdated");
+  }
+};
+
 module.exports = {
   init,
   createNotification,
+  emitCountUpdate,
 };
