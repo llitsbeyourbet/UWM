@@ -98,9 +98,11 @@ function ActivitySummary() {
     <div className="summary-mobile-container">
       {/* ส่วนหัวหน้าจอ */}
       <div className="summary-header">
-        <button className="back-btn" onClick={() => navigate(-1)}>
-          ‹
-        </button>
+        <div className="back-btn" onClick={() => navigate(-1)}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </div>
         <h2>สรุปผลกิจกรรม</h2>
         <div className="header-space" />
       </div>

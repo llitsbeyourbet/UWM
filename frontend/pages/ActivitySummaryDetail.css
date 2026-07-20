@@ -38,13 +38,12 @@
 }
 
 .back-btn {
-  background: none;
-  border: none;
-  font-size: 1.8rem;
-  color: #111111;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  padding: 0;
-  line-height: 1;
 }
 
 .header-space { 
