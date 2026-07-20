@@ -84,10 +84,19 @@ export default function Login() {
           <div className="input-icon">
             <span className="material-icons">mail</span>
             <input
+              id="login-identifier"
+              name="identifier"
               type="text"
-              placeholder="อีเมล, username หรือเบอร์โทร"
+              placeholder="อีเมล, Username หรือเบอร์โทร"
               value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
+              onChange={(e) => {
+                setIdentifier(e.target.value);
+                if (error) setError("");
+              }}
+              autoComplete="username"
+              autoCapitalize="none"
+              spellCheck={false}
+              disabled={loading}
               required
             />
           </div>
@@ -99,7 +108,10 @@ export default function Login() {
               type={showPassword ? "text" : "password"}
               placeholder="รหัสผ่าน"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (error) setError("");
+              }}
               required
             />
             <span
