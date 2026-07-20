@@ -209,19 +209,36 @@
 
 .chart-card,
 .latest-card,
-.summary-card,
 .report-card {
   background: white;
   border-radius: 22px;
   padding: 24px;
   box-shadow: 0 12px 28px rgba(0,0,0,.08);
 }
+.dashboard-summary-row{
+    display:grid;
+    grid-template-columns:1.2fr .8fr;
+    gap:24px;
+    margin-bottom:25px;
+}
+.summary-card{
+    background:#fff;
+    border-radius:22px;
+    padding:24px;
+    box-shadow:0 12px 28px rgba(0,0,0,.08);
+
+    display:flex;
+    flex-direction:column;
+}
+.report-list{
+    flex: 1;
+}
 
 .card-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   margin-bottom: 18px;
+  align-items: flex-start;
 }
 
 .card-header h3 {
@@ -233,6 +250,13 @@
   margin-top: 4px;
   color: #6b7280;
   font-size: 14px;
+}
+.summary-card .card-header{
+    width:100%;
+}
+
+.summary-card .card-header div{
+    text-align:left;
 }
 
 /* =========================================
@@ -321,8 +345,9 @@
 ========================================= */
 
 .summary-grid {
+  width: 100%;
   display: grid;
-  grid-template-columns: repeat(2,1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
   margin-top: 20px;
 }
@@ -332,6 +357,7 @@
   border-radius: 18px;
   padding: 18px;
   transition: .25s;
+  min-width: 0;
 }
 
 .summary-grid div:hover {

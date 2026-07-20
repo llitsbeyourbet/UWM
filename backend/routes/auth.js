@@ -34,7 +34,7 @@ router.post("/login", async (req, res) => {
         [Op.or]: [
           { email: email },
           { username: email },
-          { phone: email}
+          { phone: email }
         ]
       }
     });
@@ -65,9 +65,16 @@ router.post("/login", async (req, res) => {
       }
     });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+    console.error("LOGIN ERROR:", err);
+    console.error("ERROR MESSAGE:", err.message);
+    console.error("ERROR STACK:", err.stack);
+
+    return res.status(500).json({
+      message: "เกิดข้อผิดพลาด",
+      error: err.message
+    });
   }
+
 });
 
 router.get("/me", async (req, res) => {

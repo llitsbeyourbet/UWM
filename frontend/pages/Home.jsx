@@ -78,7 +78,7 @@ function Home() {
 
   const filtered = activities
     .filter((item) => item.status !== "suspended")
-    .filter((item) => activeCategory === "ทั้งหมด" || item.category === activeCategory)
+    .filter((item) => activeCategory === "ทั้งหมด" || (Array.isArray(item.category) ? item.category.includes(activeCategory) : item.category === activeCategory))
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   return (

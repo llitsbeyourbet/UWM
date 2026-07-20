@@ -15,7 +15,8 @@ function CreateActivities() {
   const [location, setLocation] = useState("");
   const [participantCount, setParticipantCount] = useState("1");
   const [activityType, setActivityType] = useState("public");
-  const [category, setCategory] = useState("กีฬา");
+  const [category, setCategory] = useState([]);
+  const [showCategory, setShowCategory] = useState(false);
   const [checkinStart, setCheckinStart] = useState("");
   const [checkinEnd, setCheckinEnd] = useState("");
   const isIPhone = /iPhone|iPod/i.test(navigator.userAgent);
@@ -42,6 +43,21 @@ function CreateActivities() {
         console.log(err);
       }
     }
+  };
+  const categoryOptions = [
+    { value: "กีฬา", label: "⚽ กีฬา" },
+    { value: "ดนตรี", label: "🎵 ดนตรี" },
+    { value: "ท่องเที่ยว", label: "🏔 ท่องเที่ยว" },
+    { value: "อาหาร", label: "🍜 อาหาร" },
+    { value: "ศิลปะ", label: "🎨 ศิลปะ" },
+    { value: "เกม", label: "🎮 เกม" },
+    { value: "คาเฟ่", label: "☕ คาเฟ่" },
+  ];
+
+  const toggleCategory = (val) => {
+    setCategory((prev) =>
+      prev.includes(val) ? prev.filter((c) => c !== val) : [...prev, val]
+    );
   };
 
   const handleSubmit = async () => {
@@ -84,7 +100,7 @@ function CreateActivities() {
         return;
       }
 
-      
+
       setActivityName("");
       setDetail("");
       setDate("");
@@ -136,16 +152,28 @@ function CreateActivities() {
         />
 
         <label>หมวดหมู่</label>
-        <select value={category} onChange={(e) => setCategory(e.target.value)}>
-          <option value="กีฬา">⚽ กีฬา</option>
-          <option value="ดนตรี">🎵 ดนตรี</option>
-          <option value="ภาพยนตร์">🎥 ภาพยนตร์</option>
-          <option value="ท่องเที่ยว">🏔 ท่องเที่ยว</option>
-          <option value="อาหาร">🍜 อาหาร</option>
-          <option value="ศิลปะ">🎨 ศิลปะ</option>
-          <option value="เกม">🎮 เกม</option>
-          <option value="คาเฟ่">☕ คาเฟ่</option>
-        </select>
+        <div className="dropdown-wrap">
+          <div className="dropdown-trigger" onClick={() => setShowCategory(!showCategory)}>
+            <span>
+              {category.length === 0 ? "เลือกหมวดหมู่" : category.join(", ")}
+            </span>
+            <span>{showCategory ? "▲" : "▼"}</span>
+          </div>
+          {showCategory && (
+            <div className="dropdown-menu">
+              {categoryOptions.map((opt) => (
+                <div
+                  key={opt.value}
+                  className={`dropdown-item ${category.includes(opt.value) ? "selected" : ""}`}
+                  onClick={() => toggleCategory(opt.value)}
+                >
+                  <span>{opt.label}</span>
+                  {category.includes(opt.value) && <span>✓</span>}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         <div className={`row-group ${isIPhone ? "ios" : ""}`}>
           <div className="input-group">

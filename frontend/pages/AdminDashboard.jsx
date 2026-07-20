@@ -161,7 +161,7 @@ export default function AdminDashboard() {
       </div>
     );
   }
-
+  console.log(stats)
   return (
     <div className="dashboard">
 
@@ -411,7 +411,7 @@ export default function AdminDashboard() {
       </div>
       {/* ================= Summary + Latest Reports ================= */}
 
-      <div className="dashboard-row">
+      <div className="dashboard-summary-row">
         <div className="summary-card">
           <div className="card-header">
             <div>
