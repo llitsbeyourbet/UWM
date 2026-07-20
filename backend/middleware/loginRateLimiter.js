@@ -10,5 +10,5 @@ const loginLimiter = rateLimit({
         message: "มีการพยายามเข้าสู่ระบบหลายครั้ง กรุณาลองใหม่อีกครั้งในภายหลัง"
     }
 });
-
+console.log("loginRateLimiter loaded");
 module.exports = loginLimiter;
