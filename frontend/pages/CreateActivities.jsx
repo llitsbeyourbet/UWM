@@ -176,13 +176,15 @@ function CreateActivities() {
           </div>
         </div>
 
-        <label>สถานที่</label>
-        <input
-          type="text"
-          placeholder="กรอกสถานที่"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-        />
+        <div className="input-group">
+          <label>สถานที่</label>
+          <input
+            type="text"
+            placeholder="กรอกสถานที่"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+          />
+        </div>
 
         <div className="slider-container">
           <label>จำนวนผู้เข้าร่วม</label>

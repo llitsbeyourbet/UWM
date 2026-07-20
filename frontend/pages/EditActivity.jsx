@@ -168,13 +168,17 @@ function EditActivity() {
           </div>
         </div>
 
-        <label>สถานที่</label>
-        <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} />
+        <div className="input-group">
+          <label>สถานที่</label>
+          <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} />
+        </div>
 
-        <label>จำนวนผู้เข้าร่วม</label>
-        <div className="slider-container">
-          <span>Number of people {participantCount}</span>
-          <input type="range" min={1} max={100} value={participantCount} onChange={(e) => setParticipantCount(Number(e.target.value))} />
+        <div className="input-group">
+          <label>จำนวนผู้เข้าร่วม</label>
+          <div className="slider-container">
+            <span>Number of people {participantCount}</span>
+            <input type="range" min={1} max={100} value={participantCount} onChange={(e) => setParticipantCount(Number(e.target.value))} />
+          </div>
         </div>
 
         <div className="input-group">
