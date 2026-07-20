@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "express-rate-limit": "^8.6.0",
     "html5-qrcode": "^2.3.8",
     "jsonwebtoken": "^9.0.3",
     "nodemailer": "^9.0.1",

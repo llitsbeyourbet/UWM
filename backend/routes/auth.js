@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { Op } = require("sequelize");
 const User = require("../models/User");
+const loginLimiter = require("../middleware/loginRateLimiter");
 
 router.post("/register", async (req, res) => {
   try {
@@ -25,7 +26,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", loginLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
 
