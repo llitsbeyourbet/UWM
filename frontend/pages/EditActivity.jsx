@@ -6,6 +6,7 @@ import "./CreateActivities.css";
 function EditActivity() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const isIOS = /iPhone|iPod|iPad/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const [activityName, setActivityName] = useState("");
   const [detail, setDetail] = useState("");
   const [date, setDate] = useState("");
@@ -149,14 +150,14 @@ function EditActivity() {
         <label>รายละเอียดกิจกรรม</label>
         <textarea className="detail-textarea" rows={2} value={detail} onChange={(e) => setDetail(e.target.value)} />
 
-        <div className="row-group">
+        <div className={`row-group ${isIOS ? "ios" : ""}`}>
           <div className="input-group">
             <label>วันที่</label>
             <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
           </div>
         </div>
 
-        <div className="row-group">
+        <div className={`row-group ${isIOS ? "ios" : ""}`}>
           <div className="input-group">
             <label>เวลาเริ่มต้น</label>
             <input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
@@ -167,13 +168,17 @@ function EditActivity() {
           </div>
         </div>
 
-        <label>สถานที่</label>
-        <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} />
+        <div className="input-group">
+          <label>สถานที่</label>
+          <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} />
+        </div>
 
-        <label>จำนวนผู้เข้าร่วม</label>
-        <div className="slider-container">
-          <span>Number of people {participantCount}</span>
-          <input type="range" min={1} max={100} value={participantCount} onChange={(e) => setParticipantCount(Number(e.target.value))} />
+        <div className="input-group">
+          <label>จำนวนผู้เข้าร่วม</label>
+          <div className="slider-container">
+            <span>Number of people {participantCount}</span>
+            <input type="range" min={1} max={100} value={participantCount} onChange={(e) => setParticipantCount(Number(e.target.value))} />
+          </div>
         </div>
 
         <div className="input-group">

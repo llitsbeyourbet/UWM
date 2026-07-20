@@ -98,9 +98,11 @@ function ActivitySummary() {
     <div className="summary-mobile-container">
       {/* ส่วนหัวหน้าจอ */}
       <div className="summary-header">
-        <button className="back-btn" onClick={() => navigate(-1)}>
-          ‹
-        </button>
+        <div className="back-btn" onClick={() => navigate(-1)}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </div>
         <h2>สรุปผลกิจกรรม</h2>
         <div className="header-space" />
       </div>
@@ -108,7 +110,10 @@ function ActivitySummary() {
       {/* ส่วนค้นหาและตัวกรอง */}
       <div className="search-filter-section">
         <div className="search-box">
-          <span className="search-icon">🔍</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2" strokeLinecap="round">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
           <input
             type="text"
             placeholder="ค้นหากิจกรรม"

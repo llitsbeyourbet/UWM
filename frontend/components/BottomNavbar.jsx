@@ -31,10 +31,16 @@ function BottomNavbar() {
       socket.on("notification", () => {
         fetchCount();
       });
+      socket.on("unreadCountUpdated", () => {
+        fetchCount();
+      });
     }
 
     return () => {
-      if (socket) socket.off("notification");
+      if (socket) {
+        socket.off("notification");
+        socket.off("unreadCountUpdated");
+      }
     };
   }, [socket]);
 

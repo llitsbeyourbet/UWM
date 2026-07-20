@@ -19,7 +19,7 @@ function CreateActivities() {
   const [showCategory, setShowCategory] = useState(false);
   const [checkinStart, setCheckinStart] = useState("");
   const [checkinEnd, setCheckinEnd] = useState("");
-  const isIPhone = /iPhone|iPod/i.test(navigator.userAgent);
+  const isIOS = /iPhone|iPod|iPad/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
 
   // 👈 แก้ handleImage ให้อัปโหลดรูปไป server
@@ -175,14 +175,14 @@ function CreateActivities() {
           )}
         </div>
 
-        <div className={`row-group ${isIPhone ? "ios" : ""}`}>
+        <div className={`row-group ${isIOS ? "ios" : ""}`}>
           <div className="input-group">
             <label>วันที่</label>
             <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
           </div>
         </div>
 
-        <div className={`row-group ${isIPhone ? "ios" : ""}`}>
+        <div className={`row-group ${isIOS ? "ios" : ""}`}>
           <div className="input-group">
             <label>เวลาเริ่มต้น</label>
             <input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
@@ -193,7 +193,7 @@ function CreateActivities() {
           </div>
         </div>
 
-        <div className={`row-group ${isIPhone ? "ios" : ""}`}>
+        <div className={`row-group ${isIOS ? "ios" : ""}`}>
           <div className="input-group">
             <label>เวลาเริ่มเช็คอิน</label>
             <input type="time" value={checkinStart} onChange={(e) => setCheckinStart(e.target.value)} />
@@ -204,13 +204,15 @@ function CreateActivities() {
           </div>
         </div>
 
-        <label>สถานที่</label>
-        <input
-          type="text"
-          placeholder="กรอกสถานที่"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-        />
+        <div className="input-group">
+          <label>สถานที่</label>
+          <input
+            type="text"
+            placeholder="กรอกสถานที่"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+          />
+        </div>
 
         <div className="slider-container">
           <label>จำนวนผู้เข้าร่วม</label>

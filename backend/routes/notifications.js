@@ -3,6 +3,7 @@ const router = express.Router();
 const Notification = require("../models/Notification");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const { emitCountUpdate } = require("../services/notificationService");
 
 const auth = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -32,6 +33,7 @@ router.get("/unread-count", auth, async (req, res) => {
 router.put("/read-all", auth, async (req, res) => {
   try {
     await Notification.update({ isRead: true }, { where: { toUserId: req.userId } });
+    emitCountUpdate(req.userId);
     res.json({ message: "ทำเครื่องหมายว่าอ่านแล้วทั้งหมด" });
   } catch (err) {
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
@@ -118,6 +120,7 @@ router.put("/:id", auth, async (req, res) => {
 router.put("/:id/read", auth, async (req, res) => {
   try {
     await Notification.update({ isRead: true }, { where: { id: req.params.id } });
+    emitCountUpdate(req.userId);
     res.json({ message: "อ่านแล้ว" });
   } catch (err) {
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });

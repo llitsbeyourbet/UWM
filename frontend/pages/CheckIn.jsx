@@ -12,6 +12,7 @@ function CheckIn() {
   const [checkinLoading, setCheckinLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [alreadyCheckedIn, setAlreadyCheckedIn] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,7 +39,11 @@ function CheckIn() {
         const statusData = await statusRes.json();
         setJoinStatus(statusData.status);
 
-        if (statusData.status === "checked_in") setDone(true);
+        if (statusData.status === "checked_in") {
+          setDone(true);
+          setJoinStatus("checked_in");
+          setAlreadyCheckedIn(true);
+        }
       } catch (err) {
         console.log(err);
         setErrorMessage(err.message || "ไม่สามารถโหลดข้อมูลกิจกรรมได้");
@@ -73,6 +78,7 @@ function CheckIn() {
 
       setDone(true);
       setJoinStatus("checked_in");
+      setAlreadyCheckedIn(false);
     } catch (err) {
       setErrorMessage("ไม่สามารถเชื่อมต่อ server ได้");
     } finally {
@@ -95,7 +101,7 @@ function CheckIn() {
 
           <button
             className="checkin-btn done"
-            onClick={() => activity && navigate(`/activity-detail?id=${activity.id}`)}
+            onClick={() => activity && navigate(`/activity-detail?id=${activity.id}`, { replace: true })}
           >
             กลับหน้ากิจกรรม
           </button>
@@ -125,11 +131,22 @@ function CheckIn() {
 
         {done ? (
           <>
-            <h2 className="checkin-title">ยืนยันการเข้าร่วมสำเร็จ!</h2>
-            <p className="checkin-subtitle">{activity?.activityName}</p>
+            <h2 className="checkin-title">
+              {alreadyCheckedIn
+                ? "คุณได้ยืนยันการเข้าร่วมไปแล้ว"
+                : "ยืนยันการเข้าร่วมสำเร็จ!"}
+            </h2>
+
+            <p className="checkin-subtitle">
+              {alreadyCheckedIn
+                ? "ไม่สามารถเช็คอินซ้ำได้"
+                : activity?.activityName}
+            </p>
+
             <button
               className="checkin-btn done"
-              onClick={() => activity && navigate(`/activity-detail?id=${activity.id}`)}>
+              onClick={() => activity && navigate(`/activity-detail?id=${activity.id}`, { replace: true })}
+            >
               กลับหน้ากิจกรรม
             </button>
           </>
