@@ -194,6 +194,10 @@
     width:100%;
 }
 
+.row-group.ios {
+    grid-template-columns: 1fr;
+}
+
 .input-group{
     width:100%;
     min-width:0;

@@ -6,6 +6,7 @@ import "./CreateActivities.css";
 function EditActivity() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const isIPhone = /iPhone|iPod/i.test(navigator.userAgent);
   const [activityName, setActivityName] = useState("");
   const [detail, setDetail] = useState("");
   const [date, setDate] = useState("");
@@ -149,14 +150,14 @@ function EditActivity() {
         <label>รายละเอียดกิจกรรม</label>
         <textarea className="detail-textarea" rows={2} value={detail} onChange={(e) => setDetail(e.target.value)} />
 
-        <div className="row-group">
+        <div className={`row-group ${isIPhone ? "ios" : ""}`}>
           <div className="input-group">
             <label>วันที่</label>
             <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
           </div>
         </div>
 
-        <div className="row-group">
+        <div className={`row-group ${isIPhone ? "ios" : ""}`}>
           <div className="input-group">
             <label>เวลาเริ่มต้น</label>
             <input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
