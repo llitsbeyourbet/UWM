@@ -269,7 +269,7 @@
   background: white;
   border-radius: 14px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-  min-width: 160px;
+  min-width: 175px;
   overflow: hidden;
   z-index: 100;
 }
@@ -281,9 +281,10 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   font-family: 'Sarabun', sans-serif;
   transition: background 0.2s;
+  box-sizing: border-box;
 }
 
 .dropdown-item:hover {
@@ -292,6 +293,29 @@
 
 .dropdown-item.red {
   color: #e53935;
+}
+
+/* ล็อกขนาดกล่องไอคอนให้กว้าง 24px คงที่ทุกแถว */
+.dropdown-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ล็อกขนาดตัว SVG ให้อยู่กึ่งกลางกล่องไอคอนพอดี */
+.dropdown-icon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+/* ข้อความตัวอักษรเริ่มต้นในตำแหน่งตรงกันแน่นอน */
+.dropdown-label {
+  white-space: nowrap;
+  flex: 1;
 }
 
 .dropdown-divider {
