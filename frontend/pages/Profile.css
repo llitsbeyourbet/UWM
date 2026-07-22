@@ -269,14 +269,14 @@
   background: white;
   border-radius: 14px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-  min-width: 160px;
+  min-width: 140px;
   overflow: hidden;
   z-index: 100;
 }
 
-.dropdown-item {
+.profile-dropdown-item {
   padding: 12px 16px;
-  font-size: 14px;
+  font-size: 13px;
   color: #111;
   cursor: pointer;
   display: flex;
@@ -286,11 +286,11 @@
   transition: background 0.2s;
 }
 
-.dropdown-item:hover {
+.profile-dropdown-item:hover {
   background: #f5f5f5;
 }
 
-.dropdown-item.red {
+.profile-dropdown-item.red {
   color: #e53935;
 }
 

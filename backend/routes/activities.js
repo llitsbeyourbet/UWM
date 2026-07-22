@@ -90,6 +90,16 @@ router.put("/:id", auth, async (req, res) => {
     const activity = await Activity.findByPk(req.params.id);
     if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
 
+    const endDateTime = new Date(
+      `${activity.date}T${activity.endTime || activity.time}`
+    );
+
+    if (new Date() >= endDateTime) {
+      return res.status(400).json({
+        message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถแก้ไขได้",
+      });
+    }
+
     if (activity.createdBy !== req.userId)
       return res.status(403).json({ message: "ไม่มีสิทธิ์แก้ไขกิจกรรมนี้" });
 
@@ -106,6 +116,16 @@ router.delete("/:id", auth, async (req, res) => {
   try {
     const activity = await Activity.findByPk(req.params.id);
     if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
+
+    const endDateTime = new Date(
+      `${activity.date}T${activity.endTime || activity.time}`
+    );
+
+    if (new Date() >= endDateTime) {
+      return res.status(400).json({
+        message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถลบได้",
+      });
+    }
 
     if (activity.createdBy !== req.userId)
       return res.status(403).json({ message: "ไม่มีสิทธิ์ลบกิจกรรมนี้" });
@@ -132,6 +152,16 @@ router.get("/:id/qr", auth, async (req, res) => {
       return res.status(403).json({
         message: "ไม่มีสิทธิ์",
       });
+
+    const endDateTime = new Date(
+      `${activity.date}T${activity.endTime || activity.time}+07:00`
+    );
+
+    if (new Date() >= endDateTime) {
+      return res.status(400).json({
+        message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถสร้าง QR Code ได้",
+      });
+    }
 
     const qrToken = jwt.sign(
       {

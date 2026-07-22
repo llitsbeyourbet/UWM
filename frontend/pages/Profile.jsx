@@ -25,9 +25,9 @@ function Profile() {
         const userData = await userRes.json();
         setUser(userData);
 
-        const actRes = await fetch(`${API_URL}/api/activities`);
+        const actRes = await fetch(`${API_URL}/api/activities/user/${userData.id}`);
         const actData = await actRes.json();
-        setCreatedActivities(actData.filter((a) => a.createdBy === userData.id));
+        setCreatedActivities(actData);
 
         const joinRes = await fetch(`${API_URL}/api/join/checked-in`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -88,14 +88,14 @@ function Profile() {
 
             {showMenu && (
               <div className="profile-dropdown">
-                <div className="dropdown-item" onClick={() => { setShowMenu(false); navigate("/edit-profile"); }}>
+                <div className="profile-dropdown-item" onClick={() => { setShowMenu(false); navigate("/edit-profile"); }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                   </svg>
                   แก้ไขโปรไฟล์
                 </div>
-                <div className="dropdown-item" onClick={() => { setShowMenu(false); navigate("/activity-summary"); }}>
+                <div className="profile-dropdown-item" onClick={() => { setShowMenu(false); navigate("/activity-summary"); }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round">
                     <path d="M3 3v18h18" />
                     <path d="M7 14l3-3 3 2 4-5" />
@@ -107,11 +107,11 @@ function Profile() {
                   สรุปผลกิจกรรม
                 </div>
                 <div className="dropdown-divider" />
-                <div className="dropdown-item red" onClick={() => { setShowMenu(false); handleLogout(); }}>
+                <div className="profile-dropdown-item red" onClick={() => { setShowMenu(false); handleLogout(); }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e53935" strokeWidth="2" strokeLinecap="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                    <polyline points="16 17 21 12 16 7"/>
-                    <line x1="21" y1="12" x2="9" y2="12"/>
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
                   </svg>
                   ออกจากระบบ
                 </div>
@@ -131,14 +131,13 @@ function Profile() {
               ) : (
                 <div className="profile-avatar-initials">{getInitials(user?.name)}</div>
               )}
-              
+
             </div>
             <div className="profile-info">
               <p className="profile-display-name">{user?.name || "ผู้ใช้งาน"}</p>
               <p className="profile-username">@{user?.username || ""}</p>
               <div className="profile-badges">
-                {hostRating && <span className="badge-host">⭐ HOST {hostRating}</span>}
-              </div>
+                {hostRating !== null && (<span className="badge-host">⭐ HOST {hostRating}</span>)}              </div>
             </div>
           </div>
           {user?.bio && <p className="profile-bio">{user.bio}</p>}
@@ -159,7 +158,7 @@ function Profile() {
           </div>
           <div className="stat-divider" />
           <div className="stat-item">
-            <p className="stat-num text-pink">{hostRating || "-"}</p>
+            <p className="stat-num text-pink">{hostRating !== null ? hostRating : "-"}</p>
             <p className="stat-lbl">คะแนน</p>
           </div>
         </div>

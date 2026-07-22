@@ -1,5 +1,5 @@
 import API_URL from "../config";
-import { useState } from "react";
+import { lazy, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./CreateActivities.css";
 
@@ -52,16 +52,30 @@ function CreateActivities() {
     { value: "ศิลปะ", label: "🎨 ศิลปะ" },
     { value: "เกม", label: "🎮 เกม" },
     { value: "คาเฟ่", label: "☕ คาเฟ่" },
+    { value: "ภาพยนตร์", label: "🍿 ภาพยนตร์"}
   ];
 
   const toggleCategory = (val) => {
     setCategory((prev) =>
-      prev.includes(val) ? prev.filter((c) => c !== val) : [...prev, val]
+      prev.includes(val)
+        ? prev.filter((c) => c !== val)
+        : [...prev, val]
     );
-  };
 
+    setShowCategory(false);
+  };
   const handleSubmit = async () => {
     if (!activityName) return;
+
+    if (endTime <= time) {
+      alert("เวลาสิ้นสุดต้องมากกว่าเวลาเริ่ม");
+      return;
+    }
+
+    if (checkinStart && checkinEnd && checkinEnd <= checkinStart) {
+      alert("เวลาเช็คอินไม่ถูกต้อง");
+      return;
+    }
 
     const token = localStorage.getItem("token");
     if (!token) {
@@ -140,7 +154,7 @@ function CreateActivities() {
           type="text"
           className="title-input"
           value={activityName}
-          onChange={(e) => setActivityName(e.target.value)}
+          onChange={(e) => setActivityName(e.target.value.slice(0, 200))}
         />
 
         <label>รายละเอียดกิจกรรม</label>
@@ -148,14 +162,24 @@ function CreateActivities() {
           className="detail-textarea"
           rows={2}
           value={detail}
-          onChange={(e) => setDetail(e.target.value)}
+          onChange={(e) => setDetail(e.target.value.slice(0, 1000))}
         />
 
         <label>หมวดหมู่</label>
         <div className="dropdown-wrap">
           <div className="dropdown-trigger" onClick={() => setShowCategory(!showCategory)}>
             <span>
-              {category.length === 0 ? "เลือกหมวดหมู่" : category.join(", ")}
+              {category.length === 0
+                ? ""
+                : (() => {
+                  const first = categoryOptions.find(
+                    (item) => item.value === category[0]
+                  );
+
+                  return category.length === 1
+                    ? first?.label
+                    : `${first?.label} +${category.length - 1}`;
+                })()}
             </span>
             <span>{showCategory ? "▲" : "▼"}</span>
           </div>
@@ -174,6 +198,30 @@ function CreateActivities() {
             </div>
           )}
         </div>
+        {category.length > 0 && (
+          <div className="category-badges">
+            {category.map((item) => {
+              const selectedCategory = categoryOptions.find(
+                (option) => option.value === item
+              );
+
+              return (
+                <div className="category-badge" key={item}>
+                  <span>{selectedCategory?.label || item}</span>
+
+                  <button
+                    type="button"
+                    className="category-badge-remove"
+                    onClick={() => toggleCategory(item)}
+                    aria-label={`ลบหมวดหมู่ ${item}`}
+                  >
+                    ×
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         <div className={`row-group ${isIOS ? "ios" : ""}`}>
           <div className="input-group">

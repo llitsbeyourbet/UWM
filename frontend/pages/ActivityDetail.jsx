@@ -313,6 +313,12 @@ function ActivityDetail() {
 
   const displayComments = isOwner ? comments : publicComments;
 
+  const activityEnded =
+    activity &&
+    new Date(
+      `${activity.date}T${activity.endTime || activity.time}`
+    ) <= new Date();
+
   return (
     <div className="activity-detail-page">
 
@@ -345,31 +351,52 @@ function ActivityDetail() {
                   aria-label="ปิดเมนู"
                   onClick={() => setShowReportMenu(false)}
                 />
-
                 <div className="report-dropdown">
                   {isOwner ? (
                     <>
-                      <button
-                        className="menu-action-btn"
-                        onClick={() => {
-                          setShowReportMenu(false);
-                          navigate(`/edit-activity/${activity.id}`);
-                        }}
-                      >
-                        <span className="menu-action-icon">✎</span>
-                        แก้ไขกิจกรรม
-                      </button>
+                      {!activityEnded && (
+                        <>
+                          <button
+                            className="menu-action-btn"
+                            onClick={() => {
+                              setShowReportMenu(false);
+                              setShowQR((prev) => !prev);
+                              setQrCountdown(15);
+                            }}
+                          >
+                            <span className="menu-action-icon">▦</span>
+                            {showQR ? "ซ่อน QR Code" : "แสดง QR Code"}
+                          </button>
 
-                      <button
-                        className="menu-action-btn delete"
-                        onClick={() => {
-                          setShowReportMenu(false);
-                          handleDelete();
-                        }}
-                      >
-                        <span className="menu-action-icon">⌫</span>
-                        ลบกิจกรรม
-                      </button>
+                          <button
+                            className="menu-action-btn"
+                            onClick={() => {
+                              setShowReportMenu(false);
+                              navigate(`/edit-activity/${activity.id}`);
+                            }}
+                          >
+                            <span className="menu-action-icon">✎</span>
+                            แก้ไขกิจกรรม
+                          </button>
+
+                          <button
+                            className="menu-action-btn delete"
+                            onClick={() => {
+                              setShowReportMenu(false);
+                              handleDelete();
+                            }}
+                          >
+                            <span className="menu-action-icon">⌫</span>
+                            ลบกิจกรรม
+                          </button>
+                        </>
+                      )}
+
+                      {activityEnded && (
+                        <div className="menu-disabled-message">
+                          กิจกรรมสิ้นสุดแล้ว
+                        </div>
+                      )}
                     </>
                   ) : (
                     <button
@@ -648,27 +675,22 @@ function ActivityDetail() {
         )}
 
         {/* Owner QR */}
-        {isOwner && (
+        {isOwner && showQR && (
           <div className="qr-owner-section">
-            <button className="show-qr-btn" onClick={() => { setShowQR(!showQR); setQrCountdown(15); }}>
-              {showQR ? "ซ่อน QR Code" : "แสดง QR Code สำหรับยืนยันการเข้าร่วม"}
-            </button>
-            {showQR && (
-              <div className="qr-container">
-                <p>QR Code สำหรับยืนยันการเข้าร่วม</p>
-                <QRCodeCanvas
-                  value={`${window.location.origin}/checkin/${activity.id}/${qrToken}`}
-                  size={180}
-                />
+            <div className="qr-container">
+              <p>QR Code สำหรับยืนยันการเข้าร่วม</p>
+              <QRCodeCanvas
+                value={`${window.location.origin}/checkin/${activity.id}/${qrToken}`}
+                size={180}
+              />
 
-                <p className="qr-countdown">
-                  🔄 QR Code จะเปลี่ยนใหม่ใน {qrCountdown} วินาที
-                </p>
-                {activity.checkinStart && activity.checkinEnd && (
-                  <p className="checkin-time-info">⏰ เช็คอินได้ {activity.checkinStart} - {activity.checkinEnd}</p>
-                )}
-              </div>
-            )}
+              <p className="qr-countdown">
+                🔄 QR Code จะเปลี่ยนใหม่ใน {qrCountdown} วินาที
+              </p>
+              {activity.checkinStart && activity.checkinEnd && (
+                <p className="checkin-time-info">⏰ เช็คอินได้ {activity.checkinStart} - {activity.checkinEnd}</p>
+              )}
+            </div>
           </div>
         )}
 
@@ -736,9 +758,41 @@ function ActivityDetail() {
                 </>
               )}
               {(joinStatus === null || joinStatus === "cancelled") && (
-                <button className="join-btn" onClick={handleJoin} disabled={joinLoading}>
-                  {joinLoading ? "กำลังส่ง..." : "Join"}
-                </button>
+                (() => {
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+
+                  const eventDate = new Date(activity.date);
+                  eventDate.setHours(0, 0, 0, 0);
+
+                  const isExpired = eventDate < today;
+
+                  if (isExpired) {
+                    return (
+                      <button className="join-btn joined" disabled>
+                        กิจกรรมสิ้นสุดแล้ว
+                      </button>
+                    );
+                  }
+
+                  if (activity.joinedCount >= activity.participantCount) {
+                    return (
+                      <button className="join-btn joined" disabled>
+                        กิจกรรมเต็มแล้ว
+                      </button>
+                    );
+                  }
+
+                  return (
+                    <button
+                      className="join-btn"
+                      onClick={handleJoin}
+                      disabled={joinLoading}
+                    >
+                      {joinLoading ? "กำลังส่ง..." : "เข้าร่วมกิจกรรม"}
+                    </button>
+                  );
+                })()
               )}
             </div>
           )

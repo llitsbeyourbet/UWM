@@ -28,6 +28,17 @@ router.post("/:activityId", auth, async (req, res) => {
     const activity = await Activity.findByPk(activityId);
     if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
 
+    const endDateTime = new Date(
+      `${activity.date}T${activity.endTime || activity.time}+07:00`
+    );
+
+    if (new Date() >= endDateTime) {
+      return res.status(400).json({
+        message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถเข้าร่วมได้",
+        message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถเช็คอินได้",
+      });
+    }
+
     if (activity.createdBy === req.userId)
       return res.status(400).json({ message: "ไม่สามารถ join กิจกรรมของตัวเองได้" });
 
@@ -37,6 +48,24 @@ router.post("/:activityId", auth, async (req, res) => {
 
     if (existing && existing.status !== "cancelled")
       return res.status(400).json({ message: "ส่งคำขอไปแล้ว" });
+
+    const joinedCount = await JoinRequest.count({
+      where: {
+        activityId,
+        status: {
+          [Op.in]: ["approved", "checked_in"],
+        },
+      },
+    });
+
+    if (
+      activity.activityType === "public" &&
+      joinedCount >= activity.participantCount
+    ) {
+      return res.status(400).json({
+        message: "กิจกรรมเต็มแล้ว",
+      });
+    }
 
     const user = await User.findByPk(req.userId);
 
@@ -106,12 +135,49 @@ router.put("/:activityId/respond/:userId", auth, async (req, res) => {
     const activity = await Activity.findByPk(activityId);
     if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
 
+    const now = new Date();
+
+    const activityEnd = new Date(activity.date);
+
+    if (activity.endTime) {
+      const [hour, minute] = activity.endTime.slice(0, 5).split(":");
+
+      activityEnd.setHours(Number(hour));
+      activityEnd.setMinutes(Number(minute));
+      activityEnd.setSeconds(0);
+      activityEnd.setMilliseconds(0);
+    } else {
+      activityEnd.setHours(23, 59, 59, 999);
+    }
+
+    if (now > activityEnd) {
+      return res.status(400).json({
+        message: "กิจกรรมนี้สิ้นสุดแล้ว",
+      });
+    }
+
     if (activity.createdBy !== req.userId)
       return res.status(403).json({ message: "ไม่มีสิทธิ์อนุมัติกิจกรรมนี้" });
 
     const joinRequest = await JoinRequest.findOne({ where: { activityId, userId } });
     if (!joinRequest) return res.status(404).json({ message: "ไม่พบคำขอ" });
 
+    if (status === "approved") {
+      const joinedCount = await JoinRequest.count({
+        where: {
+          activityId,
+          status: {
+            [Op.in]: ["approved", "checked_in"],
+          },
+        },
+      });
+
+      if (joinedCount >= activity.participantCount) {
+        return res.status(400).json({
+          message: "กิจกรรมเต็มแล้ว ไม่สามารถอนุมัติเพิ่มได้",
+        });
+      }
+    }
     await joinRequest.update({ status });
 
     // ลบ Notification คำขอเดิมของเจ้าของ
@@ -241,17 +307,17 @@ router.post("/:activityId/checkin", auth, async (req, res) => {
       );
 
 
-      if(Number(payload.activityId) !== Number(activityId)){
+      if (Number(payload.activityId) !== Number(activityId)) {
         return res.status(400).json({
-          message:"QR ไม่ถูกต้อง"
+          message: "QR ไม่ถูกต้อง"
         });
       }
 
 
-    } catch(err){
+    } catch (err) {
 
       return res.status(400).json({
-        message:"QR หมดอายุแล้ว"
+        message: "QR หมดอายุแล้ว"
       });
 
     }
@@ -260,148 +326,119 @@ router.post("/:activityId/checkin", auth, async (req, res) => {
 
     // ตรวจสอบว่ามีสิทธิ์เข้าร่วมไหม
     const joinRequest = await JoinRequest.findOne({
-      where:{
+      where: {
         activityId,
-        userId:req.userId
+        userId: req.userId
       }
     });
 
 
-    if(!joinRequest){
+    if (!joinRequest) {
 
       return res.status(404).json({
-        message:"ไม่พบคำขอเข้าร่วม"
+        message: "ไม่พบคำขอเข้าร่วม"
       });
 
     }
 
-
-
-    if(joinRequest.status === "checked_in"){
+    if (joinRequest.status === "checked_in") {
 
       return res.status(409).json({
-        message:"คุณได้เช็คอินกิจกรรมนี้เรียบร้อยแล้ว ไม่สามารถเช็คอินซ้ำได้อีก",
-        status:"checked_in"
+        message: "คุณได้เช็คอินกิจกรรมนี้เรียบร้อยแล้ว ไม่สามารถเช็คอินซ้ำได้อีก",
+        status: "checked_in"
       });
 
     }
 
-
-
-    if(joinRequest.status !== "approved"){
+    if (joinRequest.status !== "approved") {
 
       return res.status(400).json({
-        message:"ยังไม่ได้รับการอนุมัติ"
+        message: "ยังไม่ได้รับการอนุมัติ"
       });
 
     }
-
-
 
     const activity = await Activity.findByPk(activityId);
 
-
-    if(!activity){
+    if (!activity) {
 
       return res.status(404).json({
-        message:"ไม่พบกิจกรรม"
+        message: "ไม่พบกิจกรรม"
       });
 
     }
 
-
-
     // ตรวจสอบเวลา Check-in
-    if(activity.checkinStart && activity.checkinEnd){
-
-
+    if (activity.checkinStart && activity.checkinEnd) {
       const currentTime =
         new Date().toLocaleTimeString(
           "en-GB",
           {
-            timeZone:"Asia/Bangkok",
-            hour:"2-digit",
-            minute:"2-digit",
-            hour12:false
+            timeZone: "Asia/Bangkok",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false
           }
         );
 
-
       const start =
-        activity.checkinStart.slice(0,5);
-
+        activity.checkinStart.slice(0, 5);
 
       const end =
-        activity.checkinEnd.slice(0,5);
+        activity.checkinEnd.slice(0, 5);
 
-
-
-      if(currentTime < start){
+      if (currentTime < start) {
 
         return res.status(400).json({
-          message:`ยังไม่ถึงเวลาเช็คอิน (เริ่ม ${start})`
+          message: `ยังไม่ถึงเวลาเช็คอิน (เริ่ม ${start})`
         });
 
       }
 
-
-
-      if(currentTime > end){
+      if (currentTime > end) {
 
         return res.status(400).json({
-          message:`หมดเขตเช็คอินแล้ว (ปิด ${end})`
+          message: `หมดเขตเช็คอินแล้ว (ปิด ${end})`
         });
 
       }
 
     }
-
-
-
 
     // เปลี่ยนสถานะเป็น checked_in
     const [updated] = await JoinRequest.update(
       {
-        status:"checked_in"
+        status: "checked_in"
       },
       {
-        where:{
+        where: {
           activityId,
-          userId:req.userId,
-          status:"approved"
+          userId: req.userId,
+          status: "approved"
         }
       }
     );
 
-
-
-    if(updated === 0){
+    if (updated === 0) {
 
       return res.status(409).json({
-        message:"เช็คอินแล้ว"
+        message: "เช็คอินแล้ว"
       });
 
     }
-
-
 
     // บันทึก CheckIn
     await CheckIn.create({
 
       activityId,
 
-      userId:req.userId,
+      userId: req.userId,
 
-      checkedAt:new Date()
+      checkedAt: new Date()
 
     });
 
-
-
-
     const user = await User.findByPk(req.userId);
-
-
 
     // แจ้งเจ้าของกิจกรรม
     await notificationService.createNotification(
@@ -413,9 +450,6 @@ router.post("/:activityId/checkin", auth, async (req, res) => {
       user ? user.username : ""
     );
 
-
-
-
     // แจ้งเตือนให้รีวิว
     await notificationService.createNotification(
       req.userId,
@@ -426,29 +460,20 @@ router.post("/:activityId/checkin", auth, async (req, res) => {
       ""
     );
 
-
-
     return res.json({
 
-      message:"ยืนยันการเข้าร่วมสำเร็จ",
+      message: "ยืนยันการเข้าร่วมสำเร็จ",
 
-      status:"checked_in"
+      status: "checked_in"
 
     });
 
-
-
-  } catch(err){
+  } catch (err) {
 
     console.log(err);
-
-
     return res.status(500).json({
-
-      message:"เกิดข้อผิดพลาด"
-
+      message: "เกิดข้อผิดพลาด"
     });
-
   }
 });
 

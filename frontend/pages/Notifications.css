@@ -20,17 +20,6 @@
   color: #111;
 }
 
-.read-all-btn {
-  padding: 6px 12px;
-  background: #f0f0f0;
-  color: #555;
-  border: none;
-  border-radius: 8px;
-  font-size: 13px;
-  cursor: pointer;
-  font-family: 'Sarabun', sans-serif;
-}
-
 .notif-list {
   padding: 12px;
   display: flex;
@@ -56,6 +45,7 @@
 
 .notif-card.new {
   background: #eef2ff;
+  border-left:4px solid #4A6FFF;
 }
 
 .notif-icon {
@@ -97,23 +87,23 @@
 }
 
 .btn-accept {
-  padding: 6px 16px;
+  padding: 5px 14px;
   background: #000;
   color: #fff;
   border: none;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 12px;
   cursor: pointer;
   font-family: 'Sarabun', sans-serif;
 }
 
 .btn-reject {
-  padding: 6px 16px;
+  padding: 5px 14px;
   background: #f0f0f0;
   color: #555;
   border: none;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 12px;
   cursor: pointer;
   font-family: 'Sarabun', sans-serif;
 }

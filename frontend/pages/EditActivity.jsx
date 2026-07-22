@@ -17,6 +17,33 @@ function EditActivity() {
   const [activityType, setActivityType] = useState("public");
   const [coverFilename, setCoverFilename] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [category, setCategory] = useState([]);
+  const [showCategory, setShowCategory] = useState(false);
+  const [checkinStart, setCheckinStart] = useState("");
+  const [checkinEnd, setCheckinEnd] = useState("");
+  const categoryOptions = [
+    { value: "กีฬา", label: "⚽ กีฬา" },
+    { value: "ดนตรี", label: "🎵 ดนตรี" },
+    { value: "ท่องเที่ยว", label: "🏔 ท่องเที่ยว" },
+    { value: "อาหาร", label: "🍜 อาหาร" },
+    { value: "ศิลปะ", label: "🎨 ศิลปะ" },
+    { value: "เกม", label: "🎮 เกม" },
+    { value: "คาเฟ่", label: "☕ คาเฟ่" },
+  ];
+
+  const toggleCategory = (val) => {
+    setCategory((prev) =>
+      prev.includes(val)
+        ? prev.filter((item) => item !== val)
+        : [...prev, val]
+    );
+
+    setShowCategory(false);
+  };
+
+  const removeCategory = (val) => {
+    setCategory((prev) => prev.filter((item) => item !== val));
+  };
 
   useEffect(() => {
     const fetchActivity = async () => {
@@ -33,6 +60,9 @@ function EditActivity() {
         setLocation(data.location || "");
         setParticipantCount(data.participantCount || 1);
         setActivityType(data.activityType || "public");
+        setCategory(Array.isArray(data.category) ? data.category : []);
+        setCheckinStart(data.checkinStart || "");
+        setCheckinEnd(data.checkinEnd || "");
 
         if (data.cover) {
           const coverUrl = data.cover.startsWith("http")
@@ -78,6 +108,24 @@ function EditActivity() {
       alert("กรุณากรอกชื่อกิจกรรม");
       return;
     }
+    if (!date || !time || !endTime) {
+      alert("กรุณากรอกวันและเวลาให้ครบ");
+      return;
+    }
+
+    if (endTime <= time) {
+      alert("เวลาสิ้นสุดต้องมากกว่าเวลาเริ่ม");
+      return;
+    }
+
+    if (
+      checkinStart &&
+      checkinEnd &&
+      checkinEnd <= checkinStart
+    ) {
+      alert("เวลาสิ้นสุดเช็คอินต้องมากกว่าเวลาเริ่มเช็คอิน");
+      return;
+    }
 
     const token = localStorage.getItem("token");
     if (!token) {
@@ -87,14 +135,17 @@ function EditActivity() {
 
     try {
       const payload = {
-        activityName,
+        activityName: activityName.trim(),
         detail,
         date,
         time,
         endTime,
         location,
-        participantCount,
+        participantCount: Number(participantCount) || 1,
         activityType,
+        category,
+        checkinStart,
+        checkinEnd,
       };
 
       if (coverFilename) {
@@ -145,10 +196,77 @@ function EditActivity() {
 
       <div className="detail-card">
         <label>ชื่อกิจกรรม</label>
-        <input type="text" className="title-input" value={activityName} onChange={(e) => setActivityName(e.target.value)} />
+        <input type="text" className="title-input" value={activityName} onChange={(e) => setActivityName(e.target.value.slice(0, 200))} />
 
         <label>รายละเอียดกิจกรรม</label>
-        <textarea className="detail-textarea" rows={2} value={detail} onChange={(e) => setDetail(e.target.value)} />
+        <textarea className="detail-textarea" rows={2} value={detail} onChange={(e) => setDetail(e.target.value.slice(0, 1000))} />
+
+        <label>หมวดหมู่</label>
+
+        <div className="dropdown-wrap">
+          <div
+            className="dropdown-trigger"
+            onClick={() => setShowCategory((prev) => !prev)}
+          >
+            <span>
+              {category.length === 0
+                ? "เลือกหมวดหมู่"
+                : (() => {
+                  const first = categoryOptions.find(
+                    (item) => item.value === category[0]
+                  );
+
+                  return category.length === 1
+                    ? first?.label
+                    : `${first?.label} +${category.length - 1}`;
+                })()}
+            </span>
+
+            <span>{showCategory ? "▲" : "▼"}</span>
+          </div>
+
+          {showCategory && (
+            <div className="dropdown-menu">
+              {categoryOptions.map((option) => (
+                <div
+                  key={option.value}
+                  className={`dropdown-item ${category.includes(option.value) ? "selected" : ""
+                    }`}
+                  onClick={() => toggleCategory(option.value)}
+                >
+                  <span>{option.label}</span>
+                  {category.includes(option.value) && <span>✓</span>}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {category.length > 0 && (
+          <div className="category-badges">
+            {category.map((item) => {
+              const selectedCategory = categoryOptions.find(
+                (option) => option.value === item
+              );
+
+              return (
+                <div className="category-badge" key={item}>
+                  <span>{selectedCategory?.label || item}</span>
+
+                  <button
+                    type="button"
+                    className="category-badge-remove"
+                    onClick={() => removeCategory(item)}
+                    aria-label={`ลบหมวดหมู่ ${item}`}
+                  >
+                    ×
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
 
         <div className={`row-group ${isIOS ? "ios" : ""}`}>
           <div className="input-group">
@@ -168,16 +286,73 @@ function EditActivity() {
           </div>
         </div>
 
+        <div className={`row-group ${isIOS ? "ios" : ""}`}>
+          <div className="input-group">
+            <label>เวลาเริ่มเช็คอิน</label>
+            <input
+              type="time"
+              value={checkinStart}
+              onChange={(e) => setCheckinStart(e.target.value)}
+            />
+          </div>
+
+          <div className="input-group">
+            <label>เวลาสิ้นสุดเช็คอิน</label>
+            <input
+              type="time"
+              value={checkinEnd}
+              onChange={(e) => setCheckinEnd(e.target.value)}
+            />
+          </div>
+        </div>
+
         <div className="input-group">
           <label>สถานที่</label>
           <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} />
         </div>
 
-        <div className="input-group">
+        <div className="slider-container">
           <label>จำนวนผู้เข้าร่วม</label>
-          <div className="slider-container">
-            <span>Number of people {participantCount}</span>
-            <input type="range" min={1} max={100} value={participantCount} onChange={(e) => setParticipantCount(Number(e.target.value))} />
+
+          <div className="participant-control">
+            <input
+              type="range"
+              min="1"
+              max="100"
+              value={Number(participantCount) || 1}
+              onChange={(e) => setParticipantCount(e.target.value)}
+            />
+
+            <input
+              type="number"
+              min="1"
+              max="100"
+              value={participantCount}
+              onChange={(e) => {
+                const value = e.target.value;
+
+                if (value === "") {
+                  setParticipantCount("");
+                  return;
+                }
+
+                if (!/^\d+$/.test(value)) return;
+
+                const num = Number(value);
+
+                if (num <= 100) {
+                  setParticipantCount(value);
+                }
+              }}
+              onBlur={() => {
+                if (
+                  participantCount === "" ||
+                  Number(participantCount) < 1
+                ) {
+                  setParticipantCount("1");
+                }
+              }}
+            />
           </div>
         </div>
 

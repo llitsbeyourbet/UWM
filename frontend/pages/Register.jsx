@@ -37,12 +37,13 @@ function Register() {
     if (!name || !username || !email || !password || !confirmPassword) {
       setError("กรุณากรอกข้อมูลให้ครบ"); return;
     }
-    if (password !== confirmPassword) {
-      setError("รหัสผ่านไม่ตรงกัน"); return;
-    }
     if (password.length < 6) {
       setError("รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร"); return;
     }
+    if (password !== confirmPassword) {
+      setError("รหัสผ่านไม่ตรงกัน"); return;
+    }
+
 
     setError("");
     setLoading(true);
@@ -240,7 +241,14 @@ function Register() {
 
             <p className="resend-text">
               ไม่ได้รับรหัส?{" "}
-              <span className="resend-link" onClick={handleResend}>ส่งอีกครั้ง</span>
+              <span
+                className={`resend-link ${timer > 0 ? "disabled" : ""}`}
+                onClick={() => {
+                  if (timer === 0) handleResend();
+                }}
+              >
+                ส่งอีกครั้ง
+              </span>
             </p>
           </div>
         </div>
