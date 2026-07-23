@@ -96,12 +96,77 @@ router.get("/users", auth, isAdmin, async (req, res) => {
     const users = await User.findAll({
       attributes: { exclude: ["password"] },
       order: [["createdAt", "DESC"]],
+      raw: true,
     });
 
-    return res.json(users);
+    if (!users.length) {
+      return res.json([]);
+    }
+
+    const userIds = users.map((user) => Number(user.id));
+
+    const createdActivities = await Activity.findAll({
+      where: {
+        createdBy: {
+          [Op.in]: userIds,
+        },
+      },
+      attributes: ["id", "createdBy"],
+      raw: true,
+    });
+
+    const joinedRequests = await JoinRequest.findAll({
+      where: {
+        userId: {
+          [Op.in]: userIds,
+        },
+        status: {
+          [Op.in]: ["approved", "checked_in"],
+        },
+      },
+      attributes: ["id", "userId", "activityId"],
+      raw: true,
+    });
+
+    const activityCountMap = new Map();
+    const joinedCountMap = new Map();
+
+    createdActivities.forEach((activity) => {
+      const userId = Number(activity.createdBy);
+
+      activityCountMap.set(
+        userId,
+        (activityCountMap.get(userId) || 0) + 1
+      );
+    });
+
+    joinedRequests.forEach((request) => {
+      const userId = Number(request.userId);
+
+      joinedCountMap.set(
+        userId,
+        (joinedCountMap.get(userId) || 0) + 1
+      );
+    });
+
+    const result = users.map((user) => {
+      const userId = Number(user.id);
+
+      return {
+        ...user,
+        activityCount: activityCountMap.get(userId) || 0,
+        joinedActivityCount: joinedCountMap.get(userId) || 0,
+      };
+    });
+
+    return res.json(result);
   } catch (error) {
     console.error("Admin users error:", error);
-    return res.status(500).json({ message: "ไม่สามารถโหลดผู้ใช้งานได้" });
+
+    return res.status(500).json({
+      message: "ไม่สามารถโหลดผู้ใช้งานได้",
+      error: error.message,
+    });
   }
 });
 

@@ -152,7 +152,6 @@ export default function AdminActivities() {
         all: 0,
         published: 0,
         suspended: 0,
-        draft: 0,
       }
     );
   }, [activities]);
@@ -321,7 +320,6 @@ export default function AdminActivities() {
                 ["all", "ทั้งหมด"],
                 ["published", "เผยแพร่แล้ว"],
                 ["suspended", "ระงับแล้ว"],
-                ["draft", "ฉบับร่าง"],
               ].map(([key, label]) => (
                 <button
                   type="button"
@@ -348,7 +346,6 @@ export default function AdminActivities() {
                     <option value="all">ทุกสถานะ</option>
                     <option value="published">เผยแพร่แล้ว</option>
                     <option value="suspended">ระงับแล้ว</option>
-                    <option value="draft">ฉบับร่าง</option>
                   </select>
                 </label>
 

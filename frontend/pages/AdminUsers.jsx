@@ -97,6 +97,7 @@ export default function AdminUsers() {
       });
 
       const data = await response.json().catch(() => []);
+      console.log("ADMIN USERS RESPONSE:", JSON.stringify(data, null, 2));
 
       if (!response.ok) {
         throw new Error(data?.message || "โหลดข้อมูลผู้ใช้ไม่สำเร็จ");
@@ -272,9 +273,8 @@ export default function AdminUsers() {
             <button
               type="button"
               key={label}
-              className={`admin-nav-item ${
-                active ? "active" : ""
-              }`}
+              className={`admin-nav-item ${active ? "active" : ""
+                }`}
               onClick={() => navigate(path)}
             >
               <span>{icon}</span>
@@ -464,9 +464,9 @@ export default function AdminUsers() {
                         fallbackAvatar;
 
                       const activityCount = Number(
-                        user.activityCount ||
-                        user.activitiesCount ||
-                        user.createdActivities?.length ||
+                        user.activityCount ??
+                        user.activitiesCount ??
+                        user.createdActivities?.length ??
                         0
                       );
 
@@ -538,11 +538,10 @@ export default function AdminUsers() {
 
                               <button
                                 type="button"
-                                className={`user-status-button ${
-                                  status === "suspended"
+                                className={`user-status-button ${status === "suspended"
                                     ? "restore"
                                     : ""
-                                }`}
+                                  }`}
                                 onClick={() =>
                                   handleSuspend(user)
                                 }
