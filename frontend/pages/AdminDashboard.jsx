@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  FiActivity,
-  FiBell,
+  FiActivity, FiBell,
   FiCalendar,
   FiChevronDown,
   FiFlag,
@@ -33,11 +32,42 @@ const fallback =
 const dateText = (value) =>
   value
     ? new Date(value).toLocaleDateString("th-TH", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      })
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    })
     : "-";
+
+const chartDateText = (value) => {
+  if (!value) return "";
+
+  return new Date(`${value}T00:00:00`).toLocaleDateString("th-TH", {
+    day: "numeric",
+    month: "short",
+  });
+};
+
+const ChartTooltip = ({ active, payload, label }) => {
+  if (!active || !payload?.length) return null;
+
+  return (
+    <div className="admin-chart-tooltip">
+      <strong>{chartDateText(label)}</strong>
+
+      {payload.map((item) => (
+        <div key={item.dataKey}>
+          <span
+            className={`tooltip-dot ${item.dataKey === "activities" ? "purple" : "blue"
+              }`}
+          />
+
+          <span>{item.name}</span>
+          <b>{Number(item.value || 0).toLocaleString("th-TH")}</b>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const ago = (value) => {
   if (!value) return "เมื่อสักครู่";
@@ -68,7 +98,10 @@ export default function AdminDashboard() {
   const [latestReports, setLatestReports] = useState([]);
   const [latestReviews, setLatestReviews] = useState([]);
   const [days, setDays] = useState(7);
+  const [openPeriod, setOpenPeriod] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const periodRef = useRef(null);
+
 
   const admin = useMemo(() => {
     try {
@@ -183,8 +216,8 @@ export default function AdminDashboard() {
     ["ภาพรวม", <FiGrid />, "/admin", true],
     ["กิจกรรม", <FiCalendar />, "/admin/activities"],
     ["ผู้ใช้งาน", <FiUsers />, "/admin/users"],
-    ["รายงานกิจกรรม", <FiFlag />, "/admin/reports", false, pending],
-    ["การแจ้งเตือน", <FiBell />, "/admin/notifications", false, pending],
+    ["รายงานกิจกรรม", <FiFlag />, "/admin/reports"],
+    ["การแจ้งเตือน", <FiBell />, "/admin/notifications"],
     ["รีวิว", <FiStar />, "/admin/reviews"],
     ["การตั้งค่า", <FiSettings />, "/admin/settings"],
   ];
@@ -229,34 +262,77 @@ export default function AdminDashboard() {
       <main className="admin-main">
         <header className="admin-header">
           <div className="admin-greeting">
-            <span>สวัสดีตอนบ่าย 👋</span>
             <h1>ยินดีต้อนรับกลับมา, {adminName}</h1>
             <p>นี่คือภาพรวมของระบบ Until We Meet</p>
           </div>
 
           <div className="admin-header-actions">
-            <label className="admin-period">
-              <FiCalendar />
-
-              <select
-                value={days}
-                onChange={(event) => setDays(Number(event.target.value))}
+            <div className="admin-period">
+              <button
+                className="admin-period-btn"
+                onClick={() => setOpenPeriod((v) => !v)}
               >
-                <option value={7}>7 วันที่ผ่านมา</option>
-                <option value={30}>30 วันที่ผ่านมา</option>
-                <option value={90}>90 วันที่ผ่านมา</option>
-                <option value={365}>1 ปีที่ผ่านมา</option>
-              </select>
+                <FiCalendar />
 
-              <FiChevronDown />
-            </label>
+                <span>
+                  {days === 7 && "7 วันที่ผ่านมา"}
+                  {days === 30 && "30 วันที่ผ่านมา"}
+                  {days === 90 && "90 วันที่ผ่านมา"}
+                  {days === 365 && "1 ปีที่ผ่านมา"}
+                </span>
 
+                <FiChevronDown
+                  className={openPeriod ? "rotate" : ""}
+                />
+              </button>
+
+              {openPeriod && (
+                <div className="admin-period-menu">
+
+                  <button
+                    onClick={() => {
+                      setDays(7);
+                      setOpenPeriod(false);
+                    }}
+                  >
+                    7 วันที่ผ่านมา
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setDays(30);
+                      setOpenPeriod(false);
+                    }}
+                  >
+                    30 วันที่ผ่านมา
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setDays(90);
+                      setOpenPeriod(false);
+                    }}
+                  >
+                    90 วันที่ผ่านมา
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setDays(365);
+                      setOpenPeriod(false);
+                    }}
+                  >
+                    1 ปีที่ผ่านมา
+                  </button>
+
+                </div>
+              )}
+            </div>
             <button
               className="admin-bell"
               onClick={() => navigate("/admin/notifications")}
             >
               <FiBell />
-              {pending > 0 && <span>{pending}</span>}
             </button>
 
             <div className="admin-profile-menu">
@@ -355,11 +431,23 @@ export default function AdminDashboard() {
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                   data={chart}
-                  margin={{ top: 12, right: 10, left: -18, bottom: 0 }}
+                  margin={{ top: 18, right: 18, left: -12, bottom: 5 }}
                 >
+                  <defs>
+                    <linearGradient id="activityLine" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#8b6cff" />
+                      <stop offset="100%" stopColor="#5b36e8" />
+                    </linearGradient>
+
+                    <linearGradient id="participantLine" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#71b7ff" />
+                      <stop offset="100%" stopColor="#3980ea" />
+                    </linearGradient>
+                  </defs>
+
                   <CartesianGrid
-                    stroke="#edf0f7"
-                    strokeDasharray="4 4"
+                    stroke="#eef0f6"
+                    strokeDasharray="3 6"
                     vertical={false}
                   />
 
@@ -367,14 +455,32 @@ export default function AdminDashboard() {
                     dataKey="day"
                     axisLine={false}
                     tickLine={false}
+                    tickFormatter={chartDateText}
+                    minTickGap={24}
+                    tick={{
+                      fill: "#8189a2",
+                      fontSize: 11,
+                    }}
+                    dy={10}
                   />
 
-                  <YAxis axisLine={false} tickLine={false} />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    allowDecimals={false}
+                    width={35}
+                    tick={{
+                      fill: "#8189a2",
+                      fontSize: 11,
+                    }}
+                  />
 
                   <Tooltip
-                    contentStyle={{
-                      borderRadius: 14,
-                      border: "1px solid #ececf5",
+                    content={<ChartTooltip />}
+                    cursor={{
+                      stroke: "#d9d4f9",
+                      strokeWidth: 1,
+                      strokeDasharray: "4 4",
                     }}
                   />
 
@@ -382,18 +488,40 @@ export default function AdminDashboard() {
                     type="monotone"
                     dataKey="activities"
                     name="กิจกรรมที่สร้าง"
-                    stroke="#6846f5"
+                    stroke="url(#activityLine)"
                     strokeWidth={3}
-                    dot={false}
+                    dot={{
+                      r: 3,
+                      fill: "#ffffff",
+                      stroke: "#6846f5",
+                      strokeWidth: 2,
+                    }}
+                    activeDot={{
+                      r: 6,
+                      fill: "#6846f5",
+                      stroke: "#ffffff",
+                      strokeWidth: 3,
+                    }}
                   />
 
                   <Line
                     type="monotone"
                     dataKey="participants"
                     name="ผู้เข้าร่วม"
-                    stroke="#8bb3ff"
+                    stroke="url(#participantLine)"
                     strokeWidth={3}
-                    dot={false}
+                    dot={{
+                      r: 3,
+                      fill: "#ffffff",
+                      stroke: "#4b91ef",
+                      strokeWidth: 2,
+                    }}
+                    activeDot={{
+                      r: 6,
+                      fill: "#4b91ef",
+                      stroke: "#ffffff",
+                      strokeWidth: 3,
+                    }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -454,7 +582,7 @@ export default function AdminDashboard() {
           <article className="admin-panel">
             <div className="admin-panel-header">
               <h2>
-                รายงานที่รอตรวจสอบ <i className="count">{pending}</i>
+                รายงานที่รอตรวจสอบ
               </h2>
 
               <button onClick={() => navigate("/admin/reports")}>
@@ -484,7 +612,7 @@ export default function AdminDashboard() {
                   </span>
 
                   <span className="report-time">
-                    {ago(report.createdAt)} <i />
+                    {ago(report.createdAt)}
                   </span>
                 </button>
               ))}
@@ -591,7 +719,6 @@ export default function AdminDashboard() {
 function Stat({ color, icon, title, value, danger }) {
   return (
     <article className="admin-stat-card">
-      <FiMoreVertical className="more" />
 
       <span className={`admin-stat-icon ${color}`}>{icon}</span>
 
@@ -600,9 +727,6 @@ function Stat({ color, icon, title, value, danger }) {
         <strong>{Number(value || 0).toLocaleString("th-TH")}</strong>
       </span>
 
-      <p className={danger ? "danger" : ""}>
-        <FiActivity /> ข้อมูลปัจจุบันของระบบ
-      </p>
     </article>
   );
 }

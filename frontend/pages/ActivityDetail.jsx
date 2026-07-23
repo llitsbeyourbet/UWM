@@ -8,7 +8,9 @@ function ActivityDetail() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const activityId = searchParams.get("id");
+  const source = searchParams.get("from");
   const fromAdmin = searchParams.get("from") === "admin";
+  const fromReport = source === "admin-report";
 
   const [activity, setActivity] = useState(null);
   const [isOwner, setIsOwner] = useState(false);
@@ -31,6 +33,7 @@ function ActivityDetail() {
   const [hostRating, setHostRating] = useState(null);
   const [participants, setParticipants] = useState([]);
   const [notFound, setNotFound] = useState(false);
+  const [hasPendingReport, setHasPendingReport] = useState(false);
 
   const reportReasons = ["เนื้อหาไม่เหมาะสม", "ข้อมูลเป็นเท็จ", "สแปม", "เป็นอันตราย", "อื่นๆ"];
 
@@ -137,6 +140,56 @@ function ActivityDetail() {
       window.removeEventListener("activityUpdated", handleUpdate);
     };
   }, [fetchActivity]);
+
+  useEffect(() => {
+    if (!fromAdmin || !activityId) return;
+
+    const checkReport = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await fetch(`${API_URL}/api/admin/reports`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json().catch(() => []);
+
+        if (!res.ok) {
+          throw new Error(data?.message || "โหลดรายงานไม่สำเร็จ");
+        }
+
+        const reports = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.reports)
+            ? data.reports
+            : [];
+
+        const found = reports.some((report) => {
+          const reportedActivityId =
+            report.activityId ||
+            report.activity_id ||
+            report.activity?.id ||
+            report.activity?._id;
+
+          const status = String(report.status || "pending").toLowerCase();
+
+          return (
+            String(reportedActivityId) === String(activityId) &&
+            ["pending", "reviewing"].includes(status)
+          );
+        });
+
+        setHasPendingReport(found);
+      } catch (error) {
+        console.error(error);
+        setHasPendingReport(false);
+      }
+    };
+
+    checkReport();
+  }, [fromAdmin, activityId]);
 
   useEffect(() => {
     if (!showQR || !isOwner || !activity) return;
@@ -292,7 +345,7 @@ function ActivityDetail() {
         if (updatedComment) {
           setPublicComments((prev) => [
             { ...updatedComment, isPublic: true },
-            ...prev.filter((comment) => comment.id !== commentId으로),
+            ...prev.filter((comment) => comment.id !== commentId),
           ]);
         }
       }
@@ -695,108 +748,128 @@ function ActivityDetail() {
         )}
 
         {/* Join Section */}
-
         {fromAdmin ? (
           <div className="join-section">
-            <button
-              className="suspend-btn-big"
-              onClick={async () => {
-                if (!window.confirm("ต้องการระงับกิจกรรมนี้ไหม?")) return;
-                const token = localStorage.getItem("token");
-                const res = await fetch(`${API_URL}/api/admin/suspend/${activity.id}`, {
-                  method: "PUT",
-                  headers: { Authorization: `Bearer ${token}` },
-                });
-                if (res.ok) {
-                  alert("ระงับกิจกรรมสำเร็จ");
-                  navigate("/admin");
-                }
-              }}
-            >
-              🚫 ระงับกิจกรรม
-            </button>
-            <button className="cancel-btn" onClick={() => navigate("/admin")}>
-              ← กลับ Dashboard
-            </button>
-          </div>
-        ) : (
-          !isOwner && activity.status !== "suspended" && (
-            <div className="join-section">
-              {joinStatus === "checked_in" && (
-                <>
-                  <button className="join-btn joined" disabled>เข้าร่วมแล้ว ✓</button>
-                  {!reviewed ? (
-                    <button className="review-btn" onClick={() => navigate(`/review/${activity.id}`)}>
-                      ⭐ รีวิวกิจกรรม
-                    </button>
-                  ) : (
-                    <p className la-reviewed-text>✓ รีวิวแล้ว</p>
-                  )}
-                </>
-              )}
-              {joinStatus === "approved" && (
-                <>
-                  <button className="join-btn joined" disabled>เข้าร่วมแล้ว ✓</button>
-                  <button className="scan-btn" onClick={() => navigate("/scan")}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-                      <rect x="3" y="3" width="7" height="7" rx="1" />
-                      <rect x="14" y="3" width="7" height="7" rx="1" />
-                      <rect x="3" y="14" width="7" height="7" rx="1" />
-                      <path d="M14 14h3v3h-3z" />
-                      <path d="M17 17h4" />
-                      <path d="M17 14v3" />
-                    </svg>
-                    สแกน QR เช็คอิน
-                  </button>
-                  <button className="cancel-btn" onClick={handleCancel}>ยกเลิกการเข้าร่วม</button>
-                </>
-              )}
-              {joinStatus === "pending" && (
-                <>
-                  <button className="join-btn pending" disabled>รอการอนุมัติ...</button>
-                  <button className="cancel-btn" onClick={handleCancel}>ยกเลิกคำขอ</button>
-                </>
-              )}
-              {(joinStatus === null || joinStatus === "cancelled") && (
-                (() => {
-                  const today = new Date();
-                  today.setHours(0, 0, 0, 0);
+            {hasPendingReport && (
+              <button
+                className="suspend-btn-big"
+                onClick={async () => {
+                  if (!window.confirm("ต้องการระงับกิจกรรมนี้ไหม?")) return;
 
-                  const eventDate = new Date(activity.date);
-                  eventDate.setHours(0, 0, 0, 0);
+                  const token = localStorage.getItem("token");
 
-                  const isExpired = eventDate < today;
-
-                  if (isExpired) {
-                    return (
-                      <button className="join-btn joined" disabled>
-                        กิจกรรมสิ้นสุดแล้ว
-                      </button>
-                    );
-                  }
-
-                  if (activity.joinedCount >= activity.participantCount) {
-                    return (
-                      <button className="join-btn joined" disabled>
-                        กิจกรรมเต็มแล้ว
-                      </button>
-                    );
-                  }
-
-                  return (
-                    <button
-                      className="join-btn"
-                      onClick={handleJoin}
-                      disabled={joinLoading}
-                    >
-                      {joinLoading ? "กำลังส่ง..." : "เข้าร่วมกิจกรรม"}
-                    </button>
+                  const res = await fetch(
+                    `${API_URL}/api/admin/suspend/${activity.id}`,
+                    {
+                      method: "PUT",
+                      headers: {
+                        Authorization: `Bearer ${token}`,
+                      },
+                    }
                   );
-                })()
-              )}
-            </div>
-          )
-        )}
+
+                  const data = await res.json().catch(() => ({}));
+
+                  if (!res.ok) {
+                    alert(data.message || "ไม่สามารถระงับกิจกรรมได้");
+                    return;
+                  }
+
+                  alert("ระงับกิจกรรมสำเร็จ");
+                  navigate("/admin/reports");
+                }}
+              >
+                🚫 ระงับกิจกรรม
+              </button>
+            )}
+
+            <button
+              className="cancel-btn"
+              onClick={() => navigate("/admin/activities")}
+            >
+              ← กลับหน้ากิจกรรม
+            </button>
+          </div>)
+
+
+          : (
+            !isOwner && activity.status !== "suspended" && (
+              <div className="join-section">
+                {joinStatus === "checked_in" && (
+                  <>
+                    <button className="join-btn joined" disabled>เข้าร่วมแล้ว ✓</button>
+                    {!reviewed ? (
+                      <button className="review-btn" onClick={() => navigate(`/review/${activity.id}`)}>
+                        ⭐ รีวิวกิจกรรม
+                      </button>
+                    ) : (
+                      <p className la-reviewed-text>✓ รีวิวแล้ว</p>
+                    )}
+                  </>
+                )}
+                {joinStatus === "approved" && (
+                  <>
+                    <button className="join-btn joined" disabled>เข้าร่วมแล้ว ✓</button>
+                    <button className="scan-btn" onClick={() => navigate("/scan")}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
+                        <rect x="3" y="3" width="7" height="7" rx="1" />
+                        <rect x="14" y="3" width="7" height="7" rx="1" />
+                        <rect x="3" y="14" width="7" height="7" rx="1" />
+                        <path d="M14 14h3v3h-3z" />
+                        <path d="M17 17h4" />
+                        <path d="M17 14v3" />
+                      </svg>
+                      สแกน QR เช็คอิน
+                    </button>
+                    <button className="cancel-btn" onClick={handleCancel}>ยกเลิกการเข้าร่วม</button>
+                  </>
+                )}
+                {joinStatus === "pending" && (
+                  <>
+                    <button className="join-btn pending" disabled>รอการอนุมัติ...</button>
+                    <button className="cancel-btn" onClick={handleCancel}>ยกเลิกคำขอ</button>
+                  </>
+                )}
+                {(joinStatus === null || joinStatus === "cancelled") && (
+                  (() => {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+
+                    const eventDate = new Date(activity.date);
+                    eventDate.setHours(0, 0, 0, 0);
+
+                    const isExpired = eventDate < today;
+
+                    if (isExpired) {
+                      return (
+                        <button className="join-btn joined" disabled>
+                          กิจกรรมสิ้นสุดแล้ว
+                        </button>
+                      );
+                    }
+
+                    if (activity.joinedCount >= activity.participantCount) {
+                      return (
+                        <button className="join-btn joined" disabled>
+                          กิจกรรมเต็มแล้ว
+                        </button>
+                      );
+                    }
+
+                    return (
+                      <button
+                        className="join-btn"
+                        onClick={handleJoin}
+                        disabled={joinLoading}
+                      >
+                        {joinLoading ? "กำลังส่ง..." : "เข้าร่วมกิจกรรม"}
+                      </button>
+                    );
+                  })()
+                )}
+              </div>
+            )
+          )}
       </div>
 
       {/* Report Modal */}

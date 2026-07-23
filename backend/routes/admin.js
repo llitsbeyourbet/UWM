@@ -8,6 +8,7 @@ const User = require("../models/User");
 const Report = require("../models/Report");
 const JoinRequest = require("../models/JoinRequest");
 const ActivityReview = require("../models/ActivityReview");
+const HostReview = require("../models/HostReview");
 const Comment = require("../models/Comment");
 
 const auth = (req, res, next) => {
@@ -400,6 +401,244 @@ router.get("/chart", auth, isAdmin, async (req, res) => {
   } catch (error) {
     console.error("Admin chart error:", error);
     return res.status(500).json({ message: "ไม่สามารถโหลดข้อมูลกราฟได้" });
+  }
+});
+
+router.get("/reviews", auth, isAdmin, async (req, res) => {
+  try {
+    const [activityReviews, hostReviews] = await Promise.all([
+      ActivityReview.findAll({
+        order: [["createdAt", "DESC"]],
+        raw: true,
+      }),
+
+      HostReview.findAll({
+        order: [["createdAt", "DESC"]],
+        raw: true,
+      }),
+    ]);
+
+    const activityIds = [
+      ...new Set(
+        [...activityReviews, ...hostReviews]
+          .map((review) => Number(review.activityId))
+          .filter(Boolean)
+      ),
+    ];
+
+    const reviewerIds = [
+      ...new Set(
+        [...activityReviews, ...hostReviews]
+          .map((review) => Number(review.reviewerId))
+          .filter(Boolean)
+      ),
+    ];
+
+    const hostIds = [
+      ...new Set(
+        hostReviews
+          .map((review) => Number(review.hostId))
+          .filter(Boolean)
+      ),
+    ];
+
+    const userIds = [
+      ...new Set([...reviewerIds, ...hostIds]),
+    ];
+
+    const [activities, users, comments] = await Promise.all([
+      activityIds.length
+        ? Activity.findAll({
+            where: {
+              id: {
+                [Op.in]: activityIds,
+              },
+            },
+            attributes: [
+              "id",
+              "activityName",
+              "cover",
+              "createdBy",
+            ],
+            raw: true,
+          })
+        : [],
+
+      userIds.length
+        ? User.findAll({
+            where: {
+              id: {
+                [Op.in]: userIds,
+              },
+            },
+            attributes: [
+              "id",
+              "name",
+              "username",
+              "profileImage",
+            ],
+            raw: true,
+          })
+        : [],
+
+      activityIds.length && reviewerIds.length
+        ? Comment.findAll({
+            where: {
+              activityId: {
+                [Op.in]: activityIds,
+              },
+              userId: {
+                [Op.in]: reviewerIds,
+              },
+            },
+            order: [["createdAt", "DESC"]],
+            raw: true,
+          })
+        : [],
+    ]);
+
+    const activityMap = new Map(
+      activities.map((activity) => [
+        Number(activity.id),
+        activity,
+      ])
+    );
+
+    const userMap = new Map(
+      users.map((user) => [
+        Number(user.id),
+        user,
+      ])
+    );
+
+    const commentMap = new Map();
+
+    comments.forEach((comment) => {
+      const key = `${Number(comment.activityId)}:${Number(
+        comment.userId
+      )}`;
+
+      if (!commentMap.has(key)) {
+        commentMap.set(key, comment);
+      }
+    });
+
+    const activityReviewRows = activityReviews.map((review) => {
+      const activityId = Number(review.activityId);
+      const reviewerId = Number(review.reviewerId);
+
+      const activity = activityMap.get(activityId);
+      const reviewer = userMap.get(reviewerId);
+
+      const comment = commentMap.get(
+        `${activityId}:${reviewerId}`
+      );
+
+      return {
+        id: `activity-${review.id}`,
+        originalId: review.id,
+        type: "activity",
+
+        activityId,
+        reviewerId,
+
+        rating: Number(review.rating || 0),
+        comment: comment?.comment || "",
+        isPublic: comment?.isPublic ?? false,
+
+        targetName:
+          activity?.activityName || "ไม่ระบุชื่อกิจกรรม",
+
+        targetImage: activity?.cover || null,
+
+        reviewerName:
+          reviewer?.name ||
+          reviewer?.username ||
+          "ไม่ระบุชื่อ",
+
+        reviewerUsername: reviewer?.username || "",
+
+        reviewerProfileImage:
+          reviewer?.profileImage || null,
+
+        createdAt: review.createdAt,
+      };
+    });
+
+    const hostReviewRows = hostReviews.map((review) => {
+      const activityId = Number(review.activityId);
+      const reviewerId = Number(review.reviewerId);
+      const hostId = Number(review.hostId);
+
+      const activity = activityMap.get(activityId);
+      const reviewer = userMap.get(reviewerId);
+      const host = userMap.get(hostId);
+
+      const comment = commentMap.get(
+        `${activityId}:${reviewerId}`
+      );
+
+      return {
+        id: `host-${review.id}`,
+        originalId: review.id,
+        type: "host",
+
+        activityId,
+        hostId,
+        reviewerId,
+
+        rating: Number(review.rating || 0),
+        comment: comment?.comment || "",
+        isPublic: comment?.isPublic ?? false,
+
+        targetName:
+          host?.name ||
+          host?.username ||
+          "ไม่ระบุชื่อผู้จัดกิจกรรม",
+
+        targetUsername: host?.username || "",
+
+        targetImage: host?.profileImage || null,
+
+        activityName:
+          activity?.activityName || "ไม่ระบุชื่อกิจกรรม",
+
+        reviewerName:
+          reviewer?.name ||
+          reviewer?.username ||
+          "ไม่ระบุชื่อ",
+
+        reviewerUsername: reviewer?.username || "",
+
+        reviewerProfileImage:
+          reviewer?.profileImage || null,
+
+        createdAt: review.createdAt,
+      };
+    });
+
+    const reviews = [
+      ...activityReviewRows,
+      ...hostReviewRows,
+    ].sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() -
+        new Date(a.createdAt).getTime()
+    );
+
+    return res.json({
+      reviews,
+      totalReviews: reviews.length,
+      activityReviewCount: activityReviewRows.length,
+      hostReviewCount: hostReviewRows.length,
+    });
+  } catch (error) {
+    console.error("Get admin reviews error:", error);
+
+    return res.status(500).json({
+      message: "ไม่สามารถโหลดข้อมูลรีวิวได้",
+      error: error.message,
+    });
   }
 });
 
