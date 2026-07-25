@@ -102,7 +102,6 @@ function AdminNotifications() {
         ["รายงานกิจกรรม", <FiFlag />, "/admin/reports"],
         ["การแจ้งเตือน", <FiBell />, "/admin/notifications", true],
         ["รีวิว", <FiStar />, "/admin/reviews"],
-        ["การตั้งค่า", <FiSettings />, "/admin/settings"],
     ];
 
     return (

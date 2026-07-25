@@ -159,11 +159,6 @@ export default function AdminReviews() {
             path: "/admin/reviews",
             active: true,
         },
-        {
-            label: "การตั้งค่า",
-            icon: <FiSettings />,
-            path: "/admin/settings",
-        },
     ];
 
     useEffect(() => {

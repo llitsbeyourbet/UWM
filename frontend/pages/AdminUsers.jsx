@@ -76,7 +76,6 @@ export default function AdminUsers() {
     ["รายงานกิจกรรม", <FiFlag />, "/admin/reports"],
     ["การแจ้งเตือน", <FiBell />, "/admin/notifications"],
     ["รีวิว", <FiStar />, "/admin/reviews"],
-    ["การตั้งค่า", <FiSettings />, "/admin/settings"],
   ];
 
   useEffect(() => {
@@ -192,63 +191,6 @@ export default function AdminUsers() {
     setPage(1);
   }, [activeTab, search, sortOrder]);
 
-  const handleSuspend = async (user) => {
-    const userId = user.id || user._id;
-    const status = getUserStatus(user);
-    const isSuspended = status === "suspended";
-
-    const confirmed = window.confirm(
-      isSuspended
-        ? "ต้องการเปิดใช้งานบัญชีนี้อีกครั้งไหม?"
-        : "ต้องการระงับบัญชีผู้ใช้นี้ไหม?"
-    );
-
-    if (!confirmed) return;
-
-    try {
-      const token = localStorage.getItem("token");
-
-      const response = await fetch(
-        `${API_URL}/api/admin/users/${userId}/suspend`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            suspended: !isSuspended,
-          }),
-        }
-      );
-
-      const data = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(
-          data?.message || "ไม่สามารถเปลี่ยนสถานะบัญชีได้"
-        );
-      }
-
-      setUsers((currentUsers) =>
-        currentUsers.map((currentUser) => {
-          const currentId = currentUser.id || currentUser._id;
-
-          if (String(currentId) !== String(userId)) {
-            return currentUser;
-          }
-
-          return {
-            ...currentUser,
-            isSuspended: !isSuspended,
-            status: !isSuspended ? "suspended" : "active",
-          };
-        })
-      );
-    } catch (err) {
-      alert(err.message || "เกิดข้อผิดพลาด");
-    }
-  };
 
   return (
     <div className="admin-shell">
@@ -314,52 +256,21 @@ export default function AdminUsers() {
               <span className="users-heading-icon">
                 <FiUsers />
               </span>
-
               <div>
                 <h1>จัดการผู้ใช้งาน</h1>
                 <p>
                   ตรวจสอบข้อมูลและสถานะบัญชีผู้ใช้งานทั้งหมดในระบบ
                 </p>
               </div>
-            </div>
-
-            <div className="users-summary-list">
-              <div className="users-summary-item">
+               <div className="users-summary-item">
                 <span className="summary-icon total">
                   <FiUsers />
                 </span>
-
                 <div>
                   <strong>
                     {counts.all.toLocaleString("th-TH")}
                   </strong>
                   <small>ผู้ใช้ทั้งหมด</small>
-                </div>
-              </div>
-
-              <div className="users-summary-item">
-                <span className="summary-icon active">
-                  <FiUserCheck />
-                </span>
-
-                <div>
-                  <strong>
-                    {counts.active.toLocaleString("th-TH")}
-                  </strong>
-                  <small>ใช้งานปกติ</small>
-                </div>
-              </div>
-
-              <div className="users-summary-item">
-                <span className="summary-icon suspended">
-                  <FiUserX />
-                </span>
-
-                <div>
-                  <strong>
-                    {counts.suspended.toLocaleString("th-TH")}
-                  </strong>
-                  <small>ถูกระงับ</small>
                 </div>
               </div>
             </div>
@@ -369,8 +280,7 @@ export default function AdminUsers() {
             <nav className="users-tabs">
               {[
                 ["all", "ทั้งหมด"],
-                ["active", "ใช้งานปกติ"],
-                ["suspended", "ถูกระงับ"],
+          
               ].map(([key, label]) => (
                 <button
                   type="button"
@@ -440,8 +350,6 @@ export default function AdminUsers() {
                       <th>อีเมล</th>
                       <th>กิจกรรม</th>
                       <th>วันที่สมัคร</th>
-                      <th>สถานะ</th>
-                      <th>จัดการ</th>
                     </tr>
                   </thead>
 
@@ -509,63 +417,6 @@ export default function AdminUsers() {
                             <span className="user-created-date">
                               {formatDate(user.createdAt)}
                             </span>
-                          </td>
-
-                          <td>
-                            <span
-                              className={`user-status status-${status}`}
-                            >
-                              {status === "active"
-                                ? "ใช้งานปกติ"
-                                : "ถูกระงับ"}
-                            </span>
-                          </td>
-
-                          <td>
-                            <div className="user-action-buttons">
-                              <button
-                                type="button"
-                                className="user-view-button"
-                                onClick={() =>
-                                  navigate(
-                                    `/admin/users/${userId}`
-                                  )
-                                }
-                                title="ดูรายละเอียด"
-                              >
-                                <FiEye />
-                              </button>
-
-                              <button
-                                type="button"
-                                className={`user-status-button ${status === "suspended"
-                                    ? "restore"
-                                    : ""
-                                  }`}
-                                onClick={() =>
-                                  handleSuspend(user)
-                                }
-                                title={
-                                  status === "suspended"
-                                    ? "เปิดใช้งานบัญชี"
-                                    : "ระงับบัญชี"
-                                }
-                              >
-                                {status === "suspended" ? (
-                                  <FiUserCheck />
-                                ) : (
-                                  <FiUserX />
-                                )}
-                              </button>
-
-                              <button
-                                type="button"
-                                className="user-more-button"
-                                title="ตัวเลือกเพิ่มเติม"
-                              >
-                                <FiMoreVertical />
-                              </button>
-                            </div>
                           </td>
                         </tr>
                       );

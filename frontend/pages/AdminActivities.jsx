@@ -88,7 +88,6 @@ export default function AdminActivities() {
     ["รายงานกิจกรรม", <FiFlag />, "/admin/reports"],
     ["การแจ้งเตือน", <FiBell />, "/admin/notifications"],
     ["รีวิว", <FiStar />, "/admin/reviews"],
-    ["การตั้งค่า", <FiSettings />, "/admin/settings"],
   ];
 
   useEffect(() => {

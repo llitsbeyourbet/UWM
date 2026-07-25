@@ -42,7 +42,6 @@ const navItems = [
     ["รายงานกิจกรรม", <FiFlag />, "/admin/reports", true],
     ["การแจ้งเตือน", <FiBell />, "/admin/notifications", false],
     ["รีวิว", <FiStar />, "/admin/reviews", false],
-    ["การตั้งค่า", <FiSettings />, "/admin/settings", false],
 ];
 
 const normalizeStatus = (value) => {
