@@ -51,7 +51,8 @@ function AdminNotifications() {
     }, []);
 
     const pendingReports = reports.filter(
-        (report) => report.status === "pending"
+        (report) => report.status === "pending" ||
+            report.status === "reviewing"
     );
 
     useEffect(() => {
@@ -242,9 +243,10 @@ function AdminNotifications() {
                                                     {report.activityName || "ไม่ระบุชื่อกิจกรรม"}
                                                 </h3>
                                             </div>
-
-                                            <span className="notification-status">
-                                                รอตรวจสอบ
+                                            <span className={`notification-status ${report.status}`}>
+                                                {report.status === "reviewing"
+                                                    ? "กำลังตรวจสอบ"
+                                                    : "รอตรวจสอบ"}
                                             </span>
                                         </div>
 

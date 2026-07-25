@@ -259,7 +259,7 @@ function AdminReports() {
             }
         );
 
-        navigate(`/activity-detail?id=${activityId}&from=admin-report`);
+        navigate(`/activity-detail?id=${activityId}&from=admin`);
     };
 
     const startReview = (report) => {
