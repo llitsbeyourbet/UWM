@@ -706,5 +706,29 @@ router.get("/reviews", auth, isAdmin, async (req, res) => {
     });
   }
 });
+router.put("/reports/:id/view", auth, isAdmin, async (req, res) => {
+  try {
+    const report = await Report.findByPk(req.params.id);
+
+    if (!report) {
+      return res.status(404).json({
+        message: "ไม่พบรายงาน",
+      });
+    }
+
+    if (report.status === "pending") {
+      await report.update({
+        status: "reviewing",
+      });
+    }
+
+    res.json(report);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "เกิดข้อผิดพลาด",
+    });
+  }
+});
 
 module.exports = router;

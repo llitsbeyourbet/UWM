@@ -7,7 +7,7 @@ const Report = sequelize.define("Report", {
   reason: { type: DataTypes.STRING, allowNull: false },
   detail: { type: DataTypes.TEXT, allowNull: true},
   status: {
-    type: DataTypes.ENUM("pending", "reviewed"),
+    type: DataTypes.ENUM("pending", "reviewing","resolved"),
     defaultValue: "pending",
   },
 });

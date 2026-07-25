@@ -241,13 +241,23 @@ function AdminReports() {
         }
     }, [page, totalPages]);
 
-    const openActivity = (report) => {
+    const openActivity = async (report) => {
         const activityId =
             report.activityId ||
             report.activity?.id ||
             report.activity?._id;
 
         if (!activityId) return;
+
+        await fetch(
+            `${API_URL}/api/admin/reports/${report.id}/view`,
+            {
+                method: "PUT",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
 
         navigate(`/activity-detail?id=${activityId}&from=admin-report`);
     };

@@ -271,11 +271,21 @@ function AdminNotifications() {
 
                                     <button
                                         className="notification-view-button"
-                                        onClick={() =>
+                                        onClick={async () => {
+                                            await fetch(
+                                                `${API_URL}/api/admin/reports/${report.id}/view`,
+                                                {
+                                                    method: "PUT",
+                                                    headers: {
+                                                        Authorization: `Bearer ${token}`,
+                                                    },
+                                                }
+                                            );
+
                                             navigate(
                                                 `/activity-detail?id=${report.activityId}&from=admin`
-                                            )
-                                        }
+                                            );
+                                        }}
                                     >
                                         ดูรายละเอียด
                                     </button>
