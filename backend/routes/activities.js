@@ -76,8 +76,17 @@ router.get("/:id", async (req, res) => {
 // สร้างกิจกรรม
 router.post("/", auth, async (req, res) => {
   try {
-    const activity = await Activity.create({ ...req.body, createdBy: req.userId });
-    res.status(201).json(activity);
+    const categories = Array.isArray(req.body.category)
+      ? req.body.category
+      : [req.body.category].filter(Boolean);
+
+    const activity = await Activity.create({
+      ...req.body,
+      category: categories,
+      createdBy: req.userId,
+    });
+
+    return res.status(201).json(activity);
   } catch (error) {
     console.error("CREATE ACTIVITY ERROR:", error);
     console.error("CREATE ACTIVITY BODY:", req.body);
