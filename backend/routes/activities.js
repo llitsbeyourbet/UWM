@@ -112,7 +112,6 @@ router.post("/", auth, async (req, res) => {
       res.json(activity);
     } catch (err) {
       console.log(err);
-      res.status(500).json({ message: "เกิดข้อผิดพลาด" });
     }
   });
 
