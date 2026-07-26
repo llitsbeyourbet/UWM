@@ -236,7 +236,7 @@
 
 .activities-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 16px;
 }
 
@@ -449,24 +449,20 @@
 }
 
 .activities-pagination {
-  width: 100%;
+  width: fit-content;
+  max-width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 7px;
   margin: 30px auto 0;
   padding: 0;
-}
-.activities-panel > .activities-pagination {
-  width: 100% !important;
-  justify-content: center !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
+  transform: translateX(0px);
 }
 
 .activities-pagination button {
-  width: 34px;
-  height: 34px;
+  width: 35px;
+  height: 35px;
   display: grid;
   place-items: center;
   border: 1px solid #e3e3ed;
@@ -480,6 +476,11 @@
   border-color: #6846f5;
   background: #6846f5;
   color: #fff;
+  
+}
+.activities-pagination button{
+  text-align: center;
+  font-size: 12px;
 }
 
 .activities-pagination button:disabled {

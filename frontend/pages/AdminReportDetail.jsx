@@ -1,0 +1,249 @@
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  FiAlertTriangle, FiArrowLeft, FiBell, FiCalendar, FiCheck,
+  FiClock, FiEye, FiFlag, FiGrid, FiLogOut, FiMapPin,
+  FiMessageSquare, FiShield, FiSlash, FiStar, FiUser, FiUsers,
+} from "react-icons/fi";
+import { MdGroups } from "react-icons/md";
+
+import API_URL from "../config";
+import "./AdminDashboard.css";
+import "./AdminReportDetail.css";
+
+const FALLBACK_IMAGE = "https://placehold.co/900x560/F1EDFF/6846F5?text=Activity";
+
+const navItems = [
+  ["ภาพรวม", <FiGrid />, "/admin"],
+  ["กิจกรรม", <FiCalendar />, "/admin/activities"],
+  ["ผู้ใช้งาน", <FiUsers />, "/admin/users"],
+  ["รายงานกิจกรรม", <FiFlag />, "/admin/reports", true],
+  ["การแจ้งเตือน", <FiBell />, "/admin/notifications"],
+  ["รีวิว", <FiStar />, "/admin/reviews"],
+];
+
+const normalizeStatus = (value) => {
+  const status = String(value || "pending").toLowerCase();
+  if (["reviewing", "in_review", "investigating"].includes(status)) return "reviewing";
+  if (["resolved", "completed", "approved", "reviewed"].includes(status)) return "resolved";
+  if (["rejected", "dismissed", "cancelled"].includes(status)) return "rejected";
+  return "pending";
+};
+
+const formatDate = (value, includeTime = false) => {
+  if (!value) return "-";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "-";
+  return date.toLocaleString("th-TH", {
+    day: "numeric", month: "short", year: "numeric",
+    ...(includeTime ? { hour: "2-digit", minute: "2-digit" } : {}),
+  });
+};
+
+export default function AdminReportDetail() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
+  const admin = useMemo(() => {
+    try { return JSON.parse(localStorage.getItem("user")) || {}; }
+    catch { return {}; }
+  }, []);
+
+  const [report, setReport] = useState(null);
+  const [decision, setDecision] = useState("");
+  const [adminNote, setAdminNote] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!token || admin.role !== "admin") { navigate("/login"); return; }
+    loadReport();
+  }, [id]);
+
+  const loadReport = async () => {
+    try {
+      setLoading(true); setError("");
+      const response = await fetch(`${API_URL}/api/admin/reports`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await response.json().catch(() => []);
+      if (!response.ok) throw new Error(data?.message || "โหลดรายละเอียดรายงานไม่สำเร็จ");
+      const reports = Array.isArray(data) ? data : Array.isArray(data?.reports) ? data.reports : [];
+      const selected = reports.find((item) => String(item.id || item._id) === String(id));
+      if (!selected) throw new Error("ไม่พบรายงานที่ต้องการ");
+      setReport(selected);
+      setDecision(selected.decision || "");
+      setAdminNote(selected.adminNote || selected.note || "");
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "ไม่สามารถโหลดรายละเอียดรายงานได้");
+    } finally { setLoading(false); }
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
+
+  const activityId = report?.activityId || report?.activity?.id || report?.activity?._id;
+  const currentStatus = normalizeStatus(report?.status);
+  const isCompleted = currentStatus === "resolved" || currentStatus === "rejected";
+
+  const updateReportStatus = async (payload) => {
+    const response = await fetch(`${API_URL}/api/admin/reports/${id}/status`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify(payload),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data?.message || "บันทึกผลการตรวจสอบไม่สำเร็จ");
+  };
+
+  const saveDecision = async () => {
+    if (!decision) { alert("กรุณาเลือกผลการตรวจสอบ"); return; }
+    if (!window.confirm("ยืนยันการบันทึกผลการตรวจสอบหรือไม่?")) return;
+    try {
+      setSaving(true);
+      await updateReportStatus({
+        status: decision === "reject_report" ? "rejected" : "resolved",
+        decision,
+        adminNote: adminNote.trim(),
+      });
+      alert("บันทึกผลการตรวจสอบสำเร็จ");
+      await loadReport();
+    } catch (err) { alert(err.message || "เกิดข้อผิดพลาด"); }
+    finally { setSaving(false); }
+  };
+
+  const rejectReport = async () => {
+    if (!window.confirm("ยืนยันการปฏิเสธรายงานนี้หรือไม่?")) return;
+    try {
+      setSaving(true);
+      await updateReportStatus({ status: "rejected", decision: "reject_report", adminNote: adminNote.trim() });
+      alert("ปฏิเสธรายงานเรียบร้อยแล้ว");
+      await loadReport();
+    } catch (err) { alert(err.message || "เกิดข้อผิดพลาด"); }
+    finally { setSaving(false); }
+  };
+
+  const suspendActivity = async () => {
+    if (!activityId) { alert("ไม่พบรหัสกิจกรรม"); return; }
+    if (!window.confirm("ยืนยันการระงับกิจกรรมนี้หรือไม่?")) return;
+    try {
+      setSaving(true);
+      const response = await fetch(`${API_URL}/api/admin/suspend/${activityId}`, {
+        method: "PUT", headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data?.message || "ระงับกิจกรรมไม่สำเร็จ");
+      alert("ระงับกิจกรรมเรียบร้อยแล้ว");
+      await loadReport();
+    } catch (err) { alert(err.message || "เกิดข้อผิดพลาด"); }
+    finally { setSaving(false); }
+  };
+
+  if (loading || error || !report) {
+    return (
+      <div className="admin-shell">
+        <aside className="admin-sidebar" />
+        <main className="admin-main">
+          <div className="report-detail-state">
+            {loading ? <span className="report-detail-loader" /> : <FiAlertTriangle />}
+            <strong>{loading ? "กำลังโหลดรายละเอียดรายงาน" : "โหลดข้อมูลไม่สำเร็จ"}</strong>
+            {!loading && <><p>{error}</p><button onClick={() => navigate("/admin/reports")}>กลับหน้ารายงาน</button></>}
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  const reportNumber = `RPT-${String(report.id || id).padStart(5, "0")}`;
+  const activityImage = report.activityCover || report.activityImage || report.activity?.cover || report.activity?.image || FALLBACK_IMAGE;
+  const activitySuspended = String(report.activityStatus || report.activity?.status || "").toLowerCase() === "suspended";
+
+  return (
+    <div className="admin-shell">
+      <aside className="admin-sidebar">
+        <button type="button" className="admin-brand" onClick={() => navigate("/admin")}>
+          <span className="admin-brand-logo"><MdGroups /></span>
+          <span><strong>Until We Meet</strong><small>ADMIN PANEL</small></span>
+        </button>
+        <nav className="admin-nav">
+          {navItems.map(([label, icon, path, active]) => (
+            <button type="button" key={label} className={`admin-nav-item ${active ? "active" : ""}`} onClick={() => navigate(path)}>
+              <span>{icon}</span><b>{label}</b>
+            </button>
+          ))}
+        </nav>
+        <button type="button" className="admin-logout" onClick={logout}><FiLogOut />ออกจากระบบ</button>
+      </aside>
+
+      <main className="admin-main">
+        <div className="admin-report-detail-page">
+          <header className="report-detail-topbar">
+            <button type="button" className="report-detail-back" onClick={() => navigate("/admin/reports")}><FiArrowLeft />กลับหน้ารายงาน</button>
+            <button type="button" className="report-detail-notification" onClick={() => navigate("/admin/notifications")}><FiBell /></button>
+          </header>
+
+          <section className="report-detail-heading">
+            <div>
+              <span className="report-detail-label">รายละเอียดรายงาน</span>
+              <h1>รายงาน #{reportNumber}</h1>
+              <p>ส่งรายงานเมื่อ {formatDate(report.createdAt || report.reportedAt, true)}</p>
+            </div>
+            <div className="report-detail-heading-actions">
+              <button type="button" className="report-reject-action" onClick={rejectReport} disabled={saving || isCompleted}><FiAlertTriangle />ปฏิเสธรายงาน</button>
+              <button type="button" className="report-suspend-action" onClick={suspendActivity} disabled={saving || activitySuspended}><FiSlash />{activitySuspended ? "กิจกรรมถูกระงับแล้ว" : "ระงับกิจกรรม"}</button>
+            </div>
+          </section>
+
+          <section className="report-detail-main-grid">
+            <article className="report-detail-card activity-information-card">
+              <div className="report-detail-card-title"><span><FiCalendar /></span><div><h2>ข้อมูลกิจกรรม</h2><p>ข้อมูลของกิจกรรมที่ถูกรายงาน</p></div></div>
+              <img className="report-detail-activity-image" src={activityImage} alt={report.activityName || "กิจกรรม"} onError={(e) => { e.currentTarget.src = FALLBACK_IMAGE; }} />
+              <h3>{report.activityName || "ไม่ระบุชื่อกิจกรรม"}</h3>
+              <div className="report-detail-info-list">
+                <div><FiCalendar /><span><small>วันที่จัดกิจกรรม</small><strong>{formatDate(report.activityDate || report.activity?.date)}</strong></span></div>
+                <div><FiClock /><span><small>เวลา</small><strong>{report.activityTime || report.activity?.time || report.activity?.startTime || "-"}</strong></span></div>
+                <div><FiMapPin /><span><small>สถานที่</small><strong>{report.activityLocation || report.activity?.location || "ไม่ระบุสถานที่"}</strong></span></div>
+                <div><FiUser /><span><small>ผู้สร้างกิจกรรม</small><strong>@{report.creatorUsername || report.creatorName || report.activity?.creatorUsername || "ไม่ระบุ"}</strong></span></div>
+              </div>
+              <button type="button" className="report-view-activity" onClick={() => navigate(`/activity-detail?id=${activityId}&from=admin`)} disabled={!activityId}><FiEye />ดูรายละเอียดกิจกรรม</button>
+            </article>
+
+            <article className="report-detail-card review-status-card">
+              <div className="report-detail-card-title"><span><FiShield /></span><div><h2>สถานะการตรวจสอบ</h2><p>ขั้นตอนการดำเนินการของรายงานนี้</p></div></div>
+              <div className="report-status-timeline">
+                <div className="report-timeline-item complete"><span className="timeline-marker"><FiCheck /></span><div><strong>รับรายงานแล้ว</strong><small>{formatDate(report.createdAt || report.reportedAt, true)}</small></div></div>
+                <div className={`report-timeline-item ${["reviewing", "resolved", "rejected"].includes(currentStatus) ? "complete" : "current"}`}><span className="timeline-marker">{["reviewing", "resolved", "rejected"].includes(currentStatus) ? <FiCheck /> : "2"}</span><div><strong>กำลังตรวจสอบ</strong><small>{currentStatus === "pending" ? "รอผู้ดูแลระบบตรวจสอบข้อมูล" : "ผู้ดูแลระบบกำลังดำเนินการ"}</small></div></div>
+                <div className={`report-timeline-item ${isCompleted ? "complete" : ""}`}><span className="timeline-marker">{isCompleted ? <FiCheck /> : "3"}</span><div><strong>ดำเนินการเสร็จสิ้น</strong><small>{currentStatus === "resolved" ? "รายงานได้รับการดำเนินการแล้ว" : currentStatus === "rejected" ? "รายงานถูกปฏิเสธแล้ว" : "ยังไม่ดำเนินการเสร็จสิ้น"}</small></div></div>
+              </div>
+            </article>
+          </section>
+
+          <section className="report-detail-bottom-grid">
+            <article className="report-detail-card report-information-card">
+              <div className="report-detail-card-title"><span><FiFlag /></span><div><h2>รายละเอียดรายงาน</h2><p>ข้อมูลที่ผู้ใช้งานแจ้งเข้ามา</p></div></div>
+              <div className="reporter-profile">
+                <img src={report.reporterProfileImage || "https://placehold.co/80x80/EEEAFD/6846F5?text=U"} alt={report.reporterName || "ผู้รายงาน"} />
+                <div><small>รายงานโดย</small><strong>{report.reporterName || report.reporterUsername || "ผู้ใช้งาน"}</strong><span>@{report.reporterUsername || "unknown"}</span></div>
+              </div>
+              <div className="report-reason-box"><small>เหตุผลที่รายงาน</small><strong>{report.reasonCategory || report.category || report.reason || "ไม่ระบุเหตุผล"}</strong></div>
+              <div className="report-description-box"><small>รายละเอียดเพิ่มเติม</small><p>{report.description || report.details || report.reason || "ผู้รายงานไม่ได้ระบุรายละเอียดเพิ่มเติม"}</p></div>
+            </article>
+
+            <article className="report-detail-card report-decision-card">
+              <div className="report-detail-card-title"><span><FiMessageSquare /></span><div><h2>ผลการตรวจสอบ</h2><p>บันทึกผลการพิจารณารายงาน</p></div></div>
+              <label className="report-decision-field"><span>ผลการตรวจสอบ</span><select value={decision} onChange={(e) => setDecision(e.target.value)} disabled={isCompleted}><option value="">เลือกผลการตรวจสอบ</option><option value="no_violation">ไม่พบการกระทำผิด</option><option value="warning">แจ้งเตือนผู้สร้างกิจกรรม</option><option value="suspend_activity">ระงับกิจกรรม</option><option value="reject_report">ปฏิเสธรายงาน</option></select></label>
+              <label className="report-decision-field"><span>หมายเหตุจากผู้ดูแลระบบ</span><textarea rows="6" value={adminNote} onChange={(e) => setAdminNote(e.target.value)} placeholder="ระบุรายละเอียดผลการตรวจสอบ..." disabled={isCompleted} /></label>
+              <button type="button" className="report-save-decision" onClick={saveDecision} disabled={saving || isCompleted}><FiCheck />{saving ? "กำลังบันทึก..." : isCompleted ? "ดำเนินการเรียบร้อยแล้ว" : "บันทึกผลการตรวจสอบ"}</button>
+            </article>
+          </section>
+        </div>
+      </main>
+    </div>
+  );
+}

@@ -40,9 +40,10 @@
 }
 
 .users-heading-card {
-  display: flex;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: space-between;
   gap: 28px;
   padding: 25px 27px;
   border: 1px solid #ebeaf2;
@@ -53,8 +54,8 @@
 
 .users-heading-left {
   display: flex;
+  min-width: 0;
   align-items: center;
-  justify-content: space-between;
   gap: 17px;
 }
 
@@ -420,7 +421,7 @@
   text-align: center;
 }
 
-.users-state > svg {
+.users-state>svg {
   width: 58px;
   height: 58px;
   margin-bottom: 14px;
@@ -476,7 +477,7 @@
   font-size: 10px;
 }
 
-.users-pagination > div {
+.users-pagination>div {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -507,17 +508,17 @@
 
 @media (max-width: 1050px) {
   .users-heading-card {
-    align-items: stretch;
-    flex-direction: column;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
   }
 
-  .users-summary-list {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+  .users-total-summary {
+    justify-self: end;
   }
 }
 
 @media (max-width: 720px) {
+
   .users-heading-card,
   .users-content-card {
     padding-right: 17px;
@@ -550,4 +551,14 @@
     align-items: flex-start;
     flex-direction: column;
   }
+
+  .users-heading-card {
+    grid-template-columns: 1fr;
+  }
+
+  .users-total-summary {
+    width: 100%;
+    justify-self: stretch;
+  }
+
 }

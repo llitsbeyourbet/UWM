@@ -26,6 +26,7 @@ import AdminReports from "./pages/AdminReports";
 import AdminActivities from "./pages/AdminActivities";
 import AdminUsers from "./pages/AdminUsers";
 import AdminReviews from "./pages/AdminReviews";
+import AdminReportDetail from "./pages/AdminReportDetail";
 
 function App() {
   const location = useLocation();
@@ -67,6 +68,7 @@ function App() {
             <Route path="/admin/activities" element={<AdminActivities />}/>
             <Route path="/admin/users" element={<AdminUsers />} />
             <Route path="/admin/reviews" element={<AdminReviews />}/>
+            <Route path="/admin/reports/:id" element={<adminreportdetail />} />
 
 
           </Routes>

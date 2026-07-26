@@ -256,22 +256,23 @@ export default function AdminUsers() {
               <span className="users-heading-icon">
                 <FiUsers />
               </span>
+
               <div>
                 <h1>จัดการผู้ใช้งาน</h1>
                 <p>
                   ตรวจสอบข้อมูลและสถานะบัญชีผู้ใช้งานทั้งหมดในระบบ
                 </p>
               </div>
-               <div className="users-summary-item">
-                <span className="summary-icon total">
-                  <FiUsers />
-                </span>
-                <div>
-                  <strong>
-                    {counts.all.toLocaleString("th-TH")}
-                  </strong>
-                  <small>ผู้ใช้ทั้งหมด</small>
-                </div>
+            </div>
+
+            <div className="users-summary-item users-total-summary">
+              <span className="summary-icon total">
+                <FiUsers />
+              </span>
+
+              <div>
+                <strong>{counts.all.toLocaleString("th-TH")}</strong>
+                <small>ผู้ใช้ทั้งหมด</small>
               </div>
             </div>
           </section>
@@ -280,7 +281,7 @@ export default function AdminUsers() {
             <nav className="users-tabs">
               {[
                 ["all", "ทั้งหมด"],
-          
+
               ].map(([key, label]) => (
                 <button
                   type="button"
