@@ -251,7 +251,10 @@ router.put("/suspend/:activityId", auth, isAdmin, async (req, res) => {
     await Promise.all([
       activity.update({ status: "suspended" }),
       Report.update(
-        { status: "reviewed" },
+        { status: "resolved",
+          decision: "suspended_activity",
+          reviewdAt: new Date(),
+         },
         { where: { activityId: req.params.activityId } }
       ),
     ]);
@@ -727,6 +730,83 @@ router.put("/reports/:id/view", auth, isAdmin, async (req, res) => {
     console.log(err);
     res.status(500).json({
       message: "เกิดข้อผิดพลาด",
+    });
+  }
+});
+router.put("/reports/:id/status", auth, isAdmin, async (req, res) => {
+  try {
+    const report = await Report.findByPk(req.params.id);
+
+    if (!report) {
+      return res.status(404).json({
+        message: "ไม่พบรายงาน",
+      });
+    }
+
+    const {
+      status,
+      decision,
+      adminNote,
+    } = req.body;
+
+    const allowedStatuses = [
+      "reviewing",
+      "resolved",
+      "rejected",
+    ];
+
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        message: "สถานะรายงานไม่ถูกต้อง",
+      });
+    }
+
+    if (!decision) {
+      return res.status(400).json({
+        message: "กรุณาระบุผลการตรวจสอบ",
+      });
+    }
+
+    await report.update({
+      status,
+      decision,
+      adminNote: adminNote?.trim() || null,
+      reviewedBy: req.userId,
+      reviewedAt: new Date(),
+    });
+
+    const reviewer = await User.findByPk(req.userId, {
+      attributes: [
+        "id",
+        "username",
+        "name",
+        "profileImage",
+      ],
+    });
+
+    return res.json({
+      message: "บันทึกผลการตรวจสอบสำเร็จ",
+      report: {
+        ...report.toJSON(),
+
+        reviewerName:
+          reviewer?.name ||
+          reviewer?.username ||
+          "ผู้ดูแลระบบ",
+
+        reviewerUsername:
+          reviewer?.username || null,
+
+        reviewerProfileImage:
+          reviewer?.profileImage || null,
+      },
+    });
+  } catch (error) {
+    console.error("Update report status error:", error);
+
+    return res.status(500).json({
+      message: "บันทึกผลการตรวจสอบไม่สำเร็จ",
+      error: error.message,
     });
   }
 });

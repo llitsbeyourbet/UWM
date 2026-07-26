@@ -507,6 +507,34 @@
     }
 }
 
+.report-review-result-info {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px solid #e8e3f7;
+  border-radius: 14px;
+  background: #f8f6ff;
+}
+
+.report-review-result-info > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.report-review-result-info small {
+  color: #77718a;
+  font-size: 13px;
+}
+
+.report-review-result-info strong {
+  color: #2d2740;
+  font-size: 14px;
+  text-align: right;
+}
+
 @media(max-width:1080px) {
 
     .report-detail-main-grid,

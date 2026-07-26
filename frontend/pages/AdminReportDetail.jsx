@@ -64,22 +64,40 @@ export default function AdminReportDetail() {
 
   const loadReport = async () => {
     try {
-      setLoading(true); setError("");
-      const response = await fetch(`${API_URL}/api/admin/reports`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await response.json().catch(() => []);
-      if (!response.ok) throw new Error(data?.message || "โหลดรายละเอียดรายงานไม่สำเร็จ");
-      const reports = Array.isArray(data) ? data : Array.isArray(data?.reports) ? data.reports : [];
-      const selected = reports.find((item) => String(item.id || item._id) === String(id));
-      if (!selected) throw new Error("ไม่พบรายงานที่ต้องการ");
-      setReport(selected);
-      setDecision(selected.decision || "");
-      setAdminNote(selected.adminNote || selected.note || "");
+      setLoading(true);
+      setError("");
+
+      const response = await fetch(
+        `${API_URL}/api/admin/reports/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          data?.message ||
+          "โหลดรายละเอียดรายงานไม่สำเร็จ"
+        );
+      }
+
+      setReport(data);
+      setDecision(data.decision || "");
+      setAdminNote(data.adminNote || "");
     } catch (err) {
       console.error(err);
-      setError(err.message || "ไม่สามารถโหลดรายละเอียดรายงานได้");
-    } finally { setLoading(false); }
+
+      setError(
+        err.message ||
+        "ไม่สามารถโหลดรายละเอียดรายงานได้"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const logout = () => {
@@ -236,10 +254,85 @@ export default function AdminReportDetail() {
             </article>
 
             <article className="report-detail-card report-decision-card">
-              <div className="report-detail-card-title"><span><FiMessageSquare /></span><div><h2>ผลการตรวจสอบ</h2><p>บันทึกผลการพิจารณารายงาน</p></div></div>
-              <label className="report-decision-field"><span>ผลการตรวจสอบ</span><select value={decision} onChange={(e) => setDecision(e.target.value)} disabled={isCompleted}><option value="">เลือกผลการตรวจสอบ</option><option value="no_violation">ไม่พบการกระทำผิด</option><option value="warning">แจ้งเตือนผู้สร้างกิจกรรม</option><option value="suspend_activity">ระงับกิจกรรม</option><option value="reject_report">ปฏิเสธรายงาน</option></select></label>
-              <label className="report-decision-field"><span>หมายเหตุจากผู้ดูแลระบบ</span><textarea rows="6" value={adminNote} onChange={(e) => setAdminNote(e.target.value)} placeholder="ระบุรายละเอียดผลการตรวจสอบ..." disabled={isCompleted} /></label>
-              <button type="button" className="report-save-decision" onClick={saveDecision} disabled={saving || isCompleted}><FiCheck />{saving ? "กำลังบันทึก..." : isCompleted ? "ดำเนินการเรียบร้อยแล้ว" : "บันทึกผลการตรวจสอบ"}</button>
+              <div className="report-detail-card-title">
+                <span>
+                  <FiMessageSquare />
+                </span>
+
+                <div>
+                  <h2>ผลการตรวจสอบ</h2>
+                  <p>{isCompleted? "รายละเอียดผลการพิจารณารายงาน" : "บันทึกผลการพิจารณารายงาน"}</p>
+                </div>
+              </div>
+
+              <label className="report-decision-field">
+                <span>ผลการตรวจสอบ</span>
+
+                <select
+                  value={decision}
+                  onChange={(e) => setDecision(e.target.value)}
+                  disabled={isCompleted}
+                >
+                  <option value="">
+                    เลือกผลการตรวจสอบ
+                  </option>
+
+                  <option value="no_violation">
+                    ไม่พบการกระทำผิด
+                  </option>
+
+                  <option value="warning">
+                    แจ้งเตือนผู้สร้างกิจกรรม
+                  </option>
+
+                  <option value="suspend_activity">
+                    ระงับกิจกรรม
+                  </option>
+
+                  <option value="reject_report">
+                    ปฏิเสธรายงาน
+                  </option>
+                </select>
+              </label>
+
+              <label className="report-decision-field">
+                <span>หมายเหตุจากผู้ดูแลระบบ</span>
+
+                <textarea rows="6" value={adminNote} onChange={(e) =>setAdminNote(e.target.value)}placeholder="ระบุรายละเอียดผลการตรวจสอบ..."disabled={isCompleted}/>
+              </label>
+              {isCompleted && (
+                <div className="report-review-result-info">
+                  <div>
+                    <small>สถานะรายงาน</small>
+                    <strong>{currentStatus === "rejected" ? "ปฏิเสธรายงาน" : "ดำเนินการเรียบร้อยแล้ว"}</strong>
+                  </div>
+
+                  <div>
+                    <small>ตรวจสอบโดย</small>
+                    <strong>{report.reviewerName || report.reviewerUsername ||"ผู้ดูแลระบบ"}</strong>
+                  </div>
+
+                  <div>
+                    <small>วันที่ตรวจสอบ</small>
+                    <strong>{formatDate(report.reviewedAt,true)}</strong>
+                  </div>
+                </div>
+              )}
+
+              {!isCompleted && (
+                <button
+                  type="button"
+                  className="report-save-decision"
+                  onClick={saveDecision}
+                  disabled={saving}
+                >
+                  <FiCheck />
+
+                  {saving
+                    ? "กำลังบันทึก..."
+                    : "บันทึกผลการตรวจสอบ"}
+                </button>
+              )}
             </article>
           </section>
         </div>
