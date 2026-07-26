@@ -252,8 +252,8 @@ router.put("/suspend/:activityId", auth, isAdmin, async (req, res) => {
       activity.update({ status: "suspended" }),
       Report.update(
         { status: "resolved",
-          decision: "suspended_activity",
-          reviewdAt: new Date(),
+          decision: "suspend_activity",
+          reviewedAt: new Date(),
          },
         { where: { activityId: req.params.activityId } }
       ),
@@ -806,6 +806,118 @@ router.put("/reports/:id/status", auth, isAdmin, async (req, res) => {
 
     return res.status(500).json({
       message: "บันทึกผลการตรวจสอบไม่สำเร็จ",
+      error: error.message,
+    });
+  }
+});
+
+router.get("/reports/:id", auth, isAdmin, async (req, res) => {
+  try {
+    const report = await Report.findByPk(req.params.id);
+
+    if (!report) {
+      return res.status(404).json({
+        message: "ไม่พบรายงาน",
+      });
+    }
+
+    const [activity, reporter, reviewer] = await Promise.all([
+      Activity.findByPk(report.activityId, {
+        attributes: [
+          "id",
+          "activityName",
+          "cover",
+          "location",
+          "date",
+          "status",
+          "createdBy",
+        ],
+      }),
+
+      User.findByPk(report.userId, {
+        attributes: [
+          "id",
+          "username",
+          "name",
+          "profileImage",
+        ],
+      }),
+
+      report.reviewedBy
+        ? User.findByPk(report.reviewedBy, {
+            attributes: [
+              "id",
+              "username",
+              "name",
+              "profileImage",
+            ],
+          })
+        : null,
+    ]);
+
+    let creator = null;
+
+    if (activity?.createdBy) {
+      creator = await User.findByPk(activity.createdBy, {
+        attributes: [
+          "id",
+          "username",
+          "name",
+          "profileImage",
+        ],
+      });
+    }
+
+    return res.json({
+      ...report.toJSON(),
+
+      activityName:
+        activity?.activityName || "ไม่ระบุชื่อกิจกรรม",
+
+      activityCover: activity?.cover || null,
+      activityLocation: activity?.location || null,
+      activityDate: activity?.date || null,
+      activityStatus: activity?.status || null,
+
+      creatorName:
+        creator?.name ||
+        creator?.username ||
+        "ไม่ระบุผู้สร้าง",
+
+      creatorUsername:
+        creator?.username ||
+        creator?.name ||
+        "ไม่ระบุ",
+
+      reporterName:
+        reporter?.name ||
+        reporter?.username ||
+        "ผู้ใช้งาน",
+
+      reporterUsername:
+        reporter?.username ||
+        reporter?.name ||
+        "ผู้ใช้งาน",
+
+      reporterProfileImage:
+        reporter?.profileImage || null,
+
+      reviewerName:
+        reviewer?.name ||
+        reviewer?.username ||
+        null,
+
+      reviewerUsername:
+        reviewer?.username || null,
+
+      reviewerProfileImage:
+        reviewer?.profileImage || null,
+    });
+  } catch (error) {
+    console.error("Get report detail error:", error);
+
+    return res.status(500).json({
+      message: "ไม่สามารถโหลดรายละเอียดรายงานได้",
       error: error.message,
     });
   }
