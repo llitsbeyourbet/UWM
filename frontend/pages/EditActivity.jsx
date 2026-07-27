@@ -30,6 +30,7 @@ function EditActivity() {
     { value: "ศิลปะ", label: "🎨 ศิลปะ" },
     { value: "เกม", label: "🎮 เกม" },
     { value: "คาเฟ่", label: "☕ คาเฟ่" },
+    { value: "ภาพยนตร์", label: "🍿 ภาพยนตร์" },
   ];
 
   const toggleCategory = (val) => {
