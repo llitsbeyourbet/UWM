@@ -244,13 +244,70 @@ export default function AdminReportDetail() {
 
           <section className="report-detail-bottom-grid">
             <article className="report-detail-card report-information-card">
-              <div className="report-detail-card-title"><span><FiFlag /></span><div><h2>รายละเอียดรายงาน</h2><p>ข้อมูลที่ผู้ใช้งานแจ้งเข้ามา</p></div></div>
-              <div className="reporter-profile">
-                <img src={report.reporterProfileImage || "https://placehold.co/80x80/EEEAFD/6846F5?text=U"} alt={report.reporterName || "ผู้รายงาน"} />
-                <div><small>รายงานโดย</small><strong>{report.reporterName || report.reporterUsername || "ผู้ใช้งาน"}</strong><span>@{report.reporterUsername || "unknown"}</span></div>
+              <div className="reporter-list-heading">
+                <strong>
+                  ผู้รายงานทั้งหมด {report.reportCount || report.reports?.length || 0} คน
+                </strong>
               </div>
-              <div className="report-reason-box"><small>เหตุผลที่รายงาน</small><strong>{report.reasonCategory || report.category || report.reason || "ไม่ระบุเหตุผล"}</strong></div>
-              <div className="report-description-box"><small>รายละเอียดเพิ่มเติม</small><p>{report.description || report.details || report.reason || "ผู้รายงานไม่ได้ระบุรายละเอียดเพิ่มเติม"}</p></div>
+
+              <div className="reporter-list">
+                {(report.reports || []).map((item) => (
+                  <div
+                    className="reporter-report-item"
+                    key={item.id}
+                  >
+                    <div className="reporter-profile">
+                      <img
+                        src={
+                          item.reporterProfileImage ||
+                          "https://placehold.co/80x80/EEEAFD/6846F5?text=U"
+                        }
+                        alt={item.reporterName || "ผู้รายงาน"}
+                      />
+
+                      <div>
+                        <small>รายงานโดย</small>
+
+                        <strong>
+                          {item.reporterName ||
+                            item.reporterUsername ||
+                            "ผู้ใช้งาน"}
+                        </strong>
+
+                        <span>
+                          @{item.reporterUsername || "unknown"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="report-reason-box">
+                      <small>เหตุผลที่รายงาน</small>
+
+                      <strong>
+                        {item.reasonCategory ||
+                          item.category ||
+                          item.reason ||
+                          "ไม่ระบุเหตุผล"}
+                      </strong>
+                    </div>
+
+                    <div className="report-description-box">
+                      <small>รายละเอียดเพิ่มเติม</small>
+
+                      <p>
+                        {item.description ||
+                          item.details ||
+                          item.reason ||
+                          "ผู้รายงานไม่ได้ระบุรายละเอียดเพิ่มเติม"}
+                      </p>
+                    </div>
+
+                    <small className="reporter-report-date">
+                      รายงานเมื่อ {formatDate(item.createdAt, true)}
+                    </small>
+                  </div>
+                ))}
+              </div>
             </article>
 
             <article className="report-detail-card report-decision-card">
@@ -261,7 +318,7 @@ export default function AdminReportDetail() {
 
                 <div>
                   <h2>ผลการตรวจสอบ</h2>
-                  <p>{isCompleted? "รายละเอียดผลการพิจารณารายงาน" : "บันทึกผลการพิจารณารายงาน"}</p>
+                  <p>{isCompleted ? "รายละเอียดผลการพิจารณารายงาน" : "บันทึกผลการพิจารณารายงาน"}</p>
                 </div>
               </div>
 
@@ -298,7 +355,7 @@ export default function AdminReportDetail() {
               <label className="report-decision-field">
                 <span>หมายเหตุจากผู้ดูแลระบบ</span>
 
-                <textarea rows="6" value={adminNote} onChange={(e) =>setAdminNote(e.target.value)}placeholder="ระบุรายละเอียดผลการตรวจสอบ..."disabled={isCompleted}/>
+                <textarea rows="6" value={adminNote} onChange={(e) => setAdminNote(e.target.value)} placeholder="ระบุรายละเอียดผลการตรวจสอบ..." disabled={isCompleted} />
               </label>
               {isCompleted && (
                 <div className="report-review-result-info">
@@ -309,12 +366,12 @@ export default function AdminReportDetail() {
 
                   <div>
                     <small>ตรวจสอบโดย</small>
-                    <strong>{report.reviewerName || report.reviewerUsername ||"ผู้ดูแลระบบ"}</strong>
+                    <strong>{report.reviewerName || report.reviewerUsername || "ผู้ดูแลระบบ"}</strong>
                   </div>
 
                   <div>
                     <small>วันที่ตรวจสอบ</small>
-                    <strong>{formatDate(report.reviewedAt,true)}</strong>
+                    <strong>{formatDate(report.reviewedAt, true)}</strong>
                   </div>
                 </div>
               )}

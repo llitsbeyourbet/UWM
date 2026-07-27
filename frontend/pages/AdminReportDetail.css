@@ -535,6 +535,39 @@
   text-align: right;
 }
 
+.reporter-list-heading {
+  margin-bottom: 16px;
+}
+
+.reporter-list-heading strong {
+  font-size: 16px;
+  color: #29253d;
+}
+
+.reporter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.reporter-report-item {
+  padding: 16px;
+  border: 1px solid #ebe7f8;
+  border-radius: 14px;
+  background: #faf9ff;
+}
+
+.reporter-report-item + .reporter-report-item {
+  margin-top: 4px;
+}
+
+.reporter-report-date {
+  display: block;
+  margin-top: 12px;
+  color: #8a849b;
+  font-size: 12px;
+}
+
 @media(max-width:1080px) {
 
     .report-detail-main-grid,

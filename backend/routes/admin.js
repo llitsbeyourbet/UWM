@@ -854,38 +854,74 @@ router.put("/reports/:id/status", auth, isAdmin, async (req, res) => {
 
 router.get("/reports/:id", auth, isAdmin, async (req, res) => {
   try {
-    const report = await Report.findByPk(req.params.id);
+    // หา report ที่แอดมินกดเข้ามาก่อน
+    const selectedReport = await Report.findByPk(req.params.id);
 
-    if (!report) {
+    if (!selectedReport) {
       return res.status(404).json({
         message: "ไม่พบรายงาน",
       });
     }
 
-    const [activity, reporter, reviewer] = await Promise.all([
-      Activity.findByPk(report.activityId, {
-        attributes: [
-          "id",
-          "activityName",
-          "cover",
-          "location",
-          "date",
-          "status",
-          "createdBy",
-        ],
-      }),
+    // ดึงรายงานทั้งหมดของกิจกรรมเดียวกัน
+    const reports = await Report.findAll({
+      where: {
+        activityId: selectedReport.activityId,
+      },
+      order: [["createdAt", "DESC"]],
+    });
 
-      User.findByPk(report.userId, {
-        attributes: [
-          "id",
-          "username",
-          "name",
-          "profileImage",
-        ],
-      }),
+    const activity = await Activity.findByPk(selectedReport.activityId, {
+      attributes: [
+        "id",
+        "activityName",
+        "cover",
+        "location",
+        "date",
+        "startTime",
+        "endTime",
+        "status",
+        "createdBy",
+      ],
+    });
 
-      report.reviewedBy
-        ? User.findByPk(report.reviewedBy, {
+    if (!activity) {
+      return res.status(404).json({
+        message: "ไม่พบกิจกรรมที่ถูกรายงาน",
+      });
+    }
+
+    const reporterIds = [
+      ...new Set(
+        reports
+          .map((report) => Number(report.userId))
+          .filter(Boolean)
+      ),
+    ];
+
+    const reviewerIds = [
+      ...new Set(
+        reports
+          .map((report) => Number(report.reviewedBy))
+          .filter(Boolean)
+      ),
+    ];
+
+    const userIds = [
+      ...new Set([
+        ...reporterIds,
+        ...reviewerIds,
+        Number(activity.createdBy),
+      ]),
+    ].filter(Boolean);
+
+    const users = userIds.length
+      ? await User.findAll({
+          where: {
+            id: {
+              [Op.in]: userIds,
+            },
+          },
           attributes: [
             "id",
             "username",
@@ -893,32 +929,67 @@ router.get("/reports/:id", auth, isAdmin, async (req, res) => {
             "profileImage",
           ],
         })
-        : null,
-    ]);
+      : [];
 
-    let creator = null;
+    const userMap = new Map(
+      users.map((user) => [
+        Number(user.id),
+        user.toJSON(),
+      ])
+    );
 
-    if (activity?.createdBy) {
-      creator = await User.findByPk(activity.createdBy, {
-        attributes: [
-          "id",
-          "username",
-          "name",
-          "profileImage",
-        ],
-      });
-    }
+    const creator = userMap.get(Number(activity.createdBy));
+
+    const reportList = reports.map((report) => {
+      const reporter = userMap.get(Number(report.userId));
+      const reviewer = userMap.get(Number(report.reviewedBy));
+
+      return {
+        ...report.toJSON(),
+
+        reporterName:
+          reporter?.name ||
+          reporter?.username ||
+          "ผู้ใช้งาน",
+
+        reporterUsername:
+          reporter?.username ||
+          reporter?.name ||
+          "ผู้ใช้งาน",
+
+        reporterProfileImage:
+          reporter?.profileImage || null,
+
+        reviewerName:
+          reviewer?.name ||
+          reviewer?.username ||
+          null,
+
+        reviewerUsername:
+          reviewer?.username || null,
+
+        reviewerProfileImage:
+          reviewer?.profileImage || null,
+      };
+    });
 
     return res.json({
-      ...report.toJSON(),
+      ...selectedReport.toJSON(),
 
+      activityId: activity.id,
       activityName:
-        activity?.activityName || "ไม่ระบุชื่อกิจกรรม",
+        activity.activityName ||
+        "ไม่ระบุชื่อกิจกรรม",
 
-      activityCover: activity?.cover || null,
-      activityLocation: activity?.location || null,
-      activityDate: activity?.date || null,
-      activityStatus: activity?.status || null,
+      activityCover: activity.cover || null,
+      activityLocation: activity.location || null,
+      activityDate: activity.date || null,
+      activityTime:
+        activity.startTime && activity.endTime
+          ? `${activity.startTime} - ${activity.endTime}`
+          : activity.startTime || "-",
+
+      activityStatus: activity.status || null,
 
       creatorName:
         creator?.name ||
@@ -930,32 +1001,11 @@ router.get("/reports/:id", auth, isAdmin, async (req, res) => {
         creator?.name ||
         "ไม่ระบุ",
 
-      reporterName:
-        reporter?.name ||
-        reporter?.username ||
-        "ผู้ใช้งาน",
-
-      reporterUsername:
-        reporter?.username ||
-        reporter?.name ||
-        "ผู้ใช้งาน",
-
-      reporterProfileImage:
-        reporter?.profileImage || null,
-
-      reviewerName:
-        reviewer?.name ||
-        reviewer?.username ||
-        null,
-
-      reviewerUsername:
-        reviewer?.username || null,
-
-      reviewerProfileImage:
-        reviewer?.profileImage || null,
+      reportCount: reportList.length,
+      reports: reportList,
     });
   } catch (error) {
-    console.error("Get report detail error:", error);
+    console.error("Get activity report detail error:", error);
 
     return res.status(500).json({
       message: "ไม่สามารถโหลดรายละเอียดรายงานได้",
