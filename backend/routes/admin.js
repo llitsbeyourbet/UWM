@@ -219,10 +219,76 @@ router.get("/reports", auth, isAdmin, async (req, res) => {
       order: [["createdAt", "DESC"]],
     });
 
-    return res.json(await enrichReports(reports));
+    const enrichedReports = await enrichReports(reports);
+
+    const groupedReports = Object.values(
+      enrichedReports.reduce((groups, report) => {
+        const activityId = Number(report.activityId);
+
+        if (!groups[activityId]) {
+          groups[activityId] = {
+            ...report,
+
+            // เก็บ id ของรายงานล่าสุดไว้เปิดหน้า detail
+            id: report.id,
+
+            reportCount: 0,
+            reporters: [],
+          };
+        }
+
+        groups[activityId].reportCount += 1;
+
+        groups[activityId].reporters.push({
+          id: report.id,
+          userId: report.userId,
+          reporterName: report.reporterName,
+          reporterUsername: report.reporterUsername,
+          reporterProfileImage: report.reporterProfileImage,
+          reason: report.reason,
+          detail: report.detail || null,
+          status: report.status,
+          decision: report.decision,
+          adminNote: report.adminNote,
+          reviewedBy: report.reviewedBy,
+          reviewedAt: report.reviewedAt,
+          createdAt: report.createdAt,
+          updatedAt: report.updatedAt,
+        });
+
+        return groups;
+      }, {})
+    ).map((group) => {
+      const statuses = group.reporters.map(
+        (reporter) => reporter.status
+      );
+
+      let groupedStatus = "pending";
+
+      if (statuses.includes("reviewing")) {
+        groupedStatus = "reviewing";
+      } else if (statuses.includes("pending")) {
+        groupedStatus = "pending";
+      } else if (statuses.includes("resolved")) {
+        groupedStatus = "resolved";
+      } else if (statuses.includes("rejected")) {
+        groupedStatus = "rejected";
+      }
+
+      return {
+        ...group,
+        status: groupedStatus,
+      };
+    });
+
+    return res.json(groupedReports);
   } catch (error) {
     console.error("Admin reports error:", error);
-    return res.status(500).json({ message: "ไม่สามารถโหลดรายงานได้" });
+
+    return res.status(500).json({
+      message: "ไม่สามารถโหลดรายงานได้",
+      error: error.message,
+    });
   }
 });
 
@@ -862,51 +928,12 @@ router.get("/reports/:id", auth, isAdmin, async (req, res) => {
         message: "ไม่พบรายงาน",
       });
     }
-
-    // ดึงรายงานทั้งหมดของกิจกรรมเดียวกัน
     const reports = await Report.findAll({
+      where: {
+        activityId: selectedReport.activityId,
+      },
       order: [["createdAt", "DESC"]],
     });
-
-    const enriched = await enrichReports(reports);
-
-    const grouped = Object.values(
-      enriched.reduce((groups, report) => {
-        const activityId = report.activityId;
-
-        if (!groups[activityId]) {
-          groups[activityId] = {
-            ...report,
-            reportCount: 0,
-            reporters: [],
-          };
-        }
-
-        groups[activityId].reportCount++;
-
-        groups[activityId].reporters.push({
-          id: report.id,
-          reporterName: report.reporterName,
-          reporterUsername: report.reporterUsername,
-          reporterProfileImage: report.reporterProfileImage,
-          reason: report.reason,
-          details: report.details,
-          createdAt: report.createdAt,
-          status: report.status,
-        });
-
-        // ถ้ามี pending อย่างน้อยหนึ่งอัน ให้ถือว่า pending
-        if (
-          report.status === "pending" ||
-          report.status === "reviewing"
-        ) {
-          groups[activityId].status = report.status;
-        }
-        return groups;
-      }, {})
-    );
-
-    return res.json(grouped);
 
     const activity = await Activity.findByPk(selectedReport.activityId, {
       attributes: [
