@@ -34,28 +34,104 @@ function Register() {
   };
 
   const handleNext = async () => {
-    if (!name || !username || !email || !password || !confirmPassword) {
-      setError("กรุณากรอกข้อมูลให้ครบ"); return;
-    }
-    if (password.length < 6) {
-      setError("รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร"); return;
-    }
-    if (password !== confirmPassword) {
-      setError("รหัสผ่านไม่ตรงกัน"); return;
+    const cleanName = name.trim();
+    const cleanUsername = username.trim();
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanPhone = phone.replace(/\D/g, "");
+
+    if (
+      !cleanName ||
+      !cleanUsername ||
+      !cleanEmail ||
+      !cleanPhone ||
+      !password ||
+      !confirmPassword
+    ) {
+      setError("กรุณากรอกข้อมูลให้ครบ");
+      return;
     }
 
+    // username ขั้นต่ำ 3 ตัว
+    if (!/^[a-zA-Z0-9_]{3,20}$/.test(cleanUsername)) {
+      setError(
+        "ชื่อผู้ใช้ต้องมี 3-20 ตัว และใช้ได้เฉพาะตัวอักษร ตัวเลข หรือ _"
+      );
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      setError("กรุณากรอกอีเมลให้ถูกต้อง");
+      return;
+    }
+
+    if (!/^0\d{9}$/.test(cleanPhone)) {
+      setError("กรุณากรอกเบอร์โทรศัพท์ 10 หลัก");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("รหัสผ่านไม่ตรงกัน");
+      return;
+    }
 
     setError("");
     setLoading(true);
+
     try {
-      // ส่ง OTP ไปที่อีเมล
-      const res = await fetch(`${API_URL}/api/forgot/send-otp-register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
+      // ตรวจชื่อผู้ใช้ อีเมล และเบอร์โทรก่อนส่ง OTP
+      const checkRes = await fetch(
+        `${API_URL}/api/auth/check-register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: cleanUsername,
+            email: cleanEmail,
+            phone: cleanPhone,
+          }),
+        }
+      );
+
+      const checkData = await checkRes.json();
+
+      if (!checkRes.ok) {
+        setError(checkData.message || "ข้อมูลนี้ถูกใช้งานแล้ว");
+        return;
+      }
+
+      // ผ่านแล้วค่อยส่ง OTP
+      const res = await fetch(
+        `${API_URL}/api/forgot/send-otp-register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: cleanEmail,
+          }),
+        }
+      );
+
       const data = await res.json();
-      if (!res.ok) { setError(data.message); return; }
+
+      if (!res.ok) {
+        setError(data.message || "ไม่สามารถส่ง OTP ได้");
+        return;
+      }
+
+      setName(cleanName);
+      setUsername(cleanUsername);
+      setEmail(cleanEmail);
+      setPhone(cleanPhone);
+
       setStep(2);
       setTimer(600);
       startTimer();

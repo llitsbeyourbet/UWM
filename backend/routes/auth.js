@@ -6,6 +6,58 @@ const { Op } = require("sequelize");
 const User = require("../models/User");
 const loginLimiter = require("../middleware/loginRateLimiter");
 
+router.post("/check-register", async (req, res) => {
+  try {
+    const username = String(req.body.username || "").trim();
+    const email = String(req.body.email || "").trim().toLowerCase();
+    const phone = String(req.body.phone || "").replace(/\D/g, "");
+
+    if (!username || !email || !phone) {
+      return res.status(400).json({
+        message: "กรุณากรอกชื่อผู้ใช้ อีเมล และเบอร์โทรศัพท์ให้ครบ",
+      });
+    }
+
+    const [usernameExists, emailExists, phoneExists] = await Promise.all([
+      User.findOne({ where: { username } }),
+      User.findOne({ where: { email } }),
+      User.findOne({ where: { phone } }),
+    ]);
+
+    if (usernameExists) {
+      return res.status(409).json({
+        field: "username",
+        message: "ชื่อผู้ใช้นี้ถูกใช้งานแล้ว",
+      });
+    }
+
+    if (emailExists) {
+      return res.status(409).json({
+        field: "email",
+        message: "อีเมลนี้ถูกใช้งานแล้ว",
+      });
+    }
+
+    if (phoneExists) {
+      return res.status(409).json({
+        field: "phone",
+        message: "เบอร์โทรศัพท์นี้ถูกใช้งานแล้ว",
+      });
+    }
+
+    return res.json({
+      available: true,
+      message: "ข้อมูลสามารถใช้งานได้",
+    });
+  } catch (error) {
+    console.error("Check register error:", error);
+
+    return res.status(500).json({
+      message: "ไม่สามารถตรวจสอบข้อมูลได้",
+    });
+  }
+});
+
 router.post("/register", async (req, res) => {
   try {
     const { username, name, email, password, phone, birthdate } = req.body;
