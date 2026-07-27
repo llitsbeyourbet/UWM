@@ -64,6 +64,10 @@ function ActivitySummaryDetail() {
 
         if (user && activityData.createdBy === user.id) {
           setIsOwner(true);
+        } else {
+          setLoading(false);
+          navigate("/");
+          return;
         }
       } catch (err) {
         console.error("Error fetching summary details:", err);

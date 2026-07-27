@@ -43,7 +43,12 @@ function Search() {
     let result = activities.filter((item) => item.status !== "suspended");
     
     if (activeCategory !== "ทั้งหมด") {
-      result = result.filter((item) => item.category === activeCategory);
+      result = result.filter((item) => {
+        if (Array.isArray(item.category)) {
+          return item.category.includes(activeCategory);
+        }
+        return item.category === activeCategory;
+      });
     }
 
     if (search) {
@@ -108,7 +113,11 @@ function Search() {
           filtered.map((item) => (
             <div key={item.id} className="activity-card" onClick={() => handleViewDetail(item)}>
               {item.cover ? (
-                <img src={item.cover} alt="cover" className="card-cover" />
+                <img
+                  src={item.cover.startsWith("http") ? item.cover : `${API_URL}/uploads/${item.cover}`}
+                  alt="cover"
+                  className="card-cover"
+                />
               ) : (
                 <div className="card-cover-placeholder" />
               )}
