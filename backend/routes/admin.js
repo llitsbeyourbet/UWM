@@ -865,11 +865,48 @@ router.get("/reports/:id", auth, isAdmin, async (req, res) => {
 
     // ดึงรายงานทั้งหมดของกิจกรรมเดียวกัน
     const reports = await Report.findAll({
-      where: {
-        activityId: selectedReport.activityId,
-      },
       order: [["createdAt", "DESC"]],
     });
+
+    const enriched = await enrichReports(reports);
+
+    const grouped = Object.values(
+      enriched.reduce((groups, report) => {
+        const activityId = report.activityId;
+
+        if (!groups[activityId]) {
+          groups[activityId] = {
+            ...report,
+            reportCount: 0,
+            reporters: [],
+          };
+        }
+
+        groups[activityId].reportCount++;
+
+        groups[activityId].reporters.push({
+          id: report.id,
+          reporterName: report.reporterName,
+          reporterUsername: report.reporterUsername,
+          reporterProfileImage: report.reporterProfileImage,
+          reason: report.reason,
+          details: report.details,
+          createdAt: report.createdAt,
+          status: report.status,
+        });
+
+        // ถ้ามี pending อย่างน้อยหนึ่งอัน ให้ถือว่า pending
+        if (
+          report.status === "pending" ||
+          report.status === "reviewing"
+        ) {
+          groups[activityId].status = report.status;
+        }
+        return groups;
+      }, {})
+    );
+
+    return res.json(grouped);
 
     const activity = await Activity.findByPk(selectedReport.activityId, {
       attributes: [
@@ -917,18 +954,18 @@ router.get("/reports/:id", auth, isAdmin, async (req, res) => {
 
     const users = userIds.length
       ? await User.findAll({
-          where: {
-            id: {
-              [Op.in]: userIds,
-            },
+        where: {
+          id: {
+            [Op.in]: userIds,
           },
-          attributes: [
-            "id",
-            "username",
-            "name",
-            "profileImage",
-          ],
-        })
+        },
+        attributes: [
+          "id",
+          "username",
+          "name",
+          "profileImage",
+        ],
+      })
       : [];
 
     const userMap = new Map(
