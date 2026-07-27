@@ -10,6 +10,7 @@ const JoinRequest = require("../models/JoinRequest");
 const ActivityReview = require("../models/ActivityReview");
 const HostReview = require("../models/HostReview");
 const Comment = require("../models/Comment");
+const notificationService = require("../services/notificationService");
 
 const auth = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -251,13 +252,26 @@ router.put("/suspend/:activityId", auth, isAdmin, async (req, res) => {
     await Promise.all([
       activity.update({ status: "suspended" }),
       Report.update(
-        { status: "resolved",
+        {
+          status: "resolved",
           decision: "suspend_activity",
           reviewedAt: new Date(),
-         },
+        },
         { where: { activityId: req.params.activityId } }
       ),
     ]);
+
+    await notificationService.createNotification(
+      activity.createdBy,
+      "activity_suspended",
+      activity.id,
+      activity.activityName,
+      req.userId,
+      "ผู้ดูแลระบบ",
+      { deduplicate: true }
+    );
+
+    notificationService.emitCountUpdate(activity.createdBy);
 
     return res.json({ message: "ระงับกิจกรรมสำเร็จ" });
   } catch (error) {
@@ -517,51 +531,51 @@ router.get("/reviews", auth, isAdmin, async (req, res) => {
     const [activities, users, comments] = await Promise.all([
       activityIds.length
         ? Activity.findAll({
-            where: {
-              id: {
-                [Op.in]: activityIds,
-              },
+          where: {
+            id: {
+              [Op.in]: activityIds,
             },
-            attributes: [
-              "id",
-              "activityName",
-              "cover",
-              "createdBy",
-            ],
-            raw: true,
-          })
+          },
+          attributes: [
+            "id",
+            "activityName",
+            "cover",
+            "createdBy",
+          ],
+          raw: true,
+        })
         : [],
 
       userIds.length
         ? User.findAll({
-            where: {
-              id: {
-                [Op.in]: userIds,
-              },
+          where: {
+            id: {
+              [Op.in]: userIds,
             },
-            attributes: [
-              "id",
-              "name",
-              "username",
-              "profileImage",
-            ],
-            raw: true,
-          })
+          },
+          attributes: [
+            "id",
+            "name",
+            "username",
+            "profileImage",
+          ],
+          raw: true,
+        })
         : [],
 
       activityIds.length && reviewerIds.length
         ? Comment.findAll({
-            where: {
-              activityId: {
-                [Op.in]: activityIds,
-              },
-              userId: {
-                [Op.in]: reviewerIds,
-              },
+          where: {
+            activityId: {
+              [Op.in]: activityIds,
             },
-            order: [["createdAt", "DESC"]],
-            raw: true,
-          })
+            userId: {
+              [Op.in]: reviewerIds,
+            },
+          },
+          order: [["createdAt", "DESC"]],
+          raw: true,
+        })
         : [],
     ]);
 
@@ -775,6 +789,33 @@ router.put("/reports/:id/status", auth, isAdmin, async (req, res) => {
       reviewedAt: new Date(),
     });
 
+    if (status === "resolved" && decision === "suspend_activity") {
+      const activity = await Activity.findByPk(report.activityId);
+
+      if (!activity) {
+        return res.status(404).json({
+          message: "ไม่พบกิจกรรมที่ถูกรายงาน",
+        });
+      }
+
+      await activity.update({
+        status: "suspended",
+      });
+
+      await notificationService.createNotification(
+        activity.createdBy,
+        "activity_suspended",
+        activity.id,
+        activity.activityName,
+        req.userId,
+        "ผู้ดูแลระบบ",
+        { deduplicate: true }
+      );
+
+      notificationService.emitCountUpdate(activity.createdBy);
+
+    }
+
     const reviewer = await User.findByPk(req.userId, {
       attributes: [
         "id",
@@ -845,13 +886,13 @@ router.get("/reports/:id", auth, isAdmin, async (req, res) => {
 
       report.reviewedBy
         ? User.findByPk(report.reviewedBy, {
-            attributes: [
-              "id",
-              "username",
-              "name",
-              "profileImage",
-            ],
-          })
+          attributes: [
+            "id",
+            "username",
+            "name",
+            "profileImage",
+          ],
+        })
         : null,
     ]);
 

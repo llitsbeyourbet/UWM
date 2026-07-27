@@ -177,6 +177,24 @@ function Notifications() {
         </svg>
       </div>
     );
+
+    if (type === "activity_suspended") return (
+      <div className="notif-icon red">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#cc4444"
+          strokeWidth="2"
+          strokeLinecap="round"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="7" x2="12" y2="13" />
+          <circle cx="12" cy="17" r="1" />
+        </svg>
+      </div>
+    );
   };
 
   const renderMessage = (n) => {
@@ -198,6 +216,8 @@ function Notifications() {
       return <><span className="bold">{n.fromUsername}</span> {" "}ยืนยันการเข้าร่วมกิจกรรม{" "} <span className="bold">{n.activityName}</span> {" "}แล้ว </>;
     if (n.type === "review")
       return <><span className="bold">{n.fromUsername}</span> {" "}รีวิวกิจกรรม{" "} <span className="bold">{n.activityName}</span> {" "}แล้ว </>;
+    if (n.type === "activity_suspended")
+      return (<>กิจกรรม{" "}<span className="bold">{n.activityName}</span>{" "}ถูกผู้ดูแลระบบระงับ เนื่องจากไม่เป็นไปตามข้อกำหนดของระบบ</>);
   };
 
   const formatTime = (dateStr) => {

@@ -1248,3 +1248,12 @@
   cursor: pointer;
   font-family: 'Sarabun', sans-serif;
 }
+.ended-banner {
+    padding: 14px;
+    border-radius: 14px;
+    background: #f1f2f5;
+    color: #666;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+}

@@ -27,6 +27,7 @@ import AdminActivities from "./pages/AdminActivities";
 import AdminUsers from "./pages/AdminUsers";
 import AdminReviews from "./pages/AdminReviews";
 import AdminReportDetail from "./pages/AdminReportDetail";
+import AutoLogout from "./components/AutoLogout";
 
 function App() {
   const location = useLocation();
@@ -39,6 +40,7 @@ function App() {
 
   return (
     <SocketProvider>
+      <AutoLogout />
       <div className={isAdmin ? "" : "app-shell"}>
         {!hideNavbar && <BottomNavbar />}
 
