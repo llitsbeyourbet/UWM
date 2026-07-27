@@ -847,16 +847,49 @@ router.put("/reports/:id/status", auth, isAdmin, async (req, res) => {
       });
     }
 
-    await report.update({
-      status,
-      decision,
-      adminNote: adminNote?.trim() || null,
-      reviewedBy: req.userId,
-      reviewedAt: new Date(),
-    });
+    const reviewedAt = new Date();
+    const note = adminNote?.trim() || null;
 
-    if (status === "resolved" && decision === "suspend_activity") {
-      const activity = await Activity.findByPk(report.activityId);
+    /*
+      ถ้าเป็นผลตรวจสอบสุดท้าย
+      ให้อัปเดตรายงานทั้งหมดของกิจกรรมเดียวกัน
+    */
+    if (status === "resolved" || status === "rejected") {
+      await Report.update(
+        {
+          status,
+          decision,
+          adminNote: note,
+          reviewedBy: req.userId,
+          reviewedAt,
+        },
+        {
+          where: {
+            activityId: report.activityId,
+          },
+        }
+      );
+    } else {
+      /*
+        ถ้ายังอยู่ระหว่างตรวจสอบ
+        อัปเดตเฉพาะรายงานที่กดเข้ามา
+      */
+      await report.update({
+        status,
+        decision,
+        adminNote: note,
+        reviewedBy: req.userId,
+        reviewedAt,
+      });
+    }
+
+    if (
+      status === "resolved" &&
+      decision === "suspend_activity"
+    ) {
+      const activity = await Activity.findByPk(
+        report.activityId
+      );
 
       if (!activity) {
         return res.status(404).json({
@@ -868,19 +901,41 @@ router.put("/reports/:id/status", auth, isAdmin, async (req, res) => {
         status: "suspended",
       });
 
-      await notificationService.createNotification(
-        activity.createdBy,
-        "activity_suspended",
-        activity.id,
-        activity.activityName,
-        req.userId,
-        "ผู้ดูแลระบบ",
-        { deduplicate: true }
-      );
+      /*
+        แจ้งเตือนล้มเหลวต้องไม่ทำให้
+        การบันทึกผลตรวจสอบล้มเหลว
+      */
+      try {
+        await notificationService.createNotification(
+          activity.createdBy,
+          "activity_suspended",
+          activity.id,
+          activity.activityName,
+          req.userId,
+          "ผู้ดูแลระบบ",
+          {
+            deduplicate: true,
+          }
+        );
 
-      notificationService.emitCountUpdate(activity.createdBy);
-
+        notificationService.emitCountUpdate(
+          activity.createdBy
+        );
+      } catch (notificationError) {
+        console.error(
+          "Create suspension notification error:",
+          notificationError
+        );
+      }
     }
+
+    /*
+      โหลด report ใหม่ เพราะ Report.update()
+      ไม่ได้แก้ object report เดิมในหน่วยความจำ
+    */
+    const updatedReport = await Report.findByPk(
+      req.params.id
+    );
 
     const reviewer = await User.findByPk(req.userId, {
       attributes: [
@@ -893,8 +948,9 @@ router.put("/reports/:id/status", auth, isAdmin, async (req, res) => {
 
     return res.json({
       message: "บันทึกผลการตรวจสอบสำเร็จ",
+
       report: {
-        ...report.toJSON(),
+        ...updatedReport.toJSON(),
 
         reviewerName:
           reviewer?.name ||
@@ -909,7 +965,10 @@ router.put("/reports/:id/status", auth, isAdmin, async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Update report status error:", error);
+    console.error(
+      "Update report status error:",
+      error
+    );
 
     return res.status(500).json({
       message: "บันทึกผลการตรวจสอบไม่สำเร็จ",
