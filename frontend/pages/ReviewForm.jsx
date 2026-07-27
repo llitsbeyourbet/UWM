@@ -10,6 +10,7 @@ function ReviewForm() {
   const [activityRating, setActivityRating] = useState(0);
   const [hostRating, setHostRating] = useState(0);
   const [comment, setComment] = useState("");
+  const [hostComment, setHostComment] = useState("");
   const [loading, setLoading] = useState(false);
 
   const activityLabels = ["", "แย่มาก!", "พอใช้", "สนุกมาก!", "ดีมาก!", "เยี่ยมเลย!"];
@@ -43,7 +44,7 @@ function ReviewForm() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ activityRating, hostRating, comment }),
+        body: JSON.stringify({ activityRating, hostRating, comment, hostComment }),
       });
 
       const data = await res.json();
@@ -122,6 +123,18 @@ function ReviewForm() {
           <p className="review-card-title">ให้คะแนนกิจกรรมนี้</p>
           <StarRating value={activityRating} onChange={setActivityRating} labels={activityLabels} />
         </div>
+        
+        {/* Comment Activity */}
+        <div className="review-card yellow">
+          <p className="review-card-sub">ความคิดเห็นต่อกิจกรรม <span className="optional">(ไม่บังคับ)</span></p>
+          <textarea
+            className="review-textarea"
+            placeholder="กิจกรรมนี้เป็นอย่างไรบ้าง? แชร์ให้เพื่อน ๆ ฟังหน่อย!"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            rows={3}
+          />
+        </div>
 
         {/* Rate Host */}
         <div className="review-card blue">
@@ -130,14 +143,16 @@ function ReviewForm() {
           <StarRating value={hostRating} onChange={setHostRating} labels={hostLabels} />
         </div>
 
-        {/* Comment */}
-        <div className="review-card green">
-          <p className="review-card-sub">ความคิดเห็น <span className="optional">(ไม่บังคับ)</span></p>
+        
+
+        {/* Comment Host */}
+        <div className="review-card blue">
+          <p className="review-card-sub">ความคิดเห็นต่อผู้จัด <span className="optional">(ไม่บังคับ)</span></p>
           <textarea
             className="review-textarea"
-            placeholder="สนุกมั้ย? แชร์ให้เพื่อน ๆ ฟังหน่อย!"
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
+            placeholder="ผู้จัดดูแลดีไหม? ให้คำแนะนำถึงผู้จัดได้ที่นี่"
+            value={hostComment}
+            onChange={(e) => setHostComment(e.target.value)}
             rows={3}
           />
         </div>

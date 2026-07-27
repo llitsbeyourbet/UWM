@@ -27,9 +27,10 @@ function ActivityDetail() {
   const [otherReason, setOtherReason] = useState("");
   const [reportLoading, setReportLoading] = useState(false);
   const [activityRating, setActivityRating] = useState(null);
-  const [comments, setComments] = useState([]);
-  const [publicComments, setPublicComments] = useState([]);
+  const [detailedReviews, setDetailedReviews] = useState([]);
+  const [reviewTab, setReviewTab] = useState("activity");
   const [host, setHost] = useState(null);
+
   const [hostRating, setHostRating] = useState(null);
   const [participants, setParticipants] = useState([]);
   const [notFound, setNotFound] = useState(false);
@@ -43,8 +44,8 @@ function ActivityDetail() {
 
     let user = null;
     try {
-      const userRes = await fetch(`${API_URL}/api/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const userRes = await fetch(API_URL + "/api/auth/me", {
+        headers: { Authorization: "Bearer " + token },
       });
       if (userRes.ok) {
         user = await userRes.json();
@@ -54,7 +55,7 @@ function ActivityDetail() {
     }
 
     try {
-      const res = await fetch(`${API_URL}/api/activities/${activityId}`);
+      const res = await fetch(API_URL + "/api/activities/" + activityId);
       if (!res.ok) {
         if (res.status === 404) setNotFound(true);
         return;
@@ -63,31 +64,31 @@ function ActivityDetail() {
       setActivity(activityData);
       setNotFound(false);
 
-      const hostRes = await fetch(`${API_URL}/api/auth/user/${activityData.createdBy}`);
+      const hostRes = await fetch(API_URL + "/api/auth/user/" + activityData.createdBy);
       if (hostRes.ok) {
         const hostData = await hostRes.json();
         setHost(hostData);
       }
 
-      const hostRatingRes = await fetch(`${API_URL}/api/review/host/${activityData.createdBy}`);
+      const hostRatingRes = await fetch(API_URL + "/api/review/host/" + activityData.createdBy);
       if (hostRatingRes.ok) {
         const hostRatingData = await hostRatingRes.json();
         setHostRating(hostRatingData.avgRating);
       }
 
-      const ratingRes = await fetch(`${API_URL}/api/review/activity/${activityId}/rating`);
+      const ratingRes = await fetch(API_URL + "/api/review/activity/" + activityId + "/rating");
       if (ratingRes.ok) {
         const ratingData = await ratingRes.json();
         setActivityRating(ratingData);
       }
 
-      const pubCommentRes = await fetch(`${API_URL}/api/review/activity/${activityId}/comments/public`);
-      if (pubCommentRes.ok) {
-        const pubCommentData = await pubCommentRes.json();
-        setPublicComments(pubCommentData);
+      const detailedRes = await fetch(API_URL + "/api/review/activity/" + activityId + "/detailed-reviews");
+      if (detailedRes.ok) {
+        const detailedData = await detailedRes.json();
+        setDetailedReviews(detailedData);
       }
 
-      const participantsRes = await fetch(`${API_URL}/api/activities/${activityId}/participants`);
+      const participantsRes = await fetch(API_URL + "/api/activities/" + activityId + "/participants");
       if (participantsRes.ok) {
         const participantsData = await participantsRes.json();
         setParticipants(participantsData);
@@ -95,25 +96,17 @@ function ActivityDetail() {
 
       if (user && activityData.createdBy === user.id) {
         setIsOwner(true);
-
-        const commentRes = await fetch(`${API_URL}/api/review/activity/${activityId}/comments`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (commentRes.ok) {
-          const commentData = await commentRes.json();
-          setComments(commentData);
-        }
       } else if (user) {
-        const statusRes = await fetch(`${API_URL}/api/join/${activityId}/status`, {
-          headers: { Authorization: `Bearer ${token}` },
+        const statusRes = await fetch(API_URL + "/api/join/" + activityId + "/status", {
+          headers: { Authorization: "Bearer " + token },
         });
         if (statusRes.ok) {
           const statusData = await statusRes.json();
           setJoinStatus(statusData.status);
 
           if (statusData.status === "checked_in") {
-            const reviewRes = await fetch(`${API_URL}/api/review/${activityId}/status`, {
-              headers: { Authorization: `Bearer ${token}` },
+            const reviewRes = await fetch(API_URL + "/api/review/" + activityId + "/status", {
+              headers: { Authorization: "Bearer " + token },
             });
             if (reviewRes.ok) {
               const reviewData = await reviewRes.json();
@@ -130,7 +123,6 @@ function ActivityDetail() {
   useEffect(() => {
     fetchActivity();
 
-    // Listen for update event from EditActivity page
     const handleUpdate = () => {
       fetchActivity();
     };
@@ -147,59 +139,30 @@ function ActivityDetail() {
     const checkReport = async () => {
       try {
         const token = localStorage.getItem("token");
-
-        const res = await fetch(`${API_URL}/api/admin/reports`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const res = await fetch(API_URL + "/api/admin/reports", {
+          headers: { Authorization: "Bearer " + token },
         });
-
         const data = await res.json().catch(() => []);
-
-        if (!res.ok) {
-          throw new Error(data?.message || "โหลดรายงานไม่สำเร็จ");
-        }
-
-        const reports = Array.isArray(data)
-          ? data
-          : Array.isArray(data?.reports)
-            ? data.reports
-            : [];
-
+        if (!res.ok) throw new Error(data?.message || "โหลดรายงานไม่สำเร็จ");
+        const reports = Array.isArray(data) ? data : Array.isArray(data?.reports) ? data.reports : [];
         const found = reports.some((report) => {
-          const reportedActivityId =
-            report.activityId ||
-            report.activity_id ||
-            report.activity?.id ||
-            report.activity?._id;
-
+          const reportedActivityId = report.activityId || report.activity_id || report.activity?.id || report.activity?._id;
           const status = String(report.status || "pending").toLowerCase();
-
-          return (
-            String(reportedActivityId) === String(activityId) &&
-            ["pending", "reviewing"].includes(status)
-          );
+          return (String(reportedActivityId) === String(activityId) && ["pending", "reviewing"].includes(status));
         });
-
         setHasPendingReport(found);
       } catch (error) {
         console.error(error);
         setHasPendingReport(false);
       }
     };
-
     checkReport();
   }, [fromAdmin, activityId]);
 
   useEffect(() => {
     if (!showQR || !isOwner || !activity) return;
-
     loadQR();
-
-    const interval = setInterval(() => {
-      setQrCountdown((prev) => prev - 1);
-    }, 1000);
-
+    const interval = setInterval(() => { setQrCountdown((prev) => prev - 1); }, 1000);
     return () => clearInterval(interval);
   }, [showQR, activity, isOwner]);
 
@@ -212,29 +175,14 @@ function ActivityDetail() {
 
   const loadQR = async () => {
     if (!activity) return;
-
     const token = localStorage.getItem("token");
-
     try {
-      const res = await fetch(
-        `${API_URL}/api/activities/${activity.id}/qr`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
+      const res = await fetch(API_URL + "/api/activities/" + activity.id + "/qr", {
+        headers: { Authorization: "Bearer " + token },
+      });
       const data = await res.json();
-
-      if (res.ok) {
-        setQrToken(data.qrToken);
-      } else {
-        console.log(data.message);
-      }
-    } catch (err) {
-      console.log(err);
-    }
+      if (res.ok) setQrToken(data.qrToken);
+    } catch (err) { console.log(err); }
   };
 
   const handleJoin = async () => {
@@ -242,9 +190,9 @@ function ActivityDetail() {
     if (!token) { navigate("/login"); return; }
     setJoinLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/join/${activity.id}`, {
+      const res = await fetch(API_URL + "/api/join/" + activity.id, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: "Bearer " + token },
       });
       const data = await res.json();
       if (!res.ok) { alert(data.message); return; }
@@ -258,9 +206,9 @@ function ActivityDetail() {
     if (!window.confirm("ต้องการยกเลิกการเข้าร่วมไหม?")) return;
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`${API_URL}/api/join/${activity.id}/cancel`, {
+      const res = await fetch(API_URL + "/api/join/" + activity.id + "/cancel", {
         method: "PUT",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: "Bearer " + token },
       });
       const data = await res.json();
       if (!res.ok) { alert(data.message); return; }
@@ -273,9 +221,9 @@ function ActivityDetail() {
     if (!window.confirm("ต้องการลบกิจกรรมนี้ไหม?")) return;
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`${API_URL}/api/activities/${activity.id}`, {
+      const res = await fetch(API_URL + "/api/activities/" + activity.id, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: "Bearer " + token },
       });
       const data = await res.json();
       if (!res.ok) { alert(data.message); return; }
@@ -290,9 +238,9 @@ function ActivityDetail() {
     const token = localStorage.getItem("token");
     setReportLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/report/${activity.id}`, {
+      const res = await fetch(API_URL + "/api/report/" + activity.id, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
         body: JSON.stringify({ reason: reportReason === "อื่นๆ" ? otherReason : reportReason }),
       });
       const data = await res.json();
@@ -306,53 +254,27 @@ function ActivityDetail() {
   };
 
   const handleToggleCommentVisibility = async (commentId, currentIsPublic) => {
+    if (!commentId) return;
     const token = localStorage.getItem("token");
-
     try {
-      const res = await fetch(`${API_URL}/api/review/comment/${commentId}/visibility`, {
+      const res = await fetch(API_URL + "/api/review/comment/" + commentId + "/visibility", {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
         body: JSON.stringify({ isPublic: !currentIsPublic }),
       });
-
       const data = await res.json();
+      if (!res.ok) { alert(data.message || "ไม่สามารถเปลี่ยนการมองเห็นความคิดเห็นได้"); return; }
 
-      if (!res.ok) {
-        alert(data.message || "ไม่สามารถเปลี่ยนการมองเห็นความคิดเห็นได้");
-        return;
-      }
-
-      setComments((prev) =>
-        prev.map((comment) =>
-          comment.id === commentId
-            ? { ...comment, isPublic: !currentIsPublic }
-            : comment
-        )
-      );
-
-      if (currentIsPublic) {
-        setPublicComments((prev) =>
-          prev.filter((comment) => comment.id !== commentId)
-        );
-      } else {
-        const updatedComment = comments.find(
-          (comment) => comment.id === commentId
-        );
-
-        if (updatedComment) {
-          setPublicComments((prev) => [
-            { ...updatedComment, isPublic: true },
-            ...prev.filter((comment) => comment.id !== commentId),
-          ]);
+      setDetailedReviews((prev) => prev.map((rev) => {
+        if (rev.activityCommentId === commentId) {
+          return { ...rev, activityIsPublic: !currentIsPublic };
         }
-      }
-    } catch (err) {
-      console.log(err);
-      alert("ไม่สามารถเชื่อมต่อ server ได้");
-    }
+        if (rev.hostCommentId === commentId) {
+          return { ...rev, hostIsPublic: !currentIsPublic };
+        }
+        return rev;
+      }));
+    } catch (err) { console.log(err); alert("ไม่สามารถเชื่อมต่อ server ได้"); }
   };
 
   if (!activityId) return <div className="loading">ไม่พบ ID กิจกรรม</div>;
@@ -364,114 +286,52 @@ function ActivityDetail() {
     return new Date(dateStr).toLocaleDateString("en-US", { weekday: "long" });
   };
 
-  const displayComments = isOwner ? comments : publicComments;
+  const filteredReviews = detailedReviews.filter((rev) => {
+    if (reviewTab === "activity") {
+      if (!rev.activityIsPublic) return false;
+      return rev.activityRating !== null;
+    }
+    if (reviewTab === "host") {
+      if (!rev.hostIsPublic) return false;
+      return rev.hostRating !== null;
+    }
+    return true;
+  });
 
-  const activityEnded =
-    activity &&
-    new Date(
-      `${activity.date}T${activity.endTime || activity.time}`
-    ) <= new Date();
+  const activityEnded = activity && new Date(activity.date + "T" + (activity.endTime || activity.time)) <= new Date();
 
   return (
     <div className="activity-detail-page">
-
       <div className="activity-content">
-
-        {/* Top Bar */}
         <div className="detail-topbar">
-          {/* ทุกคนเห็นปุ่มย้อนกลับ ทั้ง Admin และ User */}
-          <button
-            type="button"
-            className="user-back-btn"
-            onClick={() => navigate(-1)}
-            aria-label="ย้อนกลับ"
-          >
-            ‹
-          </button>
-
-          {/* เฉพาะ User เท่านั้นที่เห็นปุ่มจุดสามจุด */}
+          <button type="button" className="user-back-btn" onClick={() => navigate(-1)} aria-label="ย้อนกลับ">‹</button>
           {!fromAdmin && !fromReport && (
             <div className="report-menu-wrapper">
-              <button
-                type="button"
-                className="report-icon-btn"
-                onClick={() => setShowReportMenu((prev) => !prev)}
-                aria-label="เมนูเพิ่มเติม"
-                aria-expanded={showReportMenu}
-              >
-                ⋮
-              </button>
-
+              <button type="button" className="report-icon-btn" onClick={() => setShowReportMenu((prev) => !prev)} aria-label="เมนูเพิ่มเติม" aria-expanded={showReportMenu}>⋮</button>
               {showReportMenu && (
                 <>
-                  <button
-                    type="button"
-                    className="menu-backdrop"
-                    aria-label="ปิดเมนู"
-                    onClick={() => setShowReportMenu(false)}
-                  />
-
+                  <button type="button" className="menu-backdrop" aria-label="ปิดเมนู" onClick={() => setShowReportMenu(false)} />
                   <div className="report-dropdown">
                     {isOwner ? (
                       <>
                         {!activityEnded && (
                           <>
-                            <button
-                              type="button"
-                              className="menu-action-btn"
-                              onClick={() => {
-                                setShowReportMenu(false);
-                                setShowQR((prev) => !prev);
-                                setQrCountdown(15);
-                              }}
-                            >
-                              <span className="menu-action-icon">▦</span>
-                              {showQR ? "ซ่อน QR Code" : "แสดง QR Code"}
+                            <button type="button" className="menu-action-btn" onClick={() => { setShowReportMenu(false); setShowQR((prev) => !prev); setQrCountdown(15); }}>
+                              <span className="menu-action-icon">▦</span> {showQR ? "ซ่อน QR Code" : "แสดง QR Code"}
                             </button>
-
-                            <button
-                              type="button"
-                              className="menu-action-btn"
-                              onClick={() => {
-                                setShowReportMenu(false);
-                                navigate(`/edit-activity/${activity.id}`);
-                              }}
-                            >
-                              <span className="menu-action-icon">✎</span>
-                              แก้ไขกิจกรรม
+                            <button type="button" className="menu-action-btn" onClick={() => { setShowReportMenu(false); navigate("/edit-activity/" + activity.id); }}>
+                              <span className="menu-action-icon">✎</span> แก้ไขกิจกรรม
                             </button>
-
-                            <button
-                              type="button"
-                              className="menu-action-btn delete"
-                              onClick={() => {
-                                setShowReportMenu(false);
-                                handleDelete();
-                              }}
-                            >
-                              <span className="menu-action-icon">⌫</span>
-                              ลบกิจกรรม
+                            <button type="button" className="menu-action-btn delete" onClick={() => { setShowReportMenu(false); handleDelete(); }}>
+                              <span className="menu-action-icon">⌫</span> ลบกิจกรรม
                             </button>
                           </>
                         )}
-
-                        {activityEnded && (
-                          <div className="menu-disabled-message">
-                            กิจกรรมสิ้นสุดแล้ว
-                          </div>
-                        )}
+                        {activityEnded && <div className="menu-disabled-message">กิจกรรมสิ้นสุดแล้ว</div>}
                       </>
                     ) : (
-                      <button
-                        type="button"
-                        className="menu-action-btn report"
-                        onClick={() => {
-                          setShowReportMenu(false);
-                          setShowReportModal(true);
-                        }}
-                      >
-                        <span className="menu-action-icon">⚑</span>
-                        รายงานกิจกรรม
+                      <button type="button" className="menu-action-btn report" onClick={() => { setShowReportMenu(false); setShowReportModal(true); }}>
+                        <span className="menu-action-icon">⚑</span> รายงานกิจกรรม
                       </button>
                     )}
                   </div>
@@ -481,15 +341,10 @@ function ActivityDetail() {
           )}
         </div>
 
-        {/* Cover */}
         <div className="activity-cover-wrapper">
           <div className="activity-cover">
             {activity.cover ? (
-              <img
-                src={activity.cover.startsWith("http") ? activity.cover : `${API_URL}/uploads/${activity.cover}`}
-                alt={activity.activityName}
-                className="activity-main-image"
-              />
+              <img src={activity.cover.startsWith("http") ? activity.cover : API_URL + "/uploads/" + activity.cover} alt={activity.activityName} className="activity-main-image" />
             ) : (
               <div className="activity-cover-placeholder">
                 <div className="placeholder-icon">
@@ -504,7 +359,6 @@ function ActivityDetail() {
           </div>
         </div>
 
-        {/* Title & Rating */}
         <div className="activity-title-row">
           <h1 className="activity-title">{activity.activityName}</h1>
           {activityRating?.totalReviews > 0 && (
@@ -516,15 +370,10 @@ function ActivityDetail() {
           )}
         </div>
 
-        {/* Date & Time */}
         <div className="activity-info-row">
           <div className="date-box">
-            <span className="date-month">
-              {activity.date ? new Date(activity.date).toLocaleDateString("en-US", { month: "short" }) : "-"}
-            </span>
-            <span className="date-day">
-              {activity.date ? new Date(activity.date).getDate() : "-"}
-            </span>
+            <span className="date-month">{activity.date ? new Date(activity.date).toLocaleDateString("en-US", { month: "short" }) : "-"}</span>
+            <span className="date-day">{activity.date ? new Date(activity.date).getDate() : "-"}</span>
           </div>
           <div className="date-detail">
             <p className="day-name">{getDayName(activity.date)}</p>
@@ -532,7 +381,6 @@ function ActivityDetail() {
           </div>
         </div>
 
-        {/* Info */}
         <div className="activity-info-row">
           <span className="icon">📍</span>
           <span>{activity.location || "-"}</span>
@@ -542,40 +390,26 @@ function ActivityDetail() {
           <span>{activity.activityType === "public" ? "สาธารณะ" : "ส่วนตัว"} · {activity.joinedCount || 0}/{activity.participantCount} คน</span>
         </div>
 
-        {/* About */}
         <div className="activity-section">
           <h3>About</h3>
           <p>{activity.detail || "-"}</p>
         </div>
 
-        {/* Host */}
         {host && !fromAdmin && (
           <div className="host-section">
             <h3 className="section-title">ผู้สร้างกิจกรรม</h3>
-
-            <div
-              className="host-card"
-              onClick={() => navigate(`/user/${host.id}`)}
-            >
+            <div className="host-card" onClick={() => navigate("/user/" + host.id)}>
               <div className="host-avatar">
                 {host.profileImage ? (
-                  <img
-                    src={host.profileImage.startsWith("http") ? host.profileImage : `${API_URL}/uploads/${host.profileImage}`}
-                    alt={host.name}
-                    className="host-avatar-img"
-                  />
+                  <img src={host.profileImage.startsWith("http") ? host.profileImage : API_URL + "/uploads/" + host.profileImage} alt={host.name} className="host-avatar-img" />
                 ) : (
-                  <div className="host-avatar-initials">
-                    {host.name?.charAt(0).toUpperCase()}
-                  </div>
+                  <div className="host-avatar-initials">{host.name?.charAt(0).toUpperCase()}</div>
                 )}
               </div>
-
               <div className="host-info">
                 <p className="host-name">{host.name}</p>
                 <p className="host-username">@{host.username}</p>
               </div>
-
               {hostRating && (
                 <div className="host-rating">
                   <span>⭐</span>
@@ -586,55 +420,30 @@ function ActivityDetail() {
           </div>
         )}
 
-        {/* Participants */}
         {fromAdmin && (
           <div className="participants-section">
             <div className="participants-header">
               <h3>ผู้เข้าร่วม ({participants.length})</h3>
-
               {participants.length > 3 && (
-                <button
-                  className="view-all-btn"
-                  onClick={() => setShowAllParticipants((prev) => !prev)}
-                >
+                <button className="view-all-btn" onClick={() => setShowAllParticipants((prev) => !prev)}>
                   {showAllParticipants ? "ย่อรายการ" : "ดูทั้งหมด"}
                 </button>
               )}
             </div>
-
             {participants.length > 0 ? (
               <div className="participants-list">
                 {(showAllParticipants ? participants : participants.slice(0, 3)).map((p) => (
-                  <div
-                    key={p.id}
-                    className="participant-item"
-                    onClick={() => navigate(`/user/${p.id}`)}
-                  >
+                  <div key={p.id} className="participant-item" onClick={() => navigate("/user/" + p.id)}>
                     <div className="p-avatar">
                       {p.profileImage ? (
-                        <img
-                          src={
-                            p.profileImage.startsWith("http")
-                              ? p.profileImage
-                              : `${API_URL}/uploads/${p.profileImage}`
-                          }
-                          alt={p.name}
-                        />
+                        <img src={p.profileImage.startsWith("http") ? p.profileImage : API_URL + "/uploads/" + p.profileImage} alt={p.name} />
                       ) : (
-                        <div className="p-avatar-initials">
-                          {p.name?.charAt(0).toUpperCase()}
-                        </div>
+                        <div className="p-avatar-initials">{p.name?.charAt(0).toUpperCase()}</div>
                       )}
                     </div>
-
                     <div className="participant-info">
                       <span className="p-name">{p.name}</span>
-
-                      {p.username && (
-                        <span className="p-username">
-                          @{p.username}
-                        </span>
-                      )}
+                      {p.username && <span className="p-username">@{p.username}</span>}
                     </div>
                   </div>
                 ))}
@@ -642,82 +451,76 @@ function ActivityDetail() {
             ) : (
               <p className="no-participants">ยังไม่มีผู้เข้าร่วม</p>
             )}
-          </div>)}
+          </div>
+        )}
 
-        {/* Reviews & Comments */}
         {!fromAdmin && activityRating?.totalReviews > 0 && (
           <div className="activity-section reviews-section">
-            <div className="reviews-title-row">
+            <div className="reviews-header">
               <h3>รีวิว ({activityRating.totalReviews})</h3>
+              <div className="review-tabs">
+                <button
+                  className={"tab-btn " + (reviewTab === 'activity' ? 'active' : '')}
+                  onClick={() => setReviewTab('activity')}
+                >
+                  รีวิวกิจกรรม
+                </button>
+                <button
+                  className={"tab-btn " + (reviewTab === 'host' ? 'active' : '')}
+                  onClick={() => setReviewTab('host')}
+                >
+                  รีวิวผู้สร้าง
+                </button>
+              </div>
             </div>
-
-            {displayComments.length > 0 ? (
+            {filteredReviews.length > 0 ? (
               <div className="comments-list">
-                {displayComments.map((c) => {
-                  const reviewer = c.user || c.reviewer || {};
-                  const reviewerId = reviewer.id || c.userId || c.reviewerId;
-                  const reviewerName =
-                    reviewer.name || c.userName || c.reviewerName || "ผู้ใช้งาน";
-                  const reviewerUsername =
-                    reviewer.username || c.username || c.reviewerUsername;
-                  const reviewerImage =
-                    reviewer.profileImage || c.profileImage || c.reviewerProfileImage;
-
-                  const imageUrl = reviewerImage
-                    ? reviewerImage.startsWith("http")
-                      ? reviewerImage
-                      : `${API_URL}/uploads/${reviewerImage}`
-                    : null;
-
-                  const isPublic = Boolean(c.isPublic);
+                {filteredReviews.map((rev) => {
+                  const reviewer = rev.user || {};
+                  const reviewerId = rev.userId;
+                  const reviewerName = reviewer.name || "ผู้ใช้งาน";
+                  const reviewerUsername = reviewer.username;
+                  const reviewerImage = reviewer.profileImage;
+                  const imageUrl = reviewerImage ? (reviewerImage.startsWith("http") ? reviewerImage : API_URL + "/uploads/" + reviewerImage) : null;
 
                   return (
-                    <div key={c.id} className="comment-card">
+                    <div key={rev.id} className="comment-card">
                       <div className="comment-header">
-                        <button
-                          type="button"
-                          className="reviewer-profile"
-                          onClick={() => reviewerId && navigate(`/user/${reviewerId}`)}
-                          disabled={!reviewerId}
-                        >
+                        <button type="button" className="reviewer-profile" onClick={() => reviewerId && navigate("/user/" + reviewerId)} disabled={!reviewerId}>
                           <div className="comment-avatar">
-                            {imageUrl ? (
-                              <img src={imageUrl} alt={reviewerName} />
-                            ) : (
-                              <span>{reviewerName?.charAt(0).toUpperCase() || "U"}</span>
-                            )}
+                            {imageUrl ? <img src={imageUrl} alt={reviewerName} /> : <span>{reviewerName?.charAt(0).toUpperCase() || "U"}</span>}
                           </div>
-
                           <div className="reviewer-info">
                             <span className="reviewer-name">{reviewerName}</span>
-                            {reviewerUsername && (
-                              <span className="reviewer-username">
-                                @{reviewerUsername}
-                              </span>
-                            )}
+                            {reviewerUsername && <span className="reviewer-username">@{reviewerUsername}</span>}
                           </div>
                         </button>
-
-                        <p className="comment-date">
-                          {new Date(c.createdAt).toLocaleDateString("th-TH")}
+                        <p className="comment-date">{new Date(rev.createdAt).toLocaleDateString("th-TH")}</p>
+                      </div>
+                      <div className="comment-content-wrap">
+                        <div className="comment-rating-badge">
+                          <span className="type-label">{reviewTab === 'host' ? '💬 ถึงผู้จัด' : '⭐ กิจกรรม'}</span>
+                          <span className="type-stars">⭐ {reviewTab === 'host' ? rev.hostRating : rev.activityRating}</span>
+                        </div>
+                        <p className="comment-text">
+                          {(reviewTab === 'host' ? rev.hostComment : rev.activityComment)
+                            ? '"' + (reviewTab === 'host' ? rev.hostComment : rev.activityComment) + '"'
+                            : "ไม่มีความคิดเห็น"}
                         </p>
                       </div>
-
-                      <p className="comment-text">"{c.comment}"</p>
-
                       {isOwner && (
                         <div className="comment-visibility-row">
                           <span className="visibility-label">
-                            {isPublic ? "สาธารณะ" : "ส่วนตัว"}
+                            {(reviewTab === 'host' ? rev.hostIsPublic : rev.activityIsPublic) ? "สาธารณะ" : "ส่วนตัว"}
                           </span>
-
                           <button
                             type="button"
-                            className={`comment-toggle-button ${isPublic ? "public" : ""}`}
-                            onClick={() =>
-                              handleToggleCommentVisibility(c.id, isPublic)
-                            }
-                            aria-pressed={isPublic}
+                            className={"comment-toggle-button " + (reviewTab === 'host' ? (rev.hostIsPublic ? "public" : "") : (rev.activityIsPublic ? "public" : ""))}
+                            onClick={() => handleToggleCommentVisibility(
+                              reviewTab === 'host' ? rev.hostCommentId : rev.activityCommentId,
+                              reviewTab === 'host' ? rev.hostIsPublic : rev.activityIsPublic
+                            )}
+                            aria-pressed={reviewTab === 'host' ? rev.hostIsPublic : rev.activityIsPublic}
                           >
                             <span className="toggle-thumb" />
                           </button>
@@ -728,133 +531,58 @@ function ActivityDetail() {
                 })}
               </div>
             ) : (
-              <p className="no-comments">ยังไม่มีความคิดเห็นที่แสดงได้</p>
+              <p className="no-comments">ไม่พบรีวิวในหมวดนี้</p>
             )}
           </div>
         )}
 
-        {/* Suspended Banner */}
-        {activity.status === "suspended" && (
-          <div className="suspended-banner">
-            🚫 กิจกรรมนี้ถูกระงับโดย Admin
-          </div>
-        )}
-       
-
-        {/* Owner QR */}
+        {activity.status === "suspended" && <div className="suspended-banner">🚫 กิจกรรมนี้ถูกระงับโดย Admin</div>}
         {isOwner && showQR && (
           <div className="qr-owner-section">
             <div className="qr-container">
               <p>QR Code สำหรับยืนยันการเข้าร่วม</p>
-              <QRCodeCanvas
-                value={`${window.location.origin}/checkin/${activity.id}/${qrToken}`}
-                size={180}
-              />
-
-              <p className="qr-countdown">
-                🔄 QR Code จะเปลี่ยนใหม่ใน {qrCountdown} วินาที
-              </p>
-              {activity.checkinStart && activity.checkinEnd && (
-                <p className="checkin-time-info">⏰ เช็คอินได้ {activity.checkinStart} - {activity.checkinEnd}</p>
-              )}
+              <QRCode value={window.location.origin + "/checkin/" + activity.id + "/" + qrToken} size={180} />
+              <p className="qr-countdown">🔄 QR Code จะเปลี่ยนใหม่ใน {qrCountdown} วินาที</p>
+              {activity.checkinStart && activity.checkinEnd && <p className="checkin-time-info">⏰ เช็คอินได้ {activity.checkinStart} - {activity.checkinEnd}</p>}
             </div>
           </div>
         )}
 
-        {/* Join Section */}
-        {!fromAdmin &&
-          !isOwner &&
-          activity.status !== "suspended" && (
-            <div className="join-section">
-              {joinStatus === "checked_in" && (
-                <>
-                  <button className="join-btn joined" disabled>
-                    เข้าร่วมแล้ว ✓
-                  </button>
+        {!fromAdmin && !isOwner && activity.status !== "suspended" && (
+          <div className="join-section">
+            {joinStatus === "checked_in" && (
+              <>
+                <button className="join-btn joined" disabled>เข้าร่วมแล้ว ✓</button>
+                {!reviewed ? (
+                  <button className="review-btn" onClick={() => navigate("/review/" + activity.id)}>⭐ รีวิวกิจกรรม</button>
+                ) : (
+                  <p className="la-reviewed-text">✓ รีวิวแล้ว</p>
+                )}
+              </>
+            )}
+            {joinStatus === "approved" && (
+              <>
+                <button className="join-btn joined" disabled>เข้าร่วมแล้ว ✓</button>
+                <button className="scan-btn" onClick={() => navigate("/scan")}>สแกน QR เช็คอิน</button>
+                <button className="cancel-btn" onClick={handleCancel}>ยกเลิกการเข้าร่วม</button>
+              </>
+            )}
+            {joinStatus === "pending" && (
+              <>
+                <button className="join-btn pending" disabled>รอการอนุมัติ...</button>
+                <button className="cancel-btn" onClick={handleCancel}>ยกเลิกคำขอ</button>
+              </>
+            )}
+            {(joinStatus === null || joinStatus === "cancelled") && (() => {
+              const today = new Date(); today.setHours(0, 0, 0, 0);
+              const eventDate = new Date(activity.date); eventDate.setHours(0, 0, 0, 0);
+              if (eventDate < today) return <button className="join-btn joined" disabled>กิจกรรมสิ้นสุดแล้ว</button>;
+              if (activity.joinedCount >= activity.participantCount) return <button className="join-btn joined" disabled>กิจกรรมเต็มแล้ว</button>;
+              return <button className="join-btn" onClick={handleJoin} disabled={joinLoading}>{joinLoading ? "กำลังส่ง..." : "เข้าร่วมกิจกรรม"}</button>;
+            })()}
+          </div>
+        )}
 
-                  {!reviewed ? (
-                    <button
-                      className="review-btn"
-                      onClick={() => navigate(`/review/${activity.id}`)}
-                    >
-                      ⭐ รีวิวกิจกรรม
-                    </button>
-                  ) : (
-                    <p className="la-reviewed-text">✓ รีวิวแล้ว</p>
-                  )}
-                </>
-              )}
-
-              {joinStatus === "approved" && (
-                <>
-                  <button className="join-btn joined" disabled>
-                    เข้าร่วมแล้ว ✓
-                  </button>
-
-                  <button
-                    className="scan-btn"
-                    onClick={() => navigate("/scan")}
-                  >
-                    สแกน QR เช็คอิน
-                  </button>
-
-                  <button className="cancel-btn" onClick={handleCancel}>
-                    ยกเลิกการเข้าร่วม
-                  </button>
-                </>
-              )}
-
-              {joinStatus === "pending" && (
-                <>
-                  <button className="join-btn pending" disabled>
-                    รอการอนุมัติ...
-                  </button>
-
-                  <button className="cancel-btn" onClick={handleCancel}>
-                    ยกเลิกคำขอ
-                  </button>
-                </>
-              )}
-
-              {(joinStatus === null || joinStatus === "cancelled") &&
-                (() => {
-                  const today = new Date();
-                  today.setHours(0, 0, 0, 0);
-
-                  const eventDate = new Date(activity.date);
-                  eventDate.setHours(0, 0, 0, 0);
-
-                  const isExpired = eventDate < today;
-
-                  if (isExpired) {
-                    return (
-                      <button className="join-btn joined" disabled>
-                        กิจกรรมสิ้นสุดแล้ว
-                      </button>
-                    );
-                  }
-
-                  if (activity.joinedCount >= activity.participantCount) {
-                    return (
-                      <button className="join-btn joined" disabled>
-                        กิจกรรมเต็มแล้ว
-                      </button>
-                    );
-                  }
-
-                  return (
-                    <button
-                      className="join-btn"
-                      onClick={handleJoin}
-                      disabled={joinLoading}
-                    >
-                      {joinLoading ? "กำลังส่ง..." : "เข้าร่วมกิจกรรม"}
-                    </button>
-                  );
-                })()}
-            </div>)}
-
-        {/* Report Modal */}
         {showReportModal && (
           <div className="modal-overlay" onClick={() => setShowReportModal(false)}>
             <div className="modal-card" onClick={(e) => e.stopPropagation()}>
@@ -862,11 +590,7 @@ function ActivityDetail() {
               <p className="modal-subtitle">เลือกเหตุผลที่รายงาน</p>
               <div className="reason-list">
                 {reportReasons.map((r) => (
-                  <div
-                    key={r}
-                    className={`reason-item ${reportReason === r ? "selected" : ""}`}
-                    onClick={() => setReportReason(r)}
-                  >
+                  <div key={r} className={"reason-item " + (reportReason === r ? "selected" : "")} onClick={() => setReportReason(r)}>
                     {reportReason === r ? "● " : "○ "}{r}
                   </div>
                 ))}
@@ -874,21 +598,12 @@ function ActivityDetail() {
               {reportReason === "อื่นๆ" && (
                 <div className="other-reason-wrap">
                   <p className="other-reason-lbl">โปรดระบุเหตุผลเพิ่มเติม</p>
-                  <textarea
-                    className="other-reason-input"
-                    placeholder="ระบุเหตุผลที่นี่..."
-                    value={otherReason}
-                    onChange={(e) => setOtherReason(e.target.value)}
-                  />
+                  <textarea className="other-reason-input" placeholder="ระบุเหตุผลที่นี่..." value={otherReason} onChange={(e) => setOtherReason(e.target.value)} />
                 </div>
               )}
               <div className="modal-actions">
                 <button className="modal-cancel-btn" onClick={() => { setShowReportModal(false); setReportReason(""); setOtherReason(""); }}>ยกเลิก</button>
-                <button
-                  className="modal-report-btn"
-                  onClick={handleReport}
-                  disabled={reportLoading || (reportReason === "อื่นๆ" && !otherReason.trim())}
-                >
+                <button className="modal-report-btn" onClick={handleReport} disabled={reportLoading || (reportReason === "อื่นๆ" && !otherReason.trim())}>
                   {reportLoading ? "กำลังส่ง..." : "รายงาน"}
                 </button>
               </div>

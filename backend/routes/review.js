@@ -49,7 +49,7 @@ const attachUsersToComments = async (comments) => {
 router.post("/:activityId", auth, async (req, res) => {
   try {
     const { activityId } = req.params;
-    const { activityRating, hostRating, comment } = req.body;
+    const { activityRating, hostRating, comment, hostComment } = req.body;
 
     // เช็คว่า checked_in แล้วไหม
     const checkedIn = await checkCheckedIn(req.userId, activityId);
@@ -93,12 +93,23 @@ router.post("/:activityId", auth, async (req, res) => {
       user.username
     );
 
-    // บันทึก Comment (ถ้ามี)
+    // บันทึก Comment กิจกรรม (ถ้ามี)
     if (comment && comment.trim()) {
       await Comment.create({
         activityId,
         userId: req.userId,
         comment: comment.trim(),
+        commentType: 'activity',
+      });
+    }
+
+    // บันทึก Comment ผู้จัด (ถ้ามี)
+    if (hostComment && hostComment.trim()) {
+      await Comment.create({
+        activityId,
+        userId: req.userId,
+        comment: hostComment.trim(),
+        commentType: 'host',
       });
     }
 
@@ -303,32 +314,51 @@ router.get("/activity/:activityId/detailed-reviews", async (req, res) => {
       Comment.findAll({ where: { activityId }, raw: true }),
     ]);
 
-    // 2. สร้าง Map สำหรับข้อมูลที่ต้องเอามา "แปะ" เพิ่ม (ใช้ userId เป็น key)
-    // ใช้ Number() เพื่อให้มั่นใจว่าเปรียบเทียบ ID ได้ถูกต้อง 100%
+    // 2. สร้าง Map สำหรับข้อมูล
+    const activityReviewMap = new Map(activityReviews.map(r => [Number(r.reviewerId), r]));
     const hostReviewMap = new Map(hostReviews.map(r => [Number(r.reviewerId), r]));
-    const commentMap = new Map(comments.map(c => [Number(c.userId), c]));
 
-    // 3. ใช้ ActivityReview เป็นหลัก (เพราะนี่คือแหล่งที่มาของ "ดาวรายบุคคล")
-    const result = activityReviews.map(rev => {
-      const userId = Number(rev.reviewerId);
-      const hostReview = hostReviewMap.get(userId);
-      const comment = commentMap.get(userId);
+    // แยก comment ตามประเภท
+    const activityCommentMap = new Map();
+    const hostCommentMap = new Map();
+    comments.forEach(c => {
+      if (c.commentType === 'activity') activityCommentMap.set(Number(c.userId), c);
+      if (c.commentType === 'host') hostCommentMap.set(Number(c.userId), c);
+    });
 
-      const ratingValue = rev.rating !== undefined ? rev.rating : rev.activityRating;
+    // 3. หา User ทั้งหมดที่รีวิว (ไม่ว่าจะเป็นกิจกรรมหรือผู้จัด)
+    const allReviewerIds = new Set([
+      ...activityReviews.map(r => Number(r.reviewerId)),
+      ...hostReviews.map(r => Number(r.reviewerId))
+    ]);
+
+    const result = Array.from(allReviewerIds).map(userId => {
+      const actRev = activityReviewMap.get(userId);
+      const hostRev = hostReviewMap.get(userId);
+      const actComm = activityCommentMap.get(userId);
+      const hostComm = hostCommentMap.get(userId);
+
+      // ใช้ public status จาก comment ถ้ามี ถ้าไม่มีให้ถือว่า public
+      const activityIsPublic = actComm ? actComm.isPublic : true;
+      const hostIsPublic = hostComm ? hostComm.isPublic : true;
 
       return {
         id: userId,
         userId: userId,
-        activityRating: ratingValue !== undefined ? Number(ratingValue) : 0,
-        hostRating: hostReview ? Number(hostReview.rating) : null,
-        comment: comment ? comment.comment : "",
-        isPublic: comment ? comment.isPublic : true,
-        createdAt: rev.createdAt,
+        activityRating: actRev ? Number(actRev.rating) : null,
+        hostRating: hostRev ? Number(hostRev.rating) : null,
+        activityComment: actComm ? actComm.comment : "",
+        hostComment: hostComm ? hostComm.comment : "",
+        activityCommentId: actComm ? actComm.id : null,
+        hostCommentId: hostComm ? hostComm.id : null,
+        activityIsPublic: activityIsPublic,
+        hostIsPublic: hostIsPublic,
+        createdAt: actRev ? actRev.createdAt : (hostRev ? hostRev.createdAt : new Date()),
         reviewerId: userId
       };
     });
 
-    // 4. ดึงข้อมูล User สำหรับทุกคนที่มีรายชื่อในผลลัพธ์
+    // 4. ดึงข้อมูล User สำหรับทุกคน
     const finalUserIds = result.map(r => r.id);
     const users = await User.findAll({
       where: { id: { [Op.in]: finalUserIds } },
@@ -337,7 +367,7 @@ router.get("/activity/:activityId/detailed-reviews", async (req, res) => {
     });
     const userMap = new Map(users.map(u => [Number(u.id), u]));
 
-    // 5. ใส่ข้อมูล User กลับเข้าไปใน result
+    // 5. ใส่ข้อมูล User กลับเข้าไป
     const finalResult = result.map(item => ({
       ...item,
       user: userMap.get(item.id)
