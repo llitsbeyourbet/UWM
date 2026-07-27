@@ -878,7 +878,7 @@ router.get("/reports/:id", auth, isAdmin, async (req, res) => {
         "cover",
         "location",
         "date",
-        "startTime",
+        "time",
         "endTime",
         "status",
         "createdBy",
@@ -985,9 +985,9 @@ router.get("/reports/:id", auth, isAdmin, async (req, res) => {
       activityLocation: activity.location || null,
       activityDate: activity.date || null,
       activityTime:
-        activity.startTime && activity.endTime
-          ? `${activity.startTime} - ${activity.endTime}`
-          : activity.startTime || "-",
+        activity.time && activity.endTime
+          ? `${activity.time} - ${activity.endTime}`
+          : activity.time || "-",
 
       activityStatus: activity.status || null,
 
