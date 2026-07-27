@@ -47,22 +47,22 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-            <Route path="/CreateActivities" element={<CreateActivities />} />
+            <Route path="/CreateActivities" element={<ProtectedRoute><CreateActivities /></ProtectedRoute>} />
             <Route path="/activities" element={<ActivityDetail />} />
             <Route path="/activity-detail" element={<ActivityDetail />} />
             <Route path="/search" element={<Search />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/user/:id" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
-            <Route path="/notifications" element={<Notifications />} />
-            <Route path="/edit-profile" element={<EditProfile />} />
-            <Route path="/edit-activity/:id" element={<EditActivity />} />
+            <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+            <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
+            <Route path="/edit-activity/:id" element={<ProtectedRoute><EditActivity /></ProtectedRoute>} />
             <Route path="/checkin/:activityId/:qrToken" element={<CheckIn />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/review/:activityId" element={<ReviewForm />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/scan" element={<ScanQR />} />
-            <Route path="/activity-summary" element={<ActivitySummary />} />
-            <Route path="/activity-summary/:id" element={<ActivitySummaryDetail />} />
+            <Route path="/activity-summary" element={<ProtectedRoute><ActivitySummary /></ProtectedRoute>} />
+            <Route path="/activity-summary/:id" element={<ProtectedRoute><ActivitySummaryDetail /></ProtectedRoute>} />
             <Route path="/admin/notifications" element={<AdminNotifications />}/>
             <Route path="/admin/reports" element={<AdminReports />} />
             <Route path="/admin/activities" element={<AdminActivities />}/>

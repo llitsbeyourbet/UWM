@@ -1,11 +1,12 @@
 import API_URL from "../config";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./CreateActivities.css";
 
 function EditActivity() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const hasFetched = useRef(false);
   const isIOS = /iPhone|iPod|iPad/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const [activityName, setActivityName] = useState("");
   const [detail, setDetail] = useState("");
@@ -47,10 +48,38 @@ function EditActivity() {
 
   useEffect(() => {
     const fetchActivity = async () => {
+      if (hasFetched.current) return;
+      hasFetched.current = true;
+
       try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          navigate("/login");
+          return;
+        }
+
+        let user = null;
+        try {
+          const userRes = await fetch(`${API_URL}/api/auth/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (userRes.ok) {
+            user = await userRes.json();
+          }
+        } catch (err) {
+          console.log("Error checking user context:", err);
+        }
+
         const res = await fetch(`${API_URL}/api/activities/${id}`);
         if (!res.ok) return;
         const data = await res.json();
+
+        if (!user || data.createdBy !== user.id) {
+          alert("คุณไม่มีสิทธิ์แก้ไขกิจกรรมนี้");
+          navigate("/");
+          return;
+        }
+
         setActivityName(data.activityName || "");
         setCoverFilename(data.cover || null);
         setDetail(data.detail || "");
