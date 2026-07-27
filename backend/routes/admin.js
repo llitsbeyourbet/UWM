@@ -309,40 +309,78 @@ router.get("/latest-reports", auth, isAdmin, async (req, res) => {
 
 router.put("/suspend/:activityId", auth, isAdmin, async (req, res) => {
   try {
-    const activity = await Activity.findByPk(req.params.activityId);
+    const activity = await Activity.findByPk(
+      req.params.activityId
+    );
 
     if (!activity) {
-      return res.status(404).json({ message: "ไม่พบกิจกรรม" });
+      return res.status(404).json({
+        message: "ไม่พบกิจกรรม",
+      });
     }
 
+    const reviewedAt = new Date();
+
     await Promise.all([
-      activity.update({ status: "suspended" }),
+      activity.update({
+        status: "suspended",
+      }),
+
       Report.update(
         {
           status: "resolved",
           decision: "suspend_activity",
-          reviewedAt: new Date(),
+          adminNote: "กิจกรรมนี้ถูกระงับโดยผู้ดูแลระบบ",
+          reviewedBy: req.userId,
+          reviewedAt,
         },
-        { where: { activityId: req.params.activityId } }
+        {
+          where: {
+            activityId: activity.id,
+          },
+        }
       ),
     ]);
 
-    await notificationService.createNotification(
-      activity.createdBy,
-      "activity_suspended",
-      activity.id,
-      activity.activityName,
-      req.userId,
-      "ผู้ดูแลระบบ",
-      { deduplicate: true }
-    );
+    /*
+      แจ้งเตือนผิดพลาดต้องไม่ทำให้ API
+      ตอบว่าระงับกิจกรรมไม่สำเร็จ
+    */
+    try {
+      await notificationService.createNotification(
+        activity.createdBy,
+        "activity_suspended",
+        activity.id,
+        activity.activityName,
+        req.userId,
+        "ผู้ดูแลระบบ",
+        {
+          deduplicate: true,
+        }
+      );
 
-    notificationService.emitCountUpdate(activity.createdBy);
+      await Promise.resolve(
+        notificationService.emitCountUpdate(
+          activity.createdBy
+        )
+      );
+    } catch (notificationError) {
+      console.error(
+        "Create suspension notification error:",
+        notificationError
+      );
+    }
 
-    return res.json({ message: "ระงับกิจกรรมสำเร็จ" });
+    return res.status(200).json({
+      message: "ระงับกิจกรรมสำเร็จ",
+    });
   } catch (error) {
     console.error("Suspend activity error:", error);
-    return res.status(500).json({ message: "ไม่สามารถระงับกิจกรรมได้" });
+
+    return res.status(500).json({
+      message: "ไม่สามารถระงับกิจกรรมได้",
+      error: error.message,
+    });
   }
 });
 
