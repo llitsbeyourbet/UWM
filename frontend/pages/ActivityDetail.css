@@ -1069,18 +1069,65 @@
    Reviewer profile + per-comment public/private toggle
 ========================================================= */
 
+/* =========================================================
+   ENHANCED REVIEWS SECTION & TABS
+========================================================= */
+
 .reviews-section {
-    padding-top: 18px;
+    padding-top: 20px;
     border-top: 1px solid #eeeeee;
-    gap: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
-.reviews-title-row {
+/* Header & Tab Navigation */
+.reviews-header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.reviews-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #111111;
+}
+
+.review-tabs {
+    display: flex;
+    background: #f1f3f7;
+    padding: 4px;
+    border-radius: 12px;
+    gap: 4px;
+}
+
+.review-tabs .tab-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 8px 12px;
+    border-radius: 9px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #666666;
+    cursor: pointer;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 6px;
 }
 
+.review-tabs .tab-btn.active {
+    background: #ffffff;
+    color: #4A6FFF;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Comments List & Card Design */
 .comments-list {
     display: flex;
     flex-direction: column;
@@ -1088,15 +1135,22 @@
 }
 
 .comment-card {
-    padding: 14px 16px;
-    background: #F8F9FC;
-    border-radius: 16px;
+    padding: 16px;
+    background: #ffffff;
+    border: 1px solid #eef0f5;
+    border-radius: 18px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.comment-card:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
 }
 
 .comment-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     gap: 12px;
 }
 
@@ -1113,102 +1167,114 @@
     cursor: pointer;
 }
 
-.reviewer-profile:disabled {
-    cursor: default;
-}
-
 .comment-avatar {
-    width: 42px;
-    height: 42px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
-    background: #EEF3FF;
+    background: linear-gradient(135deg, #EEF3FF 0%, #D8E3FF 100%);
     color: #4A6FFF;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
+    font-size: 15px;
+    border: 1.5px solid #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .comment-avatar img {
     width: 100%;
     height: 100%;
-    display: block;
     object-fit: cover;
 }
 
 .reviewer-info {
-    min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 2px;
 }
 
 .reviewer-name {
-    color: #222;
+    color: #222222;
     font-size: 14px;
     font-weight: 700;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .reviewer-username {
-    color: #999;
+    color: #888888;
     font-size: 12px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .comment-date {
-    margin: 2px 0 0 !important;
-    flex-shrink: 0;
-    color: #999 !important;
+    margin: 0 !important;
+    color: #aaaaaa !important;
     font-size: 12px !important;
 }
 
+/* Comment Content & Rating Badge */
+.comment-content-wrap {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.comment-rating-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #F8F9FC;
+    padding: 4px 10px;
+    border-radius: 8px;
+    width: fit-content;
+}
+
+.comment-rating-badge .type-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #666666;
+}
+
+.comment-rating-badge .type-stars {
+    font-size: 12px;
+    font-weight: 700;
+    color: #f3a814;
+}
+
 .comment-text {
-    margin: 14px 0 0 !important;
-    color: #444 !important;
+    margin: 4px 0 0 !important;
+    color: #333333 !important;
     font-size: 14px !important;
-    line-height: 1.6 !important;
+    line-height: 1.55 !important;
     word-break: break-word;
 }
 
+/* Visibility Control for Owner */
 .comment-visibility-row {
-    margin-top: 14px;
-    padding-top: 12px;
-    border-top: 1px solid #e9ebef;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed #e9ebef;
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 9px;
+    gap: 8px;
 }
 
 .visibility-label {
-    color: #999;
+    color: #888888;
     font-size: 12px;
 }
 
-.menu-disabled-message {
-  padding: 12px 16px;
-  color: #888;
-  font-size: 14px;
-  text-align: center;
-  cursor: default;
-}
 .comment-toggle-button {
-    width: 38px;
-    height: 22px;
-    padding: 3px;
+    width: 36px;
+    height: 20px;
+    padding: 2px;
     border: none;
     border-radius: 999px;
     background: #d8dbe1;
-    box-sizing: border-box;
     cursor: pointer;
-    transition: background .2s ease;
+    transition: background 0.2s ease;
 }
 
 .comment-toggle-button.public {
@@ -1220,10 +1286,10 @@
     height: 16px;
     display: block;
     border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, .15);
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     transform: translateX(0);
-    transition: transform .2s ease;
+    transition: transform 0.2s ease;
 }
 
 .comment-toggle-button.public .toggle-thumb {
@@ -1231,9 +1297,13 @@
 }
 
 .no-comments {
-    margin: 0;
-    color: #999;
+    text-align: center;
+    padding: 24px 16px;
+    background: #f9fafc;
+    border-radius: 16px;
+    color: #888888;
     font-size: 14px;
+    margin: 0;
 }
 
 .suspend-btn-big {
