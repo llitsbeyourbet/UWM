@@ -93,25 +93,21 @@ router.post("/:activityId", auth, async (req, res) => {
       user.username
     );
 
-    // บันทึก Comment กิจกรรม (ถ้ามี)
-    if (comment && comment.trim()) {
-      await Comment.create({
-        activityId,
-        userId: req.userId,
-        comment: comment.trim(),
-        commentType: 'activity',
-      });
-    }
+    // บันทึก Comment กิจกรรม (สร้างเสมอเพื่อเก็บสถานะการมองเห็น)
+    await Comment.create({
+      activityId,
+      userId: req.userId,
+      comment: (comment && comment.trim()) ? comment.trim() : "",
+      commentType: 'activity',
+    });
 
-    // บันทึก Comment ผู้จัด (ถ้ามี)
-    if (hostComment && hostComment.trim()) {
-      await Comment.create({
-        activityId,
-        userId: req.userId,
-        comment: hostComment.trim(),
-        commentType: 'host',
-      });
-    }
+    // บันทึก Comment ผู้จัด (สร้างเสมอเพื่อเก็บสถานะการมองเห็น)
+    await Comment.create({
+      activityId,
+      userId: req.userId,
+      comment: (hostComment && hostComment.trim()) ? hostComment.trim() : "",
+      commentType: 'host',
+    });
 
     res.status(201).json({ message: "รีวิวสำเร็จ" });
   } catch (err) {

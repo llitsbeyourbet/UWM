@@ -94,7 +94,7 @@ function ActivityDetail() {
         setParticipants(participantsData);
       }
 
-      if (user && activityData.createdBy === user.id) {
+      if (user && Number(activityData.createdBy) === Number(user.id)) {
         setIsOwner(true);
       } else if (user) {
         const statusRes = await fetch(API_URL + "/api/join/" + activityId + "/status", {
@@ -288,11 +288,11 @@ function ActivityDetail() {
 
   const filteredReviews = detailedReviews.filter((rev) => {
     if (reviewTab === "activity") {
-      if (!rev.activityIsPublic) return false;
+      if (!isOwner && !rev.activityIsPublic) return false;
       return rev.activityRating !== null;
     }
     if (reviewTab === "host") {
-      if (!rev.hostIsPublic) return false;
+      if (!isOwner && !rev.hostIsPublic) return false;
       return rev.hostRating !== null;
     }
     return true;
@@ -499,8 +499,9 @@ function ActivityDetail() {
                       </div>
                       <div className="comment-content-wrap">
                         <div className="comment-rating-badge">
-                          <span className="type-label">{reviewTab === 'host' ? '💬 ถึงผู้จัด' : '⭐ กิจกรรม'}</span>
-                          <span className="type-stars">⭐ {reviewTab === 'host' ? rev.hostRating : rev.activityRating}</span>
+                          <span className="type-stars">
+                            {"⭐".repeat(reviewTab === 'host' ? (rev.hostRating || 0) : (rev.activityRating || 0))}
+                          </span>
                         </div>
                         <p className="comment-text">
                           {(reviewTab === 'host' ? rev.hostComment : rev.activityComment)
@@ -508,24 +509,24 @@ function ActivityDetail() {
                             : "ไม่มีความคิดเห็น"}
                         </p>
                       </div>
-                      {isOwner && (
-                        <div className="comment-visibility-row">
+                      <div className="comment-visibility-row">
                           <span className="visibility-label">
                             {(reviewTab === 'host' ? rev.hostIsPublic : rev.activityIsPublic) ? "สาธารณะ" : "ส่วนตัว"}
                           </span>
-                          <button
-                            type="button"
-                            className={"comment-toggle-button " + (reviewTab === 'host' ? (rev.hostIsPublic ? "public" : "") : (rev.activityIsPublic ? "public" : ""))}
-                            onClick={() => handleToggleCommentVisibility(
-                              reviewTab === 'host' ? rev.hostCommentId : rev.activityCommentId,
-                              reviewTab === 'host' ? rev.hostIsPublic : rev.activityIsPublic
-                            )}
-                            aria-pressed={reviewTab === 'host' ? rev.hostIsPublic : rev.activityIsPublic}
-                          >
-                            <span className="toggle-thumb" />
-                          </button>
+                          {isOwner && (
+                            <button
+                              type="button"
+                              className={"comment-toggle-button " + (reviewTab === 'host' ? (rev.hostIsPublic ? "public" : "") : (rev.activityIsPublic ? "public" : ""))}
+                              onClick={() => handleToggleCommentVisibility(
+                                reviewTab === 'host' ? rev.hostCommentId : rev.activityCommentId,
+                                reviewTab === 'host' ? rev.hostIsPublic : rev.activityIsPublic
+                              )}
+                              aria-pressed={reviewTab === 'host' ? rev.hostIsPublic : rev.activityIsPublic}
+                            >
+                              <span className="toggle-thumb" />
+                            </button>
+                          )}
                         </div>
-                      )}
                     </div>
                   );
                 })}
