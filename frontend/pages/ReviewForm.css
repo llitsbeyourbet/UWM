@@ -15,7 +15,6 @@
 .review-back-btn {
   width: 36px;
   height: 36px;
-  background: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -100,7 +99,9 @@
   padding: 16px;
 }
 
-.review-card.yellow { background: #FFF176; }
+.review-card.yellow { 
+  background: #fff; 
+}
 .review-card.blue { background: #B8E0FF; }
 .review-card.green { background: #C8F5C8; }
 

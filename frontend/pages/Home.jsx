@@ -17,7 +17,7 @@ function Home() {
     "ทั้งหมด": "🌟",
     "กีฬา": "⚽",
     "ดนตรี": "🎵",
-    "ภาพยนตร์":"🎥",
+    "ภาพยนตร์": "🎥",
     "ท่องเที่ยว": "🏔",
     "อาหาร": "🍜",
     "ศิลปะ": "🎨",
@@ -55,7 +55,7 @@ function Home() {
         setLoading(false);
       }
     };
-    
+
     const fetchUser = async () => {
       const token = localStorage.getItem("token");
       try {
@@ -156,9 +156,17 @@ function Home() {
                 <p className="card-meta">👥 {joinCounts[item.id] ?? 0} / {item.participantCount} คน</p>
 
                 <div className="card-tags">
-                  {item.category && (
-                    <span className="card-tag-chip">{categoryEmoji[item.category]} {item.category}</span>
-                  )}
+                  {(Array.isArray(item.category)
+                    ? item.category
+                    : String(item.category || "")
+                      .split(",")
+                      .map((c) => c.trim())
+                      .filter(Boolean)
+                  ).map((cat) => (
+                    <span className="card-tag-chip" key={cat}>
+                      {categoryEmoji[cat] || "🏷️"} {cat}
+                    </span>
+                  ))}
                 </div>
 
                 <div className="card-bottom">

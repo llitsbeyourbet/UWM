@@ -276,15 +276,14 @@ function Register() {
         </div>
       ) : (
         <div className="register-content">
-          <div className="reg-back-btn" onClick={() => setStep(1)}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.5" strokeLinecap="round">
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
-          </div>
 
-          <p className="register-sub">ยืนยันอีเมล</p>
-          <h1 className="register-title">ตรวจสอบ email<br />ของคุณ 📧</h1>
-          <p className="register-desc">ส่งรหัส OTP ไปที่ {email} แล้ว</p>
+          <h1 className="register-title">ยืนยันอีเมลของคุณ</h1>
+
+          <p className="register-desc">เราได้ส่งรหัส OTP 6 หลักไปยัง</p>
+
+          <p className="otp-email">{email}</p>
+
+
 
           <div className="register-card">
             <div className="otp-boxes">
