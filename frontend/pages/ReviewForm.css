@@ -13,8 +13,9 @@
 }
 
 .review-back-btn {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
+  margin: 15px 0 0; 
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -23,14 +24,15 @@
 }
 
 .review-header-title {
-  margin: 0;
-  font-size: 16px;
+  margin: 15px 16px 3px 2px;
+  font-size: 25px;
   font-weight: 600;
   color: #111;
 }
 
 .review-content {
   padding: 0 20px;
+  margin-top: 20px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -41,10 +43,9 @@
 }
 
 .review-title {
-  margin: 10px 0 0;
-  font-size: 30px;
+  font-size: 34px;
   font-weight: 800;
-  color: #111;
+  color: #048ff3;
   line-height: 1.2;
 }
 
@@ -100,15 +101,23 @@
 }
 
 .review-card.yellow { 
+  border-color: #FFD93D;
+  border-style: solid;
+  border-width: 4px;
   background: #fff; 
 }
-.review-card.blue { background: #B8E0FF; }
-.review-card.green { background: #C8F5C8; }
+.review-card.blue { 
+  border-color: #B8E0FF; 
+   border-style: solid;
+  border-width: 4px;
+  background: #fff; 
+}
 
 .review-card-sub {
   margin: 0 0 4px;
-  font-size: 11px;
-  color: #888;
+  font-size: 12px;
+  font-weight: 500;
+  color: #b7bbbc;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -117,7 +126,7 @@
   margin: 0 0 12px;
   font-size: 15px;
   font-weight: 700;
-  color: #111;
+  color: #5b5f61;
 }
 
 .star-container {
@@ -135,7 +144,7 @@
 .star {
   font-size: 36px;
   cursor: pointer;
-  color: #ddd;
+  color: #c9c6c6;
   transition: transform 0.1s, color 0.1s;
 }
 
@@ -150,7 +159,7 @@
 .star-label {
   margin: 0;
   font-size: 13px;
-  color: #555;
+  color: #3b3b3b;
   font-weight: 500;
 }
 
@@ -172,7 +181,7 @@
   resize: none;
   outline: none;
   box-sizing: border-box;
-  background: rgba(255,255,255,0.6);
+  background: rgba(230, 226, 226, 0.6);
   font-family: 'Sarabun', sans-serif;
   line-height: 1.5;
   margin-top: 6px;

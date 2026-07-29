@@ -19,6 +19,7 @@ function CreateActivities() {
   const [showCategory, setShowCategory] = useState(false);
   const [checkinStart, setCheckinStart] = useState("");
   const [checkinEnd, setCheckinEnd] = useState("");
+  const [error, setError] = useState("");
   const isIOS = /iPhone|iPod|iPad/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
 
@@ -52,7 +53,7 @@ function CreateActivities() {
     { value: "ศิลปะ", label: "🎨 ศิลปะ" },
     { value: "เกม", label: "🎮 เกม" },
     { value: "คาเฟ่", label: "☕ คาเฟ่" },
-    { value: "ภาพยนตร์", label: "🍿 ภาพยนตร์"}
+    { value: "ภาพยนตร์", label: "🍿 ภาพยนตร์" }
   ];
 
   const toggleCategory = (val) => {
@@ -65,7 +66,51 @@ function CreateActivities() {
     setShowCategory(false);
   };
   const handleSubmit = async () => {
-    if (!activityName) return;
+    setError(""); 
+    if (!activityName.trim()) {
+      setError("กรุณากรอกชื่อกิจกรรม");
+      return;
+    }
+
+    if (!detail.trim()) {
+      setError("กรุณากรอกรายละเอียดกิจกรรม");
+      return;
+    }
+
+    if (!activityType) {
+      setError("กรุณาเลือกประเภทกิจกรรม");
+      return;
+    }
+
+    if (!category || category.length === 0) {
+      setError("กรุณาเลือกหมวดหมู่");
+      return;
+    }
+
+    if (!date) {
+      setError("กรุณาเลือกวันที่");
+      return;
+    }
+
+    if (!time) {
+      setError("กรุณาเลือกเวลาเริ่ม");
+      return;
+    }
+
+    if (!endTime) {
+      setError("กรุณาเลือกเวลาสิ้นสุด");
+      return;
+    }
+
+    if (!location.trim()) {
+      setError("กรุณากรอกสถานที่");
+      return;
+    }
+
+    if (!coverFilename) {
+      setError("กรุณาอัปโหลดรูปปกกิจกรรม");
+      return;
+    }
 
     if (endTime <= time) {
       alert("เวลาสิ้นสุดต้องมากกว่าเวลาเริ่ม");
@@ -325,7 +370,7 @@ function CreateActivities() {
             ))}
           </div>
         )}
-
+        {error && <p className="create-error">{error}</p>}
         <button className="submit-btn" type="button" onClick={handleSubmit}>
           Post
         </button>

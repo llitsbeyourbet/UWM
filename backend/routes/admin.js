@@ -295,15 +295,75 @@ router.get("/reports", auth, isAdmin, async (req, res) => {
 router.get("/latest-reports", auth, isAdmin, async (req, res) => {
   try {
     const reports = await Report.findAll({
-      where: { status: "pending" },
       order: [["createdAt", "DESC"]],
-      limit: 5,
     });
 
-    return res.json(await enrichReports(reports));
+    const enrichedReports = await enrichReports(reports);
+
+    const groupedReports = Object.values(
+      enrichedReports.reduce((groups, report) => {
+        const activityId = Number(report.activityId);
+
+        if (!groups[activityId]) {
+          groups[activityId] = {
+            ...report,
+            id: report.id,
+            reportCount: 0,
+            reporters: [],
+          };
+        }
+
+        groups[activityId].reportCount += 1;
+
+        groups[activityId].reporters.push({
+          id: report.id,
+          userId: report.userId,
+          reporterName: report.reporterName,
+          reporterUsername: report.reporterUsername,
+          reason: report.reason,
+          status: report.status,
+          createdAt: report.createdAt,
+        });
+
+        return groups;
+      }, {})
+    )
+      .map((group) => {
+        const statuses = group.reporters.map((item) =>
+          String(item.status || "pending").toLowerCase()
+        );
+
+        let groupedStatus = "pending";
+
+        if (statuses.includes("reviewing")) {
+          groupedStatus = "reviewing";
+        } else if (statuses.includes("pending")) {
+          groupedStatus = "pending";
+        } else if (statuses.includes("resolved")) {
+          groupedStatus = "resolved";
+        } else if (statuses.includes("rejected")) {
+          groupedStatus = "rejected";
+        }
+
+        return {
+          ...group,
+          status: groupedStatus,
+        };
+      })
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() -
+          new Date(a.createdAt).getTime()
+      )
+      .slice(0, 5);
+
+    return res.json(groupedReports);
   } catch (error) {
     console.error("Latest reports error:", error);
-    return res.status(500).json({ message: "ไม่สามารถโหลดรายงานล่าสุดได้" });
+
+    return res.status(500).json({
+      message: "ไม่สามารถโหลดรายงานล่าสุดได้",
+    });
   }
 });
 

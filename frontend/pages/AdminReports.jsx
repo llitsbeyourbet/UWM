@@ -466,25 +466,19 @@ function AdminReports() {
                                             <div className="report-card-content">
                                                 <div className="report-card-heading">
                                                     <div>
-                                                        <h2>
-                                                            {report.activityName || "ไม่ระบุชื่อกิจกรรม"}
-                                                        </h2>
 
                                                         <div className="report-inline-info">
+                                                            <h2>
+                                                                {report.activityName || "ไม่ระบุชื่อกิจกรรม"}
+                                                            </h2>
                                                             <span className="report-reason-tag">
                                                                 {report.reasonCategory ||
                                                                     report.category ||
                                                                     "ถูกรายงาน"}
                                                             </span>
 
-                                                            <span className="report-divider">•</span>
+                                                           
 
-                                                            <span>
-                                                                รายงานโดย @
-                                                                {report.reporterUsername ||
-                                                                    report.reporterName ||
-                                                                    "ผู้ใช้งาน"}
-                                                            </span>
                                                         </div>
                                                     </div>
 
@@ -502,9 +496,8 @@ function AdminReports() {
                                                 </div>
 
                                                 <p className="report-description">
-                                                    {report.reason ||
-                                                        report.description ||
-                                                        "ผู้รายงานไม่ได้ระบุรายละเอียดเพิ่มเติม"}
+                                                    มีผู้ใช้งาน {report.reportCount || 1} คน รายงานกิจกรรมนี้
+                                                    กด "เริ่มตรวจสอบ" เพื่อดูรายละเอียดผู้รายงานทั้งหมด
                                                 </p>
 
                                                 <div className="report-meta">
@@ -518,8 +511,6 @@ function AdminReports() {
                                                     <span>
                                                         <FiCalendar />
                                                         {formatDate(
-                                                            report.activityDate ||
-                                                            report.activity?.date ||
                                                             report.createdAt
                                                         )}
                                                     </span>

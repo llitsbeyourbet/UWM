@@ -131,8 +131,9 @@ function ScanQR() {
           </svg>
         </div>
         <div className="scanner-header-text">
-          <p className="scanner-sub">Check-in</p>
           <p className="scanner-title">Scan QR Code</p>
+          <p className="scanner-sub">Check-in</p>
+          
         </div>
         <div style={{ width: 40 }} />
       </div>
@@ -169,12 +170,12 @@ function ScanQR() {
 
         <div className="step">
           <div className="step-circle yellow">1</div>
-          <p>ขอ QR Code จากผู้จัดกิจกรรม</p>
+          <p>ขอ QR Code จากผู้สร้างกิจกรรม</p>
         </div>
 
         <div className="step">
           <div className="step-circle blue">2</div>
-          <p>นำ QR Code เข้ากรอบด้านบน</p>
+          <p>วาง QR Code ให้อยู่ภายในกรอบด้านบน</p>
         </div>
 
         <div className="step">

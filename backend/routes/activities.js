@@ -76,12 +76,43 @@ router.get("/:id", async (req, res) => {
 // สร้างกิจกรรม
 router.post("/", auth, async (req, res) => {
   try {
-    const categories = Array.isArray(req.body.category)
-      ? req.body.category
-      : [req.body.category].filter(Boolean);
+    const {
+      activityName,
+      detail,
+      activityType,
+      category,
+      date,
+      time,
+      endTime,
+      location,
+      cover,
+    } = req.body;
+
+    const categories = Array.isArray(category)
+      ? category.filter(Boolean)
+      : [category].filter(Boolean);
+
+    if (
+      !activityName?.trim() ||
+      !detail?.trim() ||
+      !activityType ||
+      categories.length === 0 ||
+      !date ||
+      !time ||
+      !endTime ||
+      !location?.trim() ||
+      !cover
+    ) {
+      return res.status(400).json({
+        message: "กรุณากรอกข้อมูลให้ครบทุกช่องและอัปโหลดรูปกิจกรรม",
+      });
+    }
 
     const activity = await Activity.create({
       ...req.body,
+      activityName: activityName.trim(),
+      description: description.trim(),
+      location: location.trim(),
       category: categories,
       createdBy: req.userId,
     });

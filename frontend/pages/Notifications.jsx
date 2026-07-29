@@ -217,7 +217,7 @@ function Notifications() {
     if (n.type === "review")
       return <><span className="bold">{n.fromUsername}</span> {" "}รีวิวกิจกรรม{" "} <span className="bold">{n.activityName}</span> {" "}แล้ว </>;
     if (n.type === "activity_suspended")
-      return (<>กิจกรรม{" "}<span className="bold">{n.activityName}</span>{" "}ถูกผู้ดูแลระบบระงับ เนื่องจากไม่เป็นไปตามข้อกำหนดของระบบ</>);
+      return (<>กิจกรรม{" "}<span className="bold">{n.activityName}</span>{" "}ถูกระงับโดยผู้ดูแลระบบ เนื่องจากไม่เป็นไปตามข้อกำหนดของระบบ</>);
   };
 
   const formatTime = (dateStr) => {
@@ -303,13 +303,13 @@ function Notifications() {
           <>
             {newNotifs.length > 0 && (
               <>
-                <p className="notif-section-label">ใหม่</p>
+                <p className="notif-section-label">ยังไม่ได้อ่าน</p>
                 {newNotifs.map((n) => <NotifCard key={n.id} n={n} />)}
               </>
             )}
             {oldNotifs.length > 0 && (
               <>
-                <p className="notif-section-label">ก่อนหน้า</p>
+                <p className="notif-section-label">อ่านแล้ว</p>
                 {oldNotifs.map((n) => <NotifCard key={n.id} n={n} />)}
               </>
             )}

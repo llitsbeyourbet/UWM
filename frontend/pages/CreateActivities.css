@@ -372,6 +372,14 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   color: #555;
 }
 
+.create-error {
+  margin: 4px 0 8px;
+  color: #e53935;
+  font-size: 14px;
+  text-align: center;
+  font-weight: 500;
+}
+
 @media (max-width:480px){
 
     .cover-image{

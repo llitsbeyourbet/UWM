@@ -397,7 +397,7 @@ export default function AdminDashboard() {
           <Stat
             color="red"
             icon={<FiFlag />}
-            title="รายงานรอตรวจสอบ"
+            title="รายงานล่าสุด"
             value={pending}
             danger
           />

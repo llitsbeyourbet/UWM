@@ -84,17 +84,6 @@ function ReviewForm() {
   return (
     <div className="review-page">
 
-      {/* Header */}
-      <div className="review-header">
-        <div className="review-back-btn" onClick={() => navigate(-1)}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.5" strokeLinecap="round">
-            <polyline points="15 18 9 12 15 6"/>
-          </svg>
-        </div>
-        <p className="review-header-title">Review</p>
-        <div style={{ width: 36 }} />
-      </div>
-
       <div className="review-content">
 
         {/* Title */}
@@ -138,8 +127,8 @@ function ReviewForm() {
 
         {/* Rate Host */}
         <div className="review-card blue">
-          <p className="review-card-sub">ผู้จัด</p>
-          <p className="review-card-title">ให้คะแนนผู้สร้าง</p>
+          <p className="review-card-sub">ผู้สร้างกิจกรรม</p>
+          <p className="review-card-title">ให้คะแนนผู้สร้างกิจกรรม</p>
           <StarRating value={hostRating} onChange={setHostRating} labels={hostLabels} />
         </div>
 
@@ -147,10 +136,10 @@ function ReviewForm() {
 
         {/* Comment Host */}
         <div className="review-card blue">
-          <p className="review-card-sub">ความคิดเห็นต่อผู้จัด <span className="optional">(ไม่บังคับ)</span></p>
+          <p className="review-card-sub">ความคิดเห็นต่อผู้สร้างกิจกรรม <span className="optional">(ไม่บังคับ)</span></p>
           <textarea
             className="review-textarea"
-            placeholder="ผู้จัดดูแลดีไหม? ให้คำแนะนำถึงผู้จัดได้ที่นี่"
+            placeholder="ผู้สร้างกิจกรรมดูแลดีไหม? ให้คำแนะนำถึงผู้สร้างกิจกรรมได้ที่นี่"
             value={hostComment}
             onChange={(e) => setHostComment(e.target.value)}
             rows={3}
@@ -159,7 +148,7 @@ function ReviewForm() {
 
         {/* Submit */}
         <button className="review-submit-btn" onClick={handleSubmit} disabled={loading}>
-          {loading ? "กำลังส่ง..." : "ส่งรีวิว →"}
+          {loading ? "กำลังส่ง..." : "ส่งรีวิว"}
         </button>
 
       </div>

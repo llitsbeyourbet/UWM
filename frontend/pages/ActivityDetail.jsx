@@ -420,7 +420,7 @@ function ActivityDetail() {
           </div>
         )}
 
-        {fromAdmin && (
+        
           <div className="participants-section">
             <div className="participants-header">
               <h3>ผู้เข้าร่วม ({participants.length})</h3>
@@ -452,7 +452,7 @@ function ActivityDetail() {
               <p className="no-participants">ยังไม่มีผู้เข้าร่วม</p>
             )}
           </div>
-        )}
+        
 
         {!fromAdmin && activityRating?.totalReviews > 0 && (
           <div className="activity-section reviews-section">
@@ -469,7 +469,7 @@ function ActivityDetail() {
                   className={"tab-btn " + (reviewTab === 'host' ? 'active' : '')}
                   onClick={() => setReviewTab('host')}
                 >
-                  รีวิวผู้สร้าง
+                  รีวิวผู้สร้างกิจกรรม
                 </button>
               </div>
             </div>
@@ -542,7 +542,7 @@ function ActivityDetail() {
           <div className="qr-owner-section">
             <div className="qr-container">
               <p>QR Code สำหรับยืนยันการเข้าร่วม</p>
-              <QRCode value={window.location.origin + "/checkin/" + activity.id + "/" + qrToken} size={180} />
+              <QRCodeCanvas value={window.location.origin + "/checkin/" + activity.id + "/" + qrToken} size={180} />
               <p className="qr-countdown">🔄 QR Code จะเปลี่ยนใหม่ใน {qrCountdown} วินาที</p>
               {activity.checkinStart && activity.checkinEnd && <p className="checkin-time-info">⏰ เช็คอินได้ {activity.checkinStart} - {activity.checkinEnd}</p>}
             </div>
@@ -557,15 +557,15 @@ function ActivityDetail() {
                 {!reviewed ? (
                   <button className="review-btn" onClick={() => navigate("/review/" + activity.id)}>⭐ รีวิวกิจกรรม</button>
                 ) : (
-                  <p className="la-reviewed-text">✓ รีวิวแล้ว</p>
+                  <p className="la-reviewed-text">รีวิวแล้ว</p>
                 )}
               </>
             )}
             {joinStatus === "approved" && (
               <>
-                <button className="join-btn joined" disabled>เข้าร่วมแล้ว ✓</button>
+                <button className="join-btn joined" disabled>เข้าร่วมกิจกรรมแล้ว</button>
                 <button className="scan-btn" onClick={() => navigate("/scan")}>สแกน QR เช็คอิน</button>
-                <button className="cancel-btn" onClick={handleCancel}>ยกเลิกการเข้าร่วม</button>
+                <button className="cancel-btn" onClick={handleCancel}>ยกเลิกการเข้าร่วมกิจกรรม</button>
               </>
             )}
             {joinStatus === "pending" && (
