@@ -87,6 +87,15 @@ function ActivitySummaryDetail() {
   const notCheckedIn = attendance?.approved?.length || 0;
   const checkInRate = total > 0 ? Math.round((checkedIn / total) * 100) : 0;
 
+  // คำนวณคะแนนเฉลี่ยของผู้จัด (Host) จากรีวิวทั้งหมดในกิจกรรมนี้
+  const hostRatings = reviews
+    .map((r) => r.hostRating)
+    .filter((v) => v !== null && v !== undefined);
+  const avgHostRating = hostRatings.length > 0
+    ? (hostRatings.reduce((sum, v) => sum + v, 0) / hostRatings.length).toFixed(1)
+    : "0.0";
+
+
   return (
     <div className="detail-mobile-container">
       {/* 1. Header Navigation */}
@@ -198,7 +207,7 @@ function ActivitySummaryDetail() {
       {/* 5. สรุปผลการรีวิวและความคิดเห็น */}
       <div className="section-card">
         <h4 className="section-title">สรุปผลการรีวิว</h4>
-        
+
         <div className="review-dashboard">
           <div className="rating-score-box">
             <span className="score-title">คะแนนกิจกรรม</span>
@@ -206,9 +215,23 @@ function ActivitySummaryDetail() {
               {rating?.avgActivityRating || rating?.avgRating || "0.0"} <span className="score-max">/ 5</span>
             </div>
             <div className="stars-row">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <span key={i} className={`star-icon ${i < Math.round(rating?.avgActivityRating || rating?.avgRating || 0) ? 'active' : ''}`}>★</span>
-              ))}
+              {Array.from({ length: 5 }).map((_, i) => {
+                const isActive = i < Math.round(rating?.avgActivityRating || rating?.avgRating || 0);
+                return <span key={i} className={`star-icon ${isActive ? 'active' : ''}`}>★</span>;
+              })}
+            </div>
+          </div>
+          <div className="divider-vertical"></div>
+          <div className="rating-score-box">
+            <span className="score-title">คะแนนผู้สร้างกิจกรรม</span>
+            <div className="score-big blue-text">
+              {avgHostRating} <span className="score-max">/ 5</span>
+            </div>
+            <div className="stars-row">
+              {Array.from({ length: 5 }).map((_, i) => {
+                const isActive = i < Math.round(Number(avgHostRating));
+                return <span key={i} className={`star-icon ${isActive ? 'active' : ''}`}>★</span>;
+              })}
             </div>
           </div>
           <div className="divider-vertical"></div>
@@ -218,7 +241,6 @@ function ActivitySummaryDetail() {
           </div>
         </div>
 
-        {/* รายการฟีดความคิดเห็นที่มีการตรวจจับค่าคะแนนผู้ใช้ถูกต้อง */}
         <div className="reviews-feed-list">
           <h5 className="sub-section-title">รายละเอียดรีวิวจากผู้เข้าร่วม</h5>
           {reviews.length > 0 ? (
@@ -227,10 +249,9 @@ function ActivitySummaryDetail() {
                 id: c.userId || c.reviewerId
               };
               const reviewerName = reviewer.name || c.userName || c.reviewerName || "ผู้ใช้งานทั่วไป";
-              
-              // ตรวจสอบข้อมูลคะแนนจากฟิลด์
+
               const ratingValue = c.rating !== undefined && c.rating !== null ? c.rating : (c.activityRating || 0);
-              
+
               const pImage = reviewer.profileImage || c.profileImage;
               const imageUrl = pImage
                 ? pImage.startsWith("http") ? pImage : `${API_URL}/uploads/${pImage}`
@@ -239,12 +260,11 @@ function ActivitySummaryDetail() {
               return (
                 <div key={c.id} className="review-feed-item">
                   <div className="review-feed-header">
-                    <div 
+                    <div
                       className="feed-user-wrap"
                       onClick={() => navigate(`/user/${reviewer.id}`)}
                       style={{ cursor: "pointer" }}
                     >
-                      {/* เปลี่ยนให้รูปวงกลมมีหน้าตาและสีม่วงพาสเทลเหมือนกันกับรายชื่อด้านบน */}
                       <div className="feed-avatar-wrap">
                         {imageUrl ? (
                           <img src={imageUrl} alt={reviewerName} className="feed-user-avatar" />
@@ -256,19 +276,63 @@ function ActivitySummaryDetail() {
                       </div>
                       <div className="feed-user-info">
                         <span className="feed-user-name">{reviewerName}</span>
-                        <div className="feed-stars-row">
-                          {Array.from({ length: 5 }).map((_, i) => (
-                            <span key={i} className={`star-icon ${i < ratingValue ? 'active' : ''}`}>★</span> 
-                          ))}
+                        <div className="feed-stars-row" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <span style={{ fontSize: '0.6rem', color: '#888' }}>กิจกรรม:</span>
+                            <div className="stars-row">
+                              {Array.from({ length: 5 }).map((_, i) => {
+                                const isActive = i < ratingValue;
+                                return <span key={i} className={`star-icon ${isActive ? 'active' : ''}`}>★</span>;
+                              })}
+                            </div>
+                          </div>
+                          <span style={{ color: '#ddd', fontSize: '0.8rem' }}>|</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <span style={{ fontSize: '0.6rem', color: '#888' }}>ผู้สร้างกิจกรรม:</span>
+                            <div className="stars-row">
+                              {Array.from({ length: 5 }).map((_, i) => {
+                                const isActive = i < (c.hostRating || 0);
+                                return <span key={i} className={`star-icon ${isActive ? 'active' : ''}`}>★</span>;
+                              })}
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    
                   </div>
-                  
-                  <p className="feed-comment-text">
-                    {c.comment ? `"${c.comment}"` : `ให้คะแนนกิจกรรมนี้ ${ratingValue} ดาว`}
-                  </p>
+
+                  <div className="feed-comment-section" style={{ paddingLeft: '1rem', marginTop: '0.5rem' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                      <div style={{
+                        backgroundColor: '#fcfbfa',
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        borderLeft: '3px solid #7d5fff',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+                        borderRight: '1px solid #eee',
+                        borderTop: '1px solid #eee',
+                        borderBottom: '1px solid #eee'
+                      }}>
+                        <p className="feed-comment-text" style={{ marginBottom: '0', paddingLeft: '0' }}>
+                          <strong style={{ fontSize: '0.7rem', color: '#7d5fff', display: 'block', marginBottom: '2px' }}>กิจกรรม:</strong> {c.activityComment ? `"${c.activityComment}"` : "ไม่มีความคิดเห็น"}
+                        </p>
+                      </div>
+                      <div style={{
+                        backgroundColor: '#fcfbfa',
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        borderLeft: '3px solid #0369a1',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+                        borderRight: '1px solid #eee',
+                        borderTop: '1px solid #eee',
+                        borderBottom: '1px solid #eee'
+                      }}>
+                        <p className="feed-comment-text" style={{ marginBottom: '0', paddingLeft: '0' }}>
+                          <strong style={{ fontSize: '0.7rem', color: '#0369a1', display: 'block', marginBottom: '2px' }}>ผู้สร้างกิจกรรม:</strong> {c.hostComment ? `"${c.hostComment}"` : "ไม่มีความคิดเห็น"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
 
                   <div className="feed-footer-row">
                     <span className="feed-date">{c.createdAt ? new Date(c.createdAt).toLocaleDateString("th-TH") : "-"}</span>
