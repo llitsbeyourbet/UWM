@@ -16,7 +16,7 @@ body {
   max-width: 480px;
   min-height: 100vh;
   background-color: #fcfbfa;
-  font-family: 'Prompt', 'Sarabun', sans-serif;
+  font-family: 'Sarabun', sans-serif;
   box-sizing: border-box;
   position: relative;
   color: #333333;
@@ -86,7 +86,7 @@ body {
   border: none;
   outline: none;
   width: 100%;
-  font-family: 'Prompt', sans-serif;
+  font-family: 'Sarabun', sans-serif;
   font-size: 0.9rem;
   color: #333333;
 }
@@ -100,7 +100,7 @@ body {
   border: 1px solid #e5e4e2;
   border-radius: 20px;
   padding: 0.6rem 1rem;
-  font-family: 'Prompt', sans-serif;
+  font-family: 'Sarabun', sans-serif;
   font-size: 0.85rem;
   color: #555555;
   display: flex;
@@ -227,7 +227,7 @@ body {
   color: #7d5fff;
   border-radius: 12px;
   padding: 0.35rem 0.8rem;
-  font-family: 'Prompt', sans-serif;
+  font-family: 'Sarabun', sans-serif;
   font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;

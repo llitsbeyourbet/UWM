@@ -266,7 +266,7 @@ router.post("/", auth, async (req, res) => {
       res.json({
         checkedIn,
         approved,
-        totalJoined: requests.length
+        totalJoined: checkedIn.length + approved.length
       });
     } catch (err) {
       console.log(err);
