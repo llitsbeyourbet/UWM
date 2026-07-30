@@ -615,14 +615,14 @@ button {
 }
 
 .admin-activity-row strong {
-    font-size: 13px;
+    font-size: 14px;
     color: #000000;
 }
 
 .admin-activity-row small {
     margin-top: 4px;
     color: #8a91a8;
-    font-size: 12px
+    font-size: 13px
 }
 
 .admin-activity-row .status {
@@ -632,11 +632,16 @@ button {
 .admin-activity-row .status em {
     display: block;
     margin-top: 5px;
-    color: #16b45b;
-    font-size: 9px;
+    font-size: 11px;
     font-style: normal
 }
+.status-active {
+  color: #16a34a;
+}
 
+.status-suspended {
+  color: #dc2626;
+}
 .count {
     display: inline-grid;
     place-items: center;
@@ -682,19 +687,19 @@ button {
 }
 
 .admin-report-row strong {
-    font-size: 13px;
+    font-size: 14px;
     color: #000000;
 }
 
 .admin-report-row small {
     margin-top: 3px;
     color: #747d96;
-    font-size: 10px
+    font-size: 11px
 }
 
 .report-time {
     color: #707994;
-    font-size: 9px
+    font-size: 10px
 }
 
 .report-time i {
@@ -731,7 +736,7 @@ button {
 
 .admin-review-placeholder span {
     margin-top: 7px;
-    font-size: 10px
+    font-size: 12px
 }
 
 .admin-user-row {
@@ -759,13 +764,13 @@ button {
 }
 
 .admin-user-row strong {
-    font-size: 11px
+    font-size: 14px
 }
 
 .admin-user-row small {
     margin-top: 3px;
     color: #8a91a7;
-    font-size: 9px
+    font-size: 11px
 }
 
 .admin-user-row button {
@@ -773,7 +778,7 @@ button {
     border-radius: 8px;
     background: #eee9ff;
     color: #6547ec;
-    font-size: 9px
+    font-size: 10px
 }
 
 .admin-loading {

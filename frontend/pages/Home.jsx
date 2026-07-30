@@ -174,13 +174,39 @@ function Home() {
                   <div className="card-days-badge">
                     {(() => {
                       if (!item.date) return "-";
+
+                      const now = new Date();
+
+                      const startDateTime = new Date(
+                        `${item.date}T${item.time || "00:00"}`
+                      );
+
+                      const endDateTime = new Date(
+                        `${item.date}T${item.endTime || item.time || "23:59"}`
+                      );
+
+                      if (now >= endDateTime) {
+                        return "สิ้นสุดแล้ว";
+                      }
+
                       const today = new Date();
                       today.setHours(0, 0, 0, 0);
+
                       const eventDate = new Date(item.date);
                       eventDate.setHours(0, 0, 0, 0);
-                      const diff = Math.round((eventDate - today) / (1000 * 60 * 60 * 24));
-                      if (diff < 0) return "ผ่านไปแล้ว";
-                      if (diff === 0) return "🔥 วันนี้";
+
+                      const diff = Math.round(
+                        (eventDate - today) / (1000 * 60 * 60 * 24)
+                      );
+
+                      if (diff === 0 && now < startDateTime) {
+                        return "🔥 วันนี้";
+                      }
+
+                      if (diff === 0 && now >= startDateTime && now < endDateTime) {
+                        return "กำลังดำเนินกิจกรรม";
+                      }
+
                       return `📅 อีก ${diff} วัน`;
                     })()}
                   </div>

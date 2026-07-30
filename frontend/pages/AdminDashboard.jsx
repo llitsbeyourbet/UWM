@@ -559,7 +559,7 @@ export default function AdminDashboard() {
 
                   <span className="status">
                     <small>{dateText(activity.createdAt)}</small>
-                    <em>
+                    <em className={activity.status === "suspended" ? "status-suspended" : "status-active"}>
                       {activity.status === "suspended"
                         ? "ระงับแล้ว"
                         : "เผยแพร่แล้ว"}

@@ -1327,3 +1327,14 @@
     font-size: 14px;
     font-weight: 600;
 }
+.join-btn.ended {
+  background: #9ca3af;
+  color: #ffffff;
+  cursor: not-allowed;
+}
+
+.join-btn.suspended {
+  background: #dc2626;
+  color: #ffffff;
+  cursor: not-allowed;
+}

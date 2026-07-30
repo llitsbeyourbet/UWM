@@ -218,18 +218,54 @@ function ActivityDetail() {
   };
 
   const handleDelete = async () => {
+    const ended =
+      activity &&
+      new Date(
+        activity.date + "T" + (activity.endTime || activity.time)
+      ) <= new Date();
+
+    if (activity.status === "suspended") {
+      alert("กิจกรรมที่ถูกระงับโดยแอดมินไม่สามารถลบได้");
+      return;
+    }
+
+    if (ended) {
+      alert("กิจกรรมที่สิ้นสุดแล้วไม่สามารถลบได้");
+      return;
+    }
+
+    if (Number(activity.joinedCount || participants.length || 0) > 0) {
+      alert("ไม่สามารถลบกิจกรรมที่มีผู้เข้าร่วมแล้วได้");
+      return;
+    }
+
     if (!window.confirm("ต้องการลบกิจกรรมนี้ไหม?")) return;
+
     const token = localStorage.getItem("token");
+
     try {
-      const res = await fetch(API_URL + "/api/activities/" + activity.id, {
-        method: "DELETE",
-        headers: { Authorization: "Bearer " + token },
-      });
+      const res = await fetch(
+        API_URL + "/api/activities/" + activity.id,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
+
       const data = await res.json();
-      if (!res.ok) { alert(data.message); return; }
+
+      if (!res.ok) {
+        alert(data.message);
+        return;
+      }
+
       alert("ลบกิจกรรมสำเร็จ");
       navigate("/");
-    } catch { alert("ไม่สามารถเชื่อมต่อ server ได้"); }
+    } catch {
+      alert("ไม่สามารถเชื่อมต่อ server ได้");
+    }
   };
 
   const handleReport = async () => {
@@ -300,6 +336,15 @@ function ActivityDetail() {
 
   const activityEnded = activity && new Date(activity.date + "T" + (activity.endTime || activity.time)) <= new Date();
 
+  const hasParticipants =
+    Number(activity.joinedCount || participants.length || 0) > 0;
+
+  const canDeleteActivity =
+    isOwner &&
+    !activityEnded &&
+    activity.status !== "suspended" &&
+    !hasParticipants;
+
   return (
     <div className="activity-detail-page">
       <div className="activity-content">
@@ -322,9 +367,19 @@ function ActivityDetail() {
                             <button type="button" className="menu-action-btn" onClick={() => { setShowReportMenu(false); navigate("/edit-activity/" + activity.id); }}>
                               <span className="menu-action-icon">✎</span> แก้ไขกิจกรรม
                             </button>
-                            <button type="button" className="menu-action-btn delete" onClick={() => { setShowReportMenu(false); handleDelete(); }}>
-                              <span className="menu-action-icon">⌫</span> ลบกิจกรรม
-                            </button>
+                            {canDeleteActivity && (
+                              <button
+                                type="button"
+                                className="menu-action-btn delete"
+                                onClick={() => {
+                                  setShowReportMenu(false);
+                                  handleDelete();
+                                }}
+                              >
+                                <span className="menu-action-icon">⌫</span>
+                                ลบกิจกรรม
+                              </button>
+                            )}
                           </>
                         )}
                         {activityEnded && <div className="menu-disabled-message">กิจกรรมสิ้นสุดแล้ว</div>}
@@ -420,39 +475,39 @@ function ActivityDetail() {
           </div>
         )}
 
-        
-          <div className="participants-section">
-            <div className="participants-header">
-              <h3>ผู้เข้าร่วม ({participants.length})</h3>
-              {participants.length > 3 && (
-                <button className="view-all-btn" onClick={() => setShowAllParticipants((prev) => !prev)}>
-                  {showAllParticipants ? "ย่อรายการ" : "ดูทั้งหมด"}
-                </button>
-              )}
-            </div>
-            {participants.length > 0 ? (
-              <div className="participants-list">
-                {(showAllParticipants ? participants : participants.slice(0, 3)).map((p) => (
-                  <div key={p.id} className="participant-item" onClick={() => navigate("/user/" + p.id)}>
-                    <div className="p-avatar">
-                      {p.profileImage ? (
-                        <img src={p.profileImage.startsWith("http") ? p.profileImage : API_URL + "/uploads/" + p.profileImage} alt={p.name} />
-                      ) : (
-                        <div className="p-avatar-initials">{p.name?.charAt(0).toUpperCase()}</div>
-                      )}
-                    </div>
-                    <div className="participant-info">
-                      <span className="p-name">{p.name}</span>
-                      {p.username && <span className="p-username">@{p.username}</span>}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="no-participants">ยังไม่มีผู้เข้าร่วม</p>
+
+        <div className="participants-section">
+          <div className="participants-header">
+            <h3>ผู้เข้าร่วม ({participants.length})</h3>
+            {participants.length > 3 && (
+              <button className="view-all-btn" onClick={() => setShowAllParticipants((prev) => !prev)}>
+                {showAllParticipants ? "ย่อรายการ" : "ดูทั้งหมด"}
+              </button>
             )}
           </div>
-        
+          {participants.length > 0 ? (
+            <div className="participants-list">
+              {(showAllParticipants ? participants : participants.slice(0, 3)).map((p) => (
+                <div key={p.id} className="participant-item" onClick={() => navigate("/user/" + p.id)}>
+                  <div className="p-avatar">
+                    {p.profileImage ? (
+                      <img src={p.profileImage.startsWith("http") ? p.profileImage : API_URL + "/uploads/" + p.profileImage} alt={p.name} />
+                    ) : (
+                      <div className="p-avatar-initials">{p.name?.charAt(0).toUpperCase()}</div>
+                    )}
+                  </div>
+                  <div className="participant-info">
+                    <span className="p-name">{p.name}</span>
+                    {p.username && <span className="p-username">@{p.username}</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="no-participants">ยังไม่มีผู้เข้าร่วม</p>
+          )}
+        </div>
+
 
         {!fromAdmin && activityRating?.totalReviews > 0 && (
           <div className="activity-section reviews-section">
@@ -510,23 +565,23 @@ function ActivityDetail() {
                         </p>
                       </div>
                       <div className="comment-visibility-row">
-                          <span className="visibility-label">
-                            {(reviewTab === 'host' ? rev.hostIsPublic : rev.activityIsPublic) ? "สาธารณะ" : "ส่วนตัว"}
-                          </span>
-                          {isOwner && (
-                            <button
-                              type="button"
-                              className={"comment-toggle-button " + (reviewTab === 'host' ? (rev.hostIsPublic ? "public" : "") : (rev.activityIsPublic ? "public" : ""))}
-                              onClick={() => handleToggleCommentVisibility(
-                                reviewTab === 'host' ? rev.hostCommentId : rev.activityCommentId,
-                                reviewTab === 'host' ? rev.hostIsPublic : rev.activityIsPublic
-                              )}
-                              aria-pressed={reviewTab === 'host' ? rev.hostIsPublic : rev.activityIsPublic}
-                            >
-                              <span className="toggle-thumb" />
-                            </button>
-                          )}
-                        </div>
+                        <span className="visibility-label">
+                          {(reviewTab === 'host' ? rev.hostIsPublic : rev.activityIsPublic) ? "สาธารณะ" : "ส่วนตัว"}
+                        </span>
+                        {isOwner && (
+                          <button
+                            type="button"
+                            className={"comment-toggle-button " + (reviewTab === 'host' ? (rev.hostIsPublic ? "public" : "") : (rev.activityIsPublic ? "public" : ""))}
+                            onClick={() => handleToggleCommentVisibility(
+                              reviewTab === 'host' ? rev.hostCommentId : rev.activityCommentId,
+                              reviewTab === 'host' ? rev.hostIsPublic : rev.activityIsPublic
+                            )}
+                            aria-pressed={reviewTab === 'host' ? rev.hostIsPublic : rev.activityIsPublic}
+                          >
+                            <span className="toggle-thumb" />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   );
                 })}
@@ -537,7 +592,7 @@ function ActivityDetail() {
           </div>
         )}
 
-        {activity.status === "suspended" && <div className="suspended-banner">🚫 กิจกรรมนี้ถูกระงับโดย Admin</div>}
+
         {isOwner && showQR && (
           <div className="qr-owner-section">
             <div className="qr-container">
@@ -548,39 +603,91 @@ function ActivityDetail() {
             </div>
           </div>
         )}
-
-        {!fromAdmin && !isOwner && activity.status !== "suspended" && (
+        {/* Badge และปุ่มสถานะด้านล่าง */}
+        {activity.status === "suspended" ? (
           <div className="join-section">
-            {joinStatus === "checked_in" && (
+            <button className="join-btn suspended" disabled>
+              🚫 กิจกรรมนี้ถูกระงับโดย Admin
+            </button>
+          </div>
+        ) : activityEnded ? (
+          <div className="join-section">
+            <button className="join-btn ended" disabled>
+              กิจกรรมนี้สิ้นสุดแล้ว
+            </button>
+          </div>
+        ) : fromAdmin || isOwner ? null : (
+          <div className="join-section">
+
+            {/* เช็คอินแล้ว แต่ยังไม่ได้รีวิว */}
+            {joinStatus === "checked_in" && !reviewed && (
+              <button
+                className="review-btn"
+                onClick={() => navigate("/review/" + activity.id)}
+              >
+                ⭐ รีวิวกิจกรรม
+              </button>
+            )}
+
+            {/* เช็คอินและรีวิวแล้ว จะไม่แสดงอะไร */}
+
+            {/* กิจกรรมสาธารณะเข้าร่วมแล้ว
+        หรือกิจกรรมส่วนตัวได้รับการอนุมัติแล้ว */}
+            {joinStatus === "approved" && (
               <>
-                <button className="join-btn joined" disabled>เข้าร่วมแล้ว ✓</button>
-                {!reviewed ? (
-                  <button className="review-btn" onClick={() => navigate("/review/" + activity.id)}>⭐ รีวิวกิจกรรม</button>
+                <button
+                  className="scan-btn"
+                  onClick={() => navigate("/scan")}
+                >
+                  Scan QR Code ยืนยันการเข้าร่วมกิจกรรม
+                </button>
+
+                <button
+                  className="cancel-btn"
+                  onClick={handleCancel}
+                >
+                  ยกเลิกการเข้าร่วมกิจกรรม
+                </button>
+              </>
+            )}
+
+            {/* กิจกรรมส่วนตัว ส่งคำขอแล้ว */}
+            {joinStatus === "pending" && (
+              <>
+                <button className="join-btn pending" disabled>
+                  ส่งคำขอเข้าร่วมกิจกรรมแล้ว
+                </button>
+
+                <button
+                  className="cancel-btn"
+                  onClick={handleCancel}
+                >
+                  ยกเลิกคำขอ
+                </button>
+              </>
+            )}
+
+            {/* ยังไม่ได้เข้าร่วม หรือเคยยกเลิก */}
+            {(joinStatus === null || joinStatus === "cancelled") && (
+              <>
+                {Number(activity.joinedCount || 0) >=
+                  Number(activity.participantCount || 0) ? (
+                  <button className="join-btn joined" disabled>
+                    กิจกรรมเต็มแล้ว
+                  </button>
                 ) : (
-                  <p className="la-reviewed-text">รีวิวแล้ว</p>
+                  <button
+                    className="join-btn"
+                    onClick={handleJoin}
+                    disabled={joinLoading}
+                  >
+                    {joinLoading
+                      ? "กำลังส่ง..."
+                      : "เข้าร่วมกิจกรรม"}
+                  </button>
                 )}
               </>
             )}
-            {joinStatus === "approved" && (
-              <>
-                <button className="join-btn joined" disabled>เข้าร่วมกิจกรรมแล้ว</button>
-                <button className="scan-btn" onClick={() => navigate("/scan")}>สแกน QR เช็คอิน</button>
-                <button className="cancel-btn" onClick={handleCancel}>ยกเลิกการเข้าร่วมกิจกรรม</button>
-              </>
-            )}
-            {joinStatus === "pending" && (
-              <>
-                <button className="join-btn pending" disabled>รอการอนุมัติ...</button>
-                <button className="cancel-btn" onClick={handleCancel}>ยกเลิกคำขอ</button>
-              </>
-            )}
-            {(joinStatus === null || joinStatus === "cancelled") && (() => {
-              const today = new Date(); today.setHours(0, 0, 0, 0);
-              const eventDate = new Date(activity.date); eventDate.setHours(0, 0, 0, 0);
-              if (eventDate < today) return <button className="join-btn joined" disabled>กิจกรรมสิ้นสุดแล้ว</button>;
-              if (activity.joinedCount >= activity.participantCount) return <button className="join-btn joined" disabled>กิจกรรมเต็มแล้ว</button>;
-              return <button className="join-btn" onClick={handleJoin} disabled={joinLoading}>{joinLoading ? "กำลังส่ง..." : "เข้าร่วมกิจกรรม"}</button>;
-            })()}
           </div>
         )}
 

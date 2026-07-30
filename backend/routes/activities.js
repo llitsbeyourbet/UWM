@@ -111,7 +111,7 @@ router.post("/", auth, async (req, res) => {
     const activity = await Activity.create({
       ...req.body,
       activityName: activityName.trim(),
-      description: description.trim(),
+      detail: detail.trim(),
       location: location.trim(),
       category: categories,
       createdBy: req.userId,
