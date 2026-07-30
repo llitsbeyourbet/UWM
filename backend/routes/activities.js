@@ -52,14 +52,26 @@ router.get("/:id", async (req, res) => {
     const activity = await Activity.findByPk(req.params.id);
     if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
 
-    const joinedCount = await JoinRequest.count({
+    // นับจำนวนผู้เข้าร่วมที่มีตัวตนอยู่ในระบบเท่านั้น
+    const requests = await JoinRequest.findAll({
       where: {
         activityId: activity.id,
         status: {
           [Op.in]: ["approved", "checked_in"],
         },
       },
+      attributes: ["userId"],
+      raw: true
     });
+
+    const userIds = requests.map(r => r.userId);
+    const existingUsers = await require("../models/User").findAll({
+      where: { id: { [Op.in]: userIds } },
+      attributes: ["id"],
+      raw: true
+    });
+
+    const joinedCount = existingUsers.length;
 
     console.log(`Activity ${activity.id} joinedCount: ${joinedCount}`);
 
@@ -266,7 +278,7 @@ router.post("/", auth, async (req, res) => {
       res.json({
         checkedIn,
         approved,
-        totalJoined: requests.length
+        totalJoined: checkedIn.length + approved.length
       });
     } catch (err) {
       console.log(err);

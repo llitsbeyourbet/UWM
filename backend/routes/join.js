@@ -268,23 +268,24 @@ router.get("/:activityId/count", async (req, res) => {
     const activity = await Activity.findByPk(req.params.activityId);
     if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
 
-    let statusFilter;
-    if (activity.activityType === "public") {
-      // สาธารณะ — นับคนที่กดเข้าร่วมแล้ว
-      statusFilter = ["approved", "checked_in"];
-    } else {
-      // ส่วนตัว — นับแค่คนที่เจ้าของอนุมัติแล้ว
-      statusFilter = ["approved", "checked_in"];
-    }
+    const statusFilter = ["approved", "checked_in"];
 
-    const count = await JoinRequest.count({
+    const requests = await JoinRequest.findAll({
       where: {
         activityId: req.params.activityId,
         status: statusFilter,
-      }
+      },
+      attributes: ["userId"]
     });
 
-    res.json({ count });
+    const userIds = requests.map(r => r.userId);
+    const existingUsers = await User.findAll({
+      where: { id: { [Op.in]: userIds } },
+      attributes: ["id"],
+      raw: true
+    });
+
+    res.json({ count: existingUsers.length });
   } catch (err) {
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }

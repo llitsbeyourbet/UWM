@@ -130,11 +130,21 @@ router.get("/activity/:activityId", async (req, res) => {
       where: { activityId },
     });
 
-    const avgRating = reviews.length
-      ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+    // กรองเฉพาะรีวิวจากผู้ใช้ที่มีตัวตนอยู่ในระบบ
+    const reviewerIds = reviews.map(r => r.reviewerId);
+    const existingUsers = await User.findAll({
+      where: { id: { [Op.in]: reviewerIds } },
+      attributes: ["id"],
+      raw: true
+    });
+    const existingUserIds = new Set(existingUsers.map(u => u.id));
+    const filteredReviews = reviews.filter(r => existingUserIds.has(r.reviewerId));
+
+    const avgRating = filteredReviews.length
+      ? (filteredReviews.reduce((sum, r) => sum + r.rating, 0) / filteredReviews.length).toFixed(1)
       : null;
 
-    res.json({ reviews, comments, avgRating, totalReviews: reviews.length });
+    res.json({ reviews: filteredReviews, comments, avgRating, totalReviews: filteredReviews.length });
   } catch (err) {
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
@@ -147,11 +157,21 @@ router.get("/host/:hostId", async (req, res) => {
       where: { hostId: req.params.hostId },
     });
 
-    const avgRating = reviews.length
-      ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+    // กรองเฉพาะรีวิวจากผู้ใช้ที่มีตัวตนอยู่ในระบบ
+    const reviewerIds = reviews.map(r => r.reviewerId);
+    const existingUsers = await User.findAll({
+      where: { id: { [Op.in]: reviewerIds } },
+      attributes: ["id"],
+      raw: true
+    });
+    const existingUserIds = new Set(existingUsers.map(u => u.id));
+    const filteredReviews = reviews.filter(r => existingUserIds.has(r.reviewerId));
+
+    const avgRating = filteredReviews.length
+      ? (filteredReviews.reduce((sum, r) => sum + r.rating, 0) / filteredReviews.length).toFixed(1)
       : null;
 
-    res.json({ avgRating, totalReviews: reviews.length });
+    res.json({ avgRating, totalReviews: filteredReviews.length });
   } catch (err) {
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
@@ -209,11 +229,21 @@ router.get("/activity/:activityId/rating", async (req, res) => {
       where: { activityId },
     });
 
-    const avgRating = reviews.length
-      ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+    // กรองเฉพาะรีวิวจากผู้ใช้ที่มีตัวตนอยู่ในระบบ
+    const reviewerIds = reviews.map(r => r.reviewerId);
+    const existingUsers = await User.findAll({
+      where: { id: { [Op.in]: reviewerIds } },
+      attributes: ["id"],
+      raw: true
+    });
+    const existingUserIds = new Set(existingUsers.map(u => u.id));
+    const filteredReviews = reviews.filter(r => existingUserIds.has(r.reviewerId));
+
+    const avgRating = filteredReviews.length
+      ? (filteredReviews.reduce((sum, r) => sum + r.rating, 0) / filteredReviews.length).toFixed(1)
       : null;
 
-    res.json({ avgRating, totalReviews: reviews.length });
+    res.json({ avgRating, totalReviews: filteredReviews.length });
   } catch (err) {
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
@@ -363,11 +393,13 @@ router.get("/activity/:activityId/detailed-reviews", async (req, res) => {
     });
     const userMap = new Map(users.map(u => [Number(u.id), u]));
 
-    // 5. ใส่ข้อมูล User กลับเข้าไป
-    const finalResult = result.map(item => ({
-      ...item,
-      user: userMap.get(item.id)
-    }));
+    // 5. ใส่ข้อมูล User กลับเข้าไป และกรองเอาเฉพาะรีวิวจากผู้ใช้ที่มีตัวตนอยู่ในระบบ
+    const finalResult = result
+      .filter(item => userMap.has(item.id))
+      .map(item => ({
+        ...item,
+        user: userMap.get(item.id)
+      }));
 
     res.json(finalResult);
   } catch (err) {

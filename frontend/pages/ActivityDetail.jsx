@@ -349,7 +349,11 @@ function ActivityDetail() {
     <div className="activity-detail-page">
       <div className="activity-content">
         <div className="detail-topbar">
-          <button type="button" className="user-back-btn" onClick={() => navigate(-1)} aria-label="ย้อนกลับ">‹</button>
+          <div className="back-btn" onClick={() => navigate(-1)}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </div>
           {!fromAdmin && !fromReport && (
             <div className="report-menu-wrapper">
               <button type="button" className="report-icon-btn" onClick={() => setShowReportMenu((prev) => !prev)} aria-label="เมนูเพิ่มเติม" aria-expanded={showReportMenu}>⋮</button>
