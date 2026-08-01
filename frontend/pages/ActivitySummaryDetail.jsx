@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./ActivitySummaryDetail.css";
 import API_URL from "../config";
+import { formatDate } from "../utils/formatDate";
 
 function ActivitySummaryDetail() {
   const { id } = useParams();
@@ -124,7 +125,7 @@ function ActivitySummaryDetail() {
         </div>
         <div className="profile-info">
           <h3>{activity.activityName}</h3>
-          <span className="profile-date">📅 {activity.date ? new Date(activity.date).toLocaleDateString("th-TH") : "-"}</span>
+          <span className="profile-date">📅 {formatDate(activity.date)}</span>
           <span className="profile-location">📍 {activity.location || "-"}</span>
           <span className="badge-type">
             {activity.activityType === "public" ? "กิจกรรมสาธารณะ" : "กิจกรรมส่วนตัว"}
@@ -335,7 +336,7 @@ function ActivitySummaryDetail() {
                   </div>
 
                   <div className="feed-footer-row">
-                    <span className="feed-date">{c.createdAt ? new Date(c.createdAt).toLocaleDateString("th-TH") : "-"}</span>
+                    <span className="feed-date">{formatDate(c.createdAt)}</span>
                     {isOwner && (
                       <span className={`visibility-badge ${c.isPublic ? "public-type" : "private-type"}`}>
                         {c.isPublic ? "แสดงสาธารณะ" : "เห็นเฉพาะเจ้าของ"}

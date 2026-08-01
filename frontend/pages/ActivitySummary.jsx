@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./ActivitySummary.css";
 import API_URL from "../config";
+import { formatDate } from "../utils/formatDate";
 
 function ActivitySummary() {
   const navigate = useNavigate();
@@ -89,15 +90,6 @@ function ActivitySummary() {
   const filteredActivities = activities.filter((item) =>
     item.activityName.toLowerCase().includes(searchTerm.trim().toLowerCase())
   );
-  const formatDate = (date) => {
-    if (!date) return "-";
-
-    return new Date(date).toLocaleDateString("th-TH", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
-  };
 
   if (loading) {
     return <div className="loading">กำลังโหลดข้อมูล...</div>;
