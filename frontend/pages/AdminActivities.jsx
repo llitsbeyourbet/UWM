@@ -456,7 +456,7 @@ export default function AdminActivities() {
                         <h2>{activityName}</h2>
 
                         <p className="activity-admin-creator">
-                          สร้างโดย @{activity.createdBy}
+                          สร้างโดย @{activity.creator}
                         </p>
 
                         <div className="activity-admin-meta">
