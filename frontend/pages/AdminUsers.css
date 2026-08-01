@@ -74,13 +74,13 @@
 .users-heading-left h1 {
   margin: 0;
   color: #232539;
-  font-size: 24px;
+  font-size: 25px;
 }
 
 .users-heading-left p {
   margin: 6px 0 0;
   color: #9096aa;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .users-summary-list {
@@ -115,15 +115,6 @@
   color: #6846f5;
 }
 
-.summary-icon.active {
-  background: #e9f8f0;
-  color: #239760;
-}
-
-.summary-icon.suspended {
-  background: #fff0f2;
-  color: #df455f;
-}
 
 .users-summary-item strong,
 .users-summary-item small {
@@ -138,7 +129,7 @@
 .users-summary-item small {
   margin-top: 2px;
   color: #999eb0;
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .users-content-card {
@@ -168,7 +159,7 @@
   background: transparent;
   color: #8c91a5;
   font: inherit;
-  font-size: 11px;
+  font-size: 13px;
   cursor: pointer;
 }
 
@@ -202,7 +193,7 @@
   border-radius: 99px;
   background: #f1effb;
   color: #6b58c7;
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .users-toolbar {
@@ -237,7 +228,7 @@
   background: transparent;
   color: #41465b;
   font: inherit;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .users-sort {
@@ -250,7 +241,7 @@
   background: #fff;
   color: #62687e;
   font: inherit;
-  font-size: 11px;
+  font-size: 13px;
   cursor: pointer;
 }
 
@@ -271,7 +262,7 @@
   border-bottom: 1px solid #ebebf2;
   background: #fafafe;
   color: #8b91a5;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   text-align: left;
 }
@@ -280,7 +271,7 @@
   padding: 15px 17px;
   border-bottom: 1px solid #f0f0f4;
   color: #656b80;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .users-table tbody tr:last-child td {
@@ -314,7 +305,7 @@
   max-width: 180px;
   overflow: hidden;
   color: #303348;
-  font-size: 11px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -322,7 +313,7 @@
 .user-profile-cell span {
   margin-top: 3px;
   color: #9ba0b1;
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .user-email {
@@ -341,42 +332,6 @@
 
 .user-created-date {
   color: #7f8599;
-}
-
-.user-status {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 10px;
-  border-radius: 99px;
-  font-size: 9px;
-  font-weight: 700;
-}
-
-.user-status.status-active {
-  background: #e9f8f0;
-  color: #239760;
-}
-
-.user-status.status-suspended {
-  background: #fff0f2;
-  color: #d9415c;
-}
-
-.user-action-buttons {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-
-.user-action-buttons button {
-  width: 33px;
-  height: 33px;
-  display: grid;
-  place-items: center;
-  border-radius: 8px;
-  background: #fff;
-  font-size: 13px;
-  cursor: pointer;
 }
 
 .user-view-button {

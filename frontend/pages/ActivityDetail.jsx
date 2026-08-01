@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { QRCodeCanvas } from "qrcode.react";
 import "./ActivityDetail.css";
 import API_URL from "../config";
+import { formatDate, formatTime } from "../utils/formatDate";
 
 function ActivityDetail() {
   const navigate = useNavigate();
@@ -371,7 +372,7 @@ function ActivityDetail() {
                             <button type="button" className="menu-action-btn" onClick={() => { setShowReportMenu(false); navigate("/edit-activity/" + activity.id); }}>
                               <span className="menu-action-icon">✎</span> แก้ไขกิจกรรม
                             </button>
-                            {canDeleteActivity && (
+                            
                               <button
                                 type="button"
                                 className="menu-action-btn delete"
@@ -383,7 +384,7 @@ function ActivityDetail() {
                                 <span className="menu-action-icon">⌫</span>
                                 ลบกิจกรรม
                               </button>
-                            )}
+                          
                           </>
                         )}
                         {activityEnded && <div className="menu-disabled-message">กิจกรรมสิ้นสุดแล้ว</div>}
@@ -436,7 +437,7 @@ function ActivityDetail() {
           </div>
           <div className="date-detail">
             <p className="day-name">{getDayName(activity.date)}</p>
-            <p className="time-range">{activity.time || "-"} - {activity.endTime || "-"}</p>
+            <p className="time-range"> {formatTime(activity.time)} - {formatTime(activity.endTime)}</p>
           </div>
         </div>
 

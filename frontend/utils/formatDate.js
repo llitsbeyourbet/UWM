@@ -7,3 +7,9 @@ export const formatDate = (dateString) => {
 
   return `${day}/${month}/${year}`;
 };
+
+export const formatTime = (timeString) => {
+  if (!timeString) return "-";
+
+  return String(timeString).slice(0, 5);
+};

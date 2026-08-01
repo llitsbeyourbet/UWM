@@ -456,7 +456,7 @@ export default function AdminActivities() {
                         <h2>{activityName}</h2>
 
                         <p className="activity-admin-creator">
-                          สร้างโดย @{creator}
+                          สร้างโดย @{activity.createdBy}
                         </p>
 
                         <div className="activity-admin-meta">
@@ -467,11 +467,7 @@ export default function AdminActivities() {
 
                           <span>
                             <FiCalendar />
-                            {formatDate(
-                              activity.activityDate ||
-                              activity.date ||
-                              activity.createdAt
-                            )}
+                            {formatDate(activity.date)}
                           </span>
 
                           <span>

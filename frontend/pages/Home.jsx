@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
 import API_URL from "../config";
-import { formatDate } from "../utils/formatDate";
+import { formatDate, formatTime } from "../utils/formatDate";
 
 function Home() {
   const navigate = useNavigate();
@@ -153,7 +153,7 @@ function Home() {
                 </div>
                 <p className="card-meta">📍 {item.location || "-"}</p>
                 <p className="card-meta">📅 {formatDate(item.date)}</p>
-                <p className="card-meta">⏰ {item.time || "-"} - {item.endTime || "-"}</p>
+                <p className="card-meta">⏰  {formatTime(item.time)} - {formatTime(item.endTime)}</p>
                 <p className="card-meta">👥 {joinCounts[item.id] ?? 0} / {item.participantCount} คน</p>
 
                 <div className="card-tags">

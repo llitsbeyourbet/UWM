@@ -581,7 +581,7 @@ export default function AdminDashboard() {
           <article className="admin-panel">
             <div className="admin-panel-header">
               <h2>
-                รายงานที่รอตรวจสอบ
+                รายงานล่าสุด
               </h2>
 
               <button onClick={() => navigate("/admin/reports")}>

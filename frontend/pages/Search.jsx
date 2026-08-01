@@ -2,6 +2,7 @@ import API_URL from "../config";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Search.css";
+import { formatDate, formatTime } from "../utils/formatDate";
 
 function Search() {
   const navigate = useNavigate();
@@ -65,11 +66,7 @@ function Search() {
     navigate(`/activity-detail?id=${activity.id}`);
   };
 
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "-";
-    const d = new Date(dateStr);
-    return d.toLocaleDateString("th-TH", { weekday: "short", day: "numeric", month: "short" });
-  };
+  
 
   return (
     <div className="search-page">
@@ -124,7 +121,7 @@ function Search() {
               <div className="card-body">
                 <p className="card-title">{item.activityName}</p>
                 <p className="card-info">📍 {item.location || "-"} &nbsp;·&nbsp; 👥 {item.participantCount} คน</p>
-                <p className="card-date">{formatDate(item.date)} · {item.time || "-"} - {item.endTime || "-"}</p>
+                <p className="card-date">{formatDate(item.date)} ·  {formatTime(item.time)} - {formatTime(item.endTime)}</p>
               </div>
             </div>
           ))
