@@ -459,6 +459,83 @@ router.put("/unsuspend/:activityId", auth, isAdmin, async (req, res) => {
     return res.status(500).json({ message: "ไม่สามารถยกเลิกการระงับได้" });
   }
 });
+router.get("/activities", auth, isAdmin, async (req, res) => {
+  try {
+    const activities = await Activity.findAll({
+      order: [["createdAt", "DESC"]],
+    });
+
+    if (!activities.length) {
+      return res.json([]);
+    }
+
+    const creatorIds = [
+      ...new Set(
+        activities
+          .map((activity) => Number(activity.createdBy))
+          .filter(Boolean)
+      ),
+    ];
+
+    const creators = creatorIds.length
+      ? await User.findAll({
+          where: {
+            id: {
+              [Op.in]: creatorIds,
+            },
+          },
+          attributes: [
+            "id",
+            "username",
+            "name",
+            "profileImage",
+          ],
+        })
+      : [];
+
+    const creatorMap = new Map(
+      creators.map((user) => [
+        Number(user.id),
+        user.toJSON(),
+      ])
+    );
+
+    const result = activities.map((activity) => {
+      const creator = creatorMap.get(
+        Number(activity.createdBy)
+      );
+
+      return {
+        ...activity.toJSON(),
+
+        creator:
+          creator?.username ||
+          creator?.name ||
+          "ไม่ทราบผู้สร้าง",
+
+        creatorUsername:
+          creator?.username || null,
+
+        creatorName:
+          creator?.name ||
+          creator?.username ||
+          "ไม่ทราบผู้สร้าง",
+
+        creatorProfileImage:
+          creator?.profileImage || null,
+      };
+    });
+
+    return res.json(result);
+  } catch (error) {
+    console.error("Admin activities error:", error);
+
+    return res.status(500).json({
+      message: "ไม่สามารถโหลดกิจกรรมทั้งหมดได้",
+      error: error.message,
+    });
+  }
+});
 
 /* ========================= LATEST ACTIVITIES ========================= */
 

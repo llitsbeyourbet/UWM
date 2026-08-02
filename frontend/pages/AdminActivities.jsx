@@ -104,7 +104,7 @@ export default function AdminActivities() {
       setLoading(true);
       setError("");
 
-      const response = await fetch(`${API_URL}/api/activities`, {
+      const response = await fetch(`${API_URL}/api/admin/activities`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -444,23 +444,19 @@ export default function AdminActivities() {
                         >
                           {status === "published" && "เผยแพร่แล้ว"}
                           {status === "suspended" && "ระงับแล้ว"}
-                          {status === "draft" && "ฉบับร่าง"}
                         </span>
                       </div>
 
                       <div className="activity-admin-content">
+
+                        <h2>{activityName}</h2>
                         <span className="activity-admin-category">
                           {activity.category || "กิจกรรมทั่วไป"}
                         </span>
 
-                        <h2>{activityName}</h2>
-
                         <p className="activity-admin-creator">
-                          สร้างโดย @
-                          {activity.creatorUsername ||
-                            activity.creator ||
-                            activity.creatorName ||
-                            "ไม่ทราบผู้สร้าง"}
+                          สร้างโดย @{creator}
+                          
                         </p>
 
                         <div className="activity-admin-meta">
