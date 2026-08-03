@@ -36,6 +36,7 @@ function ActivityDetail() {
   const [participants, setParticipants] = useState([]);
   const [notFound, setNotFound] = useState(false);
   const [hasPendingReport, setHasPendingReport] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
   const reportReasons = ["เนื้อหาไม่เหมาะสม", "ข้อมูลเป็นเท็จ", "สแปม", "เป็นอันตราย", "อื่นๆ"];
 
@@ -50,6 +51,7 @@ function ActivityDetail() {
       });
       if (userRes.ok) {
         user = await userRes.json();
+        setCurrentUser(user);
       }
     } catch (err) {
       console.log(err);
@@ -364,30 +366,46 @@ function ActivityDetail() {
                   <div className="report-dropdown">
                     {isOwner ? (
                       <>
-                        {!activityEnded && (
-                          <>
-                            <button type="button" className="menu-action-btn" onClick={() => { setShowReportMenu(false); setShowQR((prev) => !prev); setQrCountdown(15); }}>
-                              <span className="menu-action-icon">▦</span> {showQR ? "ซ่อน QR Code" : "แสดง QR Code"}
-                            </button>
-                            <button type="button" className="menu-action-btn" onClick={() => { setShowReportMenu(false); navigate("/edit-activity/" + activity.id); }}>
-                              <span className="menu-action-icon">✎</span> แก้ไขกิจกรรม
-                            </button>
-                            
-                              <button
-                                type="button"
-                                className="menu-action-btn delete"
-                                onClick={() => {
-                                  setShowReportMenu(false);
-                                  handleDelete();
-                                }}
-                              >
-                                <span className="menu-action-icon">⌫</span>
-                                ลบกิจกรรม
-                              </button>
-                          
-                          </>
-                        )}
-                        {activityEnded && <div className="menu-disabled-message">กิจกรรมสิ้นสุดแล้ว</div>}
+
+                        <>
+                          <button type="button" className="menu-action-btn"
+                            onClick={() => {
+                              setShowReportMenu(false);
+                              if (activityEnded) {
+                                alert("กิจกรรมที่สิ้นสุดแล้วไม่สามารถแสดง QR Code ได้");
+                                return;
+                              }
+                              setShowQR((prev) => !prev); setQrCountdown(15);
+                            }}>
+                            <span className="menu-action-icon">▦</span> {showQR ? "ซ่อน QR Code" : "แสดง QR Code"}
+                          </button>
+                          <button type="button" className="menu-action-btn"
+                            onClick={() => {
+                              setShowReportMenu(false);
+                              if (activityEnded) {
+                                alert("กิจกรรมที่สิ้นสุดแล้ว ไม่สามารถแก้ไขได้");
+                                return;
+                              }
+                              navigate("/edit-activity/" + activity.id);
+                            }}>
+                            <span className="menu-action-icon">✎</span> แก้ไขกิจกรรม
+                          </button>
+
+                          <button
+                            type="button"
+                            className="menu-action-btn delete"
+                            onClick={() => {
+                              setShowReportMenu(false);
+                              handleDelete();
+                            }}
+                          >
+                            <span className="menu-action-icon">🗑️</span>
+                            ลบกิจกรรม
+                          </button>
+
+                        </>
+
+
                       </>
                     ) : (
                       <button type="button" className="menu-action-btn report" onClick={() => { setShowReportMenu(false); setShowReportModal(true); }}>
@@ -455,7 +473,7 @@ function ActivityDetail() {
           <p>{activity.detail || "-"}</p>
         </div>
 
-        {host && !fromAdmin && (
+        {host && (
           <div className="host-section">
             <h3 className="section-title">ผู้สร้างกิจกรรม</h3>
             <div className="host-card" onClick={() => navigate("/user/" + host.id)}>
@@ -470,6 +488,11 @@ function ActivityDetail() {
                 <p className="host-name">{host.name}</p>
                 <p className="host-username">@{host.username}</p>
               </div>
+              {isOwner && (
+                <span className="user-role-badge me">
+                 👑 ME
+                </span>
+              )}
               {hostRating && (
                 <div className="host-rating">
                   <span>⭐</span>
@@ -503,8 +526,15 @@ function ActivityDetail() {
                   </div>
                   <div className="participant-info">
                     <span className="p-name">{p.name}</span>
+                    
                     {p.username && <span className="p-username">@{p.username}</span>}
+                    
                   </div>
+                  {Number(p.id) === Number(currentUser?.id) && (
+                      <span className="user-role-badge member">
+                      👑 ME
+                      </span>
+                    )}
                 </div>
               ))}
             </div>

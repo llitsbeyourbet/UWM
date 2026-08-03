@@ -173,7 +173,7 @@ function ActivitySummary() {
                 className="summary-btn"
                 onClick={() => navigate(`/activity-summary/${item.id}`)}
               >
-                ดูสรุป <span>→</span>
+                ดูสรุปผลกิจกรรม
               </button>
             </div>
           ))}

@@ -449,11 +449,7 @@ export default function AdminActivities() {
 
                       <div className="activity-admin-content">
 
-                        <h2>{activityName}</h2>
-                        <span className="activity-admin-category">
-                          {activity.category || "กิจกรรมทั่วไป"}
-                        </span>
-
+                        <h2>{activityName}</h2>                    
                         <p className="activity-admin-creator">
                           สร้างโดย @{creator}
                           
