@@ -9,12 +9,13 @@
   padding: 16px 20px 0;
   display: flex;
   align-items: center;
+  margin-top: 15px;
   justify-content: space-between;
 }
 
 .profile-header-title {
   margin: 0;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 800;
   color: #111;
 }
@@ -22,6 +23,7 @@
 .profile-header-icons {
   display: flex;
   gap: 8px;
+  margin-top: 15px;
 }
 
 .profile-icon-btn {
@@ -269,11 +271,7 @@
   background: white;
   border-radius: 14px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-<<<<<<< HEAD
   min-width: 140px;
-=======
-  min-width: 175px;
->>>>>>> 2b2e2923df6f24a62786ec8d4bc0916701d9d5cf
   overflow: hidden;
   z-index: 100;
 }

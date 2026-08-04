@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./ActivitySummaryDetail.css";
 import API_URL from "../config";
-import { formatDate } from "../utils/formatDate";
+import { formatTime, formatDate } from "../utils/formatDate";
 
 function ActivitySummaryDetail() {
   const { id } = useParams();
@@ -106,7 +106,7 @@ function ActivitySummaryDetail() {
             <polyline points="15 18 9 12 15 6"/>
           </svg>
         </div>
-        <h2>สรุปกิจกรรม</h2>
+        <h2>สรุปผลกิจกรรม</h2>
         <div className="header-space"></div>
       </div>
 
@@ -136,7 +136,7 @@ function ActivitySummaryDetail() {
       {/* 3. สรุปผลการเข้าร่วม */}
       <div className="section-card">
         <div className="section-header-flex">
-          <h4 className="section-title">สรุปผลการเข้าร่วม</h4>
+          <h4 className="section-title">สรุปผลการเข้าร่วมกิจกรรม</h4>
           <span className="opened-seats-badge">เปิดรับ {activity.participantCount || 0} คน</span>
         </div>
         <div className="attendance-overview">
@@ -336,7 +336,9 @@ function ActivitySummaryDetail() {
                   </div>
 
                   <div className="feed-footer-row">
-                    <span className="feed-date">{formatDate(c.createdAt)}</span>
+                    <span className="feed-date">
+                      {formatDate(c.createdAt)}
+                    </span>
                     {isOwner && (
                       <span className={`visibility-badge ${c.isPublic ? "public-type" : "private-type"}`}>
                         {c.isPublic ? "แสดงสาธารณะ" : "เห็นเฉพาะเจ้าของ"}
