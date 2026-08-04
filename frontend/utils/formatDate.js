@@ -13,3 +13,19 @@ export const formatTime = (timeString) => {
 
   return String(timeString).slice(0, 5);
 };
+
+export const formatDateTime = (dateString) => {
+  if (!dateString) return "-";
+
+  const date = new Date(dateString);
+
+  if (Number.isNaN(date.getTime())) return dateString;
+
+  return date.toLocaleString("th-TH", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};

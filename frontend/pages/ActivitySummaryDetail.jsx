@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./ActivitySummaryDetail.css";
 import API_URL from "../config";
-import { formatTime, formatDate } from "../utils/formatDate";
+import { formatDateTime ,formatTime, formatDate } from "../utils/formatDate";
 
 function ActivitySummaryDetail() {
   const { id } = useParams();
