@@ -14,8 +14,7 @@ button {
 }
 
 .admin-shell {
-    min-height: 100vh;
-    display: grid;
+    display: block;
     grid-template-columns: 250px minmax(0, 1fr);
     background: radial-gradient(circle at 75% 0%, rgba(140, 108, 255, .08), transparent 28%), #f8f9fd;
     color: #17182a;
@@ -23,15 +22,18 @@ button {
 }
 
 .admin-sidebar {
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    width: 250px;
     height: 100vh;
     display: flex;
     flex-direction: column;
     padding: 28px 16px 24px;
     border-right: 1px solid #ececf4;
     background: rgba(255, 255, 255, .95);
-    z-index: 100
+    owerflow-y: auto;
+    z-index: 1000
 }
 
 .admin-brand {
@@ -137,6 +139,9 @@ button {
 
 .admin-main {
     min-width: 0;
+    width: calc(100% - 250px);
+    min-height: 100vh;
+    margin-left: 250px;
     padding: 28px 32px 38px
 }
 
@@ -173,118 +178,124 @@ button {
 }
 
 .admin-period,
-.admin-bell,
 .admin-profile-trigger {
     border: 1px solid #ececf4;
     background: #fff;
     box-shadow: 0 8px 24px rgba(43, 39, 85, .07)
 }
 
-.admin-period{
-    position:relative;
+.admin-period {
+    position: relative;
     border-radius: 16px;
 }
 
-.admin-period-btn{
-    display:flex;
-    align-items:center;
-    gap:8px;
+.admin-period-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 
-    width:170px;
-    height:54px;
+    width: 170px;
+    height: 54px;
 
-    padding:0 20px;
+    padding: 0 20px;
 
-    border:none;
-    border-radius:16px;
-    background:#fff;
+    border: none;
+    border-radius: 16px;
+    background: #fff;
 
-    cursor:pointer;
+    cursor: pointer;
 
     font-size: 15px;
-    color:#4b5169;
+    color: #4b5169;
 
-    box-shadow:0 10px 30px rgba(0,0,0,.06);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .06);
 
-    transition:.2s;
+    transition: .2s;
 }
 
-.admin-period-btn:hover{
-    transform:translateY(-1px);
+.admin-period-btn:hover {
+    transform: translateY(-1px);
 }
 
-.admin-period-btn span{
-    flex:1;
-    text-align:left;
+.admin-period-btn span {
+    flex: 1;
+    text-align: left;
 }
 
-.admin-period-btn svg:first-child{
-    color:#6846f5;
+.admin-period-btn svg:first-child {
+    color: #6846f5;
 }
 
-.admin-period-btn .rotate{
-    transform:rotate(180deg);
+.admin-period-btn .rotate {
+    transform: rotate(180deg);
 }
 
-.admin-period-menu{
+.admin-period-menu {
 
-    position:absolute;
+    position: absolute;
 
-    top:60px;
-    right:0;
+    top: 60px;
+    right: 0;
 
-    width:140px;
+    width: 140px;
 
-    padding:8px;
+    padding: 8px;
     font-size: 15px;
 
-    border-radius:16px;
+    border-radius: 16px;
 
-    background:#fff;
+    background: #fff;
 
-    box-shadow:0 18px 40px rgba(0,0,0,.12);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .12);
 
-    z-index:100;
+    z-index: 100;
 }
 
-.admin-period-menu button{
+.admin-period-menu button {
 
-    width:100%;
+    width: 100%;
 
-    border:none;
+    border: none;
 
-    background:none;
+    background: none;
 
-    padding:12px 14px;
+    padding: 12px 14px;
 
-    border-radius:12px;
+    border-radius: 12px;
 
-    text-align:left;
+    text-align: left;
 
-    cursor:pointer;
+    cursor: pointer;
 
-    transition:.18s;
-    color:#4b5169;
+    transition: .18s;
+    color: #4b5169;
 
-    font:inherit;
+    font: inherit;
 }
 
-.admin-period-menu button:hover{
+.admin-period-menu button:hover {
 
-    background:#f3f5ff;
+    background: #f3f5ff;
 
-    color:#6846f5;
+    color: #6846f5;
 }
 
 .admin-bell {
     position: relative;
-    width: 54px;
-    height: 54px;
-    display: grid;
-    place-items: center;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    outline: none;
+    background: transparent;
     border-radius: 13px;
+    background: #fff;
     color: #5c6580;
     font-size: 20px;
+    line-height: 1;
     cursor: pointer
 }
 
@@ -635,13 +646,15 @@ button {
     font-size: 11px;
     font-style: normal
 }
+
 .status-active {
-  color: #16a34a;
+    color: #16a34a;
 }
 
 .status-suspended {
-  color: #dc2626;
+    color: #dc2626;
 }
+
 .count {
     display: inline-grid;
     place-items: center;
@@ -809,6 +822,17 @@ button {
         grid-template-columns: 82px minmax(0, 1fr)
     }
 
+    .admin-sidebar {
+        width: 82px;
+        padding: 28px 10px 24px;
+    }
+
+    .admin-main {
+        width: calc(100% - 82px);
+        margin-left: 82px;
+    }
+
+
     .admin-brand>span:last-child,
     .admin-nav-item b,
     .admin-nav-item i,
@@ -869,13 +893,17 @@ button {
         right: 10px;
         bottom: 10px;
         left: 10px;
+
         width: auto;
         height: 64px;
+
         display: block;
         padding: 7px;
+
         border: 1px solid #e5e6ef;
         border-radius: 18px;
-        box-shadow: 0 18px 40px rgba(35, 31, 81, .18)
+        background: #fff;
+        box-shadow: 0 18px 40px rgba(35, 31, 81, 0.18);
     }
 
     .admin-brand,
@@ -901,7 +929,10 @@ button {
     }
 
     .admin-main {
-        padding: 18px 14px 96px
+        width: 100%;
+        min-height: 100vh;
+        margin-left: 0;
+        padding: 18px 14px 96px;
     }
 
     .admin-profile-trigger {

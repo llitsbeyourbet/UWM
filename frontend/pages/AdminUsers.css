@@ -246,7 +246,9 @@
 }
 
 .users-table-wrapper {
+  max-height: calc(100vh - 360px);
   overflow-x: auto;
+  overflow-y: auto;
   border: 1px solid #ebebf2;
   border-radius: 13px;
 }
@@ -265,6 +267,9 @@
   font-size: 12px;
   font-weight: 600;
   text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 5;
 }
 
 .users-table td {
@@ -414,6 +419,34 @@
   border-top-color: #6846f5;
   border-radius: 50%;
   animation: users-spin 0.8s linear infinite;
+}
+
+.user-profile-cell {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.user-profile-cell img,
+.user-avatar-placeholder {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.user-profile-cell img {
+  object-fit: cover;
+}
+
+.user-avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ede8ff;
+  color: #6846f5;
+  font-size: 20px;
+  font-weight: 700;
 }
 
 @keyframes users-spin {

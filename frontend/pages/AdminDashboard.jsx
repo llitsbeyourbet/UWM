@@ -14,15 +14,14 @@ import {
 } from "react-icons/fi";
 import { MdGroups } from "react-icons/md";
 import {
+  Bar,
+  BarChart,
   CartesianGrid,
-  Line,
-  LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
-
 import "./AdminDashboard.css";
 import API_URL from "../config";
 
@@ -93,7 +92,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState({});
   const [users, setUsers] = useState([]);
   const [activities, setActivities] = useState([]);
-  const [chartData, setChartData] = useState([]);
+  const [categoryChartData, setCategoryChartData] = useState([]);
   const [latestActivities, setLatestActivities] = useState([]);
   const [latestReports, setLatestReports] = useState([]);
   const [latestReviews, setLatestReviews] = useState([]);
@@ -135,7 +134,7 @@ export default function AdminDashboard() {
         fetch(`${API_URL}/api/admin/dashboard`, { headers: authHeader }),
         fetch(`${API_URL}/api/admin/users`, { headers: authHeader }),
         fetch(`${API_URL}/api/activities`),
-        fetch(`${API_URL}/api/admin/chart?days=${days}`, {
+        fetch(`${API_URL}/api/admin/chart-categories?days=${days}`, {
           headers: authHeader,
         }),
         fetch(`${API_URL}/api/admin/latest-activities`, {
@@ -160,7 +159,7 @@ export default function AdminDashboard() {
         dashboardData,
         userData,
         activityData,
-        chart,
+        categoryChart,
         latestActivityData,
         latestReportData,
         latestReviewData,
@@ -169,7 +168,9 @@ export default function AdminDashboard() {
       setStats(dashboardData || {});
       setUsers(Array.isArray(userData) ? userData : []);
       setActivities(Array.isArray(activityData) ? activityData : []);
-      setChartData(Array.isArray(chart) ? chart : []);
+      setCategoryChartData(
+        Array.isArray(categoryChart) ? categoryChart : []
+      );
       setLatestActivities(
         Array.isArray(latestActivityData) ? latestActivityData : []
       );
@@ -206,10 +207,9 @@ export default function AdminDashboard() {
     )
     .slice(0, 4);
 
-  const chart = chartData.map((item) => ({
+  const categoryChart = categoryChartData.map((item) => ({
     ...item,
-    activities: Number(item.activities || 0),
-    participants: Number(item.participants || 0),
+    count: Number(item.count || 0),
   }));
 
   const navItems = [
@@ -277,7 +277,6 @@ export default function AdminDashboard() {
                   {days === 7 && "7 วันที่ผ่านมา"}
                   {days === 30 && "30 วันที่ผ่านมา"}
                   {days === 90 && "90 วันที่ผ่านมา"}
-                  {days === 365 && "1 ปีที่ผ่านมา"}
                 </span>
 
                 <FiChevronDown
@@ -407,12 +406,7 @@ export default function AdminDashboard() {
           <article className="admin-panel">
             <div className="admin-panel-header">
               <div>
-                <h2>ภาพรวมกิจกรรม</h2>
-
-                <div className="admin-legend">
-                  <span className="p">กิจกรรมที่สร้าง</span>
-                  <span className="b">ผู้เข้าร่วม</span>
-                </div>
+                <h2>กิจกรรมตามหมวดหมู่</h2>
               </div>
 
               <select
@@ -428,22 +422,10 @@ export default function AdminDashboard() {
 
             <div className="admin-chart">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  data={chart}
+                <BarChart
+                  data={categoryChart}
                   margin={{ top: 18, right: 18, left: -12, bottom: 5 }}
                 >
-                  <defs>
-                    <linearGradient id="activityLine" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#8b6cff" />
-                      <stop offset="100%" stopColor="#5b36e8" />
-                    </linearGradient>
-
-                    <linearGradient id="participantLine" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#71b7ff" />
-                      <stop offset="100%" stopColor="#3980ea" />
-                    </linearGradient>
-                  </defs>
-
                   <CartesianGrid
                     stroke="#eef0f6"
                     strokeDasharray="3 6"
@@ -451,11 +433,9 @@ export default function AdminDashboard() {
                   />
 
                   <XAxis
-                    dataKey="day"
+                    dataKey="category"
                     axisLine={false}
                     tickLine={false}
-                    tickFormatter={chartDateText}
-                    minTickGap={24}
                     tick={{
                       fill: "#8189a2",
                       fontSize: 11,
@@ -475,54 +455,23 @@ export default function AdminDashboard() {
                   />
 
                   <Tooltip
-                    content={<ChartTooltip />}
+                    formatter={(value) => [
+                      Number(value || 0).toLocaleString("th-TH"),
+                      "จำนวนกิจกรรม",
+                    ]}
                     cursor={{
-                      stroke: "#d9d4f9",
-                      strokeWidth: 1,
-                      strokeDasharray: "4 4",
+                      fill: "rgba(104, 70, 245, 0.06)",
                     }}
                   />
 
-                  <Line
-                    type="monotone"
-                    dataKey="activities"
-                    name="กิจกรรมที่สร้าง"
-                    stroke="url(#activityLine)"
-                    strokeWidth={3}
-                    dot={{
-                      r: 3,
-                      fill: "#ffffff",
-                      stroke: "#6846f5",
-                      strokeWidth: 2,
-                    }}
-                    activeDot={{
-                      r: 6,
-                      fill: "#6846f5",
-                      stroke: "#ffffff",
-                      strokeWidth: 3,
-                    }}
+                  <Bar
+                    dataKey="count"
+                    name="จำนวนกิจกรรม"
+                    fill="#6846f5"
+                    radius={[8, 8, 0, 0]}
+                    maxBarSize={46}
                   />
-
-                  <Line
-                    type="monotone"
-                    dataKey="participants"
-                    name="ผู้เข้าร่วม"
-                    stroke="url(#participantLine)"
-                    strokeWidth={3}
-                    dot={{
-                      r: 3,
-                      fill: "#ffffff",
-                      stroke: "#4b91ef",
-                      strokeWidth: 2,
-                    }}
-                    activeDot={{
-                      r: 6,
-                      fill: "#4b91ef",
-                      stroke: "#ffffff",
-                      strokeWidth: 3,
-                    }}
-                  />
-                </LineChart>
+                </BarChart>
               </ResponsiveContainer>
             </div>
           </article>

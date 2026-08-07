@@ -727,6 +727,139 @@ router.get("/chart", auth, isAdmin, async (req, res) => {
   }
 });
 
+/* ========================= CATEGORY CHART ========================= */
+
+router.get("/chart-categories", auth, isAdmin, async (req, res) => {
+  try {
+    const days = validDays(req.query.days);
+
+    const startDate = new Date();
+    startDate.setHours(0, 0, 0, 0);
+    startDate.setDate(startDate.getDate() - (days - 1));
+
+    const categories = [
+      "กีฬา",
+      "เกม",
+      "ดนตรี",
+      "ภาพยนตร์",
+      "อาหาร",
+      "คาเฟ่",
+      "ศิลปะ",
+      "ท่องเที่ยว",
+    ];
+
+    const activities = await Activity.findAll({
+      where: {
+        createdAt: {
+          [Op.gte]: startDate,
+        },
+      },
+      attributes: ["category"],
+      raw: true,
+    });
+
+    const categoryCount = Object.fromEntries(
+      categories.map((category) => [category, 0])
+    );
+
+    activities.forEach((activity) => {
+      let activityCategories = activity.category;
+
+      if (!activityCategories) return;
+
+      // รองรับกรณี category เป็น JSON string
+      if (typeof activityCategories === "string") {
+        try {
+          const parsed = JSON.parse(activityCategories);
+
+          activityCategories = Array.isArray(parsed)
+            ? parsed
+            : [activityCategories];
+        } catch {
+          activityCategories = activityCategories
+            .split(",")
+            .map((item) => item.trim());
+        }
+      }
+
+      if (!Array.isArray(activityCategories)) {
+        activityCategories = [activityCategories];
+      }
+
+      activityCategories.forEach((category) => {
+        if (categoryCount[category] !== undefined) {
+          categoryCount[category] += 1;
+        }
+      });
+    });
+
+    const result = categories.map((category) => ({
+      category,
+      count: categoryCount[category],
+    }));
+
+    return res.json(result);
+  } catch (error) {
+    console.error("Admin category chart error:", error);
+
+    return res.status(500).json({
+      message: "ไม่สามารถโหลดข้อมูลหมวดหมู่กิจกรรมได้",
+    });
+  }
+});
+
+
+/* ========================= ACTIVITY STATUS CHART ========================= */
+
+router.get("/chart-status", auth, isAdmin, async (req, res) => {
+  try {
+    const days = validDays(req.query.days);
+
+    const startDate = new Date();
+    startDate.setHours(0, 0, 0, 0);
+    startDate.setDate(startDate.getDate() - (days - 1));
+
+    const [active, suspended] = await Promise.all([
+      Activity.count({
+        where: {
+          status: "active",
+          createdAt: {
+            [Op.gte]: startDate,
+          },
+        },
+      }),
+
+      Activity.count({
+        where: {
+          status: "suspended",
+          createdAt: {
+            [Op.gte]: startDate,
+          },
+        },
+      }),
+    ]);
+
+    return res.json([
+      {
+        status: "active",
+        name: "เผยแพร่แล้ว",
+        value: active,
+      },
+      {
+        status: "suspended",
+        name: "ระงับแล้ว",
+        value: suspended,
+      },
+    ]);
+  } catch (error) {
+    console.error("Admin activity status chart error:", error);
+
+    return res.status(500).json({
+      message: "ไม่สามารถโหลดข้อมูลสถานะกิจกรรมได้",
+    });
+  }
+});
+
 router.get("/reviews", auth, isAdmin, async (req, res) => {
   try {
     const [activityReviews, hostReviews] = await Promise.all([

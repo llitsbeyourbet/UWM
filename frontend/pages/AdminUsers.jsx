@@ -24,10 +24,7 @@ import API_URL from "../config";
 import "./AdminDashboard.css";
 import "./AdminUsers.css";
 
-const ITEMS_PER_PAGE = 8;
-
-const fallbackAvatar =
-  "https://placehold.co/100x100/EEEAFD/6846F5?text=U";
+const ITEMS_PER_PAGE = 10;
 
 const getUserStatus = (user) => {
   if (
@@ -278,22 +275,6 @@ export default function AdminUsers() {
           </section>
 
           <section className="users-content-card">
-            <nav className="users-tabs">
-              {[
-                ["all", "ทั้งหมด"],
-
-              ].map(([key, label]) => (
-                <button
-                  type="button"
-                  key={key}
-                  className={activeTab === key ? "active" : ""}
-                  onClick={() => setActiveTab(key)}
-                >
-                  {label}
-                  <span>{counts[key]}</span>
-                </button>
-              ))}
-            </nav>
 
             <div className="users-toolbar">
               <label className="users-search">
@@ -367,10 +348,7 @@ export default function AdminUsers() {
                         user.username ||
                         "ไม่ระบุชื่อ";
 
-                      const avatar =
-                        user.profileImage ||
-                        user.avatar ||
-                        fallbackAvatar;
+                      const avatar = user.profileImage || user.avatar;
 
                       const activityCount = Number(
                         user.activityCount ??
@@ -383,14 +361,26 @@ export default function AdminUsers() {
                         <tr key={userId}>
                           <td>
                             <div className="user-profile-cell">
-                              <img
-                                src={avatar}
-                                alt={displayName}
-                                onError={(event) => {
-                                  event.currentTarget.src =
-                                    fallbackAvatar;
-                                }}
-                              />
+                              {avatar ? (
+                                <img
+                                  src={avatar}
+                                  alt={displayName}
+                                  onError={(e) => {
+                                    e.currentTarget.style.display = "none";
+                                    e.currentTarget.nextSibling.style.display = "flex";
+                                  }}
+                                />
+                              ) : null}
+
+                              <div
+                                className="user-avatar-placeholder"
+                                style={{ display: avatar ? "none" : "flex" }}
+                              >
+                                {(user.username || displayName || "U")
+                                  .trim()
+                                  .charAt(0)
+                                  .toUpperCase()}
+                              </div>
 
                               <div>
                                 <strong>{displayName}</strong>

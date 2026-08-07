@@ -342,7 +342,7 @@ export default function AdminActivities() {
                     }
                     aria-label="กรองสถานะกิจกรรม"
                   >
-                    <option value="all">ทุกสถานะ</option>
+                    <option value="all">ทั้งหมด</option>
                     <option value="published">เผยแพร่แล้ว</option>
                     <option value="suspended">ระงับแล้ว</option>
                   </select>
@@ -483,15 +483,7 @@ export default function AdminActivities() {
                           ดูรายละเอียด
                         </button>
 
-                        <button
-                          type="button"
-                          className="activity-manage-button"
-                          onClick={() =>
-                            navigate(`/admin/activities/${activityId}`)
-                          }
-                        >
-                          จัดการ
-                        </button>
+                        
                       </div>
                     </article>
                   );

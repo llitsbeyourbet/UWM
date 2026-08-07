@@ -1362,3 +1362,18 @@
   background: #fef3c7;
   color: #b45309;
 }
+.category-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.category-badge {
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #5b4ff6;
+  font-size: 13px;
+  font-weight: 600;
+}

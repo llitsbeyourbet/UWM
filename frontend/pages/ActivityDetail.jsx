@@ -4,6 +4,7 @@ import { QRCodeCanvas } from "qrcode.react";
 import "./ActivityDetail.css";
 import API_URL from "../config";
 import { formatDate, formatTime } from "../utils/formatDate";
+import { getCategoryIcon } from "../utils/categoryIcons";
 
 function ActivityDetail() {
   const navigate = useNavigate();
@@ -468,6 +469,20 @@ function ActivityDetail() {
           <span>{activity.activityType === "public" ? "สาธารณะ" : "ส่วนตัว"} · {activity.joinedCount || 0}/{activity.participantCount} คน</span>
         </div>
 
+        <div className="category-badges">
+          {(Array.isArray(activity.category)
+            ? activity.category
+            : [activity.category]
+          )
+            .filter(Boolean)
+            .map((category) => (
+              <span key={category} className="category-badge">
+                {getCategoryIcon(category)} {category}
+              </span>
+            ))}
+        </div>
+
+
         <div className="activity-section">
           <h3>About</h3>
           <p>{activity.detail || "-"}</p>
@@ -490,7 +505,7 @@ function ActivityDetail() {
               </div>
               {isOwner && (
                 <span className="user-role-badge me">
-                 👑 ME
+                  👑 ME
                 </span>
               )}
               {hostRating && (
@@ -526,15 +541,15 @@ function ActivityDetail() {
                   </div>
                   <div className="participant-info">
                     <span className="p-name">{p.name}</span>
-                    
+
                     {p.username && <span className="p-username">@{p.username}</span>}
-                    
+
                   </div>
                   {Number(p.id) === Number(currentUser?.id) && (
-                      <span className="user-role-badge member">
+                    <span className="user-role-badge member">
                       👑 ME
-                      </span>
-                    )}
+                    </span>
+                  )}
                 </div>
               ))}
             </div>

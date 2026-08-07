@@ -337,7 +337,7 @@ function ActivitySummaryDetail() {
 
                   <div className="feed-footer-row">
                     <span className="feed-date">
-                      {formatDate(c.createdAt)}
+                      {formatDateTime(c.createdAt)}
                     </span>
                     {isOwner && (
                       <span className={`visibility-badge ${c.isPublic ? "public-type" : "private-type"}`}>
