@@ -25,6 +25,7 @@ function ActivityDetail() {
   const [showReportModal, setShowReportModal] = useState(false);
   const [showReportMenu, setShowReportMenu] = useState(false);
   const [showAllParticipants, setShowAllParticipants] = useState(false);
+  const [visibleReviews, setVisibleReviews] = useState(3);
   const [reportReason, setReportReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
   const [reportLoading, setReportLoading] = useState(false);
@@ -522,15 +523,15 @@ function ActivityDetail() {
         <div className="participants-section">
           <div className="participants-header">
             <h3>ผู้เข้าร่วม ({participants.length})</h3>
-            {participants.length > 3 && (
+            {participants.length > 5 && (
               <button className="view-all-btn" onClick={() => setShowAllParticipants((prev) => !prev)}>
-                {showAllParticipants ? "ย่อรายการ" : "ดูทั้งหมด"}
+                {showAllParticipants ? "ย่อรายการ" : "ดูเพิ่มเติม"}
               </button>
             )}
           </div>
           {participants.length > 0 ? (
             <div className="participants-list">
-              {(showAllParticipants ? participants : participants.slice(0, 3)).map((p) => (
+              {(showAllParticipants ? participants : participants.slice(0, 5)).map((p) => (
                 <div key={p.id} className="participant-item" onClick={() => navigate("/user/" + p.id)}>
                   <div className="p-avatar">
                     {p.profileImage ? (
@@ -579,63 +580,86 @@ function ActivityDetail() {
               </div>
             </div>
             {filteredReviews.length > 0 ? (
-              <div className="comments-list">
-                {filteredReviews.map((rev) => {
-                  const reviewer = rev.user || {};
-                  const reviewerId = rev.userId;
-                  const reviewerName = reviewer.name || "ผู้ใช้งาน";
-                  const reviewerUsername = reviewer.username;
-                  const reviewerImage = reviewer.profileImage;
-                  const imageUrl = reviewerImage ? (reviewerImage.startsWith("http") ? reviewerImage : API_URL + "/uploads/" + reviewerImage) : null;
+              <>
+                <div className="comments-list">
+                  {filteredReviews.slice(0, visibleReviews).map((rev) => {
+                    const reviewer = rev.user || {};
+                    const reviewerId = rev.userId;
+                    const reviewerName = reviewer.name || "ผู้ใช้งาน";
+                    const reviewerUsername = reviewer.username;
+                    const reviewerImage = reviewer.profileImage;
+                    const imageUrl = reviewerImage ? (reviewerImage.startsWith("http") ? reviewerImage : API_URL + "/uploads/" + reviewerImage) : null;
 
-                  return (
-                    <div key={rev.id} className="comment-card">
-                      <div className="comment-header">
-                        <button type="button" className="reviewer-profile" onClick={() => reviewerId && navigate("/user/" + reviewerId)} disabled={!reviewerId}>
-                          <div className="comment-avatar">
-                            {imageUrl ? <img src={imageUrl} alt={reviewerName} /> : <span>{reviewerName?.charAt(0).toUpperCase() || "U"}</span>}
-                          </div>
-                          <div className="reviewer-info">
-                            <span className="reviewer-name">{reviewerName}</span>
-                            {reviewerUsername && <span className="reviewer-username">@{reviewerUsername}</span>}
-                          </div>
-                        </button>
-                        <p className="comment-date">{new Date(rev.createdAt).toLocaleDateString("th-TH")}</p>
-                      </div>
-                      <div className="comment-content-wrap">
-                        <div className="comment-rating-badge">
-                          <span className="type-stars">
-                            {"⭐".repeat(reviewTab === 'host' ? (rev.hostRating || 0) : (rev.activityRating || 0))}
-                          </span>
-                        </div>
-                        <p className="comment-text">
-                          {(reviewTab === 'host' ? rev.hostComment : rev.activityComment)
-                            ? '"' + (reviewTab === 'host' ? rev.hostComment : rev.activityComment) + '"'
-                            : "ไม่มีความคิดเห็น"}
-                        </p>
-                      </div>
-                      <div className="comment-visibility-row">
-                        <span className="visibility-label">
-                          {(reviewTab === 'host' ? rev.hostIsPublic : rev.activityIsPublic) ? "สาธารณะ" : "ส่วนตัว"}
-                        </span>
-                        {isOwner && (
-                          <button
-                            type="button"
-                            className={"comment-toggle-button " + (reviewTab === 'host' ? (rev.hostIsPublic ? "public" : "") : (rev.activityIsPublic ? "public" : ""))}
-                            onClick={() => handleToggleCommentVisibility(
-                              reviewTab === 'host' ? rev.hostCommentId : rev.activityCommentId,
-                              reviewTab === 'host' ? rev.hostIsPublic : rev.activityIsPublic
-                            )}
-                            aria-pressed={reviewTab === 'host' ? rev.hostIsPublic : rev.activityIsPublic}
-                          >
-                            <span className="toggle-thumb" />
+                    return (
+                      <div key={rev.id} className="comment-card">
+                        <div className="comment-header">
+                          <button type="button" className="reviewer-profile" onClick={() => reviewerId && navigate("/user/" + reviewerId)} disabled={!reviewerId}>
+                            <div className="comment-avatar">
+                              {imageUrl ? <img src={imageUrl} alt={reviewerName} /> : <span>{reviewerName?.charAt(0).toUpperCase() || "U"}</span>}
+                            </div>
+                            <div className="reviewer-info">
+                              <span className="reviewer-name">{reviewerName}</span>
+                              {reviewerUsername && <span className="reviewer-username">@{reviewerUsername}</span>}
+                            </div>
                           </button>
-                        )}
+                          <p className="comment-date">{new Date(rev.createdAt).toLocaleDateString("th-TH")}</p>
+                        </div>
+                        <div className="comment-content-wrap">
+                          <div className="comment-rating-badge">
+                            <span className="type-stars">
+                              {"⭐".repeat(reviewTab === 'host' ? (rev.hostRating || 0) : (rev.activityRating || 0))}
+                            </span>
+                          </div>
+                          <p className="comment-text">
+                            {(reviewTab === 'host' ? rev.hostComment : rev.activityComment)
+                              ? '"' + (reviewTab === 'host' ? rev.hostComment : rev.activityComment) + '"'
+                              : "ไม่มีความคิดเห็น"}
+                          </p>
+                        </div>
+                        <div className="comment-visibility-row">
+                          <span className="visibility-label">
+                            {(reviewTab === 'host' ? rev.hostIsPublic : rev.activityIsPublic) ? "สาธารณะ" : "ส่วนตัว"}
+                          </span>
+                          {isOwner && (
+                            <button
+                              type="button"
+                              className={"comment-toggle-button " + (reviewTab === 'host' ? (rev.hostIsPublic ? "public" : "") : (rev.activityIsPublic ? "public" : ""))}
+                              onClick={() => handleToggleCommentVisibility(
+                                reviewTab === 'host' ? rev.hostCommentId : rev.activityCommentId,
+                                reviewTab === 'host' ? rev.hostIsPublic : rev.activityIsPublic
+                              )}
+                              aria-pressed={reviewTab === 'host' ? rev.hostIsPublic : rev.activityIsPublic}
+                            >
+                              <span className="toggle-thumb" />
+                            </button>
+                          )}
+                        </div>
                       </div>
+                    );
+                  })}
+                </div>
+                {filteredReviews.length > visibleReviews ? (
+                  <div className="show-more-container">
+                    <button
+                      className="show-more-btn"
+                      onClick={() => setVisibleReviews(prev => prev + 5)}
+                    >
+                      ดูรีวิวเพิ่มเติม ({filteredReviews.length - visibleReviews} รีวิว)
+                    </button>
+                  </div>
+                ) : (
+                  visibleReviews > 3 && (
+                    <div className="show-more-container">
+                      <button
+                        className="show-more-btn"
+                        onClick={() => setVisibleReviews(3)}
+                      >
+                        แสดงน้อยลง
+                      </button>
                     </div>
-                  );
-                })}
-              </div>
+                  )
+                )}
+              </>
             ) : (
               <p className="no-comments">ไม่พบรีวิวในหมวดนี้</p>
             )}

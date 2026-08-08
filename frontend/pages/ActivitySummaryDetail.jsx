@@ -11,10 +11,15 @@ function ActivitySummaryDetail() {
   const [activity, setActivity] = useState(null);
   const [rating, setRating] = useState(null);
   const [attendance, setAttendance] = useState(null);
+  const [participants, setParticipants] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [isOwner, setIsOwner] = useState(false);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+
+  const [showAllParticipants, setShowAllParticipants] = useState(false);
+  const [showAllCheckedIn, setShowAllCheckedIn] = useState(false);
+  const [visibleReviews, setVisibleReviews] = useState(3);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -33,11 +38,12 @@ function ActivitySummaryDetail() {
           console.log("Error checking user context:", err);
         }
 
-        const [actRes, ratingRes, partRes, revRes] = await Promise.all([
+        const [actRes, ratingRes, partRes, revRes, participantsRes] = await Promise.all([
           fetch(`${API_URL}/api/activities/${id}`),
           fetch(`${API_URL}/api/review/activity/${id}/rating`),
           fetch(`${API_URL}/api/activities/${id}/summary-participants`),
-          fetch(`${API_URL}/api/review/activity/${id}/detailed-reviews`)
+          fetch(`${API_URL}/api/review/activity/${id}/detailed-reviews`),
+          fetch(`${API_URL}/api/activities/${id}/participants`)
         ]);
 
         if (!actRes.ok) {
@@ -61,6 +67,11 @@ function ActivitySummaryDetail() {
         if (revRes.ok) {
           const revData = await revRes.json();
           setReviews(Array.isArray(revData) ? revData : revData.reviews || []);
+        }
+
+        if (participantsRes.ok) {
+          const pData = await participantsRes.json();
+          setParticipants(Array.isArray(pData) ? pData : []);
         }
 
         if (user && activityData.createdBy === user.id) {
@@ -153,59 +164,99 @@ function ActivitySummaryDetail() {
             <span className="box-value">{notCheckedIn} <small>คน</small></span>
           </div>
         </div>
-
-        <div className="attendance-visuals-row">
-          <div className="circle-progress-wrap">
-            <div className="circle-progress" style={{ background: `conic-gradient(#2ecc71 ${checkInRate}%, #edf2f7 0)` }}>
-              <div className="circle-inner">
-                <span className="rate-num">{checkInRate}%</span>
-                <span className="rate-label">อัตราเช็คอิน</span>
-              </div>
-            </div>
-          </div>
-          <div className="attendance-bar-side">
-            <div className="progress-bar-bg">
-              <div className="progress-bar-fill" style={{ width: `${checkInRate}%` }}></div>
-            </div>
-            <p className="attendance-calc-hint">สัดส่วนเช็คอิน: <strong>{checkedIn}</strong> จาก <strong>{total}</strong> คน</p>
-          </div>
-        </div>
       </div>
 
-      {/* 4. รายชื่อผู้เช็คอิน */}
+      {/* 4. รายชื่อผู้เข้าร่วมทั้งหมด */}
+      <div className="section-card">
+        <h4 className="section-title">รายชื่อผู้เข้าร่วมทั้งหมด ({participants.length})</h4>
+        <div className="participants-avatars-list">
+          {participants.length > 0 ? (
+            participants
+              .slice(0, showAllParticipants ? participants.length : 10)
+              .map((p) => {
+                const pImage = p.profileImage;
+                const imageUrl = pImage
+                  ? pImage.startsWith("http") ? pImage : `${API_URL}/uploads/${pImage}`
+                  : null;
+
+                return (
+                  <div
+                    key={p.id}
+                    className="participant-avatar-item"
+                    title={`${p.name} (@${p.username || ""})`}
+                    onClick={() => navigate(`/user/${p.id}`)}
+                  >
+                    {imageUrl ? (
+                      <img src={imageUrl} alt={p.name} />
+                    ) : (
+                      <div className="avatar-placeholder">{p.name?.charAt(0).toUpperCase() || "U"}</div>
+                    )}
+                    <span className="avatar-mini-name">{p.name?.split(" ")[0]}</span>
+                  </div>
+                );
+              })
+          ) : (
+            <p className="empty-text">ยังไม่มีผู้เข้าร่วมกิจกรรม</p>
+          )}
+        </div>
+        {participants.length > 10 && (
+          <div className="show-more-container">
+            <button
+              className="show-more-btn"
+              onClick={() => setShowAllParticipants(!showAllParticipants)}
+            >
+              {showAllParticipants ? "แสดงน้อยลง" : `ดูเพิ่มเติม (${participants.length - 10} คน)`}
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* 5. รายชื่อผู้เช็คอิน */}
       <div className="section-card">
         <h4 className="section-title">รายชื่อผู้เช็คอิน ({checkedIn})</h4>
         <div className="participants-avatars-list">
           {attendance?.checkedIn?.length > 0 ? (
-            attendance.checkedIn.map((p) => {
-              const pImage = p.profileImage;
-              const imageUrl = pImage
-                ? pImage.startsWith("http") ? pImage : `${API_URL}/uploads/${pImage}`
-                : null;
+            attendance.checkedIn
+              .slice(0, showAllCheckedIn ? attendance.checkedIn.length : 10)
+              .map((p) => {
+                const pImage = p.profileImage;
+                const imageUrl = pImage
+                  ? pImage.startsWith("http") ? pImage : `${API_URL}/uploads/${pImage}`
+                  : null;
 
-              return (
-                <div
-                  key={p.id}
-                  className="participant-avatar-item"
-                  title={`${p.name} (@${p.username || ""})`}
-                  onClick={() => navigate(`/user/${p.id}`)}
-                >
-                  {imageUrl ? (
-                    <img src={imageUrl} alt={p.name} />
-                  ) : (
-                    <div className="avatar-placeholder">{p.name?.charAt(0).toUpperCase() || "U"}</div>
-                  )}
-                  <span className="avatar-mini-name">{p.name?.split(" ")[0]}</span>
-                </div>
-              );
-            })
+                return (
+                  <div
+                    key={p.id}
+                    className="participant-avatar-item"
+                    title={`${p.name} (@${p.username || ""})`}
+                    onClick={() => navigate(`/user/${p.id}`)}
+                  >
+                    {imageUrl ? (
+                      <img src={imageUrl} alt={p.name} />
+                    ) : (
+                      <div className="avatar-placeholder">{p.name?.charAt(0).toUpperCase() || "U"}</div>
+                    )}
+                    <span className="avatar-mini-name">{p.name?.split(" ")[0]}</span>
+                  </div>
+                );
+              })
           ) : (
             <p className="empty-text">ไม่มีรายชื่อผู้เช็คอิน</p>
           )}
         </div>
+        {attendance?.checkedIn?.length > 10 && (
+          <div className="show-more-container">
+            <button
+              className="show-more-btn"
+              onClick={() => setShowAllCheckedIn(!showAllCheckedIn)}
+            >
+              {showAllCheckedIn ? "แสดงน้อยลง" : `ดูเพิ่มเติม (${attendance.checkedIn.length - 10} คน)`}
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* 5. สรุปผลการรีวิวและความคิดเห็น */}
+      {/* 6. สรุปผลการรีวิวและความคิดเห็น */}
       <div className="section-card">
         <h4 className="section-title">สรุปผลการรีวิว</h4>
 
@@ -238,116 +289,146 @@ function ActivitySummaryDetail() {
           <div className="divider-vertical"></div>
           <div className="review-count-box">
             <span className="score-title">จำนวนรีวิว</span>
-            <span className="review-big-num">{rating?.totalReviews || 0} <span className="review-small-label">รีวิว</span></span>
+            <div className="score-big">
+              <span className="review-big-num">{rating?.totalReviews || 0} <span className="review-small-label">รีวิว</span></span>
+            </div>
+            <div className="stars-row" style={{ visibility: 'hidden' }}>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <span key={i} className="star-icon">★</span>
+              ))}
+            </div>
           </div>
         </div>
 
         <div className="reviews-feed-list">
           <h5 className="sub-section-title">รายละเอียดรีวิวจากผู้เข้าร่วม</h5>
           {reviews.length > 0 ? (
-            reviews.map((c) => {
-              const reviewer = c.user || c.reviewer || {
-                id: c.userId || c.reviewerId
-              };
-              const reviewerName = reviewer.name || c.userName || c.reviewerName || "ผู้ใช้งานทั่วไป";
+            <>
+              {reviews.slice(0, visibleReviews).map((c) => {
+                const reviewer = c.user || c.reviewer || {
+                  id: c.userId || c.reviewerId
+                };
+                const reviewerName = reviewer.name || c.userName || c.reviewerName || "ผู้ใช้งานทั่วไป";
 
-              const ratingValue = c.rating !== undefined && c.rating !== null ? c.rating : (c.activityRating || 0);
+                const ratingValue = c.rating !== undefined && c.rating !== null ? c.rating : (c.activityRating || 0);
 
-              const pImage = reviewer.profileImage || c.profileImage;
-              const imageUrl = pImage
-                ? pImage.startsWith("http") ? pImage : `${API_URL}/uploads/${pImage}`
-                : null;
+                const pImage = reviewer.profileImage || c.profileImage;
+                const imageUrl = pImage
+                  ? pImage.startsWith("http") ? pImage : `${API_URL}/uploads/${pImage}`
+                  : null;
 
-              return (
-                <div key={c.id} className="review-feed-item">
-                  <div className="review-feed-header">
-                    <div
-                      className="feed-user-wrap"
-                      onClick={() => navigate(`/user/${reviewer.id}`)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      <div className="feed-avatar-wrap">
-                        {imageUrl ? (
-                          <img src={imageUrl} alt={reviewerName} className="feed-user-avatar" />
-                        ) : (
-                          <div className="avatar-placeholder" style={{ width: '100%', height: '100%', fontSize: '0.9rem' }}>
-                            {reviewerName.charAt(0).toUpperCase()}
-                          </div>
-                        )}
-                      </div>
-                      <div className="feed-user-info">
-                        <span className="feed-user-name">{reviewerName}</span>
-                        <div className="feed-stars-row" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            <span style={{ fontSize: '0.6rem', color: '#888' }}>กิจกรรม:</span>
-                            <div className="stars-row">
-                              {Array.from({ length: 5 }).map((_, i) => {
-                                const isActive = i < ratingValue;
-                                return <span key={i} className={`star-icon ${isActive ? 'active' : ''}`}>★</span>;
-                              })}
+                return (
+                  <div key={c.id} className="review-feed-item">
+                    <div className="review-feed-header">
+                      <div
+                        className="feed-user-wrap"
+                        onClick={() => navigate(`/user/${reviewer.id}`)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <div className="feed-avatar-wrap">
+                          {imageUrl ? (
+                            <img src={imageUrl} alt={reviewerName} className="feed-user-avatar" />
+                          ) : (
+                            <div className="avatar-placeholder" style={{ width: '100%', height: '100%', fontSize: '0.9rem' }}>
+                              {reviewerName.charAt(0).toUpperCase()}
                             </div>
-                          </div>
-                          <span style={{ color: '#ddd', fontSize: '0.8rem' }}>|</span>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            <span style={{ fontSize: '0.6rem', color: '#888' }}>ผู้สร้างกิจกรรม:</span>
-                            <div className="stars-row">
-                              {Array.from({ length: 5 }).map((_, i) => {
-                                const isActive = i < (c.hostRating || 0);
-                                return <span key={i} className={`star-icon ${isActive ? 'active' : ''}`}>★</span>;
-                              })}
+                          )}
+                        </div>
+                        <div className="feed-user-info">
+                          <span className="feed-user-name">{reviewerName}</span>
+                          <div className="feed-stars-row" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <span style={{ fontSize: '0.6rem', color: '#888', whiteSpace: 'nowrap' }}>กิจกรรม:</span>
+                              <div className="stars-row">
+                                {Array.from({ length: 5 }).map((_, i) => {
+                                  const isActive = i < ratingValue;
+                                  return <span key={i} className={`star-icon ${isActive ? 'active' : ''}`}>★</span>;
+                                })}
+                              </div>
+                            </div>
+                            <span style={{ color: '#ddd', fontSize: '0.8rem' }}>|</span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <span style={{ fontSize: '0.6rem', color: '#888', whiteSpace: 'nowrap' }}>ผู้สร้างกิจกรรม:</span>
+                              <div className="stars-row">
+                                {Array.from({ length: 5 }).map((_, i) => {
+                                  const isActive = i < (c.hostRating || 0);
+                                  return <span key={i} className={`star-icon ${isActive ? 'active' : ''}`}>★</span>;
+                                })}
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="feed-comment-section" style={{ paddingLeft: '1rem', marginTop: '0.5rem' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                      <div style={{
-                        backgroundColor: '#fcfbfa',
-                        padding: '8px 12px',
-                        borderRadius: '8px',
-                        borderLeft: '3px solid #7d5fff',
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-                        borderRight: '1px solid #eee',
-                        borderTop: '1px solid #eee',
-                        borderBottom: '1px solid #eee'
-                      }}>
-                        <p className="feed-comment-text" style={{ marginBottom: '0', paddingLeft: '0' }}>
-                          <strong style={{ fontSize: '0.7rem', color: '#7d5fff', display: 'block', marginBottom: '2px' }}>กิจกรรม:</strong> {c.activityComment ? `"${c.activityComment}"` : "ไม่มีความคิดเห็น"}
-                        </p>
-                      </div>
-                      <div style={{
-                        backgroundColor: '#fcfbfa',
-                        padding: '8px 12px',
-                        borderRadius: '8px',
-                        borderLeft: '3px solid #0369a1',
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-                        borderRight: '1px solid #eee',
-                        borderTop: '1px solid #eee',
-                        borderBottom: '1px solid #eee'
-                      }}>
-                        <p className="feed-comment-text" style={{ marginBottom: '0', paddingLeft: '0' }}>
-                          <strong style={{ fontSize: '0.7rem', color: '#0369a1', display: 'block', marginBottom: '2px' }}>ผู้สร้างกิจกรรม:</strong> {c.hostComment ? `"${c.hostComment}"` : "ไม่มีความคิดเห็น"}
-                        </p>
+                    <div className="feed-comment-section" style={{ paddingLeft: '1rem', marginTop: '0.5rem' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                        <div style={{
+                          backgroundColor: '#fcfbfa',
+                          padding: '8px 12px',
+                          borderRadius: '8px',
+                          borderLeft: '3px solid #7d5fff',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+                          borderRight: '1px solid #eee',
+                          borderTop: '1px solid #eee',
+                          borderBottom: '1px solid #eee'
+                        }}>
+                          <p className="feed-comment-text" style={{ marginBottom: '0', paddingLeft: '0' }}>
+                            <strong style={{ fontSize: '0.7rem', color: '#7d5fff', display: 'block', marginBottom: '2px' }}>กิจกรรม:</strong> {c.activityComment ? `"${c.activityComment}"` : "ไม่มีความคิดเห็น"}
+                          </p>
+                        </div>
+                        <div style={{
+                          backgroundColor: '#fcfbfa',
+                          padding: '8px 12px',
+                          borderRadius: '8px',
+                          borderLeft: '3px solid #0369a1',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+                          borderRight: '1px solid #eee',
+                          borderTop: '1px solid #eee',
+                          borderBottom: '1px solid #eee'
+                        }}>
+                          <p className="feed-comment-text" style={{ marginBottom: '0', paddingLeft: '0' }}>
+                            <strong style={{ fontSize: '0.7rem', color: '#0369a1', display: 'block', marginBottom: '2px' }}>ผู้สร้างกิจกรรม:</strong> {c.hostComment ? `"${c.hostComment}"` : "ไม่มีความคิดเห็น"}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="feed-footer-row">
-                    <span className="feed-date">
-                      {formatDateTime(c.createdAt)}
-                    </span>
-                    {isOwner && (
-                      <span className={`visibility-badge ${c.isPublic ? "public-type" : "private-type"}`}>
-                        {c.isPublic ? "แสดงสาธารณะ" : "เห็นเฉพาะเจ้าของ"}
+                    <div className="feed-footer-row">
+                      <span className="feed-date">
+                        {formatDateTime(c.createdAt)}
                       </span>
-                    )}
+                      {isOwner && (
+                        <span className={`visibility-badge ${c.isPublic ? "public-type" : "private-type"}`}>
+                          {c.isPublic ? "แสดงสาธารณะ" : "เห็นเฉพาะเจ้าของ"}
+                        </span>
+                      )}
+                    </div>
                   </div>
+                );
+              })}
+              {reviews.length > visibleReviews ? (
+                <div className="show-more-container">
+                  <button
+                    className="show-more-btn"
+                    onClick={() => setVisibleReviews(prev => prev + 5)}
+                  >
+                    ดูรีวิวเพิ่มเติม ({reviews.length - visibleReviews} รีวิว)
+                  </button>
                 </div>
-              );
-            })
+              ) : (
+                visibleReviews > 3 && (
+                  <div className="show-more-container">
+                    <button
+                      className="show-more-btn"
+                      onClick={() => setVisibleReviews(3)}
+                    >
+                      แสดงน้อยลง
+                    </button>
+                  </div>
+                )
+              )}
+            </>
           ) : (
             <p className="empty-text">ยังไม่มีรีวิวสำหรับกิจกรรมนี้</p>
           )}

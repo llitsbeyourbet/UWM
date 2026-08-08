@@ -1377,3 +1377,27 @@
   font-size: 13px;
   font-weight: 600;
 }
+
+.show-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.show-more-btn {
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  color: #6b7280;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Sarabun', sans-serif;
+}
+
+.show-more-btn:hover {
+  background-color: #e5e7eb;
+  color: #374151;
+}
