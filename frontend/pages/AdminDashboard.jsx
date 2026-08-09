@@ -231,9 +231,15 @@ export default function AdminDashboard() {
     navigate("/login");
   };
 
-  const totalParticipants = Number(stats.totalParticipants) || 0;
   const totalReviews = Number(stats.totalReviews) || 0;
   const pending = Number(stats.pendingReports) || 0;
+
+  const publishedActivities =
+    Number(stats.publishedActivities) || 0;
+
+  const suspendedActivities =
+    Number(stats.suspendedActivities) || 0;
+    
   const adminName = admin.name || admin.username || "Admin";
 
   const newestUsers = users
@@ -344,16 +350,22 @@ export default function AdminDashboard() {
 
           <Stat
             color="green"
-            icon={<FiUsers />}
-            title="ผู้ใช้งานทั้งหมด"
-            value={stats.totalUsers || users.length}
+            icon={<FiActivity />}
+            title="กิจกรรมที่เผยแพร่"
+            value={publishedActivities}
+          />
+          <Stat
+            color="red"
+            icon={<FiFlag />}
+            title="กิจกรรมที่ถูกระงับ"
+            value={suspendedActivities}
           />
 
           <Stat
             color="blue"
-            icon={<MdGroups />}
-            title="ผู้เข้าร่วมกิจกรรม"
-            value={totalParticipants}
+            icon={<FiUsers />}
+            title="ผู้ใช้งานทั้งหมด"
+            value={stats.totalUsers || users.length}
           />
 
           <Stat
@@ -366,7 +378,7 @@ export default function AdminDashboard() {
           <Stat
             color="red"
             icon={<FiFlag />}
-            title="รายงานล่าสุด"
+            title="รายงานรอตรวจสอบ"
             value={pending}
             danger
           />
@@ -395,7 +407,7 @@ export default function AdminDashboard() {
                 <BarChart
                   data={categoryChart}
                   layout="vertical"
-                  margin={{ top: 10, right: 45, left: 0, bottom: 30 }}
+                  margin={{ top: 5, right: 45, left: 0, bottom: 20 }}
                 >
                   <CartesianGrid
                     stroke="#eef0f6"
@@ -427,8 +439,8 @@ export default function AdminDashboard() {
                     axisLine={false}
                     tickLine={false}
                     width={115}
-                    intervals={0}
-                    tick={<CategoryTick/>}
+                    interval={0}
+                    tick={<CategoryTick />}
                   />
 
                   <Tooltip

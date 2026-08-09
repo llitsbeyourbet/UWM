@@ -53,6 +53,7 @@ router.get("/dashboard", auth, isAdmin, async (req, res) => {
       totalActivities,
       totalReports,
       pendingReports,
+      publishedActivities,
       suspendedActivities,
       totalCheckins,
       totalParticipants,
@@ -62,6 +63,7 @@ router.get("/dashboard", auth, isAdmin, async (req, res) => {
       Activity.count(),
       Report.count(),
       Report.count({ where: { status: "pending" } }),
+      Activity.count({ where: { status: "active" } }),
       Activity.count({ where: { status: "suspended" } }),
       JoinRequest.count({ where: { status: "checked_in" } }),
       JoinRequest.count({
@@ -71,12 +73,18 @@ router.get("/dashboard", auth, isAdmin, async (req, res) => {
           },
         },
       }),
-      ActivityReview.count(),
+      Promise.all([
+        ActivityReview.count(),
+        HostReview.count(),
+      ]).then(([activityReviews, hostReviews]) => {
+        return activityReviews + hostReviews;
+      }),
     ]);
 
     return res.json({
       totalUsers,
       totalActivities,
+      publishedActivities,
       totalReports,
       pendingReports,
       suspendedActivities,
@@ -479,18 +487,18 @@ router.get("/activities", auth, isAdmin, async (req, res) => {
 
     const creators = creatorIds.length
       ? await User.findAll({
-          where: {
-            id: {
-              [Op.in]: creatorIds,
-            },
+        where: {
+          id: {
+            [Op.in]: creatorIds,
           },
-          attributes: [
-            "id",
-            "username",
-            "name",
-            "profileImage",
-          ],
-        })
+        },
+        attributes: [
+          "id",
+          "username",
+          "name",
+          "profileImage",
+        ],
+      })
       : [];
 
     const creatorMap = new Map(
@@ -819,40 +827,94 @@ router.get("/chart-status", auth, isAdmin, async (req, res) => {
     startDate.setHours(0, 0, 0, 0);
     startDate.setDate(startDate.getDate() - (days - 1));
 
-    const [active, suspended] = await Promise.all([
-      Activity.count({
-        where: {
-          status: "active",
-          createdAt: {
-            [Op.gte]: startDate,
-          },
+    const activities = await Activity.findAll({
+      where: {
+        createdAt: {
+          [Op.gte]: startDate,
         },
-      }),
+      },
+      attributes: [
+        "id",
+        "date",
+        "time",
+        "endTime",
+        "status",
+      ],
+      raw: true,
+    });
 
-      Activity.count({
-        where: {
-          status: "suspended",
-          createdAt: {
-            [Op.gte]: startDate,
-          },
-        },
-      }),
-    ]);
+    const counts = {
+      upcoming: 0,
+      ongoing: 0,
+      ended: 0,
+      suspended: 0,
+    };
+
+    const now = new Date();
+
+    activities.forEach((activity) => {
+      // กิจกรรมที่ถูกระงับ ให้นับเป็น "ระงับแล้ว" ก่อน
+      if (activity.status === "suspended") {
+        counts.suspended += 1;
+        return;
+      }
+
+      if (!activity.date || !activity.time) {
+        return;
+      }
+
+      const date =
+        activity.date instanceof Date
+          ? activity.date.toISOString().split("T")[0]
+          : String(activity.date).split("T")[0];
+
+      const startDateTime = new Date(
+        `${date}T${activity.time}`
+      );
+
+      const endDateTime = new Date(
+        `${date}T${activity.endTime || activity.time}`
+      );
+
+      if (now < startDateTime) {
+        counts.upcoming += 1;
+      } else if (
+        now >= startDateTime &&
+        now <= endDateTime
+      ) {
+        counts.ongoing += 1;
+      } else {
+        counts.ended += 1;
+      }
+    });
 
     return res.json([
       {
-        status: "active",
-        name: "เผยแพร่แล้ว",
-        value: active,
+        status: "upcoming",
+        name: "ยังไม่เริ่ม",
+        value: counts.upcoming,
+      },
+      {
+        status: "ongoing",
+        name: "กำลังดำเนินการ",
+        value: counts.ongoing,
+      },
+      {
+        status: "ended",
+        name: "สิ้นสุดแล้ว",
+        value: counts.ended,
       },
       {
         status: "suspended",
         name: "ระงับแล้ว",
-        value: suspended,
+        value: counts.suspended,
       },
     ]);
   } catch (error) {
-    console.error("Admin activity status chart error:", error);
+    console.error(
+      "Admin activity status chart error:",
+      error
+    );
 
     return res.status(500).json({
       message: "ไม่สามารถโหลดข้อมูลสถานะกิจกรรมได้",
