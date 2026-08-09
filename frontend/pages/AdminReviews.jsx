@@ -128,37 +128,11 @@ export default function AdminReviews() {
     const [error, setError] = useState("");
 
     const navItems = [
-        {
-            label: "ภาพรวม",
-            icon: <FiGrid />,
-            path: "/admin",
-        },
-        {
-            label: "กิจกรรม",
-            icon: <FiCalendar />,
-            path: "/admin/activities",
-        },
-        {
-            label: "ผู้ใช้งาน",
-            icon: <FiUsers />,
-            path: "/admin/users",
-        },
-        {
-            label: "รายงานกิจกรรม",
-            icon: <FiFlag />,
-            path: "/admin/reports",
-        },
-        {
-            label: "การแจ้งเตือน",
-            icon: <FiBell />,
-            path: "/admin/notifications",
-        },
-        {
-            label: "รีวิว",
-            icon: <FiStar />,
-            path: "/admin/reviews",
-            active: true,
-        },
+        {label: "ภาพรวม", icon: <FiGrid />, path: "/admin",},
+        {label: "กิจกรรม", icon: <FiCalendar />, path: "/admin/activities",},
+        {label: "ผู้ใช้งาน", icon: <FiUsers />, path: "/admin/users",},
+        {label: "รายงานกิจกรรม", icon: <FiFlag />, path: "/admin/reports",},
+        {label: "รีวิว", icon: <FiStar />, path: "/admin/reviews",active: true,},
     ];
 
     useEffect(() => {
@@ -419,7 +393,7 @@ export default function AdminReviews() {
                             </span>
 
                             <div>
-                                <h1>จัดการรีวิว</h1>
+                                <h1>ตรวจสอบรีวิว</h1>
                                 <p>
                                     ตรวจสอบรีวิวกิจกรรมและผู้จัดกิจกรรมทั้งหมดในระบบ
                                 </p>

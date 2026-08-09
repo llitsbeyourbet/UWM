@@ -21,7 +21,6 @@ import UserProfile from "./pages/UserProfile";
 import { SocketProvider } from "./src/context/SocketContext";
 import ActivitySummary from "./pages/ActivitySummary";
 import ActivitySummaryDetail from "./pages/ActivitySummaryDetail";
-import AdminNotifications from "./pages/AdminNotifications";
 import AdminReports from "./pages/AdminReports";
 import AdminActivities from "./pages/AdminActivities";
 import AdminUsers from "./pages/AdminUsers";
@@ -65,7 +64,6 @@ function App() {
             <Route path="/scan" element={<ScanQR />} />
             <Route path="/activity-summary" element={<ProtectedRoute><ActivitySummary /></ProtectedRoute>} />
             <Route path="/activity-summary/:id" element={<ProtectedRoute><ActivitySummaryDetail /></ProtectedRoute>} />
-            <Route path="/admin/notifications" element={<AdminNotifications />}/>
             <Route path="/admin/reports" element={<AdminReports />} />
             <Route path="/admin/activities" element={<AdminActivities />}/>
             <Route path="/admin/users" element={<AdminUsers />} />

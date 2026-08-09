@@ -4,6 +4,7 @@ import {
     FiAlertTriangle,
     FiBell,
     FiCalendar,
+    FiClock,
     FiChevronLeft,
     FiChevronRight,
     FiEye,
@@ -18,11 +19,10 @@ import {
     FiUsers,
 } from "react-icons/fi";
 import { MdGroups } from "react-icons/md";
-
 import API_URL from "../config";
-
 import "./AdminDashboard.css";
 import "./AdminReports.css";
+import { formatDate, formatTime, formatDateTime, formatDateTimeDate, formatDateTimeTime } from "../utils/formatDate";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -33,16 +33,8 @@ const statusLabel = {
     pending: "รอการตรวจสอบ",
     reviewing: "กำลังตรวจสอบ",
     resolved: "ดำเนินการแล้ว",
-    rejected: "ยกเลิกรายงาน",
+    rejected: "ปฏิเสธการรายงาน",
 };
-const navItems = [
-    ["ภาพรวม", <FiGrid />, "/admin", false],
-    ["กิจกรรม", <FiCalendar />, "/admin/activities", false],
-    ["ผู้ใช้งาน", <FiUsers />, "/admin/users", false],
-    ["รายงานกิจกรรม", <FiFlag />, "/admin/reports", true],
-    ["การแจ้งเตือน", <FiBell />, "/admin/notifications", false],
-    ["รีวิว", <FiStar />, "/admin/reviews", false],
-];
 
 const normalizeStatus = (value) => {
     const status = String(value || "pending").toLowerCase();
@@ -60,22 +52,6 @@ const normalizeStatus = (value) => {
     }
 
     return "pending";
-};
-
-const formatDate = (value) => {
-    if (!value) return "-";
-
-    const date = new Date(value);
-
-    if (Number.isNaN(date.getTime())) return "-";
-
-    return date.toLocaleString("th-TH", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-    });
 };
 
 const timeAgo = (value) => {
@@ -170,14 +146,16 @@ function AdminReports() {
         return reports.reduce(
             (result, report) => {
                 const status = normalizeStatus(report.status);
-
                 result.all += 1;
                 result[status] += 1;
-
+                if (["pending", "reviewing"].includes(status)) {
+                    result.latest += 1;
+                }
                 return result;
             },
             {
                 all: 0,
+                latest: 0,
                 pending: 0,
                 reviewing: 0,
                 resolved: 0,
@@ -186,6 +164,14 @@ function AdminReports() {
         );
     }, [reports]);
 
+    const navItems = [
+        ["ภาพรวม", <FiGrid />, "/admin", false],
+        ["กิจกรรม", <FiCalendar />, "/admin/activities", false],
+        ["ผู้ใช้งาน", <FiUsers />, "/admin/users", false],
+        ["รายงานกิจกรรม", <FiFlag />, "/admin/reports", true, counts.latest,],
+        ["รีวิว", <FiStar />, "/admin/reviews", false],
+    ];
+
     const filteredReports = useMemo(() => {
         const keyword = search.trim().toLowerCase();
 
@@ -193,7 +179,9 @@ function AdminReports() {
             const currentStatus = normalizeStatus(report.status);
 
             const matchesStatus =
-                activeStatus === "all" || currentStatus === activeStatus;
+                activeStatus === "latest"
+                    ? ["pending", "reviewing"].includes(currentStatus)
+                    : activeStatus === "all" || currentStatus === activeStatus;
 
             const searchableText = [
                 report.activityName,
@@ -214,10 +202,22 @@ function AdminReports() {
         });
 
         return [...result].sort((a, b) => {
-            const dateA = new Date(a.createdAt || a.reportedAt || 0).getTime();
-            const dateB = new Date(b.createdAt || b.reportedAt || 0).getTime();
+            const dateA = new Date(
+                a.createdAt || a.reportedAt || 0
+            ).getTime();
 
-            return sortOrder === "oldest" ? dateA - dateB : dateB - dateA;
+            const dateB = new Date(
+                b.createdAt || b.reportedAt || 0
+            ).getTime();
+
+            // รายงานล่าสุด = เรียงตามคิว เก่าสุดก่อน
+            if (activeStatus === "latest") {
+                return dateA - dateB;
+            }
+
+            return sortOrder === "oldest"
+                ? dateA - dateB
+                : dateB - dateA;
         });
     }, [reports, activeStatus, search, sortOrder]);
 
@@ -272,10 +272,14 @@ function AdminReports() {
 
     const tabs = [
         { key: "all", label: "ทั้งหมด" },
+        { key: "latest", label: "รายงานล่าสุด" },
         { key: "pending", label: "รอการตรวจสอบ" },
         { key: "reviewing", label: "กำลังตรวจสอบ" },
         { key: "resolved", label: "ดำเนินการแล้ว" },
+        { key: "rejected", label: "ปฏิเสธการระงับ" },
     ];
+
+
 
     return (
         <div className="admin-shell">
@@ -301,6 +305,12 @@ function AdminReports() {
                         >
                             <span>{icon}</span>
                             <b>{label}</b>
+
+                            {badge > 0 && (
+                                <i className="admin-nav-badge">
+                                    {badge > 99 ? "99+" : badge}
+                                </i>
+                            )}
                         </button>
                     ))}
                 </nav>
@@ -321,15 +331,6 @@ function AdminReports() {
                             <span>/</span>
                             <strong>รายงานกิจกรรม</strong>
                         </div>
-
-                        <button
-                            type="button"
-                            className="reports-notification-button"
-                            onClick={() => navigate("/admin/notifications")}
-                            aria-label="เปิดการแจ้งเตือน"
-                        >
-                            <FiBell />
-                        </button>
                     </header>
 
                     <main className="reports-panel">
@@ -362,13 +363,10 @@ function AdminReports() {
                                     {tab.label}
 
                                     <span
-                                        className={
-                                            tab.key === "pending" && counts[tab.key] > 0
-                                                ? "urgent"
-                                                : ""
-                                        }
+                                        className={`tab-count ${tab.key === "latest" && counts.latest > 0 ? "alert" : ""
+                                            }`}
                                     >
-                                        {counts[tab.key].toLocaleString("th-TH")}
+                                        {counts[tab.key] || 0}
                                     </span>
                                 </button>
                             ))}
@@ -382,11 +380,12 @@ function AdminReports() {
                                         onChange={(event) => setActiveStatus(event.target.value)}
                                         aria-label="กรองตามสถานะ"
                                     >
-                                        <option value="all">ทุกสถานะ</option>
+                                        <option value="all">ทั้งหมด</option>
+                                        <option value="latest">รายงานล่าสุด</option>
                                         <option value="pending">รอการตรวจสอบ</option>
                                         <option value="reviewing">กำลังตรวจสอบ</option>
                                         <option value="resolved">ดำเนินการแล้ว</option>
-                                        <option value="rejected">ยกเลิกรายงาน</option>
+                                        <option value="rejected">ปฏิเสธการระงับ</option>
                                     </select>
                                 </label>
 
@@ -447,13 +446,8 @@ function AdminReports() {
                                         report.activity?.coverImage ||
                                         report.activity?.image ||
                                         FALLBACK_IMAGE;
-
                                     return (
                                         <article className="report-card" key={reportId}>
-                                            <span className="report-warning-icon">
-                                                <FiAlertTriangle />
-                                            </span>
-
                                             <img
                                                 className="report-activity-image"
                                                 src={activityImage}
@@ -462,11 +456,9 @@ function AdminReports() {
                                                     event.currentTarget.src = FALLBACK_IMAGE;
                                                 }}
                                             />
-
                                             <div className="report-card-content">
                                                 <div className="report-card-heading">
                                                     <div>
-
                                                         <div className="report-inline-info">
                                                             <h2>
                                                                 {report.activityName || "ไม่ระบุชื่อกิจกรรม"}
@@ -476,22 +468,7 @@ function AdminReports() {
                                                                     report.category ||
                                                                     "ถูกรายงาน"}
                                                             </span>
-
-                                                           
-
                                                         </div>
-                                                    </div>
-
-                                                    <div className="report-time-status">
-                                                        <span>
-                                                            {timeAgo(
-                                                                report.createdAt || report.reportedAt
-                                                            )}
-                                                        </span>
-
-                                                        <b className={`status-${currentStatus}`}>
-                                                            {statusLabel[currentStatus]}
-                                                        </b>
                                                     </div>
                                                 </div>
 
@@ -501,16 +478,16 @@ function AdminReports() {
                                                 </p>
 
                                                 <div className="report-meta">
-                                                    <span>
-                                                        <FiMapPin />
-                                                        {report.activityLocation ||
-                                                            report.activity?.location ||
-                                                            "ไม่ระบุสถานที่"}
-                                                    </span>
 
                                                     <span>
                                                         <FiCalendar />
-                                                        {formatDate(
+                                                        {formatDateTimeDate(
+                                                            report.createdAt
+                                                        )}
+                                                    </span>
+                                                    <span>
+                                                        <FiClock />
+                                                        {formatDateTimeTime(
                                                             report.createdAt
                                                         )}
                                                     </span>
@@ -526,39 +503,76 @@ function AdminReports() {
                                                     </span>
                                                 </div>
                                             </div>
+                                            <div className="report-card-right">
+                                                <div className="report-time-status">
+                                                    <div className="report-status-top">
+                                                        <span>
+                                                            {timeAgo(report.createdAt || report.reportedAt)}
+                                                        </span>
 
-                                            <div className="report-card-actions">
-                                                <button
-                                                    type="button"
-                                                    className="report-outline-button"
-                                                    onClick={() => openActivity(report)}
-                                                >
-                                                    <FiEye />
-                                                    ดูรายละเอียด
-                                                </button>
+                                                        <b className={`status-${currentStatus}`}>
+                                                            {statusLabel[currentStatus]}
+                                                        </b>
+                                                    </div>
 
-                                                {currentStatus === "resolved" ||
-                                                    currentStatus === "rejected" ? (
+                                                    {report.reviewedAt &&
+                                                        (currentStatus === "resolved" ||
+                                                            currentStatus === "rejected") && (
+                                                            <div
+                                                                className={`report-reviewed-meta ${report.decision === "suspend_activity"
+                                                                        ? "resolved"
+                                                                        : "rejected"
+                                                                    }`}
+                                                            >
+                                                                <FiShield />
+
+                                                                <span>
+                                                                    {report.decision === "suspend_activity"
+                                                                        ? "ระงับกิจกรรมเมื่อ"
+                                                                        : "ปฏิเสธการระงับเมื่อ"}
+                                                                </span>
+
+                                                                <strong>
+                                                                    {formatDateTimeDate(report.reviewedAt)}
+                                                                </strong>
+                                                            </div>
+                                                        )}
+                                                </div>
+
+                                                <div className="report-card-actions">
                                                     <button
                                                         type="button"
-                                                        className="report-completed-button"
-                                                        onClick={() => startReview(report)}
+                                                        className="report-outline-button"
+                                                        onClick={() => openActivity(report)}
                                                     >
-                                                        <FiShield />
-                                                        ดูผลตรวจสอบ
+                                                        <FiEye />
+                                                        ดูรายละเอียด
                                                     </button>
-                                                ) : (
-                                                    <button
-                                                        type="button"
-                                                        className="report-primary-button"
-                                                        onClick={() => startReview(report)}
-                                                    >
-                                                        <FiShield />
-                                                        {currentStatus === "reviewing"
-                                                            ? "ตรวจสอบต่อ"
-                                                            : "เริ่มตรวจสอบ"}
-                                                    </button>
-                                                )}
+
+                                                    {currentStatus === "resolved" ||
+                                                        currentStatus === "rejected" ? (
+                                                        <button
+                                                            type="button"
+                                                            className="report-completed-button"
+                                                            onClick={() => startReview(report)}
+                                                        >
+                                                            <FiShield />
+                                                            ดูผลตรวจสอบ
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            type="button"
+                                                            className="report-primary-button"
+                                                            onClick={() => startReview(report)}
+                                                        >
+                                                            <FiShield />
+
+                                                            {currentStatus === "reviewing"
+                                                                ? "ตรวจสอบต่อ"
+                                                                : "เริ่มตรวจสอบ"}
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </div>
                                         </article>
                                     );
@@ -607,8 +621,8 @@ function AdminReports() {
                         )}
                     </main>
                 </div>
-            </main>
-        </div>
+            </main >
+        </div >
     );
 }
 

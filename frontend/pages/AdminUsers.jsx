@@ -71,7 +71,6 @@ export default function AdminUsers() {
     ["กิจกรรม", <FiCalendar />, "/admin/activities"],
     ["ผู้ใช้งาน", <FiUsers />, "/admin/users", true],
     ["รายงานกิจกรรม", <FiFlag />, "/admin/reports"],
-    ["การแจ้งเตือน", <FiBell />, "/admin/notifications"],
     ["รีวิว", <FiStar />, "/admin/reviews"],
   ];
 
@@ -255,9 +254,9 @@ export default function AdminUsers() {
               </span>
 
               <div>
-                <h1>จัดการผู้ใช้งาน</h1>
+                <h1>ตรวจสอบผู้ใช้งาน</h1>
                 <p>
-                  ตรวจสอบข้อมูลและสถานะบัญชีผู้ใช้งานทั้งหมดในระบบ
+                  ตรวจสอบข้อมูลบัญชีผู้ใช้งานทั้งหมดในระบบ
                 </p>
               </div>
             </div>
@@ -330,7 +329,8 @@ export default function AdminUsers() {
                     <tr>
                       <th>ผู้ใช้งาน</th>
                       <th>อีเมล</th>
-                      <th>กิจกรรม</th>
+                      <th>เบอร์โทร</th>
+                      <th>กิจกรรมที่สร้าง</th>
                       <th>วันที่สมัคร</th>
                     </tr>
                   </thead>
@@ -395,6 +395,12 @@ export default function AdminUsers() {
                             <span className="user-email">
                               <FiMail />
                               {user.email || "-"}
+                            </span>
+                          </td>
+
+                          <td>
+                            <span className="user-phone">
+                              {user.phone || "-"}
                             </span>
                           </td>
 

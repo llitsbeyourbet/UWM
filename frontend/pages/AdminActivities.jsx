@@ -60,6 +60,29 @@ const normalizeStatus = (activity) => {
   return "published";
 };
 
+const getActivityPhase = (activity) => {
+  const date = activity.date || activity.activityDate;
+  const startTime = activity.time;
+  const endTime = activity.endTime || activity.time;
+
+  if (!date || !startTime) return "upcoming";
+
+  const now = new Date();
+
+  const startDateTime = new Date(`${date}T${startTime}`);
+  const endDateTime = new Date(`${date}T${endTime}`);
+
+  if (now < startDateTime) {
+    return "upcoming";
+  }
+
+  if (now >= startDateTime && now <= endDateTime) {
+    return "ongoing";
+  }
+
+  return "ended";
+};
+
 export default function AdminActivities() {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -86,7 +109,6 @@ export default function AdminActivities() {
     ["กิจกรรม", <FiCalendar />, "/admin/activities", true],
     ["ผู้ใช้งาน", <FiUsers />, "/admin/users"],
     ["รายงานกิจกรรม", <FiFlag />, "/admin/reports"],
-    ["การแจ้งเตือน", <FiBell />, "/admin/notifications"],
     ["รีวิว", <FiStar />, "/admin/reviews"],
   ];
 
@@ -141,15 +163,24 @@ export default function AdminActivities() {
     return activities.reduce(
       (result, activity) => {
         const status = normalizeStatus(activity);
+        const phase = getActivityPhase(activity);
 
         result.all += 1;
+
+        // สถานะของกิจกรรม
         result[status] += 1;
+
+        // ช่วงเวลาของกิจกรรม
+        result[phase] += 1;
 
         return result;
       },
       {
         all: 0,
         published: 0,
+        upcoming: 0,
+        ongoing: 0,
+        ended: 0,
         suspended: 0,
       }
     );
@@ -160,9 +191,11 @@ export default function AdminActivities() {
 
     const result = activities.filter((activity) => {
       const status = normalizeStatus(activity);
-
+      const phase = getActivityPhase(activity);
       const matchesStatus =
-        activeStatus === "all" || status === activeStatus;
+        activeStatus === "all" ||
+        status === activeStatus ||
+        phase === activeStatus;
 
       const searchableText = [
         activity.activityName,
@@ -171,6 +204,7 @@ export default function AdminActivities() {
         activity.creatorUsername,
         activity.location,
         activity.category,
+        activity.activityType,
       ]
         .filter(Boolean)
         .join(" ")
@@ -279,15 +313,6 @@ export default function AdminActivities() {
               <span>/</span>
               <strong>กิจกรรม</strong>
             </div>
-
-            <button
-              type="button"
-              className="activities-notification-button"
-              onClick={() => navigate("/admin/notifications")}
-              aria-label="เปิดการแจ้งเตือน"
-            >
-              <FiBell />
-            </button>
           </header>
 
           <section className="activities-panel">
@@ -298,8 +323,8 @@ export default function AdminActivities() {
                 </span>
 
                 <div>
-                  <h1>จัดการกิจกรรม</h1>
-                  <p>ตรวจสอบและจัดการกิจกรรมทั้งหมดในระบบ</p>
+                  <h1>ตรวจสอบกิจกรรม</h1>
+                  <p>ตรวจสอบกิจกรรมทั้งหมดในระบบ</p>
                 </div>
               </div>
 
@@ -318,7 +343,11 @@ export default function AdminActivities() {
               {[
                 ["all", "ทั้งหมด"],
                 ["published", "เผยแพร่แล้ว"],
+                ["upcoming", "ยังไม่เริ่ม"],
+                ["ongoing", "กำลังดำเนินการ"],
+                ["ended", "สิ้นสุดแล้ว"],
                 ["suspended", "ระงับแล้ว"],
+
               ].map(([key, label]) => (
                 <button
                   type="button"
@@ -344,6 +373,9 @@ export default function AdminActivities() {
                   >
                     <option value="all">ทั้งหมด</option>
                     <option value="published">เผยแพร่แล้ว</option>
+                    <option value="upcoming">ยังไม่เริ่ม</option>
+                    <option value="ongoing">กำลังดำเนินการ</option>
+                    <option value="ended">สิ้นสุดแล้ว</option>
                     <option value="suspended">ระงับแล้ว</option>
                   </select>
                 </label>
@@ -449,10 +481,10 @@ export default function AdminActivities() {
 
                       <div className="activity-admin-content">
 
-                        <h2>{activityName}</h2>                    
+                        <h2>{activityName}</h2>
                         <p className="activity-admin-creator">
                           สร้างโดย @{creator}
-                          
+
                         </p>
 
                         <div className="activity-admin-meta">
@@ -483,7 +515,7 @@ export default function AdminActivities() {
                           ดูรายละเอียด
                         </button>
 
-                        
+
                       </div>
                     </article>
                   );

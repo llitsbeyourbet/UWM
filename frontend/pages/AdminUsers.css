@@ -15,7 +15,7 @@
   align-items: center;
   gap: 13px;
   color: #9297aa;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .users-breadcrumb button {
@@ -74,13 +74,13 @@
 .users-heading-left h1 {
   margin: 0;
   color: #232539;
-  font-size: 25px;
+  font-size: 27px;
 }
 
 .users-heading-left p {
   margin: 6px 0 0;
   color: #9096aa;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .users-summary-list {
@@ -107,7 +107,7 @@
   place-items: center;
   flex-shrink: 0;
   border-radius: 10px;
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .summary-icon.total {
@@ -123,13 +123,13 @@
 
 .users-summary-item strong {
   color: #292c41;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .users-summary-item small {
   margin-top: 2px;
   color: #999eb0;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .users-content-card {
@@ -141,60 +141,6 @@
   box-shadow: 0 12px 35px rgba(44, 39, 87, 0.05);
 }
 
-.users-tabs {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border-bottom: 1px solid #ededf3;
-}
-
-.users-tabs button {
-  position: relative;
-  min-height: 54px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 19px;
-  border: 0;
-  background: transparent;
-  color: #8c91a5;
-  font: inherit;
-  font-size: 13px;
-  cursor: pointer;
-}
-
-.users-tabs button::after {
-  position: absolute;
-  right: 0;
-  bottom: -1px;
-  left: 0;
-  height: 3px;
-  border-radius: 3px 3px 0 0;
-  background: #6846f5;
-  content: "";
-  opacity: 0;
-}
-
-.users-tabs button.active {
-  color: #6846f5;
-  font-weight: 700;
-}
-
-.users-tabs button.active::after {
-  opacity: 1;
-}
-
-.users-tabs button span {
-  min-width: 22px;
-  height: 22px;
-  display: grid;
-  place-items: center;
-  padding: 0 6px;
-  border-radius: 99px;
-  background: #f1effb;
-  color: #6b58c7;
-  font-size: 11px;
-}
 
 .users-toolbar {
   display: flex;
@@ -228,7 +174,7 @@
   background: transparent;
   color: #41465b;
   font: inherit;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .users-sort {
@@ -241,7 +187,7 @@
   background: #fff;
   color: #62687e;
   font: inherit;
-  font-size: 13px;
+  font-size: 14px;
   cursor: pointer;
 }
 
@@ -264,7 +210,7 @@
   border-bottom: 1px solid #ebebf2;
   background: #fafafe;
   color: #8b91a5;
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 600;
   text-align: left;
   position: sticky;
@@ -276,7 +222,7 @@
   padding: 15px 17px;
   border-bottom: 1px solid #f0f0f4;
   color: #656b80;
-  font-size: 12px;
+  font-size: 15px;
 }
 
 .users-table tbody tr:last-child td {
@@ -310,7 +256,7 @@
   max-width: 180px;
   overflow: hidden;
   color: #303348;
-  font-size: 12px;
+  font-size: 14px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -318,7 +264,7 @@
 .user-profile-cell span {
   margin-top: 3px;
   color: #9ba0b1;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .user-email {

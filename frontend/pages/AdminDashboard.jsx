@@ -24,6 +24,7 @@ import {
 } from "recharts";
 import "./AdminDashboard.css";
 import API_URL from "../config";
+import { getCategoryIcon } from "../utils/categoryIcons";
 
 const fallback =
   "https://placehold.co/120x90/ede9fe/6d28d9?text=Activity";
@@ -83,6 +84,42 @@ const ago = (value) => {
 
   return `${Math.floor(hours / 24)} วันที่แล้ว`;
 };
+
+function CategoryTick({ x, y, payload }) {
+  const value = String(payload.value || "");
+
+  const firstSpace = value.indexOf(" ");
+
+  const icon =
+    firstSpace !== -1 ? value.slice(0, firstSpace) : "";
+
+  const label =
+    firstSpace !== -1 ? value.slice(firstSpace + 1) : value;
+
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text
+        x={-92}
+        y={4}
+        textAnchor="middle"
+        fontSize={13}
+      >
+        {icon}
+      </text>
+
+      <text
+        x={-75}
+        y={4}
+        textAnchor="start"
+        fill="#626a82"
+        fontSize={12}
+        fontWeight={500}
+      >
+        {label}
+      </text>
+    </g>
+  );
+}
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -210,6 +247,7 @@ export default function AdminDashboard() {
   const categoryChart = categoryChartData.map((item) => ({
     ...item,
     count: Number(item.count || 0),
+    categoryLabel: `${getCategoryIcon(item.category)} ${item.category}`,
   }));
 
   const navItems = [
@@ -217,7 +255,6 @@ export default function AdminDashboard() {
     ["กิจกรรม", <FiCalendar />, "/admin/activities"],
     ["ผู้ใช้งาน", <FiUsers />, "/admin/users"],
     ["รายงานกิจกรรม", <FiFlag />, "/admin/reports"],
-    ["การแจ้งเตือน", <FiBell />, "/admin/notifications"],
     ["รีวิว", <FiStar />, "/admin/reviews"],
   ];
 
@@ -266,73 +303,6 @@ export default function AdminDashboard() {
           </div>
 
           <div className="admin-header-actions">
-            <div className="admin-period">
-              <button
-                className="admin-period-btn"
-                onClick={() => setOpenPeriod((v) => !v)}
-              >
-                <FiCalendar />
-
-                <span>
-                  {days === 7 && "7 วันที่ผ่านมา"}
-                  {days === 30 && "30 วันที่ผ่านมา"}
-                  {days === 90 && "90 วันที่ผ่านมา"}
-                </span>
-
-                <FiChevronDown
-                  className={openPeriod ? "rotate" : ""}
-                />
-              </button>
-
-              {openPeriod && (
-                <div className="admin-period-menu">
-
-                  <button
-                    onClick={() => {
-                      setDays(7);
-                      setOpenPeriod(false);
-                    }}
-                  >
-                    7 วันที่ผ่านมา
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setDays(30);
-                      setOpenPeriod(false);
-                    }}
-                  >
-                    30 วันที่ผ่านมา
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setDays(90);
-                      setOpenPeriod(false);
-                    }}
-                  >
-                    90 วันที่ผ่านมา
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setDays(365);
-                      setOpenPeriod(false);
-                    }}
-                  >
-                    1 ปีที่ผ่านมา
-                  </button>
-
-                </div>
-              )}
-            </div>
-            <button
-              className="admin-bell"
-              onClick={() => navigate("/admin/notifications")}
-            >
-              <FiBell />
-            </button>
-
             <div className="admin-profile-menu">
               <button
                 className="admin-profile-trigger"
@@ -424,43 +394,50 @@ export default function AdminDashboard() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={categoryChart}
-                  margin={{ top: 18, right: 18, left: -12, bottom: 5 }}
+                  layout="vertical"
+                  margin={{ top: 10, right: 45, left: 0, bottom: 30 }}
                 >
                   <CartesianGrid
                     stroke="#eef0f6"
                     strokeDasharray="3 6"
-                    vertical={false}
+                    horizontal={false}
                   />
 
                   <XAxis
-                    dataKey="category"
+                    type="number"
+                    allowDecimals={false}
                     axisLine={false}
                     tickLine={false}
                     tick={{
                       fill: "#8189a2",
                       fontSize: 11,
                     }}
-                    dy={10}
+                    label={{
+                      value: "จำนวนกิจกรรม",
+                      position: "insideBottom",
+                      offset: -18,
+                      fill: "#69728c",
+                      fontSize: 12,
+                    }}
                   />
 
                   <YAxis
+                    type="category"
+                    dataKey="categoryLabel"
                     axisLine={false}
                     tickLine={false}
-                    allowDecimals={false}
-                    width={35}
-                    tick={{
-                      fill: "#8189a2",
-                      fontSize: 11,
-                    }}
+                    width={115}
+                    intervals={0}
+                    tick={<CategoryTick/>}
                   />
 
                   <Tooltip
                     formatter={(value) => [
-                      Number(value || 0).toLocaleString("th-TH"),
+                      `${Number(value).toLocaleString("th-TH")} กิจกรรม`,
                       "จำนวนกิจกรรม",
                     ]}
                     cursor={{
-                      fill: "rgba(104, 70, 245, 0.06)",
+                      fill: "rgba(104, 70, 245, 0.05)",
                     }}
                   />
 
@@ -468,9 +445,9 @@ export default function AdminDashboard() {
                     dataKey="count"
                     name="จำนวนกิจกรรม"
                     fill="#6846f5"
-                    radius={[8, 8, 0, 0]}
-                    maxBarSize={46}
-                  />
+                    maxBarSize={24}
+                  >
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
