@@ -132,7 +132,8 @@
 
 .opened-seats-badge {
   font-size: 0.75rem;
-  color: #4a5568;
+  font-weight: 600;
+  color: #000000;
   background-color: #f7fafc;
   padding: 0.2rem 0.5rem;
   border-radius: 8px;
@@ -156,6 +157,7 @@
 
 .box-label {
   font-size: 0.75rem;
+  font-weight: 600;
   color: #888888;
   margin-bottom: 0.25rem;
 }
@@ -253,6 +255,7 @@
 .participants-avatars-list {
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-start;
   gap: 0.85rem;
   padding-top: 0.25rem;
 }
@@ -266,7 +269,18 @@
   cursor: pointer;
 }
 
-.participant-avatar-item img, 
+.more-avatar-item {
+  border: none;
+}
+
+.more-avatar {
+  background-color: #eee;
+  color: #666;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.participant-avatar-item img,
 .feed-user-avatar,
 .avatar-placeholder {
   width: 44px;
@@ -289,6 +303,13 @@
   box-sizing: border-box;
 }
 
+.more-avatar {
+  background-color: #eee !important;
+  color: #666 !important;
+  font-weight: bold !important;
+  font-size: 1.2rem !important;
+}
+
 .avatar-mini-name {
   font-size: 0.7rem;
   color: #666666;
@@ -299,14 +320,142 @@
   text-overflow: ellipsis;
 }
 
+/* Grid layout for expanded view */
+.participants-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 1rem;
+  padding-top: 0.25rem;
+}
+
+/* Pagination footer container */
+.pagination-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.pagination-info {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.pagination-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.pagination-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: #666;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.pagination-dots {
+  font-size: 0.8rem;
+  color: #aaa;
+  padding: 0 4px;
+}
+
+.pagination-btn.active {
+  background-color: #7d5fff;
+  color: #fff;
+  border-color: #7d5fff;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 400px) {
+  .section-title {
+    font-size: 0.9rem;
+  }
+  .show-more-btn {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.7rem;
+  }
+  .participants-grid {
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    gap: 0.5rem;
+  }
+  .pagination-info {
+    font-size: 0.7rem;
+  }
+  .pagination-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.7rem;
+  }
+  .pagination-buttons {
+    gap: 0.3rem;
+  }
+  .score-title {
+    font-size: 0.65rem;
+  }
+  .score-big {
+    font-size: 1.2rem;
+  }
+  .review-big-num {
+    font-size: 1.2rem;
+  }
+  .divider-vertical {
+    height: 30px;
+  }
+}
+
+.show-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.show-more-btn {
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  color: #6b7280;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.show-more-btn:hover {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
 /* Review Matrix Block */
 .review-dashboard {
   display: flex;
-  align-items: center;
+  align-items: stretch;
+  justify-content: space-between;
   background-color: #fbf9ff;
   border-radius: 16px;
-  padding: 1rem 0;
+  padding: 1rem 0.5rem;
   margin-bottom: 1.5rem;
+  text-align: center;
 }
 
 .rating-score-box, .review-count-box {
@@ -314,61 +463,80 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  min-width: 0;
 }
 
 .score-title {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #888888;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+  white-space: normal;
+  word-break: keep-all;
+  min-height: 2.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .score-big {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   font-weight: 600;
   color: #7d5fff;
+  white-space: nowrap;
+  margin: 0;
+  line-height: 1;
 }
 
-.score-big.blue-text { 
-  color: #0369a1; 
+.score-big.blue-text {
+  color: #0369a1;
 }
 
-.score-max { 
-  font-size: 0.8rem; 
-  color: #aaaaaa; 
-  font-weight: 400; 
+.score-max {
+  font-size: 0.7rem;
+  color: #aaaaaa;
+  font-weight: 400;
 }
 
-.stars-row { 
-  display: flex; 
-  gap: 1px; 
+.stars-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1px;
+  height: 12px;
 }
 
-.star-icon { 
-  color: #e2e8f0; 
-  font-size: 0.8rem; 
+.star-icon {
+  color: #e2e8f0;
+  font-size: 0.7rem;
 }
 
-.star-icon.active { 
-  color: #f3a814; 
+.star-icon.active {
+  color: #f3a814;
 }
 
 .divider-vertical {
   width: 1px;
-  height: 45px;
+  height: 40px;
   background-color: #e8e2f7;
+  flex-shrink: 0;
+  align-self: center;
 }
 
-.review-big-num { 
-  font-size: 1.4rem; 
-  font-weight: 600; 
-  color: #7d5fff; 
+.review-big-num {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #7d5fff;
 }
 
-.review-small-label { 
-  font-size: 0.8rem; 
-  font-weight: 400; 
-  color: #777777; 
+.review-small-label {
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: #777777;
 }
+
 
 /* Feeds & Review Comment Elements */
 .reviews-feed-list { 
