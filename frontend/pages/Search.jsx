@@ -113,7 +113,9 @@ function Search() {
     // Sorting Logic
     return result.sort((a, b) => {
       if (filters.sortBy === "soonest") {
-        return new Date(a.date) - new Date(b.date);
+        const dateA = new Date(`${a.date}T${a.time || "00:00"}`);
+        const dateB = new Date(`${b.date}T${b.time || "00:00"}`);
+        return dateA - dateB;
       } else if (filters.sortBy === "newest") {
         return new Date(b.createdAt) - new Date(a.createdAt);
       } else if (filters.sortBy === "rating") {
@@ -211,31 +213,33 @@ function Search() {
         <div className="active-filters-container">
           {(filters.categories.length > 0 || filters.type !== "all" || filters.dateRange !== "all" || filters.onlyAvailable) && (
             <div className="filters-row">
-              {filters.categories.map(cat => (
-                <div key={cat} className="filter-chip">
-                  {categoryEmoji[cat]} {cat}
-                  <span className="remove-chip" onClick={() => toggleCategory(cat)}>×</span>
-                </div>
-              ))}
-              {filters.type !== "all" && (
-                <div className="filter-chip">
-                  {filters.type === "public" ? "สาธารณะ" : "ส่วนตัว"}
-                  <span className="remove-chip" onClick={() => setFilters(prev => ({ ...prev, type: "all" }))}>×</span>
-                </div>
-              )}
-              {filters.dateRange !== "all" && (
-                <div className="filter-chip">
-                  {filters.dateRange === "today" ? "วันนี้" : filters.dateRange === "week" ? "สัปดาห์นี้" : filters.dateRange === "month" ? "เดือนนี้" : "ช่วงวันที่"}
-                  <span className="remove-chip" onClick={() => setFilters(prev => ({ ...prev, dateRange: "all" }))}>×</span>
-                </div>
-              )}
-              {filters.onlyAvailable && (
-                <div className="filter-chip">
-                  ยังมีที่ว่าง
-                  <span className="remove-chip" onClick={() => setFilters(prev => ({ ...prev, onlyAvailable: false }))}>×</span>
-                </div>
-              )}
-              <button className="clear-all-btn" onClick={clearFilters}>ล้างตัวกรอง</button>
+              <div className="chips-container">
+                {filters.categories.map(cat => (
+                  <div key={cat} className="filter-chip">
+                    {categoryEmoji[cat]} {cat}
+                    <span className="remove-chip" onClick={() => toggleCategory(cat)}>×</span>
+                  </div>
+                ))}
+                {filters.type !== "all" && (
+                  <div className="filter-chip">
+                    {filters.type === "public" ? "สาธารณะ" : "ส่วนตัว"}
+                    <span className="remove-chip" onClick={() => setFilters(prev => ({ ...prev, type: "all" }))}>×</span>
+                  </div>
+                )}
+                {filters.dateRange !== "all" && (
+                  <div className="filter-chip">
+                    {filters.dateRange === "today" ? "วันนี้" : filters.dateRange === "week" ? "สัปดาห์นี้" : filters.dateRange === "month" ? "เดือนนี้" : "ช่วงวันที่"}
+                    <span className="remove-chip" onClick={() => setFilters(prev => ({ ...prev, dateRange: "all" }))}>×</span>
+                  </div>
+                )}
+                {filters.onlyAvailable && (
+                  <div className="filter-chip">
+                    ยังมีที่ว่าง
+                    <span className="remove-chip" onClick={() => setFilters(prev => ({ ...prev, onlyAvailable: false }))}>×</span>
+                  </div>
+                )}
+              </div>
+              <button className="clear-filter-btn" onClick={clearFilters}>ล้างตัวกรอง</button>
             </div>
           )}
         </div>
@@ -321,7 +325,7 @@ function Search() {
 
                 {/* Date Range */}
                 <div className="filter-section">
-                  <label className="filter-label">ช่วงวันที่</label>
+                  <label className="filter-label">ช่วงเวลา</label>
                   <div className="filter-options-row">
                     {["all", "today", "week", "month", "custom"].map(range => (
                       <div
@@ -352,7 +356,7 @@ function Search() {
 
                 {/* Availability */}
                 <div className="filter-section">
-                  <label className="filter-label">ความว่าง</label>
+                  <label className="filter-label">สถานะที่ว่าง</label>
                   <div className="filter-toggle-row">
                     <span className="toggle-text">แสดงเฉพาะกิจกรรมที่ยังมีที่ว่าง</span>
                     <input
@@ -383,7 +387,7 @@ function Search() {
 
               <div className="bottom-sheet-footer">
                 <button className="btn-clear-all" onClick={clearFilters}>ล้างตัวกรอง</button>
-                <button className="btn-apply-filters" onClick={() => setIsFilterOpen(false)}>ใช้ตัวกรอง</button>
+                <button className="btn-apply-filters" onClick={() => setIsFilterOpen(false)}>นำไปใช้</button>
               </div>
             </div>
           </div>
