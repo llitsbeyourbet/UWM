@@ -20,7 +20,7 @@ export default function Login() {
     setError("");
 
     if (!isEmail(identifier) && !isPhone(identifier) && !isUsername(identifier)) {
-      setError("กรุณากรอกอีเมล, username หรือเบอร์โทรให้ถูกต้อง");
+      setError("กรุณากรอกอีเมล, username หรือเบอร์โทรศัพท์ให้ถูกต้อง");
       return;
     }
 
@@ -87,7 +87,7 @@ export default function Login() {
               id="login-identifier"
               name="identifier"
               type="text"
-              placeholder="อีเมล, Username หรือเบอร์โทร"
+              placeholder="อีเมล, Username หรือเบอร์โทรศัพท์"
               value={identifier}
               onChange={(e) => {
                 setIdentifier(e.target.value);
