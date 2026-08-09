@@ -255,6 +255,7 @@
 .participants-avatars-list {
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-start;
   gap: 0.85rem;
   padding-top: 0.25rem;
 }
@@ -268,7 +269,18 @@
   cursor: pointer;
 }
 
-.participant-avatar-item img, 
+.more-avatar-item {
+  border: none;
+}
+
+.more-avatar {
+  background-color: #eee;
+  color: #666;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.participant-avatar-item img,
 .feed-user-avatar,
 .avatar-placeholder {
   width: 44px;
@@ -291,6 +303,13 @@
   box-sizing: border-box;
 }
 
+.more-avatar {
+  background-color: #eee !important;
+  color: #666 !important;
+  font-weight: bold !important;
+  font-size: 1.2rem !important;
+}
+
 .avatar-mini-name {
   font-size: 0.7rem;
   color: #666666;
@@ -299,6 +318,108 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Grid layout for expanded view */
+.participants-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 1rem;
+  padding-top: 0.25rem;
+}
+
+/* Pagination footer container */
+.pagination-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.pagination-info {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.pagination-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.pagination-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: #666;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.pagination-dots {
+  font-size: 0.8rem;
+  color: #aaa;
+  padding: 0 4px;
+}
+
+.pagination-btn.active {
+  background-color: #7d5fff;
+  color: #fff;
+  border-color: #7d5fff;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 400px) {
+  .section-title {
+    font-size: 0.9rem;
+  }
+  .show-more-btn {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.7rem;
+  }
+  .participants-grid {
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    gap: 0.5rem;
+  }
+  .pagination-info {
+    font-size: 0.7rem;
+  }
+  .pagination-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.7rem;
+  }
+  .pagination-buttons {
+    gap: 0.3rem;
+  }
+  .score-title {
+    font-size: 0.65rem;
+  }
+  .score-big {
+    font-size: 1.2rem;
+  }
+  .review-big-num {
+    font-size: 1.2rem;
+  }
+  .divider-vertical {
+    height: 30px;
+  }
 }
 
 .show-more-container {
@@ -317,6 +438,7 @@
   border-radius: 20px;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .show-more-btn:hover {
@@ -415,20 +537,6 @@
   color: #777777;
 }
 
-@media (max-width: 360px) {
-  .score-title {
-    font-size: 0.65rem;
-  }
-  .score-big {
-    font-size: 1.2rem;
-  }
-  .review-big-num {
-    font-size: 1.2rem;
-  }
-  .divider-vertical {
-    height: 30px;
-  }
-}
 
 /* Feeds & Review Comment Elements */
 .reviews-feed-list { 

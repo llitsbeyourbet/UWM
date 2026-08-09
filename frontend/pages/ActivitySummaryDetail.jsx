@@ -2,11 +2,30 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./ActivitySummaryDetail.css";
 import API_URL from "../config";
-import { formatDateTime ,formatTime, formatDate } from "../utils/formatDate";
+import { formatDate } from "../utils/formatDate";
+
+const getPaginationNumbers = (page, totalPages) => {
+  if (totalPages <= 5) {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }
+
+  if (page <= 3) {
+    return [1, 2, 3, "...", totalPages];
+  }
+
+  if (page >= totalPages - 2) {
+    return [1, "...", totalPages - 2, totalPages - 1, totalPages];
+  }
+
+  return [1, "...", page, "...", totalPages];
+};
 
 function ActivitySummaryDetail() {
+  const USE_MOCK_DATA = false; // เปลี่ยนเป็น false เพื่อใช้ข้อมูลจริงจาก API
+
   const { id } = useParams();
   const navigate = useNavigate();
+
 
   const [activity, setActivity] = useState(null);
   const [rating, setRating] = useState(null);
@@ -20,6 +39,10 @@ function ActivitySummaryDetail() {
   const [showAllParticipants, setShowAllParticipants] = useState(false);
   const [showAllCheckedIn, setShowAllCheckedIn] = useState(false);
   const [visibleReviews, setVisibleReviews] = useState(3);
+
+  const [participantsPage, setParticipantsPage] = useState(1);
+  const [checkedInPage, setCheckedInPage] = useState(1);
+  const ITEMS_PER_PAGE = 15;
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -74,12 +97,14 @@ function ActivitySummaryDetail() {
           setParticipants(Array.isArray(pData) ? pData : []);
         }
 
-        if (user && activityData.createdBy === user.id) {
-          setIsOwner(true);
-        } else {
-          setLoading(false);
-          navigate("/");
-          return;
+        if (!USE_MOCK_DATA) {
+          if (user && activityData.createdBy === user.id) {
+            setIsOwner(true);
+          } else {
+            setLoading(false);
+            navigate("/");
+            return;
+          }
         }
       } catch (err) {
         console.error("Error fetching summary details:", err);
@@ -89,7 +114,7 @@ function ActivitySummaryDetail() {
     };
 
     fetchDetails();
-  }, [id]);
+  }, [id, navigate]);
 
   if (loading) return <div className="detail-loading">กำลังโหลดข้อมูล...</div>;
   if (notFound || !activity) return <div className="detail-loading">ไม่พบข้อมูลสรุปผลกิจกรรม</div>;
@@ -98,6 +123,26 @@ function ActivitySummaryDetail() {
   const checkedIn = attendance?.checkedIn?.length || 0;
   const notCheckedIn = attendance?.approved?.length || 0;
   const checkInRate = total > 0 ? Math.round((checkedIn / total) * 100) : 0;
+
+  // Pagination for Participants
+  const totalP = participants.length;
+  const totalPagesP = Math.max(1, Math.ceil(totalP / ITEMS_PER_PAGE));
+  const pStart = (participantsPage - 1) * ITEMS_PER_PAGE + 1;
+  const pEnd = Math.min(participantsPage * ITEMS_PER_PAGE, totalP);
+  const paginatedParticipants = participants.slice(
+    (participantsPage - 1) * ITEMS_PER_PAGE,
+    participantsPage * ITEMS_PER_PAGE
+  );
+
+  // Pagination for Checked-In
+  const totalC = attendance?.checkedIn?.length || 0;
+  const totalPagesC = Math.max(1, Math.ceil(totalC / ITEMS_PER_PAGE));
+  const cStart = (checkedInPage - 1) * ITEMS_PER_PAGE + 1;
+  const cEnd = Math.min(checkedInPage * ITEMS_PER_PAGE, totalC);
+  const paginatedCheckedIn = attendance?.checkedIn?.slice(
+    (checkedInPage - 1) * ITEMS_PER_PAGE,
+    checkedInPage * ITEMS_PER_PAGE
+  ) || [];
 
   // คำนวณคะแนนเฉลี่ยของผู้จัด (Host) จากรีวิวทั้งหมดในกิจกรรมนี้
   const hostRatings = reviews
@@ -168,17 +213,59 @@ function ActivitySummaryDetail() {
 
       {/* 4. รายชื่อผู้เข้าร่วมทั้งหมด */}
       <div className="section-card">
-        <h4 className="section-title">รายชื่อผู้เข้าร่วมทั้งหมด ({participants.length})</h4>
-        <div className="participants-avatars-list">
-          {participants.length > 0 ? (
-            participants
-              .slice(0, showAllParticipants ? participants.length : 10)
-              .map((p) => {
+        <div className="section-header-flex">
+          <h4 className="section-title">รายชื่อผู้เข้าร่วมทั้งหมด ({participants.length})</h4>
+          {participants.length > 5 && (
+            <button
+              className="show-more-btn"
+              onClick={() => {
+                setShowAllParticipants(!showAllParticipants);
+                setParticipantsPage(1);
+              }}
+            >
+              {showAllParticipants ? "แสดงน้อยลง" : `ดูเพิ่มเติม (${participants.length - 5} คน)`}
+            </button>
+          )}
+        </div>
+
+        {!showAllParticipants ? (
+          <div className="participants-avatars-list">
+            {participants.length > 0 ? (
+              <>
+                {participants.slice(0, 5).map((p) => {
+                  const pImage = p.profileImage;
+                  const imageUrl = pImage
+                    ? pImage.startsWith("http") ? pImage : `${API_URL}/uploads/${pImage}`
+                    : null;
+                  return (
+                    <div
+                      key={p.id}
+                      className="participant-avatar-item"
+                      title={`${p.name} (@${p.username || ""})`}
+                      onClick={() => navigate(`/user/${p.id}`)}
+                    >
+                      {imageUrl ? (
+                        <img src={imageUrl} alt={p.name} />
+                      ) : (
+                        <div className="avatar-placeholder">{p.name?.charAt(0).toUpperCase() || "U"}</div>
+                      )}
+                      <span className="avatar-mini-name">{p.name?.split(" ")[0]}</span>
+                    </div>
+                  );
+                })}
+              </>
+            ) : (
+              <p className="empty-text">ยังไม่มีผู้เข้าร่วมกิจกรรม</p>
+            )}
+          </div>
+        ) : (
+          <>
+            <div className="participants-grid">
+              {paginatedParticipants.map((p) => {
                 const pImage = p.profileImage;
                 const imageUrl = pImage
                   ? pImage.startsWith("http") ? pImage : `${API_URL}/uploads/${pImage}`
                   : null;
-
                 return (
                   <div
                     key={p.id}
@@ -194,36 +281,105 @@ function ActivitySummaryDetail() {
                     <span className="avatar-mini-name">{p.name?.split(" ")[0]}</span>
                   </div>
                 );
-              })
-          ) : (
-            <p className="empty-text">ยังไม่มีผู้เข้าร่วมกิจกรรม</p>
-          )}
-        </div>
-        {participants.length > 10 && (
-          <div className="show-more-container">
-            <button
-              className="show-more-btn"
-              onClick={() => setShowAllParticipants(!showAllParticipants)}
-            >
-              {showAllParticipants ? "แสดงน้อยลง" : `ดูเพิ่มเติม (${participants.length - 10} คน)`}
-            </button>
-          </div>
+              })}
+            </div>
+            {participants.length > 0 && (
+              <div className="pagination-controls">
+                <span className="pagination-info">
+                  แสดง {participantsPage === 1 ? 1 : pStart}-{pEnd} จาก {participants.length} คน
+                </span>
+                <div className="pagination-buttons">
+                  <button
+                    className="pagination-btn"
+                    disabled={participantsPage === 1}
+                    onClick={() => setParticipantsPage(prev => prev - 1)}
+                  >
+                    ‹
+                  </button>
+                  {getPaginationNumbers(participantsPage, totalPagesP).map((num, index) => (
+                    typeof num === "number" ? (
+                      <button
+                        key={num}
+                        className={`pagination-btn ${participantsPage === num ? "active" : ""}`}
+                        onClick={() => setParticipantsPage(num)}
+                      >
+                        {num}
+                      </button>
+                    ) : (
+                      <span key={`dots-${index}`} className="pagination-dots">
+                        {num}
+                      </span>
+                    )
+                  ))}
+                  <button
+                    className="pagination-btn"
+                    disabled={participantsPage === totalPagesP}
+                    onClick={() => setParticipantsPage(prev => prev + 1)}
+                  >
+                    ›
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 
       {/* 5. รายชื่อผู้เช็คอิน */}
       <div className="section-card">
-        <h4 className="section-title">รายชื่อผู้เช็คอิน ({checkedIn})</h4>
-        <div className="participants-avatars-list">
-          {attendance?.checkedIn?.length > 0 ? (
-            attendance.checkedIn
-              .slice(0, showAllCheckedIn ? attendance.checkedIn.length : 10)
-              .map((p) => {
+        <div className="section-header-flex">
+          <h4 className="section-title">รายชื่อผู้เช็คอิน ({checkedIn})</h4>
+          {attendance?.checkedIn?.length > 5 && (
+            <button
+              className="show-more-btn"
+              onClick={() => {
+                setShowAllCheckedIn(!showAllCheckedIn);
+                setCheckedInPage(1);
+              }}
+            >
+              {showAllCheckedIn ? "แสดงน้อยลง" : `ดูเพิ่มเติม (${attendance.checkedIn.length - 5} คน)`}
+            </button>
+          )}
+        </div>
+
+        {!showAllCheckedIn ? (
+          <div className="participants-avatars-list">
+            {attendance?.checkedIn?.length > 0 ? (
+              <>
+                {attendance.checkedIn.slice(0, 5).map((p) => {
+                  const pImage = p.profileImage;
+                  const imageUrl = pImage
+                    ? pImage.startsWith("http") ? pImage : `${API_URL}/uploads/${pImage}`
+                    : null;
+                  return (
+                    <div
+                      key={p.id}
+                      className="participant-avatar-item"
+                      title={`${p.name} (@${p.username || ""})`}
+                      onClick={() => navigate(`/user/${p.id}`)}
+                    >
+                      {imageUrl ? (
+                        <img src={imageUrl} alt={p.name} />
+                      ) : (
+                        <div className="avatar-placeholder">{p.name?.charAt(0).toUpperCase() || "U"}</div>
+                      )}
+                      <span className="avatar-mini-name">{p.name?.split(" ")[0]}</span>
+                    </div>
+                  );
+                })}
+              </>
+            ) : (
+              <p className="empty-text">ไม่มีรายชื่อผู้เช็คอิน</p>
+            )}
+          </div>
+        ) : (
+          <>
+            <div className="participants-grid">
+              {paginatedCheckedIn.map((p) => {
                 const pImage = p.profileImage;
                 const imageUrl = pImage
                   ? pImage.startsWith("http") ? pImage : `${API_URL}/uploads/${pImage}`
                   : null;
-
                 return (
                   <div
                     key={p.id}
@@ -239,20 +395,47 @@ function ActivitySummaryDetail() {
                     <span className="avatar-mini-name">{p.name?.split(" ")[0]}</span>
                   </div>
                 );
-              })
-          ) : (
-            <p className="empty-text">ไม่มีรายชื่อผู้เช็คอิน</p>
-          )}
-        </div>
-        {attendance?.checkedIn?.length > 10 && (
-          <div className="show-more-container">
-            <button
-              className="show-more-btn"
-              onClick={() => setShowAllCheckedIn(!showAllCheckedIn)}
-            >
-              {showAllCheckedIn ? "แสดงน้อยลง" : `ดูเพิ่มเติม (${attendance.checkedIn.length - 10} คน)`}
-            </button>
-          </div>
+              })}
+            </div>
+            {attendance?.checkedIn?.length > 0 && (
+              <div className="pagination-controls">
+                <span className="pagination-info">
+                  แสดง {checkedInPage === 1 ? 1 : cStart}-{cEnd} จาก {attendance.checkedIn.length} คน
+                </span>
+                <div className="pagination-buttons">
+                  <button
+                    className="pagination-btn"
+                    disabled={checkedInPage === 1}
+                    onClick={() => setCheckedInPage(prev => prev - 1)}
+                  >
+                    ‹
+                  </button>
+                  {getPaginationNumbers(checkedInPage, totalPagesC).map((num, index) => (
+                    typeof num === "number" ? (
+                      <button
+                        key={num}
+                        className={`pagination-btn ${checkedInPage === num ? "active" : ""}`}
+                        onClick={() => setCheckedInPage(num)}
+                      >
+                        {num}
+                      </button>
+                    ) : (
+                      <span key={`dots-${index}`} className="pagination-dots">
+                        {num}
+                      </span>
+                    )
+                  ))}
+                  <button
+                    className="pagination-btn"
+                    disabled={checkedInPage === totalPagesC}
+                    onClick={() => setCheckedInPage(prev => prev + 1)}
+                  >
+                    ›
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 
@@ -294,7 +477,7 @@ function ActivitySummaryDetail() {
             </div>
             <div className="stars-row" style={{ visibility: 'hidden' }}>
               {Array.from({ length: 5 }).map((_, i) => (
-                <span key={i} className="star-icon">★</span>
+                <span className="star-icon">★</span>
               ))}
             </div>
           </div>
@@ -336,20 +519,20 @@ function ActivitySummaryDetail() {
                         </div>
                         <div className="feed-user-info">
                           <span className="feed-user-name">{reviewerName}</span>
-                          <div className="feed-stars-row" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <div className="feed-stars-row" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '4px', marginTop: '4px', flexWrap: 'nowrap' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '3px', flexShrink: 0 }}>
                               <span style={{ fontSize: '0.6rem', color: '#888', whiteSpace: 'nowrap' }}>กิจกรรม:</span>
-                              <div className="stars-row">
+                              <div className="stars-row" style={{ display: 'flex', flexWrap: 'nowrap' }}>
                                 {Array.from({ length: 5 }).map((_, i) => {
                                   const isActive = i < ratingValue;
                                   return <span key={i} className={`star-icon ${isActive ? 'active' : ''}`}>★</span>;
                                 })}
                               </div>
                             </div>
-                            <span style={{ color: '#ddd', fontSize: '0.8rem' }}>|</span>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <span style={{ color: '#ddd', fontSize: '0.8rem', margin: '0 2px' }}>|</span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '3px', flexShrink: 0 }}>
                               <span style={{ fontSize: '0.6rem', color: '#888', whiteSpace: 'nowrap' }}>ผู้สร้างกิจกรรม:</span>
-                              <div className="stars-row">
+                              <div className="stars-row" style={{ display: 'flex', flexWrap: 'nowrap' }}>
                                 {Array.from({ length: 5 }).map((_, i) => {
                                   const isActive = i < (c.hostRating || 0);
                                   return <span key={i} className={`star-icon ${isActive ? 'active' : ''}`}>★</span>;
@@ -396,7 +579,7 @@ function ActivitySummaryDetail() {
 
                     <div className="feed-footer-row">
                       <span className="feed-date">
-                        {formatDateTime(c.createdAt)}
+                        {new Date(c.createdAt).toLocaleDateString("th-TH")} {new Date(c.createdAt).toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" })} น.
                       </span>
                       {isOwner && (
                         <span className={`visibility-badge ${c.isPublic ? "public-type" : "private-type"}`}>
