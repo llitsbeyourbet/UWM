@@ -21,6 +21,9 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+  PieChart,
+  Pie,
+  Cell,
 } from "recharts";
 import "./AdminDashboard.css";
 import API_URL from "../config";
@@ -130,6 +133,7 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [activities, setActivities] = useState([]);
   const [categoryChartData, setCategoryChartData] = useState([]);
+  const [statusChartData, setStatusChartData] = useState([]);
   const [latestActivities, setLatestActivities] = useState([]);
   const [latestReports, setLatestReports] = useState([]);
   const [latestReviews, setLatestReviews] = useState([]);
@@ -174,6 +178,9 @@ export default function AdminDashboard() {
         fetch(`${API_URL}/api/admin/chart-categories?days=${days}`, {
           headers: authHeader,
         }),
+        fetch(`${API_URL}/api/admin/chart-status?days=${days}`, {
+          headers: authHeader,
+        }),
         fetch(`${API_URL}/api/admin/latest-activities`, {
           headers: authHeader,
         }),
@@ -197,6 +204,7 @@ export default function AdminDashboard() {
         userData,
         activityData,
         categoryChart,
+        statusChart,
         latestActivityData,
         latestReportData,
         latestReviewData,
@@ -207,6 +215,9 @@ export default function AdminDashboard() {
       setActivities(Array.isArray(activityData) ? activityData : []);
       setCategoryChartData(
         Array.isArray(categoryChart) ? categoryChart : []
+      );
+      setStatusChartData(
+        Array.isArray(statusChart) ? statusChart : []
       );
       setLatestActivities(
         Array.isArray(latestActivityData) ? latestActivityData : []
@@ -239,7 +250,7 @@ export default function AdminDashboard() {
 
   const suspendedActivities =
     Number(stats.suspendedActivities) || 0;
-    
+
   const adminName = admin.name || admin.username || "Admin";
 
   const newestUsers = users
@@ -255,6 +266,23 @@ export default function AdminDashboard() {
     count: Number(item.count || 0),
     categoryLabel: `${getCategoryIcon(item.category)} ${item.category}`,
   }));
+
+  const statusChart = statusChartData.map((item) => ({
+    ...item,
+    value: Number(item.value || 0),
+  }));
+
+  const statusTotal = statusChart.reduce(
+    (sum, item) => sum + item.value,
+    0
+  );
+
+  const STATUS_COLORS = [
+    "#7c5cff",
+    "#36b9cc",
+    "#a0a6b8",
+    "#ef476f",
+  ];
 
   const navItems = [
     ["ภาพรวม", <FiGrid />, "/admin", true],
@@ -464,55 +492,83 @@ export default function AdminDashboard() {
               </ResponsiveContainer>
             </div>
           </article>
-
           <article className="admin-panel">
             <div className="admin-panel-header">
-              <h2>กิจกรรมล่าสุด</h2>
-              <button onClick={() => navigate("/admin/activities")}>
-                ดูทั้งหมด
-              </button>
+              <div>
+                <h2>สถานะกิจกรรม</h2>
+              </div>
+
+              <select
+                value={days}
+                onChange={(event) => setDays(Number(event.target.value))}
+              >
+                <option value={7}>7 วันที่ผ่านมา</option>
+                <option value={30}>30 วันที่ผ่านมา</option>
+                <option value={90}>90 วันที่ผ่านมา</option>
+                <option value={365}>1 ปีที่ผ่านมา</option>
+              </select>
             </div>
 
-            <div className="admin-list">
-              {latestActivities.slice(0, 4).map((activity) => (
-                <button
-                  className="admin-activity-row"
-                  key={activity.id}
-                  onClick={() =>
-                    navigate(`/activity-detail?id=${activity.id}&from=admin`)
-                  }
-                >
-                  <img
-                    src={activity.cover || fallback}
-                    onError={(event) => {
-                      event.currentTarget.src = fallback;
-                    }}
-                    alt=""
-                  />
+            <div className="admin-status-chart">
+              <div className="admin-donut">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={statusChart}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={72}
+                      outerRadius={100}
+                      paddingAngle={3}
+                      stroke="none"
+                    >
+                      {statusChart.map((item, index) => (
+                        <Cell
+                          key={item.status}
+                          fill={STATUS_COLORS[index % STATUS_COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
 
-                  <span>
-                    <strong>{activity.activityName}</strong>
-                    <small>สร้างโดย @{activity.creator}</small>
-                  </span>
+                    <Tooltip
+                      formatter={(value, name) => [
+                        `${Number(value).toLocaleString("th-TH")} กิจกรรม`,
+                        name,
+                      ]}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
 
-                  <span className="status">
-                    <small>{dateText(activity.createdAt)}</small>
-                    <em className={activity.status === "suspended" ? "status-suspended" : "status-active"}>
-                      {activity.status === "suspended"
-                        ? "ระงับแล้ว"
-                        : "เผยแพร่แล้ว"}
-                    </em>
-                  </span>
+                <div className="admin-donut-center">
+                  <strong>{statusTotal.toLocaleString("th-TH")}</strong>
+                  <span>กิจกรรม</span>
+                </div>
+              </div>
 
-                  <FiMoreVertical />
-                </button>
-              ))}
+              <div className="admin-status-legend">
+                {statusChart.map((item, index) => (
+                  <div key={item.status}>
+                    <span
+                      className="admin-status-dot"
+                      style={{
+                        background:
+                          STATUS_COLORS[index % STATUS_COLORS.length],
+                      }}
+                    />
 
-              {latestActivities.length === 0 && (
-                <div className="admin-empty">ยังไม่มีกิจกรรม</div>
-              )}
+                    <span>{item.name}</span>
+
+                    <strong>
+                      {item.value.toLocaleString("th-TH")}
+                    </strong>
+                  </div>
+                ))}
+              </div>
             </div>
           </article>
+
         </section>
 
         <section className="admin-secondary-grid">
