@@ -632,6 +632,7 @@
     font-size: 14px;
     color: #e53935;
     cursor: pointer;
+    transition: background .15s;
 }
 
 .report-dropdown button:hover {
@@ -806,262 +807,6 @@
     gap: 8px;
 }
 
-/* Reviews */
-.comments-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.comment-card {
-    padding: 14px;
-    background: #F8F9FC;
-    border-radius: 14px;
-}
-
-.comment-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.comment-avatar {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    background: #EEF3FF;
-    color: #4A6FFF;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-}
-
-.comment-date {
-    font-size: 12px !important;
-    color: #999 !important;
-}
-
-.comment-text {
-    margin-top: 10px !important;
-    color: #444 !important;
-}
-
-.comment-toggle {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-}
-
-.toggle-switch {
-    width: 34px;
-    height: 20px;
-    padding: 2px;
-    border-radius: 999px;
-    background: #d8d8d8;
-    box-sizing: border-box;
-    transition: background .2s;
-}
-
-.toggle-switch.on {
-    background: #6BCB77;
-}
-
-.toggle-thumb {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: #fff;
-    transition: transform .2s;
-}
-
-.toggle-switch.on .toggle-thumb {
-    transform: translateX(14px);
-}
-
-/* Status */
-.suspended-banner {
-    padding: 14px;
-    border-radius: 14px;
-    background: #FFEAEA;
-    color: #C62828;
-    text-align: center;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.reviewed-text {
-    margin: 0;
-    text-align: center;
-    color: #4f9b59;
-    font-size: 14px;
-}
-
-/* Report modal */
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
-    background: rgba(20, 24, 35, .45);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    box-sizing: border-box;
-}
-
-.modal-card {
-    width: 100%;
-    max-width: 380px;
-    background: #fff;
-    border-radius: 22px;
-    padding: 22px;
-    box-sizing: border-box;
-    box-shadow: 0 24px 70px rgba(0, 0, 0, .22);
-}
-
-.modal-title {
-    margin: 0;
-    font-size: 20px;
-}
-
-.modal-subtitle {
-    margin: 6px 0 16px;
-    color: #888;
-    font-size: 14px;
-}
-
-.reason-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.reason-item {
-    padding: 12px 14px;
-    border: 1px solid #eee;
-    border-radius: 12px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: .15s;
-}
-
-.reason-item:hover {
-    background: #F8F9FC;
-}
-
-.reason-item.selected {
-    border-color: #4A6FFF;
-    background: #EEF3FF;
-    color: #3657d6;
-}
-
-.modal-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.modal-cancel-btn,
-.modal-report-btn {
-    flex: 1;
-    border: none;
-    border-radius: 12px;
-    padding: 12px;
-    font-family: 'Sarabun', sans-serif;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.modal-cancel-btn {
-    background: #f1f2f5;
-    color: #444;
-}
-
-.modal-report-btn {
-    background: #e53935;
-    color: #fff;
-}
-
-.modal-report-btn:disabled {
-    opacity: .6;
-    cursor: default;
-}
-
-.other-reason-wrap {
-    margin-top: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.other-reason-lbl {
-    margin: 0;
-    font-size: 13px;
-    color: #666;
-    font-weight: 600;
-}
-
-.other-reason-input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    color: #333;
-    background-color: #ffffff;
-    font-family: 'Sarabun', sans-serif;
-    font-size: 14px;
-    resize: none;
-    height: 80px;
-    box-sizing: border-box;
-}
-
-.other-reason-input:focus {
-    outline: none;
-    border-color: #4A6FFF;
-    box-shadow: 0 0 0 2px rgba(74, 111, 255, 0.1);
-}
-
-/* QR text */
-.qr-container p {
-    margin: 0;
-    text-align: center;
-}
-
-.qr-countdown,
-.checkin-time-info {
-    font-size: 13px;
-    color: #666;
-}
-
-/* Loading */
-.loading {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f4f5f8;
-    color: #777;
-    font-family: 'Sarabun', sans-serif;
-}
-
-@media (max-width: 480px) {
-    .activity-content {
-        padding: 16px 16px 100px;
-    }
-
-    .activity-cover {
-        height: 220px;
-        border-radius: 24px;
-    }
-
-    .activity-main-image {
-        border-radius: 24px;
-    }
-}
-
-
 /* =========================================================
    UPDATED REVIEWS
    Reviewer profile + per-comment public/private toggle
@@ -1170,7 +915,6 @@
     height: 40px;
     border-radius: 50%;
     overflow: hidden;
-    flex-shrink: 0;
     background: linear-gradient(135deg, #EEF3FF 0%, #D8E3FF 100%);
     color: #4A6FFF;
     display: flex;
@@ -1330,7 +1074,6 @@
   color: #ffffff;
   cursor: not-allowed;
 }
-
 .join-btn.suspended {
   background: #dc2626;
   color: #ffffff;
@@ -1355,7 +1098,7 @@
 .user-role-badge.member {
   background: #dcfce7;
   color: #15803d;
-  
+
 }
 
 .user-role-badge.pending {
@@ -1400,4 +1143,62 @@
 .show-more-btn:hover {
   background-color: #e5e7eb;
   color: #374151;
+}
+
+/* Pagination footer container */
+.pagination-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.pagination-info {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.pagination-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.pagination-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: #666;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  font-family: 'Sarabun', sans-serif;
+}
+
+.pagination-dots {
+  font-size: 0.8rem;
+  color: #aaa;
+  padding: 0 4px;
+}
+
+.pagination-btn.active {
+  background-color: #7d5fff;
+  color: #fff;
+  border-color: #7d5fff;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

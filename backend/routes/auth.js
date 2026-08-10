@@ -4,7 +4,89 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { Op } = require("sequelize");
 const User = require("../models/User");
+const OTP = require("../models/OTP");
 const loginLimiter = require("../middleware/loginRateLimiter");
+const Mailjet = require("node-mailjet");
+const { verifyToken } = require("../middleware/auth");
+
+const mailjet = Mailjet.connect(
+  process.env.MJ_APIKEY_PUBLIC,
+  process.env.MJ_APIKEY_PRIVATE
+);
+
+const sendOTPEmail = async (email, otp, subject) => {
+  await mailjet.post("send", { version: "v3.1" }).request({
+    Messages: [
+      {
+        From: {
+          Email: process.env.MJ_SENDER_EMAIL,
+          Name: "Until We Meet",
+        },
+        To: [{ Email: email }],
+        Subject: subject,
+        HTMLPart: `
+          <div style="font-family:sans-serif;padding:20px;">
+            <h2>Until We Meet</h2>
+            <p>รหัส OTP สำหรับเปลี่ยนรหัสผ่านของคุณคือ</p>
+            <h1 style="color:#4A6FFF;letter-spacing:8px;">${otp}</h1>
+            <p>รหัสนี้จะหมดอายุใน 10 นาที</p>
+          </div>
+        `,
+      },
+    ],
+  });
+};
+
+// เปลี่ยนรหัสผ่าน: ส่ง OTP (ต้อง Login)
+router.post("/change-password/otp", verifyToken, async (req, res) => {
+  try {
+    const user = await User.findByPk(req.userId);
+    if (!user) return res.status(404).json({ message: "ไม่พบผู้ใช้งาน" });
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiredAt = new Date(Date.now() + 10 * 60 * 1000);
+
+    await OTP.destroy({ where: { email: user.email } });
+    await OTP.create({ email: user.email, otp, expiredAt });
+
+    await sendOTPEmail(user.email, otp, "Until We Meet — รหัส OTP สำหรับเปลี่ยนรหัสผ่าน");
+
+    res.json({ message: "ส่ง OTP สำเร็จ กรุณาเช็คอีเมล" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+  }
+});
+
+// เปลี่ยนรหัสผ่าน: อัปเดตรหัสผ่าน (ต้อง Login)
+router.post("/change-password/update", verifyToken, async (req, res) => {
+  try {
+    const { otp, newPassword, confirmPassword } = req.body;
+    const user = await User.findByPk(req.userId);
+
+    if (!user) return res.status(404).json({ message: "ไม่พบผู้ใช้งาน" });
+
+    const otpRecord = await OTP.findOne({ where: { email: user.email, otp } });
+    if (!otpRecord) return res.status(400).json({ message: "OTP ไม่ถูกต้อง" });
+    if (new Date() > otpRecord.expiredAt) return res.status(400).json({ message: "OTP หมดอายุแล้ว" });
+
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({ message: "รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร" });
+    }
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ message: "รหัสผ่านไม่ตรงกัน" });
+    }
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    await User.update({ password: hashed }, { where: { id: user.id } });
+    await OTP.destroy({ where: { email: user.email } });
+
+    res.json({ message: "เปลี่ยนรหัสผ่านสำเร็จ กรุณาเข้าสู่ระบบอีกครั้ง" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+  }
+});
 
 router.post("/check-register", async (req, res) => {
   try {
@@ -68,7 +150,6 @@ router.post("/register", async (req, res) => {
     const cleanEmail = email?.trim().toLowerCase();
     const cleanPhone = phone?.trim();
 
-    // อนุญาตเฉพาะตัวอักษรภาษาอังกฤษและตัวเลข
     const usernameRegex = /^[A-Za-z0-9]+$/;
 
     if (!usernameRegex.test(cleanUsername || "")) {
@@ -152,14 +233,12 @@ router.post("/login", loginLimiter, async (req, res) => {
     if (!isMatch)
       return res.status(400).json({ message: "รหัสผ่านไม่ถูกต้อง" });
 
-    // 👈 เพิ่ม role ใน token
     const token = jwt.sign(
       { id: user.id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
-    // 👈 เพิ่ม role ใน response
     res.json({
       token,
       user: {
@@ -180,7 +259,6 @@ router.post("/login", loginLimiter, async (req, res) => {
       error: err.message
     });
   }
-
 });
 
 router.get("/me", async (req, res) => {

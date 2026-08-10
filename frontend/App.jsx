@@ -15,6 +15,7 @@ import CheckIn from "./pages/CheckIn";
 import AdminDashboard from "./pages/AdminDashboard";
 import ReviewForm from "./pages/ReviewForm";
 import ForgotPassword from "./pages/ForgotPassword";
+import ChangePassword from "./pages/ChangePassword";
 import "./assets/AppLayout.css"
 import ScanQR from "./pages/ScanQR";
 import UserProfile from "./pages/UserProfile";
@@ -61,6 +62,7 @@ function App() {
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/review/:activityId" element={<ReviewForm />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/change-password" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
             <Route path="/scan" element={<ScanQR />} />
             <Route path="/activity-summary" element={<ProtectedRoute><ActivitySummary /></ProtectedRoute>} />
             <Route path="/activity-summary/:id" element={<ProtectedRoute><ActivitySummaryDetail /></ProtectedRoute>} />
