@@ -136,7 +136,6 @@ export default function AdminDashboard() {
   const [statusChartData, setStatusChartData] = useState([]);
   const [latestActivities, setLatestActivities] = useState([]);
   const [latestReports, setLatestReports] = useState([]);
-  const [latestReviews, setLatestReviews] = useState([]);
   const [days, setDays] = useState(7);
   const [openPeriod, setOpenPeriod] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -187,9 +186,6 @@ export default function AdminDashboard() {
         fetch(`${API_URL}/api/admin/latest-reports`, {
           headers: authHeader,
         }),
-        fetch(`${API_URL}/api/admin/latest-reviews`, {
-          headers: authHeader,
-        }),
       ]);
 
       const failedResponse = responses.find((response) => !response.ok);
@@ -207,7 +203,6 @@ export default function AdminDashboard() {
         statusChart,
         latestActivityData,
         latestReportData,
-        latestReviewData,
       ] = await Promise.all(responses.map((response) => response.json()));
 
       setStats(dashboardData || {});
@@ -224,9 +219,6 @@ export default function AdminDashboard() {
       );
       setLatestReports(
         Array.isArray(latestReportData) ? latestReportData : []
-      );
-      setLatestReviews(
-        Array.isArray(latestReviewData) ? latestReviewData : []
       );
     } catch (error) {
       console.error(error);
@@ -572,6 +564,65 @@ export default function AdminDashboard() {
         </section>
 
         <section className="admin-secondary-grid">
+
+          <article className="admin-panel">
+            <div className="admin-panel-header">
+              <h2>กิจกรรมล่าสุด</h2>
+
+              <button onClick={() => navigate("/admin/activities")}>
+                ดูทั้งหมด
+              </button>
+            </div>
+
+            <div className="admin-list">
+              {latestActivities.slice(0, 4).map((activity) => (
+                <button
+                  className="admin-activity-row"
+                  key={activity.id}
+                  onClick={() =>
+                    navigate(`/activity-detail?id=${activity.id}&from=admin`)
+                  }
+                >
+                  <img
+                    src={activity.cover || fallback}
+                    onError={(event) => {
+                      event.currentTarget.src = fallback;
+                    }}
+                    alt=""
+                  />
+
+                  <span>
+                    <strong>{activity.activityName}</strong>
+                    <small>สร้างโดย @{activity.creator}</small>
+                  </span>
+
+                  <span className="status">
+                    <small>{dateText(activity.createdAt)}</small>
+
+                    <em
+                      className={
+                        activity.status === "suspended"
+                          ? "status-suspended"
+                          : "status-active"
+                      }
+                    >
+                      {activity.status === "suspended"
+                        ? "ระงับแล้ว"
+                        : "เผยแพร่แล้ว"}
+                    </em>
+                  </span>
+
+                  <FiMoreVertical />
+                </button>
+              ))}
+
+              {latestActivities.length === 0 && (
+                <div className="admin-empty">
+                  ยังไม่มีกิจกรรม
+                </div>
+              )}
+            </div>
+          </article>
           <article className="admin-panel">
             <div className="admin-panel-header">
               <h2>
@@ -612,55 +663,6 @@ export default function AdminDashboard() {
 
               {latestReports.length === 0 && (
                 <div className="admin-empty">ไม่มีรายงานที่รอตรวจสอบ</div>
-              )}
-            </div>
-          </article>
-
-          <article className="admin-panel">
-            <div className="admin-panel-header">
-              <h2>รีวิวล่าสุด</h2>
-
-              <button onClick={() => navigate("/admin/reviews")}>
-                ดูทั้งหมด
-              </button>
-            </div>
-
-            <div className="admin-list">
-              {latestReviews.slice(0, 3).map((review) => (
-                <button
-                  className="admin-report-row"
-                  key={review.id}
-                  onClick={() =>
-                    navigate(
-                      `/activity-detail?id=${review.activityId}&from=admin`
-                    )
-                  }
-                >
-                  <span className="flag">
-                    <FiStar />
-                  </span>
-
-                  <span>
-                    <strong>{review.activityName}</strong>
-
-                    <small>
-                      {"★".repeat(Math.max(0, Math.min(5, review.rating)))}
-                      {"☆".repeat(Math.max(0, 5 - review.rating))}
-                    </small>
-
-                    <small>
-                      {review.comment || `รีวิวโดย @${review.reviewerUsername}`}
-                    </small>
-                  </span>
-
-                  <span className="report-time">
-                    {ago(review.createdAt)}
-                  </span>
-                </button>
-              ))}
-
-              {latestReviews.length === 0 && (
-                <div className="admin-empty">ยังไม่มีรีวิว</div>
               )}
             </div>
           </article>

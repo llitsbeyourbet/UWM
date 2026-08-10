@@ -1192,6 +1192,14 @@ router.put("/reports/:id/status", auth, isAdmin, async (req, res) => {
         message: "ไม่พบรายงาน",
       });
     }
+    if (
+      report.status === "resolved" ||
+      report.status === "rejected"
+    ) {
+      return res.status(400).json({
+        message: "รายงานนี้ได้รับการตรวจสอบเรียบร้อยแล้ว ไม่สามารถเปลี่ยนผลการตรวจสอบได้",
+      });
+    }
 
     const {
       status,

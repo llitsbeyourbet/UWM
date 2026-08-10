@@ -10,7 +10,7 @@ import { MdGroups } from "react-icons/md";
 import API_URL from "../config";
 import "./AdminDashboard.css";
 import "./AdminReportDetail.css";
-
+import { formatDateTime, formatDateTimeDate, formatDateTimeTime, formatTime } from "../utils/formatDate";
 const FALLBACK_IMAGE = "https://placehold.co/900x560/F1EDFF/6846F5?text=Activity";
 
 const navItems = [
@@ -18,7 +18,6 @@ const navItems = [
   ["กิจกรรม", <FiCalendar />, "/admin/activities"],
   ["ผู้ใช้งาน", <FiUsers />, "/admin/users"],
   ["รายงานกิจกรรม", <FiFlag />, "/admin/reports", true],
-  ["การแจ้งเตือน", <FiBell />, "/admin/notifications"],
   ["รีวิว", <FiStar />, "/admin/reviews"],
 ];
 
@@ -203,7 +202,6 @@ export default function AdminReportDetail() {
         <div className="admin-report-detail-page">
           <header className="report-detail-topbar">
             <button type="button" className="report-detail-back" onClick={() => navigate("/admin/reports")}><FiArrowLeft />กลับหน้ารายงาน</button>
-            <button type="button" className="report-detail-notification" onClick={() => navigate("/admin/notifications")}><FiBell /></button>
           </header>
 
           <section className="report-detail-heading">
@@ -212,10 +210,45 @@ export default function AdminReportDetail() {
               <h1>รายงาน #{reportNumber}</h1>
               <p>ส่งรายงานเมื่อ {formatDate(report.createdAt || report.reportedAt, true)}</p>
             </div>
-            <div className="report-detail-heading-actions">
-              <button type="button" className="report-reject-action" onClick={rejectReport} disabled={saving || isCompleted}><FiAlertTriangle />ปฏิเสธรายงาน</button>
-              <button type="button" className="report-suspend-action" onClick={suspendActivity} disabled={saving || activitySuspended}><FiSlash />{activitySuspended ? "กิจกรรมถูกระงับแล้ว" : "ระงับกิจกรรม"}</button>
-            </div>
+            {isCompleted ? (
+              <div className="report-detail-heading-result">
+                {report.decision === "suspend_activity" ? (
+                  <span className="heading-result-badge suspended">
+                    <FiSlash />
+                    ระงับกิจกรรมแล้ว
+                  </span>
+                ) : (
+                  <span className="heading-result-badge rejected">
+                    <FiAlertTriangle />
+                    ปฏิเสธรายงาน
+                  </span>
+                )}
+              </div>
+            ) : (
+              <div className="report-detail-heading-actions">
+                <button
+                  type="button"
+                  className="report-reject-action"
+                  onClick={rejectReport}
+                  disabled={saving}
+                >
+                  <FiAlertTriangle />
+                  ปฏิเสธรายงาน
+                </button>
+
+                <button
+                  type="button"
+                  className="report-suspend-action"
+                  onClick={suspendActivity}
+                  disabled={saving || activitySuspended}
+                >
+                  <FiSlash />
+                  {activitySuspended
+                    ? "กิจกรรมถูกระงับแล้ว"
+                    : "ระงับกิจกรรม"}
+                </button>
+              </div>
+            )}
           </section>
 
           <section className="report-detail-main-grid">
@@ -225,7 +258,17 @@ export default function AdminReportDetail() {
               <h3>{report.activityName || "ไม่ระบุชื่อกิจกรรม"}</h3>
               <div className="report-detail-info-list">
                 <div><FiCalendar /><span><small>วันที่จัดกิจกรรม</small><strong>{formatDate(report.activityDate || report.activity?.date)}</strong></span></div>
-                <div><FiClock /><span><small>เวลา</small><strong>{report.activityTime || report.activity?.time || report.activity?.startTime || "-"}</strong></span></div>
+                <div><FiClock /><span>
+                  <small>เวลา</small>
+                  <strong>
+                    {report.activityTime
+                      ? report.activityTime
+                        .split(" - ")
+                        .map((time) => time.slice(0, 5))
+                        .join(" - ")
+                      : "-"}
+                  </strong>
+                </span></div>
                 <div><FiMapPin /><span><small>สถานที่</small><strong>{report.activityLocation || report.activity?.location || "ไม่ระบุสถานที่"}</strong></span></div>
                 <div><FiUser /><span><small>ผู้สร้างกิจกรรม</small><strong>@{report.creatorUsername || report.creatorName || report.activity?.creatorUsername || "ไม่ระบุ"}</strong></span></div>
               </div>
@@ -302,9 +345,21 @@ export default function AdminReportDetail() {
                       </p>
                     </div>
 
-                    <small className="reporter-report-date">
-                      รายงานเมื่อ {formatDate(item.createdAt, true)}
-                    </small>
+                    <div className="report-created-meta">
+                      <div>
+                        <small>วันที่รายงาน</small>
+                        <strong>
+                          {formatDateTimeDate(report.createdAt)}
+                        </strong>
+                      </div>
+
+                      <div>
+                        <small>เวลารายงาน</small>
+                        <strong>
+                          {formatDateTimeTime(report.createdAt)} น.
+                        </strong>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -371,7 +426,12 @@ export default function AdminReportDetail() {
 
                   <div>
                     <small>วันที่ตรวจสอบ</small>
-                    <strong>{formatDate(report.reviewedAt, true)}</strong>
+                    <strong>{formatDateTimeDate(report.reviewedAt)}</strong>
+                  </div>
+
+                  <div>
+                    <small>เวลาที่ตรวจสอบ</small>
+                    <strong>{formatDateTimeTime(report.reviewedAt)} น.</strong>
                   </div>
                 </div>
               )}

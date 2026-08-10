@@ -448,6 +448,7 @@ function AdminReports() {
                                         FALLBACK_IMAGE;
                                     return (
                                         <article className="report-card" key={reportId}>
+                                            <div classname = "report-image-wrap">
                                             <img
                                                 className="report-activity-image"
                                                 src={activityImage}
@@ -456,6 +457,7 @@ function AdminReports() {
                                                     event.currentTarget.src = FALLBACK_IMAGE;
                                                 }}
                                             />
+                                            </div>
                                             <div className="report-card-content">
                                                 <div className="report-card-heading">
                                                     <div>
