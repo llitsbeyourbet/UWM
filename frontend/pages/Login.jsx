@@ -1,11 +1,10 @@
 import API_URL from "../config";
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
 export default function Login() {
   const navigate = useNavigate();
-  const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
@@ -72,22 +71,6 @@ export default function Login() {
         <h1>Meet Friends, Meet Activities</h1>
         <p>Until We Meet ช่วยให้คุณค้นหาและเข้าร่วมกิจกรรมได้ง่ายขึ้น</p>
       </div>
-
-      {location.state?.message && (
-        <div className="login-success-alert" style={{
-          backgroundColor: '#e6fffa',
-          color: '#2d3748',
-          padding: '12px',
-          borderRadius: '12px',
-          textAlign: 'center',
-          marginBottom: '20px',
-          border: '1px solid #b2f5ea',
-          fontSize: '14px',
-          fontWeight: '500'
-        }}>
-          {location.state.message}
-        </div>
-      )}
 
       {/* Card */}
       <div className="login-card">

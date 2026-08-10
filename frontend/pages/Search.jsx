@@ -53,24 +53,11 @@ function Search() {
   const filteredActivities = useMemo(() => {
     let result = activities.filter((item) => {
       // 1. Hide ended activities
-      if (item.date) {
-        const dateStr = item.date.includes('T') ? item.date.split('T')[0] : item.date;
-        const timeStr = item.endTime || item.time || "23:59";
-
-        const [year, month, day] = dateStr.split('-').map(Number);
-        const [hours, minutes] = timeStr.split(':').map(Number);
-
-        if (!isNaN(year)) {
-          const endDateTime = new Date(year, month - 1, day, hours || 0, minutes || 0);
-          if (endDateTime < new Date()) return false;
-        }
-      }
+      const endDateTime = new Date(`${item.date}T${item.endTime || item.time || "23:59"}`);
+      if (endDateTime < new Date()) return false;
 
       // 2. Status suspended
       if (item.status === "suspended") return false;
-
-      // ... rest of filters
-
 
       // 3. Keyword search
       if (filters.search && !item.activityName.toLowerCase().includes(filters.search.toLowerCase())) {
@@ -126,17 +113,8 @@ function Search() {
     // Sorting Logic
     return result.sort((a, b) => {
       if (filters.sortBy === "soonest") {
-        const datePartA = a.date?.includes('T') ? a.date.split('T')[0] : a.date;
-        const datePartB = b.date?.includes('T') ? b.date.split('T')[0] : b.date;
-
-        const [yA, mA, dA] = (datePartA || "").split('-').map(Number);
-        const [hA, minA] = (a.endTime || a.time || "00:00").split(':').map(Number);
-        const dateA = new Date(yA, mA - 1, dA, hA || 0, minA || 0);
-
-        const [yB, mB, dB] = (datePartB || "").split('-').map(Number);
-        const [hB, minB] = (b.endTime || b.time || "00:00").split(':').map(Number);
-        const dateB = new Date(yB, mB - 1, dB, hB || 0, minB || 0);
-
+        const dateA = new Date(`${a.date}T${a.time || "00:00"}`);
+        const dateB = new Date(`${b.date}T${b.time || "00:00"}`);
         return dateA - dateB;
       } else if (filters.sortBy === "newest") {
         return new Date(b.createdAt) - new Date(a.createdAt);
@@ -196,55 +174,6 @@ function Search() {
     return badges.map((b, i) => (
       <span key={i} className={`activity-badge badge-${b.type}`}>{b.text}</span>
     ));
-  };
-
-  const renderEmptyState = () => {
-    const isSearchActive = filters.search !== "";
-    const isFilterActive = filters.categories.length > 0 || filters.type !== "all" || filters.dateRange !== "all" || filters.onlyAvailable;
-
-    if (isSearchActive && isFilterActive) {
-      return (
-        <div className="empty-state">
-          <p className="empty-text">ไม่พบกิจกรรมที่ตรงกับการค้นหา</p>
-          <button className="create-activity-btn" onClick={clearFilters}>
-            ล้างการค้นหาและตัวกรอง
-          </button>
-        </div>
-      );
-    }
-    if (isSearchActive) {
-      return (
-        <div className="empty-state">
-          <p className="empty-text">ไม่พบกิจกรรมที่ค้นหา</p>
-          <button className="create-activity-btn" onClick={() => setFilters(prev => ({ ...prev, search: "" }))}>
-            ล้างคำค้นหา
-          </button>
-        </div>
-      );
-    }
-    if (isFilterActive) {
-      return (
-        <div className="empty-state">
-          <p className="empty-text">ไม่พบกิจกรรมที่ตรงกับตัวกรอง</p>
-          <div className="empty-state-btns">
-            <button className="create-activity-btn" onClick={() => setIsFilterOpen(true)}>
-              ปรับตัวกรอง
-            </button>
-            <button className="create-activity-btn secondary" onClick={clearFilters}>
-              ล้างตัวกรอง
-            </button>
-          </div>
-        </div>
-      );
-    }
-    return (
-      <div className="empty-state">
-        <p className="empty-text">ยังไม่มีกิจกรรมที่กำลังจะมาถึง</p>
-        <button className="create-activity-btn" onClick={() => navigate("/CreateActivities")}>
-          สร้างกิจกรรมเลย!
-        </button>
-      </div>
-    );
   };
 
   return (
@@ -320,7 +249,9 @@ function Search() {
       <div className="activity-list">
         {loading ? (
           <p className="empty-text">กำลังโหลด...</p>
-        ) : filteredActivities.length === 0 ? renderEmptyState() : (
+        ) : filteredActivities.length === 0 ? (
+          <p className="empty-text">ไม่พบกิจกรรมที่ตรงตามเงื่อนไข</p>
+        ) : (
           filteredActivities.map((item) => (
             <div key={item.id} className="activity-card" onClick={() => handleViewDetail(item)}>
               <div className="card-cover-wrap">
