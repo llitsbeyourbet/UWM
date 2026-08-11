@@ -178,6 +178,25 @@ function Notifications() {
       </div>
     );
 
+    if (type === "activity_warning") return (
+      <div className="notif-icon amber">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#cc8833"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+          <line x1="12" y1="9" x2="12" y2="13" />
+          <line x1="12" y1="17" x2="12.01" y2="17" />
+        </svg>
+      </div>
+    );
+
     if (type === "activity_suspended") return (
       <div className="notif-icon red">
         <svg
@@ -216,8 +235,10 @@ function Notifications() {
       return <><span className="bold">{n.fromUsername}</span> {" "}ยืนยันการเข้าร่วมกิจกรรม{" "} <span className="bold">{n.activityName}</span> {" "}แล้ว </>;
     if (n.type === "review")
       return <><span className="bold">{n.fromUsername}</span> {" "}รีวิวกิจกรรม{" "} <span className="bold">{n.activityName}</span> {" "}แล้ว </>;
+    if (n.type === "activity_warning")
+      return (<>กิจกรรม{" "}<span className="bold">{n.activityName}</span>{" "}ได้รับคำเตือนจากผู้ดูแลระบบ</>);
     if (n.type === "activity_suspended")
-      return (<>กิจกรรม{" "}<span className="bold">{n.activityName}</span>{" "}ถูกระงับโดยผู้ดูแลระบบ เนื่องจากไม่เป็นไปตามข้อกำหนดของระบบ</>);
+      return (<>กิจกรรม{" "}<span className="bold">{n.activityName}</span>{" "}ถูกระงับโดยผู้ดูแลระบบ</>);
   };
 
   const formatTime = (dateStr) => {
@@ -276,6 +297,14 @@ function Notifications() {
         {renderIcon(n.type)}
         <div className="notif-body">
           <p className="notif-message">{renderMessage(n)}</p>
+          {(n.type === "activity_warning" ||
+            n.type === "activity_suspended") &&
+            n.adminNote && (
+              <div className="notif-admin-note">
+                <span>หมายเหตุจากผู้ดูแลระบบ</span>
+                <p>{n.adminNote}</p>
+              </div>
+            )}
           <p className="notif-time">{formatTime(n.createdAt)}</p>
           {n.type === "join_request" && (
             <div className="notif-actions" onClick={(e) => e.stopPropagation()}>
