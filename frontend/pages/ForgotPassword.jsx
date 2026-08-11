@@ -130,7 +130,7 @@ function ForgotPassword() {
       {step === 1 && (
         <div className="forgot-content">
           <p className="forgot-sub">ลืมรหัสผ่าน</p>
-          <h1 className="forgot-title">กรอกอีเมล<br/>ของคุณ</h1>
+          <h1 className="forgot-title">กรอกอีเมลของคุณ</h1>
           <p className="forgot-desc">เราจะส่งรหัส OTP ไปที่อีเมลของคุณ</p>
 
           <div className="forgot-card">
