@@ -7,12 +7,23 @@ const User = require("../models/User");
 const OTP = require("../models/OTP");
 const loginLimiter = require("../middleware/loginRateLimiter");
 const Mailjet = require("node-mailjet");
-const { verifyToken } = require("../middleware/auth");
 
 const mailjet = Mailjet.connect(
   process.env.MJ_APIKEY_PUBLIC,
   process.env.MJ_APIKEY_PRIVATE
 );
+
+const auth = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) return res.status(401).json({ message: "ไม่มี token" });
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.userId = decoded.id;
+    next();
+  } catch (err) {
+    return res.status(401).json({ message: "Token ไม่ถูกต้องหรือหมดอายุ" });
+  }
+};
 
 const sendOTPEmail = async (email, otp, subject) => {
   await mailjet.post("send", { version: "v3.1" }).request({
@@ -38,7 +49,7 @@ const sendOTPEmail = async (email, otp, subject) => {
 };
 
 // เปลี่ยนรหัสผ่าน: ส่ง OTP (ต้อง Login)
-router.post("/change-password/otp", verifyToken, async (req, res) => {
+router.post("/change-password/otp", auth, async (req, res) => {
   try {
     const user = await User.findByPk(req.userId);
     if (!user) return res.status(404).json({ message: "ไม่พบผู้ใช้งาน" });
@@ -59,7 +70,7 @@ router.post("/change-password/otp", verifyToken, async (req, res) => {
 });
 
 // เปลี่ยนรหัสผ่าน: อัปเดตรหัสผ่าน (ต้อง Login)
-router.post("/change-password/update", verifyToken, async (req, res) => {
+router.post("/change-password/update", auth, async (req, res) => {
   try {
     const { otp, newPassword, confirmPassword } = req.body;
     const user = await User.findByPk(req.userId);
