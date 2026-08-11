@@ -6,6 +6,23 @@ import API_URL from "../config";
 import { formatDate, formatTime } from "../utils/formatDate";
 import { getCategoryIcon } from "../utils/categoryIcons";
 
+const getPaginationNumbers = (page, totalPages) => {
+  if (totalPages <= 5) {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }
+
+  if (page <= 3) {
+    return [1, 2, 3, "...", totalPages];
+  }
+
+  if (page >= totalPages - 2) {
+    return [1, "...", totalPages - 2, totalPages - 1, totalPages];
+  }
+
+  return [1, "...", page, "...", totalPages];
+};
+
+
 function ActivityDetail() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -33,6 +50,9 @@ function ActivityDetail() {
   const [detailedReviews, setDetailedReviews] = useState([]);
   const [reviewTab, setReviewTab] = useState("activity");
   const [host, setHost] = useState(null);
+
+  const [participantsPage, setParticipantsPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
 
   const [hostRating, setHostRating] = useState(null);
   const [participants, setParticipants] = useState([]);
@@ -341,6 +361,16 @@ function ActivityDetail() {
 
   const activityEnded = activity && new Date(activity.date + "T" + (activity.endTime || activity.time)) <= new Date();
 
+  // Pagination for Participants
+  const totalP = participants.length;
+  const totalPagesP = Math.max(1, Math.ceil(totalP / ITEMS_PER_PAGE));
+  const pStart = (participantsPage - 1) * ITEMS_PER_PAGE + 1;
+  const pEnd = Math.min(participantsPage * ITEMS_PER_PAGE, totalP);
+  const paginatedParticipants = participants.slice(
+    (participantsPage - 1) * ITEMS_PER_PAGE,
+    participantsPage * ITEMS_PER_PAGE
+  );
+
   const hasParticipants =
     Number(activity.joinedCount || participants.length || 0) > 0;
 
@@ -524,36 +554,102 @@ function ActivityDetail() {
           <div className="participants-header">
             <h3>ผู้เข้าร่วม ({participants.length})</h3>
             {participants.length > 5 && (
-              <button className="view-all-btn" onClick={() => setShowAllParticipants((prev) => !prev)}>
+              <button className="view-all-btn" onClick={() => {
+                setShowAllParticipants((prev) => !prev);
+                setParticipantsPage(1);
+              }}>
                 {showAllParticipants ? "ย่อรายการ" : "ดูเพิ่มเติม"}
               </button>
             )}
           </div>
           {participants.length > 0 ? (
-            <div className="participants-list">
-              {(showAllParticipants ? participants : participants.slice(0, 5)).map((p) => (
-                <div key={p.id} className="participant-item" onClick={() => navigate("/user/" + p.id)}>
-                  <div className="p-avatar">
-                    {p.profileImage ? (
-                      <img src={p.profileImage.startsWith("http") ? p.profileImage : API_URL + "/uploads/" + p.profileImage} alt={p.name} />
-                    ) : (
-                      <div className="p-avatar-initials">{p.name?.charAt(0).toUpperCase()}</div>
-                    )}
-                  </div>
-                  <div className="participant-info">
-                    <span className="p-name">{p.name}</span>
-
-                    {p.username && <span className="p-username">@{p.username}</span>}
-
-                  </div>
-                  {Number(p.id) === Number(currentUser?.id) && (
-                    <span className="user-role-badge member">
-                      👑 ME
-                    </span>
-                  )}
+            <>
+              {!showAllParticipants ? (
+                <div className="participants-list">
+                  {participants.slice(0, 5).map((p) => (
+                    <div key={p.id} className="participant-item" onClick={() => navigate("/user/" + p.id)}>
+                      <div className="p-avatar">
+                        {p.profileImage ? (
+                          <img src={p.profileImage.startsWith("http") ? p.profileImage : API_URL + "/uploads/" + p.profileImage} alt={p.name} />
+                        ) : (
+                          <div className="p-avatar-initials">{p.name?.charAt(0).toUpperCase()}</div>
+                        )}
+                      </div>
+                      <div className="participant-info">
+                        <span className="p-name">{p.name}</span>
+                        {p.username && <span className="p-username">@{p.username}</span>}
+                      </div>
+                      {Number(p.id) === Number(currentUser?.id) && (
+                        <span className="user-role-badge member">
+                          👑 ME
+                        </span>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              ) : (
+                <>
+                  <div className="participants-list">
+                    {paginatedParticipants.map((p) => (
+                      <div key={p.id} className="participant-item" onClick={() => navigate("/user/" + p.id)}>
+                        <div className="p-avatar">
+                          {p.profileImage ? (
+                            <img src={p.profileImage.startsWith("http") ? p.profileImage : API_URL + "/uploads/" + p.profileImage} alt={p.name} />
+                          ) : (
+                            <div className="p-avatar-initials">{p.name?.charAt(0).toUpperCase()}</div>
+                          )}
+                        </div>
+                        <div className="participant-info">
+                          <span className="p-name">{p.name}</span>
+                          {p.username && <span className="p-username">@{p.username}</span>}
+                        </div>
+                        {Number(p.id) === Number(currentUser?.id) && (
+                          <span className="user-role-badge member">
+                            👑 ME
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="pagination-controls">
+                    <span className="pagination-info">
+                      แสดง {participantsPage === 1 ? 1 : pStart}-{pEnd} จาก {participants.length} คน
+                    </span>
+                    <div className="pagination-buttons">
+                      <button
+                        className="pagination-btn"
+                        disabled={participantsPage === 1}
+                        onClick={() => setParticipantsPage(prev => prev - 1)}
+                      >
+                        ‹
+                      </button>
+                      {getPaginationNumbers(participantsPage, totalPagesP).map((num, index) => (
+                        typeof num === "number" ? (
+                          <button
+                            key={num}
+                            className={`pagination-btn ${participantsPage === num ? "active" : ""}`}
+                            onClick={() => setParticipantsPage(num)}
+                          >
+                            {num}
+                          </button>
+                        ) : (
+                          <span key={`dots-${index}`} className="pagination-dots">
+                            {num}
+                          </span>
+                        )
+                      ))}
+                      <button
+                        className="pagination-btn"
+                        disabled={participantsPage === totalPagesP}
+                        onClick={() => setParticipantsPage(prev => prev + 1)}
+                      >
+                        ›
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </>
           ) : (
             <p className="no-participants">ยังไม่มีผู้เข้าร่วม</p>
           )}
@@ -638,27 +734,24 @@ function ActivityDetail() {
                     );
                   })}
                 </div>
-                {filteredReviews.length > visibleReviews ? (
-                  <div className="show-more-container">
+                <div className="show-more-container" style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+                  {filteredReviews.length > visibleReviews && (
                     <button
                       className="show-more-btn"
                       onClick={() => setVisibleReviews(prev => prev + 5)}
                     >
                       ดูรีวิวเพิ่มเติม ({filteredReviews.length - visibleReviews} รีวิว)
                     </button>
-                  </div>
-                ) : (
-                  visibleReviews > 3 && (
-                    <div className="show-more-container">
-                      <button
-                        className="show-more-btn"
-                        onClick={() => setVisibleReviews(3)}
-                      >
-                        แสดงน้อยลง
-                      </button>
-                    </div>
-                  )
-                )}
+                  )}
+                  {visibleReviews > 3 && (
+                    <button
+                      className="show-more-btn"
+                      onClick={() => setVisibleReviews(3)}
+                    >
+                      แสดงน้อยลง
+                    </button>
+                  )}
+                </div>
               </>
             ) : (
               <p className="no-comments">ไม่พบรีวิวในหมวดนี้</p>
