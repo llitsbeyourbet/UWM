@@ -11,6 +11,7 @@ import API_URL from "../config";
 import "./AdminDashboard.css";
 import "./AdminReportDetail.css";
 import { formatDateTime, formatDateTimeDate, formatDateTimeTime, formatTime } from "../utils/formatDate";
+import { getCategoryIcon } from "../utils/categoryIcons";
 const FALLBACK_IMAGE = "https://placehold.co/900x560/F1EDFF/6846F5?text=Activity";
 
 const navItems = [
@@ -327,7 +328,7 @@ export default function AdminReportDetail() {
                       <small>เหตุผลที่รายงาน</small>
 
                       <strong>
-                        {item.reasonCategory ||
+                        {getCategoryIcon(item.reasonCategory || item.category)} {item.reasonCategory ||
                           item.category ||
                           item.reason ||
                           "ไม่ระบุเหตุผล"}

@@ -93,10 +93,10 @@
 
 .filters-row {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   width: 100%;
-  gap: 8px;
+  gap: 16px;
 }
 
 .chips-container {
@@ -147,7 +147,6 @@
   font-family: 'Sarabun', sans-serif;
   font-weight: 500;
   padding: 0;
-  margin-left: auto;
   flex-shrink: 0;
   white-space: nowrap;
 }
@@ -262,9 +261,21 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 3rem 1rem;
+  padding: 5rem 1rem;
   text-align: center;
-  gap: 1.5rem;
+  gap: 1rem;
+}
+
+.empty-icon {
+  margin-bottom: 0.5rem;
+  color: #ccc;
+}
+
+.empty-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #aaa;
+  margin: 0;
 }
 
 .empty-state .empty-text {
