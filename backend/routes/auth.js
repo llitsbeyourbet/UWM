@@ -69,6 +69,24 @@ router.post("/change-password/otp", auth, async (req, res) => {
   }
 });
 
+// เปลี่ยนรหัสผ่าน: ยืนยัน OTP (ต้อง Login)
+router.post("/change-password/verify-otp", auth, async (req, res) => {
+  try {
+    const { otp } = req.body;
+    const user = await User.findByPk(req.userId);
+    if (!user) return res.status(404).json({ message: "ไม่พบผู้ใช้งาน" });
+
+    const otpRecord = await OTP.findOne({ where: { email: user.email, otp } });
+    if (!otpRecord) return res.status(400).json({ message: "OTP ไม่ถูกต้อง" });
+    if (new Date() > otpRecord.expiredAt) return res.status(400).json({ message: "OTP หมดอายุแล้ว" });
+
+    res.json({ verified: true });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+  }
+});
+
 // เปลี่ยนรหัสผ่าน: อัปเดตรหัสผ่าน (ต้อง Login)
 router.post("/change-password/update", auth, async (req, res) => {
   try {

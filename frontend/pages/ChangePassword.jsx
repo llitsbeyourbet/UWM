@@ -83,15 +83,19 @@ function ChangePassword() {
     setError("");
     try {
       const token = localStorage.getItem("token");
-      // Reuse logic from Forgot Password verify-otp
-      const data = await safeFetch(`${API_URL}/api/forgot/verify-otp`, {
+      const data = await safeFetch(`${API_URL}/api/auth/change-password/verify-otp`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: userEmail, otp }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ otp }),
       });
 
-      setMessage("ยืนยันตัวตนสำเร็จ กรุณาตั้งรหัสผ่านใหม่");
-      setStep("password");
+      if (data.verified) {
+        setMessage("ยืนยันตัวตนสำเร็จ กรุณาตั้งรหัสผ่านใหม่");
+        setStep("password");
+      }
     } catch (err) {
       setError(err.message);
     } finally {
