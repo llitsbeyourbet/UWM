@@ -200,7 +200,7 @@ function ForgotPassword() {
       {step === 3 && (
         <div className="forgot-content">
           <p className="forgot-sub">รีเซ็ตรหัสผ่าน</p>
-          <h1 className="forgot-title">ตั้งรหัสผ่าน<br/>ใหม่</h1>
+          <h1 className="forgot-title">ตั้งรหัสผ่านใหม่</h1>
           <p className="forgot-desc">กรอกรหัสผ่านใหม่ของคุณ</p>
 
           <div className="forgot-card">

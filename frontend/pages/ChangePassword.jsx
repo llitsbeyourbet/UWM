@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./ChangePassword.css";
 import API_URL from "../config";
@@ -17,11 +17,14 @@ async function safeFetch(url, options) {
 function ChangePassword() {
   const navigate = useNavigate();
   const location = useLocation();
+  const otpInputsRef = useRef([]);
   const [step, setStep] = useState("email"); // 'email' -> 'otp' -> 'password'
   const [userEmail, setUserEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -126,8 +129,7 @@ function ChangePassword() {
         body: JSON.stringify({ otp, newPassword, confirmPassword }),
       });
 
-      localStorage.removeItem("token");
-      navigate("/login", { state: { message: data.message } });
+      navigate("/profile", { state: { message: data.message } });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -168,20 +170,26 @@ function ChangePassword() {
                 {[0, 1, 2, 3, 4, 5].map((i) => (
                   <input
                     key={i}
+                    ref={(el) => (otpInputsRef.current[i] = el)}
                     type="text"
                     maxLength="1"
                     className="otp-digit"
                     value={otp[i] || ""}
                     onChange={(e) => {
                       const val = e.target.value;
+                      const newOtp = otp.split("");
                       if (val) {
-                        const newOtp = otp.split("");
                         newOtp[i] = val;
                         setOtp(newOtp.join(""));
+                        if (i < 5) otpInputsRef.current[i + 1]?.focus();
                       } else {
-                        const newOtp = otp.split("");
                         newOtp[i] = "";
                         setOtp(newOtp.join(""));
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Backspace" && !otp[i] && i > 0) {
+                        otpInputsRef.current[i - 1]?.focus();
                       }
                     }}
                   />
@@ -198,21 +206,37 @@ function ChangePassword() {
             <div className="cp-step">
               <div className="input-group">
                 <label>รหัสผ่านใหม่</label>
-                <input
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="อย่างน้อย 6 ตัวอักษร"
-                />
+                <div className="password-wrap">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="อย่างน้อย 6 ตัวอักษร"
+                  />
+                  <span
+                    className="material-icons toggle-password"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? "visibility" : "visibility_off"}
+                  </span>
+                </div>
               </div>
               <div className="input-group">
                 <label>ยืนยันรหัสผ่านใหม่</label>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="กรอกรหัสผ่านอีกครั้ง"
-                />
+                <div className="password-wrap">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="กรอกรหัสผ่านอีกครั้ง"
+                  />
+                  <span
+                    className="material-icons toggle-password"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? "visibility" : "visibility_off"}
+                  </span>
+                </div>
               </div>
               <button className="cp-btn" onClick={handleSubmitPassword} disabled={loading}>
                 {loading ? "กำลังบันทึก..." : "เปลี่ยนรหัสผ่าน"}
