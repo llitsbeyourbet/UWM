@@ -1261,6 +1261,48 @@ router.put("/reports/:id/status", auth, isAdmin, async (req, res) => {
       });
     }
 
+    /*แจ้งเตือนผู้สร้างกิจกรรมแต่ยังไม่ระงับกิจกรรม*/
+    if (
+      status === "resolved" &&
+      decision === "warning"
+    ) {
+      const activity = await Activity.findByPk(
+        report.activityId
+      );
+
+      if (!activity) {
+        return res.status(404).json({
+          message: "ไม่พบกิจกรรมที่ถูกรายงาน",
+        });
+      }
+
+      try {
+        await notificationService.createNotification(
+          activity.createdBy,
+          "activity_warning",
+          activity.id,
+          activity.activityName,
+          req.userId,
+          "ผู้ดูแลระบบ",
+          {
+            deduplicate: true,
+            adminNote: note,
+          }
+        );
+
+        await Promise.resolve(
+          notificationService.emitCountUpdate(
+            activity.createdBy
+          )
+        );
+      } catch (notificationError) {
+        console.error(
+          "Create activity warning notification error:",
+          notificationError
+        );
+      }
+    }
+
     if (
       status === "resolved" &&
       decision === "suspend_activity"

@@ -47,6 +47,7 @@ const createNotification = async (toUserId, type, activityId, activityName, from
       activityName,
       fromUserId,
       fromUsername,
+      adminNote: options.adminNote || null,
       isRead: false,
     });
 
