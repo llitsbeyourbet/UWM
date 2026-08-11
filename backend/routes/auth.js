@@ -7,12 +7,28 @@ const User = require("../models/User");
 const OTP = require("../models/OTP");
 const loginLimiter = require("../middleware/loginRateLimiter");
 const Mailjet = require("node-mailjet");
-const { verifyToken } = require("../middleware/auth");
 
 const mailjet = Mailjet.connect(
   process.env.MJ_APIKEY_PUBLIC,
   process.env.MJ_APIKEY_PRIVATE
 );
+
+const auth = async (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) return res.status(401).json({ message: "ไม่มี token" });
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findByPk(decoded.id);
+    if (!user) return res.status(404).json({ message: "ไม่พบผู้ใช้งาน" });
+    if (user.tokenVersion !== decoded.tokenVersion) {
+      return res.status(401).json({ message: "เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่" });
+    }
+    req.userId = user.id;
+    next();
+  } catch (err) {
+    return res.status(401).json({ message: "Token ไม่ถูกต้องหรือหมดอายุ" });
+  }
+};
 
 const sendOTPEmail = async (email, otp, subject) => {
   await mailjet.post("send", { version: "v3.1" }).request({
@@ -38,7 +54,7 @@ const sendOTPEmail = async (email, otp, subject) => {
 };
 
 // เปลี่ยนรหัสผ่าน: ส่ง OTP (ต้อง Login)
-router.post("/change-password/otp", verifyToken, async (req, res) => {
+router.post("/change-password/otp", auth, async (req, res) => {
   try {
     const user = await User.findByPk(req.userId);
     if (!user) return res.status(404).json({ message: "ไม่พบผู้ใช้งาน" });
@@ -58,8 +74,26 @@ router.post("/change-password/otp", verifyToken, async (req, res) => {
   }
 });
 
+// เปลี่ยนรหัสผ่าน: ยืนยัน OTP (ต้อง Login)
+router.post("/change-password/verify-otp", auth, async (req, res) => {
+  try {
+    const { otp } = req.body;
+    const user = await User.findByPk(req.userId);
+    if (!user) return res.status(404).json({ message: "ไม่พบผู้ใช้งาน" });
+
+    const otpRecord = await OTP.findOne({ where: { email: user.email, otp } });
+    if (!otpRecord) return res.status(400).json({ message: "OTP ไม่ถูกต้อง" });
+    if (new Date() > otpRecord.expiredAt) return res.status(400).json({ message: "OTP หมดอายุแล้ว" });
+
+    res.json({ verified: true });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+  }
+});
+
 // เปลี่ยนรหัสผ่าน: อัปเดตรหัสผ่าน (ต้อง Login)
-router.post("/change-password/update", verifyToken, async (req, res) => {
+router.post("/change-password/update", auth, async (req, res) => {
   try {
     const { otp, newPassword, confirmPassword } = req.body;
     const user = await User.findByPk(req.userId);
@@ -78,10 +112,13 @@ router.post("/change-password/update", verifyToken, async (req, res) => {
     }
 
     const hashed = await bcrypt.hash(newPassword, 10);
-    await User.update({ password: hashed }, { where: { id: user.id } });
+    await User.update(
+      { password: hashed, tokenVersion: (user.tokenVersion || 0) + 1 },
+      { where: { id: user.id } }
+    );
     await OTP.destroy({ where: { email: user.email } });
 
-    res.json({ message: "เปลี่ยนรหัสผ่านสำเร็จ กรุณาเข้าสู่ระบบอีกครั้ง" });
+    res.json({ message: "เปลี่ยนรหัสผ่านสำเร็จ" });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
@@ -234,7 +271,7 @@ router.post("/login", loginLimiter, async (req, res) => {
       return res.status(400).json({ message: "รหัสผ่านไม่ถูกต้อง" });
 
     const token = jwt.sign(
-      { id: user.id, role: user.role },
+      { id: user.id, role: user.role, tokenVersion: user.tokenVersion },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
