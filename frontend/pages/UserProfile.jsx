@@ -1,7 +1,7 @@
 import API_URL from "../config";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import "./UserProfile.css";
+import "../styles/UserProfile.css";
 
 function UserProfile() {
   const { id } = useParams();

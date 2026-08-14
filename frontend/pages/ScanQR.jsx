@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Html5Qrcode } from "html5-qrcode";
-import "./ScanQR.css";
+import "../styles/ScanQR.css";
 
 function ScanQR() {
   const scannerRef = useRef(null);

@@ -18,8 +18,10 @@ import {
 import { MdGroups } from "react-icons/md";
 
 import API_URL from "../config";
-import "./AdminDashboard.css";
-import "./AdminActivities.css";
+import "../styles/AdminDashboard.css";
+import "../styles/AdminActivities.css";
+import "../components/AdminSidebar"
+import AdminSidebar from "../components/AdminSidebar";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -306,46 +308,7 @@ export default function AdminActivities() {
 
   return (
     <div className="admin-shell">
-      <aside className="admin-sidebar">
-        <button
-          type="button"
-          className="admin-brand"
-          onClick={() => navigate("/admin")}
-        >
-          <span className="admin-brand-logo">
-            <MdGroups />
-          </span>
-
-          <span>
-            <strong>Until We Meet</strong>
-            <small>ADMIN PANEL</small>
-          </span>
-        </button>
-
-        <nav className="admin-nav">
-          {navItems.map(([label, icon, path, active]) => (
-            <button
-              type="button"
-              key={label}
-              className={`admin-nav-item ${active ? "active" : ""}`}
-              onClick={() => navigate(path)}
-            >
-              <span>{icon}</span>
-              <b>{label}</b>
-            </button>
-          ))}
-        </nav>
-
-        <button
-          type="button"
-          className="admin-logout"
-          onClick={logout}
-        >
-          <FiLogOut />
-          ออกจากระบบ
-        </button>
-      </aside>
-
+      <AdminSidebar/>
       <main className="admin-main">
         <div className="admin-activities-page">
           <header className="activities-topbar">

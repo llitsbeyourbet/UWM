@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import "./ChangePassword.css";
+import "../styles/ChangePassword.css";
 import API_URL from "../config";
 
 async function safeFetch(url, options) {

@@ -1,7 +1,7 @@
 import API_URL from "../config";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./EditProfile.css";
+import "../styles/EditProfile.css";
 
 function EditProfile() {
   const navigate = useNavigate();

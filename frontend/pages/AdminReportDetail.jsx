@@ -8,19 +8,12 @@ import {
 import { MdGroups } from "react-icons/md";
 
 import API_URL from "../config";
-import "./AdminDashboard.css";
-import "./AdminReportDetail.css";
+import "../styles/AdminDashboard.css";
+import "../styles/AdminReportDetail.css";
+import "../components/AdminSidebar"
 import { formatDateTime, formatDateTimeDate, formatDateTimeTime, formatTime } from "../utils/formatDate";
 import { getCategoryIcon } from "../utils/categoryIcons";
 const FALLBACK_IMAGE = "https://placehold.co/900x560/F1EDFF/6846F5?text=Activity";
-
-const navItems = [
-  ["ภาพรวม", <FiGrid />, "/admin"],
-  ["กิจกรรม", <FiCalendar />, "/admin/activities"],
-  ["ผู้ใช้งาน", <FiUsers />, "/admin/users"],
-  ["รายงานกิจกรรม", <FiFlag />, "/admin/reports", true],
-  ["รีวิว", <FiStar />, "/admin/reviews"],
-];
 
 const normalizeStatus = (value) => {
   const status = String(value || "pending").toLowerCase();
@@ -100,12 +93,6 @@ export default function AdminReportDetail() {
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/login");
-  };
-
   const activityId = report?.activityId || report?.activity?.id || report?.activity?._id;
   const currentStatus = normalizeStatus(report?.status);
   const isCompleted = currentStatus === "resolved" || currentStatus === "rejected";
@@ -166,7 +153,6 @@ export default function AdminReportDetail() {
   if (loading || error || !report) {
     return (
       <div className="admin-shell">
-        <aside className="admin-sidebar" />
         <main className="admin-main">
           <div className="report-detail-state">
             {loading ? <span className="report-detail-loader" /> : <FiAlertTriangle />}
@@ -184,21 +170,6 @@ export default function AdminReportDetail() {
 
   return (
     <div className="admin-shell">
-      <aside className="admin-sidebar">
-        <button type="button" className="admin-brand" onClick={() => navigate("/admin")}>
-          <span className="admin-brand-logo"><MdGroups /></span>
-          <span><strong>Until We Meet</strong><small>ADMIN PANEL</small></span>
-        </button>
-        <nav className="admin-nav">
-          {navItems.map(([label, icon, path, active]) => (
-            <button type="button" key={label} className={`admin-nav-item ${active ? "active" : ""}`} onClick={() => navigate(path)}>
-              <span>{icon}</span><b>{label}</b>
-            </button>
-          ))}
-        </nav>
-        <button type="button" className="admin-logout" onClick={logout}><FiLogOut />ออกจากระบบ</button>
-      </aside>
-
       <main className="admin-main">
         <div className="admin-report-detail-page">
           <header className="report-detail-topbar">

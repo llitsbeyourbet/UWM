@@ -20,8 +20,9 @@ import {
 } from "react-icons/fi";
 import { MdGroups } from "react-icons/md";
 import API_URL from "../config";
-import "./AdminDashboard.css";
-import "./AdminReports.css";
+import "../styles/AdminDashboard.css";
+import "../styles/AdminReports.css";
+import AdminSidebar from "../components/AdminSidebar";
 import { formatDate, formatTime, formatDateTime, formatDateTimeDate, formatDateTimeTime } from "../utils/formatDate";
 import { getCategoryIcon } from "../utils/categoryIcons";
 
@@ -105,12 +106,6 @@ function AdminReports() {
         loadReports();
     }, []);
 
-    const logout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        navigate("/login");
-    };
-
     const loadReports = async () => {
         try {
             setLoading(true);
@@ -164,14 +159,6 @@ function AdminReports() {
             }
         );
     }, [reports]);
-
-    const navItems = [
-        ["ภาพรวม", <FiGrid />, "/admin", false],
-        ["กิจกรรม", <FiCalendar />, "/admin/activities", false],
-        ["ผู้ใช้งาน", <FiUsers />, "/admin/users", false],
-        ["รายงานกิจกรรม", <FiFlag />, "/admin/reports", true, counts.latest,],
-        ["รีวิว", <FiStar />, "/admin/reviews", false],
-    ];
 
     const filteredReports = useMemo(() => {
         const keyword = search.trim().toLowerCase();
@@ -274,53 +261,13 @@ function AdminReports() {
     const tabs = [
         { key: "all", label: "ทั้งหมด" },
         { key: "latest", label: "รายงานล่าสุด" },
-        { key: "pending", label: "รอการตรวจสอบ" },
         { key: "reviewing", label: "กำลังตรวจสอบ" },
         { key: "resolved", label: "ดำเนินการแล้ว" },
         { key: "rejected", label: "ปฏิเสธการระงับ" },
     ];
-
-
-
     return (
         <div className="admin-shell">
-            <aside className="admin-sidebar">
-                <button type="button" className="admin-brand" onClick={() => navigate("/admin")}>
-                    <span className="admin-brand-logo">
-                        <MdGroups />
-                    </span>
-
-                    <span>
-                        <strong>Until We Meet</strong>
-                        <small>ADMIN PANEL</small>
-                    </span>
-                </button>
-
-                <nav className="admin-nav">
-                    {navItems.map(([label, icon, path, active, badge]) => (
-                        <button
-                            type="button"
-                            key={label}
-                            className={`admin-nav-item ${active ? "active" : ""}`}
-                            onClick={() => navigate(path)}
-                        >
-                            <span>{icon}</span>
-                            <b>{label}</b>
-
-                            {badge > 0 && (
-                                <i className="admin-nav-badge">
-                                    {badge > 99 ? "99+" : badge}
-                                </i>
-                            )}
-                        </button>
-                    ))}
-                </nav>
-
-                <button type="button" className="admin-logout" onClick={logout}>
-                    <FiLogOut /> ออกจากระบบ
-                </button>
-            </aside>
-
+            <AdminSidebar/>
             <main className="admin-main">
                 <div className="admin-reports-page">
                     <header className="reports-topbar">
@@ -383,7 +330,6 @@ function AdminReports() {
                                     >
                                         <option value="all">ทั้งหมด</option>
                                         <option value="latest">รายงานล่าสุด</option>
-                                        <option value="pending">รอการตรวจสอบ</option>
                                         <option value="reviewing">กำลังตรวจสอบ</option>
                                         <option value="resolved">ดำเนินการแล้ว</option>
                                         <option value="rejected">ปฏิเสธการระงับ</option>
@@ -449,15 +395,15 @@ function AdminReports() {
                                         FALLBACK_IMAGE;
                                     return (
                                         <article className="report-card" key={reportId}>
-                                            <div classname = "report-image-wrap">
-                                            <img
-                                                className="report-activity-image"
-                                                src={activityImage}
-                                                alt={report.activityName || "กิจกรรมที่ถูกรายงาน"}
-                                                onError={(event) => {
-                                                    event.currentTarget.src = FALLBACK_IMAGE;
-                                                }}
-                                            />
+                                            <div classname="report-image-wrap">
+                                                <img
+                                                    className="report-activity-image"
+                                                    src={activityImage}
+                                                    alt={report.activityName || "กิจกรรมที่ถูกรายงาน"}
+                                                    onError={(event) => {
+                                                        event.currentTarget.src = FALLBACK_IMAGE;
+                                                    }}
+                                                />
                                             </div>
                                             <div className="report-card-content">
                                                 <div className="report-card-heading">
@@ -467,16 +413,13 @@ function AdminReports() {
                                                                 {report.activityName || "ไม่ระบุชื่อกิจกรรม"}
                                                             </h2>
                                                             <span className="report-reason-tag">
-                                                                {getCategoryIcon(report.reasonCategory || report.category)} {report.reasonCategory || report.category || "ถูกรายงาน"}
+                                                                {"🚩 ถูกรายงาน"}
                                                             </span>
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <p className="report-description">
-                                                    มีผู้ใช้งาน {report.reportCount || 1} คน รายงานกิจกรรมนี้
-                                                    กด "เริ่มตรวจสอบ" เพื่อดูรายละเอียดผู้รายงานทั้งหมด
-                                                </p>
+                                                <p className="report-description">มีผู้ใช้งาน {report.reportCount || 1} คน รายงานกิจกรรมนี้</p>
 
                                                 <div className="report-meta">
 
@@ -491,16 +434,6 @@ function AdminReports() {
                                                         {formatDateTimeTime(
                                                             report.createdAt
                                                         )}
-                                                    </span>
-
-                                                    <span>
-                                                        <FiUsers />
-                                                        {Number(
-                                                            report.participantCount ||
-                                                            report.activity?.participantCount ||
-                                                            0
-                                                        ).toLocaleString("th-TH")}{" "}
-                                                        คน
                                                     </span>
                                                 </div>
                                             </div>
@@ -521,8 +454,8 @@ function AdminReports() {
                                                             currentStatus === "rejected") && (
                                                             <div
                                                                 className={`report-reviewed-meta ${report.decision === "suspend_activity"
-                                                                        ? "resolved"
-                                                                        : "rejected"
+                                                                    ? "resolved"
+                                                                    : "rejected"
                                                                     }`}
                                                             >
                                                                 <FiShield />

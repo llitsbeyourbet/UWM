@@ -1,7 +1,7 @@
 import API_URL from "../config";
 import { lazy, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./CreateActivities.css";
+import "../styles/CreateActivities.css";
 import { getCategoryIcon } from "../utils/categoryIcons";
 
 function CreateActivities() {

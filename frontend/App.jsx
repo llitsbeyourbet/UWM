@@ -20,6 +20,7 @@ import "./assets/AppLayout.css"
 import ScanQR from "./pages/ScanQR";
 import UserProfile from "./pages/UserProfile";
 import { SocketProvider } from "./src/context/SocketContext";
+import { AdminReportProvider } from "./src/context/AdminReportContext";
 import ActivitySummary from "./pages/ActivitySummary";
 import ActivitySummaryDetail from "./pages/ActivitySummaryDetail";
 import AdminReports from "./pages/AdminReports";
@@ -40,6 +41,7 @@ function App() {
 
   return (
     <SocketProvider>
+      <AdminReportProvider>
       <AutoLogout />
       <div className={isAdmin ? "" : "app-shell"}>
         {!hideNavbar && <BottomNavbar />}
@@ -76,6 +78,7 @@ function App() {
           </Routes>
         </div>
       </div>
+      </AdminReportProvider>
     </SocketProvider>
   );
 }

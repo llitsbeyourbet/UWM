@@ -1,7 +1,7 @@
 import API_URL from "../config";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import "./CreateActivities.css";
+import "../styles/CreateActivities.css";
 import { getCategoryIcon } from "../utils/categoryIcons";
 
 function EditActivity() {

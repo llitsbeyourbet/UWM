@@ -25,9 +25,11 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import "./AdminDashboard.css";
+import "../styles/AdminDashboard.css";
+import "../components/AdminSidebar"
 import API_URL from "../config";
 import { getCategoryIcon } from "../utils/categoryIcons";
+import AdminSidebar from "../components/AdminSidebar";
 
 const fallback =
   "https://placehold.co/120x90/ede9fe/6d28d9?text=Activity";
@@ -228,12 +230,6 @@ export default function AdminDashboard() {
     }
   }
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/login");
-  };
-
   const totalReviews = Number(stats.totalReviews) || 0;
   const pending = Number(stats.pendingReports) || 0;
 
@@ -276,51 +272,13 @@ export default function AdminDashboard() {
     "#ef476f",
   ];
 
-  const navItems = [
-    ["ภาพรวม", <FiGrid />, "/admin", true],
-    ["กิจกรรม", <FiCalendar />, "/admin/activities"],
-    ["ผู้ใช้งาน", <FiUsers />, "/admin/users"],
-    ["รายงานกิจกรรม", <FiFlag />, "/admin/reports"],
-    ["รีวิว", <FiStar />, "/admin/reviews"],
-  ];
-
   if (loading) {
     return <div className="admin-loading">กำลังโหลด Dashboard...</div>;
   }
 
   return (
     <div className="admin-shell">
-      <aside className="admin-sidebar">
-        <button className="admin-brand" onClick={() => navigate("/admin")}>
-          <span className="admin-brand-logo">
-            <MdGroups />
-          </span>
-
-          <span>
-            <strong>Until We Meet</strong>
-            <small>ADMIN PANEL</small>
-          </span>
-        </button>
-
-        <nav className="admin-nav">
-          {navItems.map(([label, icon, path, active, badge]) => (
-            <button
-              key={label}
-              className={`admin-nav-item ${active ? "active" : ""}`}
-              onClick={() => navigate(path)}
-            >
-              <span>{icon}</span>
-              <b>{label}</b>
-              {badge > 0 && <i>{badge > 99 ? "99+" : badge}</i>}
-            </button>
-          ))}
-        </nav>
-
-        <button className="admin-logout" onClick={logout}>
-          <FiLogOut /> ออกจากระบบ
-        </button>
-      </aside>
-
+      <AdminSidebar/>
       <main className="admin-main">
         <header className="admin-header">
           <div className="admin-greeting">

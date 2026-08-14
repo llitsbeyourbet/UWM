@@ -17,8 +17,10 @@ import {
 import { MdGroups } from "react-icons/md";
 
 import API_URL from "../config";
-import "./AdminDashboard.css";
-import "./AdminReviews.css";
+import "../styles/AdminDashboard.css";
+import "../styles/AdminReviews.css";
+import "../components/AdminSidebar"
+import AdminSidebar from "../components/AdminSidebar";
 
 const ITEMS_PER_PAGE = 8;
 
@@ -112,10 +114,8 @@ function RatingStars({ rating }) {
         </div>
     );
 }
-
 export default function AdminReviews() {
     const navigate = useNavigate();
-
     const [reviews, setReviews] = useState([]);
     const [activeTab, setActiveTab] = useState("all");
     const [search, setSearch] = useState("");
@@ -123,17 +123,8 @@ export default function AdminReviews() {
     const [ratingFilter, setRatingFilter] = useState("all");
     const [sortOrder, setSortOrder] = useState("latest");
     const [page, setPage] = useState(1);
-
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-
-    const navItems = [
-        {label: "ภาพรวม", icon: <FiGrid />, path: "/admin",},
-        {label: "กิจกรรม", icon: <FiCalendar />, path: "/admin/activities",},
-        {label: "ผู้ใช้งาน", icon: <FiUsers />, path: "/admin/users",},
-        {label: "รายงานกิจกรรม", icon: <FiFlag />, path: "/admin/reports",},
-        {label: "รีวิว", icon: <FiStar />, path: "/admin/reviews",active: true,},
-    ];
 
     useEffect(() => {
         loadReviews();
@@ -186,12 +177,6 @@ export default function AdminReviews() {
         } finally {
             setLoading(false);
         }
-    };
-
-    const logout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        navigate("/login");
     };
 
     const reviewCounts = useMemo(() => {
@@ -331,57 +316,11 @@ export default function AdminReviews() {
 
     return (
         <div className="admin-shell">
-            <aside className="admin-sidebar">
-                <button
-                    type="button"
-                    className="admin-brand"
-                    onClick={() => navigate("/admin")}
-                >
-                    <span className="admin-brand-logo">
-                        <MdGroups />
-                    </span>
-
-                    <span>
-                        <strong>Until We Meet</strong>
-                        <small>ADMIN PANEL</small>
-                    </span>
-                </button>
-
-                <nav className="admin-nav">
-                    {navItems.map((item) => (
-                        <button
-                            type="button"
-                            key={item.label}
-                            className={`admin-nav-item ${item.active ? "active" : ""
-                                }`}
-                            onClick={() => navigate(item.path)}
-                        >
-                            <span>{item.icon}</span>
-                            <b>{item.label}</b>
-                        </button>
-                    ))}
-                </nav>
-
-                <button
-                    type="button"
-                    className="admin-logout"
-                    onClick={logout}
-                >
-                    <FiLogOut />
-                    ออกจากระบบ
-                </button>
-            </aside>
-
+            <AdminSidebar/>
             <main className="admin-main">
                 <div className="admin-reviews-page">
                     <div className="admin-reviews-breadcrumb">
-                        <button
-                            type="button"
-                            onClick={() => navigate("/admin")}
-                        >
-                            หน้าหลัก
-                        </button>
-
+                        <button type="button" onClick={() => navigate("/admin")}>หน้าหลัก</button>
                         <span>/</span>
                         <strong>รีวิว</strong>
                     </div>

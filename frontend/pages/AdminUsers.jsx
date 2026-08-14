@@ -1,28 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  FiBell,
-  FiCalendar,
-  FiChevronLeft,
-  FiChevronRight,
-  FiEye,
-  FiFlag,
-  FiGrid,
-  FiLogOut,
-  FiMail,
-  FiMoreVertical,
-  FiSearch,
-  FiSettings,
-  FiStar,
-  FiUserCheck,
-  FiUserX,
-  FiUsers,
+import {FiBell, FiCalendar, FiChevronLeft, FiChevronRight, FiEye,
+  FiFlag, FiGrid, FiLogOut, FiMail, FiMoreVertical, FiSearch, FiSettings, FiStar,
+  FiUserCheck, FiUserX, FiUsers,
 } from "react-icons/fi";
 import { MdGroups } from "react-icons/md";
-
 import API_URL from "../config";
-import "./AdminDashboard.css";
-import "./AdminUsers.css";
+import "../styles/AdminDashboard.css";
+import "../styles/AdminUsers.css";
+import "../components/AdminSidebar"
+import AdminSidebar from "../components/AdminSidebar";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -66,14 +53,6 @@ export default function AdminUsers() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const navItems = [
-    ["ภาพรวม", <FiGrid />, "/admin"],
-    ["กิจกรรม", <FiCalendar />, "/admin/activities"],
-    ["ผู้ใช้งาน", <FiUsers />, "/admin/users", true],
-    ["รายงานกิจกรรม", <FiFlag />, "/admin/reports"],
-    ["รีวิว", <FiStar />, "/admin/reviews"],
-  ];
-
   useEffect(() => {
     loadUsers();
   }, []);
@@ -111,12 +90,6 @@ export default function AdminUsers() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/login");
   };
 
   const counts = useMemo(() => {
@@ -190,47 +163,7 @@ export default function AdminUsers() {
 
   return (
     <div className="admin-shell">
-      <aside className="admin-sidebar">
-        <button
-          type="button"
-          className="admin-brand"
-          onClick={() => navigate("/admin")}
-        >
-          <span className="admin-brand-logo">
-            <MdGroups />
-          </span>
-
-          <span>
-            <strong>Until We Meet</strong>
-            <small>ADMIN PANEL</small>
-          </span>
-        </button>
-
-        <nav className="admin-nav">
-          {navItems.map(([label, icon, path, active]) => (
-            <button
-              type="button"
-              key={label}
-              className={`admin-nav-item ${active ? "active" : ""
-                }`}
-              onClick={() => navigate(path)}
-            >
-              <span>{icon}</span>
-              <b>{label}</b>
-            </button>
-          ))}
-        </nav>
-
-        <button
-          type="button"
-          className="admin-logout"
-          onClick={logout}
-        >
-          <FiLogOut />
-          ออกจากระบบ
-        </button>
-      </aside>
-
+      <AdminSidebar/>
       <main className="admin-main">
         <div className="admin-users-page">
           <header className="users-topbar">

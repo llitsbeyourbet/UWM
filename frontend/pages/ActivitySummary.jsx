@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./ActivitySummary.css";
+import "../styles/ActivitySummary.css";
 import API_URL from "../config";
 import { formatDate } from "../utils/formatDate";
 

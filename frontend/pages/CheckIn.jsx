@@ -1,7 +1,7 @@
 import API_URL from "../config";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import "./CheckIn.css";
+import "../styles/CheckIn.css";
 
 function CheckIn() {
   const navigate = useNavigate();
