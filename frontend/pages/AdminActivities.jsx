@@ -392,7 +392,7 @@ export default function AdminActivities() {
                 ["published", "กิจกรรมที่เผยแพร่แล้ว"],
                 ["ended", "กิจกรรมที่สิ้นสุดแล้ว"],
                 ["suspended", "กิจกรรมที่ถูกระงับ"],
-                ["deleted"], "กิจกรรมที่ถูกยกเลิก"
+                ["deleted", "กิจกรรมที่ถูกลบ"],
 
               ].map(([key, label]) => (
                 <button
@@ -413,47 +413,32 @@ export default function AdminActivities() {
               ))}
             </nav>
 
-            {activeStatus === "published" && (
-              <div className="activities-sub-tabs">
-                {[
-                  ["upcoming", "ยังไม่เริ่มกิจกรรม"],
-                  ["ongoing", "กำลังดำเนินกิจกรรม"],
-                ].map(([key, label]) => (
-                  <button
-                    type="button"
-                    key={key}
-                    className={publishedPhase === key ? "active" : ""}
-                    onClick={() => setPublishedPhase(key)}
-                  >
-                    {label}
-
-                    <span>
-                      {key === "all"
-                        ? counts.published
-                        : counts[key]}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            )}
 
             <div className="activities-toolbar">
               <div className="activities-toolbar-left">
-                <label className="activities-select">
-                  <select
-                    value={activeStatus}
-                    onChange={(event) =>
-                      setActiveStatus(event.target.value)
-                    }
-                    aria-label="กรองสถานะกิจกรรม"
-                  >
-                    <option value="all">ทั้งหมด</option>
-                    <option value="published">กิจกรรมที่เผยแพร่แล้ว</option>
-                    <option value="ended">กิจกรรมที่สิ้นสุดแล้ว</option>
-                    <option value="suspended">กิจกรรมที่ถูกระงับ</option>
-                    <option value="deleted">กิจกรรมที่ถูกยกเลิก</option>
-                  </select>
-                </label>
+                {activeStatus === "published" && (
+                  <label className="activities-select">
+                    <select
+                      value={publishedPhase}
+                      onChange={(event) =>
+                        setPublishedPhase(event.target.value)
+                      }
+                      aria-label="กรองช่วงเวลากิจกรรมที่เผยแพร่แล้ว"
+                    >
+                      <option value="all">
+                        กิจกรรมที่เผยแพร่แล้ว
+                      </option>
+
+                      <option value="upcoming">
+                        ยังไม่เริ่มกิจกรรม
+                      </option>
+
+                      <option value="ongoing">
+                        กำลังดำเนินกิจกรรม
+                      </option>
+                    </select>
+                  </label>
+                )}
 
                 <label className="activities-select">
                   <select
