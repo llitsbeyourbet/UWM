@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { act, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FiBell,
@@ -41,6 +41,10 @@ const formatDate = (value) => {
 };
 
 const normalizeStatus = (activity) => {
+
+  if (activity.deletedAt) {
+    return "deleted"
+  }
   const status = String(activity.status || "").toLowerCase();
 
   if (
@@ -92,6 +96,7 @@ export default function AdminActivities() {
   const [error, setError] = useState("");
 
   const [activeStatus, setActiveStatus] = useState("all");
+  const [publishedPhase, setPublishedPhase] = useState("all");
   const [search, setSearch] = useState("");
   const [sortOrder, setSortOrder] = useState("latest");
   const [page, setPage] = useState(1);
@@ -159,6 +164,7 @@ export default function AdminActivities() {
     navigate("/login");
   };
 
+
   const counts = useMemo(() => {
     return activities.reduce(
       (result, activity) => {
@@ -167,11 +173,32 @@ export default function AdminActivities() {
 
         result.all += 1;
 
-        // สถานะของกิจกรรม
-        result[status] += 1;
+        if (status === "deleted") {
+          result.deleted += 1;
+          return result;
+        }
 
-        // ช่วงเวลาของกิจกรรม
-        result[phase] += 1;
+        if (status === "suspended") {
+          result.suspended += 1;
+          return result;
+        }
+
+        if (status === "published") {
+          if (phase === "ended") {
+            result.ended += 1;
+            return result;
+          }
+
+          result.published += 1;
+
+          if (phase === "upcoming") {
+            result.upcoming += 1;
+          }
+
+          if (phase === "ongoing") {
+            result.ongoing += 1;
+          }
+        }
 
         return result;
       },
@@ -182,6 +209,7 @@ export default function AdminActivities() {
         ongoing: 0,
         ended: 0,
         suspended: 0,
+        deleted: 0,
       }
     );
   }, [activities]);
@@ -192,10 +220,29 @@ export default function AdminActivities() {
     const result = activities.filter((activity) => {
       const status = normalizeStatus(activity);
       const phase = getActivityPhase(activity);
-      const matchesStatus =
-        activeStatus === "all" ||
-        status === activeStatus ||
-        phase === activeStatus;
+      let matchesStatus = false;
+
+      if (activeStatus === "all") {
+        matchesStatus = true;
+      } else if (activeStatus === "deleted") {
+        matchesStatus = status === "deleted";
+      } else if (activeStatus === "suspended") {
+        matchesStatus = status === "suspended";
+      } else if (activeStatus === "ended") {
+        matchesStatus =
+          status === "published" &&
+          phase === "ended";
+      } else if (activeStatus === "published") {
+        matchesStatus =
+          status === "published" &&
+          phase !== "ended";
+
+        if (publishedPhase !== "all") {
+          matchesStatus =
+            matchesStatus &&
+            phase === publishedPhase;
+        }
+      }
 
       const searchableText = [
         activity.activityName,
@@ -227,7 +274,7 @@ export default function AdminActivities() {
 
       return sortOrder === "oldest" ? dateA - dateB : dateB - dateA;
     });
-  }, [activities, activeStatus, search, sortOrder]);
+  }, [activities, activeStatus, publishedPhase, search, sortOrder]);
 
   const totalPages = Math.max(
     1,
@@ -241,7 +288,7 @@ export default function AdminActivities() {
 
   useEffect(() => {
     setPage(1);
-  }, [activeStatus, search, sortOrder]);
+  }, [activeStatus, publishedPhase, search, sortOrder]);
 
   useEffect(() => {
     if (page > totalPages) {
@@ -342,24 +389,53 @@ export default function AdminActivities() {
             >
               {[
                 ["all", "ทั้งหมด"],
-                ["published", "เผยแพร่แล้ว"],
-                ["upcoming", "ยังไม่เริ่ม"],
-                ["ongoing", "กำลังดำเนินการ"],
-                ["ended", "สิ้นสุดแล้ว"],
-                ["suspended", "ระงับแล้ว"],
+                ["published", "กิจกรรมที่เผยแพร่แล้ว"],
+                ["ended", "กิจกรรมที่สิ้นสุดแล้ว"],
+                ["suspended", "กิจกรรมที่ถูกระงับ"],
+                ["deleted"], "กิจกรรมที่ถูกยกเลิก"
 
               ].map(([key, label]) => (
                 <button
                   type="button"
                   key={key}
                   className={activeStatus === key ? "active" : ""}
-                  onClick={() => setActiveStatus(key)}
+                  onClick={() => {
+                    setActiveStatus(key);
+                    if (key !== "published") {
+                      setPublishedPhase("all");
+                    }
+                  }}
+
                 >
                   {label}
-                  <span>{counts[key].toLocaleString("th-TH")}</span>
+                  <span>{Number(counts[key] || 0).toLocaleString("th-TH")}</span>
                 </button>
               ))}
             </nav>
+
+            {activeStatus === "published" && (
+              <div className="activities-sub-tabs">
+                {[
+                  ["upcoming", "ยังไม่เริ่มกิจกรรม"],
+                  ["ongoing", "กำลังดำเนินกิจกรรม"],
+                ].map(([key, label]) => (
+                  <button
+                    type="button"
+                    key={key}
+                    className={publishedPhase === key ? "active" : ""}
+                    onClick={() => setPublishedPhase(key)}
+                  >
+                    {label}
+
+                    <span>
+                      {key === "all"
+                        ? counts.published
+                        : counts[key]}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
 
             <div className="activities-toolbar">
               <div className="activities-toolbar-left">
@@ -372,11 +448,10 @@ export default function AdminActivities() {
                     aria-label="กรองสถานะกิจกรรม"
                   >
                     <option value="all">ทั้งหมด</option>
-                    <option value="published">เผยแพร่แล้ว</option>
-                    <option value="upcoming">ยังไม่เริ่ม</option>
-                    <option value="ongoing">กำลังดำเนินการ</option>
-                    <option value="ended">สิ้นสุดแล้ว</option>
-                    <option value="suspended">ระงับแล้ว</option>
+                    <option value="published">กิจกรรมที่เผยแพร่แล้ว</option>
+                    <option value="ended">กิจกรรมที่สิ้นสุดแล้ว</option>
+                    <option value="suspended">กิจกรรมที่ถูกระงับ</option>
+                    <option value="deleted">กิจกรรมที่ถูกยกเลิก</option>
                   </select>
                 </label>
 
@@ -476,6 +551,7 @@ export default function AdminActivities() {
                         >
                           {status === "published" && "เผยแพร่แล้ว"}
                           {status === "suspended" && "ระงับแล้ว"}
+                          {status === "deleted" && "ถูกลบ"}
                         </span>
                       </div>
 
