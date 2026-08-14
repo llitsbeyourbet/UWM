@@ -2,6 +2,7 @@ import API_URL from "../config";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./CreateActivities.css";
+import { getCategoryIcon } from "../utils/categoryIcons";
 
 function EditActivity() {
   const navigate = useNavigate();
@@ -22,16 +23,7 @@ function EditActivity() {
   const [showCategory, setShowCategory] = useState(false);
   const [checkinStart, setCheckinStart] = useState("");
   const [checkinEnd, setCheckinEnd] = useState("");
-  const categoryOptions = [
-    { value: "กีฬา", label: "⚽ กีฬา" },
-    { value: "ดนตรี", label: "🎵 ดนตรี" },
-    { value: "ท่องเที่ยว", label: "🏔 ท่องเที่ยว" },
-    { value: "อาหาร", label: "🍜 อาหาร" },
-    { value: "ศิลปะ", label: "🎨 ศิลปะ" },
-    { value: "เกม", label: "🎮 เกม" },
-    { value: "คาเฟ่", label: "☕ คาเฟ่" },
-    { value: "ภาพยนตร์", label: "🍿 ภาพยนตร์" },
-  ];
+  const categoryOptions = ["กีฬา", "ดนตรี", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่", "ภาพยนตร์"];
 
   const toggleCategory = (val) => {
     setCategory((prev) =>
@@ -242,13 +234,11 @@ function EditActivity() {
               {category.length === 0
                 ? "เลือกหมวดหมู่"
                 : (() => {
-                  const first = categoryOptions.find(
-                    (item) => item.value === category[0]
-                  );
+                  const first = category[0];
 
                   return category.length === 1
-                    ? first?.label
-                    : `${first?.label} +${category.length - 1}`;
+                    ? `${getCategoryIcon(first)} ${first}`
+                    : `${getCategoryIcon(first)} ${first} +${category.length - 1}`;
                 })()}
             </span>
 
@@ -259,13 +249,13 @@ function EditActivity() {
             <div className="dropdown-menu">
               {categoryOptions.map((option) => (
                 <div
-                  key={option.value}
-                  className={`dropdown-item ${category.includes(option.value) ? "selected" : ""
+                  key={option}
+                  className={`dropdown-item ${category.includes(option) ? "selected" : ""
                     }`}
-                  onClick={() => toggleCategory(option.value)}
+                  onClick={() => toggleCategory(option)}
                 >
-                  <span>{option.label}</span>
-                  {category.includes(option.value) && <span>✓</span>}
+                  <span>{getCategoryIcon(option)} {option}</span>
+                  {category.includes(option) && <span>✓</span>}
                 </div>
               ))}
             </div>
@@ -275,13 +265,9 @@ function EditActivity() {
         {category.length > 0 && (
           <div className="category-badges">
             {category.map((item) => {
-              const selectedCategory = categoryOptions.find(
-                (option) => option.value === item
-              );
-
               return (
                 <div className="category-badge" key={item}>
-                  <span>{selectedCategory?.label || item}</span>
+                  <span>{getCategoryIcon(item)} {item}</span>
 
                   <button
                     type="button"

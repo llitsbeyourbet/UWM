@@ -23,6 +23,7 @@ import API_URL from "../config";
 import "./AdminDashboard.css";
 import "./AdminReports.css";
 import { formatDate, formatTime, formatDateTime, formatDateTimeDate, formatDateTimeTime } from "../utils/formatDate";
+import { getCategoryIcon } from "../utils/categoryIcons";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -466,9 +467,7 @@ function AdminReports() {
                                                                 {report.activityName || "ไม่ระบุชื่อกิจกรรม"}
                                                             </h2>
                                                             <span className="report-reason-tag">
-                                                                {report.reasonCategory ||
-                                                                    report.category ||
-                                                                    "ถูกรายงาน"}
+                                                                {getCategoryIcon(report.reasonCategory || report.category)} {report.reasonCategory || report.category || "ถูกรายงาน"}
                                                             </span>
                                                         </div>
                                                     </div>

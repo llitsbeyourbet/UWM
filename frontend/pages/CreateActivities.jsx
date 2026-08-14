@@ -2,6 +2,7 @@ import API_URL from "../config";
 import { lazy, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./CreateActivities.css";
+import { getCategoryIcon } from "../utils/categoryIcons";
 
 function CreateActivities() {
   const navigate = useNavigate();
@@ -45,16 +46,7 @@ function CreateActivities() {
       }
     }
   };
-  const categoryOptions = [
-    { value: "กีฬา", label: "⚽ กีฬา" },
-    { value: "ดนตรี", label: "🎵 ดนตรี" },
-    { value: "ท่องเที่ยว", label: "🏔 ท่องเที่ยว" },
-    { value: "อาหาร", label: "🍜 อาหาร" },
-    { value: "ศิลปะ", label: "🎨 ศิลปะ" },
-    { value: "เกม", label: "🎮 เกม" },
-    { value: "คาเฟ่", label: "☕ คาเฟ่" },
-    { value: "ภาพยนตร์", label: "🍿 ภาพยนตร์" }
-  ];
+  const categoryOptions = ["กีฬา", "ดนตรี", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่", "ภาพยนตร์"];
 
   const toggleCategory = (val) => {
     setCategory((prev) =>
@@ -217,13 +209,10 @@ function CreateActivities() {
               {category.length === 0
                 ? ""
                 : (() => {
-                  const first = categoryOptions.find(
-                    (item) => item.value === category[0]
-                  );
-
+                  const first = category[0];
                   return category.length === 1
-                    ? first?.label
-                    : `${first?.label} +${category.length - 1}`;
+                    ? `${getCategoryIcon(first)} ${first}`
+                    : `${getCategoryIcon(first)} ${first} +${category.length - 1}`;
                 })()}
             </span>
             <span>{showCategory ? "▲" : "▼"}</span>
@@ -232,12 +221,12 @@ function CreateActivities() {
             <div className="dropdown-menu">
               {categoryOptions.map((opt) => (
                 <div
-                  key={opt.value}
-                  className={`dropdown-item ${category.includes(opt.value) ? "selected" : ""}`}
-                  onClick={() => toggleCategory(opt.value)}
+                  key={opt}
+                  className={`dropdown-item ${category.includes(opt) ? "selected" : ""}`}
+                  onClick={() => toggleCategory(opt)}
                 >
-                  <span>{opt.label}</span>
-                  {category.includes(opt.value) && <span>✓</span>}
+                  <span>{getCategoryIcon(opt)} {opt}</span>
+                  {category.includes(opt) && <span>✓</span>}
                 </div>
               ))}
             </div>
@@ -246,13 +235,9 @@ function CreateActivities() {
         {category.length > 0 && (
           <div className="category-badges">
             {category.map((item) => {
-              const selectedCategory = categoryOptions.find(
-                (option) => option.value === item
-              );
-
               return (
                 <div className="category-badge" key={item}>
-                  <span>{selectedCategory?.label || item}</span>
+                  <span>{getCategoryIcon(item)} {item}</span>
 
                   <button
                     type="button"

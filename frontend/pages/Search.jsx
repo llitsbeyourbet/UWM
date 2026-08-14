@@ -3,6 +3,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Search.css";
 import { formatDate, formatTime } from "../utils/formatDate";
+import { getCategoryIcon } from "../utils/categoryIcons";
 
 function Search() {
   const navigate = useNavigate();
@@ -23,16 +24,7 @@ function Search() {
   const [loading, setLoading] = useState(true);
 
   const categories = ["กีฬา", "ดนตรี", "ภาพยนตร์", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่"];
-  const categoryEmoji = {
-    "กีฬา": "⚽",
-    "ดนตรี": "🎵",
-    "ภาพยนตร์": "🎥",
-    "ท่องเที่ยว": "🏔",
-    "อาหาร": "🍜",
-    "ศิลปะ": "🎨",
-    "เกม": "🎮",
-    "คาเฟ่": "☕",
-  };
+
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -164,15 +156,15 @@ function Search() {
   };
 
   const clearFilters = () => {
-    setFilters({
-      search: "",
+    setFilters(prev => ({
+      ...prev,
       categories: [],
       type: "all",
       dateRange: "all",
       customDates: { start: "", end: "" },
       onlyAvailable: false,
       sortBy: "soonest",
-    });
+    }));
   };
 
   const renderBadges = (item) => {
@@ -202,41 +194,20 @@ function Search() {
     const isSearchActive = filters.search !== "";
     const isFilterActive = filters.categories.length > 0 || filters.type !== "all" || filters.dateRange !== "all" || filters.onlyAvailable;
 
-    if (isSearchActive && isFilterActive) {
+    if (isSearchActive || isFilterActive) {
       return (
         <div className="empty-state">
-          <p className="empty-text">ไม่พบกิจกรรมที่ตรงกับการค้นหา</p>
-          <button className="create-activity-btn" onClick={clearFilters}>
-            ล้างการค้นหาและตัวกรอง
-          </button>
-        </div>
-      );
-    }
-    if (isSearchActive) {
-      return (
-        <div className="empty-state">
-          <p className="empty-text">ไม่พบกิจกรรมที่ค้นหา</p>
-          <button className="create-activity-btn" onClick={() => setFilters(prev => ({ ...prev, search: "" }))}>
-            ล้างคำค้นหา
-          </button>
-        </div>
-      );
-    }
-    if (isFilterActive) {
-      return (
-        <div className="empty-state">
-          <p className="empty-text">ไม่พบกิจกรรมที่ตรงกับตัวกรอง</p>
-          <div className="empty-state-btns">
-            <button className="create-activity-btn" onClick={() => setIsFilterOpen(true)}>
-              ปรับตัวกรอง
-            </button>
-            <button className="create-activity-btn secondary" onClick={clearFilters}>
-              ล้างตัวกรอง
-            </button>
+          <div className="empty-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
           </div>
+          <p className="empty-title">ไม่พบกิจกรรมที่ค้นหา</p>
         </div>
       );
     }
+
     return (
       <div className="empty-state">
         <p className="empty-text">ยังไม่มีกิจกรรมที่กำลังจะมาถึง</p>
@@ -287,7 +258,7 @@ function Search() {
               <div className="chips-container">
                 {filters.categories.map(cat => (
                   <div key={cat} className="filter-chip">
-                    {categoryEmoji[cat]} {cat}
+                    {getCategoryIcon(cat)} {cat}
                     <span className="remove-chip" onClick={() => toggleCategory(cat)}>×</span>
                   </div>
                 ))}
@@ -370,7 +341,7 @@ function Search() {
                         className={`filter-option-pill ${filters.categories.includes(cat) ? "active" : ""}`}
                         onClick={() => toggleCategory(cat)}
                       >
-                        {categoryEmoji[cat]} {cat}
+                        {getCategoryIcon(cat)} {cat}
                       </div>
                     ))}
                   </div>

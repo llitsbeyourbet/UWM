@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./Home.css";
 import API_URL from "../config";
 import { formatDate, formatTime } from "../utils/formatDate";
+import { getCategoryIcon } from "../utils/categoryIcons";
 
 function Home() {
   const navigate = useNavigate();
@@ -14,17 +15,6 @@ function Home() {
 
   const categories = ["ทั้งหมด", "กีฬา", "ดนตรี", "ภาพยนตร์", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่"];
 
-  const categoryEmoji = {
-    "ทั้งหมด": "🌟",
-    "กีฬา": "⚽",
-    "ดนตรี": "🎵",
-    "ภาพยนตร์": "🎥",
-    "ท่องเที่ยว": "🏔",
-    "อาหาร": "🍜",
-    "ศิลปะ": "🎨",
-    "เกม": "🎮",
-    "คาเฟ่": "☕",
-  };
 
   useEffect(() => {
 
@@ -120,7 +110,7 @@ function Home() {
             className={`category-pill ${activeCategory === cat ? "active" : ""}`}
             onClick={() => setActiveCategory(cat)}
           >
-            {categoryEmoji[cat]} {cat}
+            {cat === "ทั้งหมด" ? "🌟" : getCategoryIcon(cat)} {cat}
           </div>
         ))}
       </div>
@@ -165,7 +155,7 @@ function Home() {
                       .filter(Boolean)
                   ).map((cat) => (
                     <span className="card-tag-chip" key={cat}>
-                      {categoryEmoji[cat] || "🏷️"} {cat}
+                      {getCategoryIcon(cat)} {cat}
                     </span>
                   ))}
                 </div>
