@@ -18,7 +18,10 @@ const Activity = sequelize.define("Activity", {
   checkinStart: { type: DataTypes.TIME },  // เวลาที่เริ่มเช็คอินได้
   checkinEnd: { type: DataTypes.TIME },    // เวลาที่หมดเขตเช็คอิน
   commentPublic: {type: DataTypes.BOOLEAN, defaultValue: false, // default ปิดไว้ เห็นแค่เจ้าของ
-}
+}},{
+  paranoid: true, // Enable soft deletes
+  timestamps: true, // Enable timestamps (createdAt and updatedAt)
+  deletedAt: "deletedAt",
 });
 
 module.exports = Activity;

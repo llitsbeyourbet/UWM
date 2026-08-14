@@ -301,7 +301,7 @@ function Notifications() {
             n.type === "activity_suspended") &&
             n.adminNote && (
               <div className="notif-admin-note">
-                <span>หมายเหตุจากผู้ดูแลระบบ</span>
+                <span>หมายเหตุจากผู้ดูแลระบบ :</span>
                 <p>{n.adminNote}</p>
               </div>
             )}

@@ -470,6 +470,7 @@ router.put("/unsuspend/:activityId", auth, isAdmin, async (req, res) => {
 router.get("/activities", auth, isAdmin, async (req, res) => {
   try {
     const activities = await Activity.findAll({
+      paranoid: false,
       order: [["createdAt", "DESC"]],
     });
 
@@ -1228,10 +1229,7 @@ router.put("/reports/:id/status", auth, isAdmin, async (req, res) => {
     const reviewedAt = new Date();
     const note = adminNote?.trim() || null;
 
-    /*
-      ถ้าเป็นผลตรวจสอบสุดท้าย
-      ให้อัปเดตรายงานทั้งหมดของกิจกรรมเดียวกัน
-    */
+    /*ถ้าเป็นผลตรวจสอบสุดท้าย ให้อัปเดตรายงานทั้งหมดของกิจกรรมเดียวกัน*/
     if (status === "resolved" || status === "rejected") {
       await Report.update(
         {
@@ -1248,10 +1246,7 @@ router.put("/reports/:id/status", auth, isAdmin, async (req, res) => {
         }
       );
     } else {
-      /*
-        ถ้ายังอยู่ระหว่างตรวจสอบ
-        อัปเดตเฉพาะรายงานที่กดเข้ามา
-      */
+      /*ถ้ายังอยู่ระหว่างตรวจสอบอัปเดตเฉพาะรายงานที่กดเข้ามา*/
       await report.update({
         status,
         decision,
@@ -1321,10 +1316,7 @@ router.put("/reports/:id/status", auth, isAdmin, async (req, res) => {
         status: "suspended",
       });
 
-      /*
-        แจ้งเตือนล้มเหลวต้องไม่ทำให้
-        การบันทึกผลตรวจสอบล้มเหลว
-      */
+      /*แจ้งเตือนล้มเหลวต้องไม่ทำให้การบันทึกผลตรวจสอบล้มเหลว*/
       try {
         await notificationService.createNotification(
           activity.createdBy,
@@ -1335,6 +1327,7 @@ router.put("/reports/:id/status", auth, isAdmin, async (req, res) => {
           "ผู้ดูแลระบบ",
           {
             deduplicate: true,
+            adminNote:note,
           }
         );
 
@@ -1349,10 +1342,7 @@ router.put("/reports/:id/status", auth, isAdmin, async (req, res) => {
       }
     }
 
-    /*
-      โหลด report ใหม่ เพราะ Report.update()
-      ไม่ได้แก้ object report เดิมในหน่วยความจำ
-    */
+    /*โหลด report ใหม่ เพราะ Report.update()ไม่ได้แก้ object report เดิมในหน่วยความจำ*/
     const updatedReport = await Report.findByPk(
       req.params.id
     );
