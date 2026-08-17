@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { logoutUser } from "../utils/logout";
 
 const IDLE_TIME = 60 * 60 * 1000; // 1 ชั่วโมง
 
@@ -9,11 +10,13 @@ function AutoLogout() {
   useEffect(() => {
     let timeout;
 
-    const logout = () => {
-      sessionStorage.removeItem("token");
-      sessionStorage.removeItem("user");
+    const logout = async () => {
+      await logoutUser();
 
-      alert("ไม่มีการใช้งานเกิน 1 ชั่วโมง ระบบได้ออกจากระบบอัตโนมัติ");
+      alert(
+        "ไม่มีการใช้งานเกิน 1 ชั่วโมง ระบบได้ออกจากระบบอัตโนมัติ"
+      );
+
       navigate("/login", { replace: true });
     };
 

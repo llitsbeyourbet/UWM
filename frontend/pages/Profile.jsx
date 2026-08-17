@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Profile.css";
 import API_URL from "../config";
+import { logoutUser } from "../utils/logout";
 
 function Profile() {
   const navigate = useNavigate();
@@ -45,9 +46,9 @@ function Profile() {
     fetchAll();
   }, []);
 
-  const handleLogout = () => {
-    sessionStorage.removeItem("token");
-    navigate("/login");
+  const handleLogout = async () => {
+    await logoutUser();
+    navigate("/login", { replace: true });
   };
 
   const handleViewDetail = (activity) => {
@@ -91,8 +92,8 @@ function Profile() {
                 <div className="dropdown-item" onClick={() => { setShowMenu(false); navigate("/edit-profile"); }}>
                   <span className="dropdown-icon">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                     </svg>
                   </span>
                   <span className="dropdown-label">แก้ไขโปรไฟล์</span>
@@ -101,8 +102,8 @@ function Profile() {
                 <div className="dropdown-item" onClick={() => { setShowMenu(false); navigate("/change-password"); }}>
                   <span className="dropdown-icon">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                     </svg>
                   </span>
                   <span className="dropdown-label">เปลี่ยนรหัสผ่าน</span>
@@ -128,9 +129,9 @@ function Profile() {
                 <div className="dropdown-item red" onClick={() => { setShowMenu(false); handleLogout(); }}>
                   <span className="dropdown-icon">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                      <polyline points="16 17 21 12 16 7"/>
-                      <line x1="21" y1="12" x2="9" y2="12"/>
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                      <polyline points="16 17 21 12 16 7" />
+                      <line x1="21" y1="12" x2="9" y2="12" />
                     </svg>
                   </span>
                   <span className="dropdown-label">ออกจากระบบ</span>

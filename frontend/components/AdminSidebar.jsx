@@ -1,8 +1,8 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import {FiCalendar, FiFlag, FiGrid, FiLogOut, FiStar, FiUsers,} from "react-icons/fi";
+import { FiCalendar, FiFlag, FiGrid, FiLogOut, FiStar, FiUsers, } from "react-icons/fi";
 import { MdGroups } from "react-icons/md";
-
 import { useAdminReport } from "../src/context/AdminReportContext";
+import { logoutUser } from "../utils/logout";
 
 export default function AdminSidebar() {
   const navigate = useNavigate();
@@ -18,10 +18,9 @@ export default function AdminSidebar() {
     ["รีวิว", <FiStar />, "/admin/reviews"],
   ];
 
-  const logout = () => {
-    sessionStorage.removeItem("token");
-    sessionStorage.removeItem("user");
-    navigate("/login");
+  const logout = async () => {
+    await logoutUser();
+    navigate("/login", { replace: true });
   };
 
   const isActive = (path) => {
@@ -54,9 +53,8 @@ export default function AdminSidebar() {
           <button
             type="button"
             key={label}
-            className={`admin-nav-item ${
-              isActive(path) ? "active" : ""
-            }`}
+            className={`admin-nav-item ${isActive(path) ? "active" : ""
+              }`}
             onClick={() => navigate(path)}
           >
             <span>{icon}</span>

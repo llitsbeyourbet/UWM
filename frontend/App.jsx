@@ -29,6 +29,7 @@ import AdminUsers from "./pages/AdminUsers";
 import AdminReviews from "./pages/AdminReviews";
 import AdminReportDetail from "./pages/AdminReportDetail";
 import AutoLogout from "./components/AutoLogout";
+import SessionManager from "./components/SessionManager";
 
 function HomeRedirect() {
   let user = null;
@@ -59,6 +60,7 @@ function App() {
     <SocketProvider>
       <AdminReportProvider>
       <AutoLogout />
+      <SessionManager/>
       <div className={isAdmin ? "" : "app-shell"}>
         {!hideNavbar && <BottomNavbar />}
 

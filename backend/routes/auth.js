@@ -5,30 +5,16 @@ const jwt = require("jsonwebtoken");
 const { Op } = require("sequelize");
 const User = require("../models/User");
 const OTP = require("../models/OTP");
+const UserSession = require("../models/UserSession");
+const crypto = require("crypto");
 const loginLimiter = require("../middleware/loginRateLimiter");
 const Mailjet = require("node-mailjet");
+const { auth } = require("../middleware/auth");
 
 const mailjet = Mailjet.connect(
   process.env.MJ_APIKEY_PUBLIC,
   process.env.MJ_APIKEY_PRIVATE
 );
-
-const auth = async (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) return res.status(401).json({ message: "ไม่มี token" });
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findByPk(decoded.id);
-    if (!user) return res.status(404).json({ message: "ไม่พบผู้ใช้งาน" });
-    if (user.tokenVersion !== decoded.tokenVersion) {
-      return res.status(401).json({ message: "เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่" });
-    }
-    req.userId = user.id;
-    next();
-  } catch (err) {
-    return res.status(401).json({ message: "Token ไม่ถูกต้องหรือหมดอายุ" });
-  }
-};
 
 const sendOTPEmail = async (email, otp, subject) => {
   await mailjet.post("send", { version: "v3.1" }).request({
@@ -266,14 +252,71 @@ router.post("/login", loginLimiter, async (req, res) => {
     if (!user)
       return res.status(400).json({ message: "ไม่พบผู้ใช้งาน" });
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
-      return res.status(400).json({ message: "รหัสผ่านไม่ถูกต้อง" });
+    const isMatch = await bcrypt.compare(
+      password,
+      user.password
+    );
+
+    if (!isMatch) {
+      return res.status(400).json({
+        message: "รหัสผ่านไม่ถูกต้อง",
+      });
+    }
+
+    const now = new Date();
+
+    /*ตรวจว่าบัญชีนี้มี session อยู่หรือไม่*/
+    const existingSession =
+      await UserSession.findOne({
+        where: {
+          userId: user.id,
+        },
+      });
+
+    if (existingSession) {
+      const lastSeen = new Date(
+        existingSession.lastSeenAt
+      ).getTime();
+
+      const isStillActive =
+        !existingSession.revokedAt &&
+        now.getTime() - lastSeen < 2 * 60 * 1000 &&
+        now < new Date(existingSession.expiresAt);
+
+      if (isStillActive) {
+        return res.status(409).json({
+          message:
+            "บัญชีนี้กำลังเข้าสู่ระบบอยู่บนอุปกรณ์หรือหน้าต่างอื่น",
+        });
+      }
+
+      /*session เก่าหมดอายุแล้วลบเพื่อสร้างอันใหม่*/
+      await existingSession.destroy();
+    }
+
+    const sessionId = crypto.randomUUID();
+
+    const expiresAt = new Date(
+      now.getTime() + 8 * 60 * 60 * 1000
+    );
+
+    await UserSession.create({
+      userId: user.id,
+      sessionId,
+      lastSeenAt: now,
+      expiresAt,
+    });
 
     const token = jwt.sign(
-      { id: user.id, role: user.role, tokenVersion: user.tokenVersion },
+      {
+        id: user.id,
+        role: user.role,
+        sessionId,
+      },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      {
+        expiresIn: "8h",
+      }
     );
 
     res.json({
@@ -297,6 +340,45 @@ router.post("/login", loginLimiter, async (req, res) => {
     });
   }
 });
+
+router.post("/heartbeat",auth,async (req, res) => {
+    try {
+      const now = new Date();
+
+      await req.session.update({
+        lastSeenAt: now,
+      });
+
+      return res.json({active: true,});
+    } catch (error) {
+      console.error("Session heartbeat error:",error);
+
+      return res.status(500).json({
+        message:
+          "ไม่สามารถ update session ได้",
+      });
+    }
+  }
+);
+
+router.post("/logout",auth, async (req, res) => {
+    try {
+      await req.session.destroy();
+
+      return res.json({message: "ออกจากระบบสำเร็จ",});
+    } catch (error) {
+      console.error(
+        "Logout session error:",
+        error
+      );
+
+      return res.status(500).json({
+        message:
+          "ไม่สามารถออกจากระบบได้",
+      });
+    }
+  }
+);
 
 router.get("/me", async (req, res) => {
   const token = req.headers.authorization?.split(" ")[1];
