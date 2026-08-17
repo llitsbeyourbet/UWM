@@ -274,23 +274,18 @@ router.post("/login", loginLimiter, async (req, res) => {
       });
 
     if (existingSession) {
-      const lastSeen = new Date(
-        existingSession.lastSeenAt
-      ).getTime();
+      const isExpired =
+        now >= new Date(existingSession.expiresAt);
 
-      const isStillActive =
-        !existingSession.revokedAt &&
-        now.getTime() - lastSeen < 2 * 60 * 1000 &&
-        now < new Date(existingSession.expiresAt);
-
-      if (isStillActive) {
+      // session ยังไม่ถูก revoke และยังไม่หมดอายุ
+      if (!existingSession.revokedAt && !isExpired) {
         return res.status(409).json({
           message:
             "บัญชีนี้กำลังเข้าสู่ระบบอยู่บนอุปกรณ์หรือหน้าต่างอื่น",
         });
       }
 
-      /*session เก่าหมดอายุแล้วลบเพื่อสร้างอันใหม่*/
+      // session เก่าถูกยกเลิกหรือหมดอายุแล้ว
       await existingSession.destroy();
     }
 
@@ -341,43 +336,43 @@ router.post("/login", loginLimiter, async (req, res) => {
   }
 });
 
-router.post("/heartbeat",auth,async (req, res) => {
-    try {
-      const now = new Date();
+router.post("/heartbeat", auth, async (req, res) => {
+  try {
+    const now = new Date();
 
-      await req.session.update({
-        lastSeenAt: now,
-      });
+    await req.session.update({
+      lastSeenAt: now,
+    });
 
-      return res.json({active: true,});
-    } catch (error) {
-      console.error("Session heartbeat error:",error);
+    return res.json({ active: true, });
+  } catch (error) {
+    console.error("Session heartbeat error:", error);
 
-      return res.status(500).json({
-        message:
-          "ไม่สามารถ update session ได้",
-      });
-    }
+    return res.status(500).json({
+      message:
+        "ไม่สามารถ update session ได้",
+    });
   }
+}
 );
 
-router.post("/logout",auth, async (req, res) => {
-    try {
-      await req.session.destroy();
+router.post("/logout", auth, async (req, res) => {
+  try {
+    await req.session.destroy();
 
-      return res.json({message: "ออกจากระบบสำเร็จ",});
-    } catch (error) {
-      console.error(
-        "Logout session error:",
-        error
-      );
+    return res.json({ message: "ออกจากระบบสำเร็จ", });
+  } catch (error) {
+    console.error(
+      "Logout session error:",
+      error
+    );
 
-      return res.status(500).json({
-        message:
-          "ไม่สามารถออกจากระบบได้",
-      });
-    }
+    return res.status(500).json({
+      message:
+        "ไม่สามารถออกจากระบบได้",
+    });
   }
+}
 );
 
 router.get("/me", async (req, res) => {
