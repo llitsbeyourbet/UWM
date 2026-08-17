@@ -91,7 +91,7 @@ const getActivityPhase = (activity) => {
 
 export default function AdminActivities() {
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -105,7 +105,7 @@ export default function AdminActivities() {
 
   const admin = useMemo(() => {
     try {
-      return JSON.parse(localStorage.getItem("user")) || {};
+      return JSON.parse(sessionStorage.getItem("user")) || {};
     } catch {
       return {};
     }
@@ -161,8 +161,8 @@ export default function AdminActivities() {
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("user");
     navigate("/login");
   };
 

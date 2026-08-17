@@ -128,7 +128,7 @@ function CategoryTick({ x, y, payload }) {
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({});
@@ -146,7 +146,7 @@ export default function AdminDashboard() {
 
   const admin = useMemo(() => {
     try {
-      return JSON.parse(localStorage.getItem("user")) || {};
+      return JSON.parse(sessionStorage.getItem("user")) || {};
     } catch {
       return {};
     }

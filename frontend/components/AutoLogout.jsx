@@ -10,8 +10,8 @@ function AutoLogout() {
     let timeout;
 
     const logout = () => {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("user");
 
       alert("ไม่มีการใช้งานเกิน 1 ชั่วโมง ระบบได้ออกจากระบบอัตโนมัติ");
       navigate("/login", { replace: true });

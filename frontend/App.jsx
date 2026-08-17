@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import BottomNavbar from "./components/BottomNavbar";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -30,6 +30,22 @@ import AdminReviews from "./pages/AdminReviews";
 import AdminReportDetail from "./pages/AdminReportDetail";
 import AutoLogout from "./components/AutoLogout";
 
+function HomeRedirect() {
+  let user = null;
+
+  try {
+    user = JSON.parse(sessionStorage.getItem("user"));
+  } catch {
+    user = null;
+  }
+
+  if (user?.role === "admin") {
+    return <Navigate to="/admin" replace />;
+  }
+
+  return <Home />;
+}
+
 function App() {
   const location = useLocation();
 
@@ -50,7 +66,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+            <Route path="/" element={<ProtectedRoute><HomeRedirect /></ProtectedRoute>} />
             <Route path="/CreateActivities" element={<ProtectedRoute><CreateActivities /></ProtectedRoute>} />
             <Route path="/activities" element={<ActivityDetail />} />
             <Route path="/activity-detail" element={<ActivityDetail />} />

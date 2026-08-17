@@ -26,7 +26,7 @@ function Notifications() {
 
   const handleAccept = async (n) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
 
       const res = await fetch(
         `${API_URL}/api/join/${n.activityId}/respond/${n.fromUserId}`,
@@ -55,7 +55,7 @@ function Notifications() {
   // 👈 แก้ handleReject ให้เรียก API join/respond
   const handleReject = async (n) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
 
       await fetch(
         `${API_URL}/api/join/${n.activityId}/respond/${n.fromUserId}`,
@@ -78,7 +78,7 @@ function Notifications() {
 
   const fetchNotifications = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
 
       const res = await fetch(`${API_URL}/api/notifications`, {
         headers: {
@@ -273,7 +273,7 @@ function Notifications() {
   const NotifCard = ({ n }) => {
     const handleClick = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         await fetch(`${API_URL}/api/notifications/${n.id}/read`, {
           method: "PUT",
           headers: { Authorization: `Bearer ${token}` },

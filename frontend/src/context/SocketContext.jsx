@@ -8,7 +8,7 @@ export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) return;
 
     const newSocket = io(API_URL, {
@@ -20,8 +20,11 @@ export const SocketProvider = ({ children }) => {
     newSocket.on("connect", () => {
       console.log("Connected to Socket.io");
       // Join user room
-      const userId = JSON.parse(localStorage.getItem("user")).id;
-      newSocket.emit("join", userId);
+      const user = JSON.parse(sessionStorage.getItem("user") || "null");
+
+      if (user?.id) {
+        newSocket.emit("join", user.id);
+      }
     });
 
     return () => {

@@ -36,10 +36,10 @@ const formatDate = (value, includeTime = false) => {
 export default function AdminReportDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   const admin = useMemo(() => {
-    try { return JSON.parse(localStorage.getItem("user")) || {}; }
+    try { return JSON.parse(sessionStorage.getItem("user")) || {}; }
     catch { return {}; }
   }, []);
 
@@ -49,6 +49,9 @@ export default function AdminReportDetail() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+
+  const [reporterPage, setReporterPage] = useState(1);
+  const REPORTERS_PER_PAGE = 1;
 
   useEffect(() => {
     if (!token || admin.role !== "admin") { navigate("/login"); return; }
@@ -92,6 +95,16 @@ export default function AdminReportDetail() {
       setLoading(false);
     }
   };
+  const reporters = report?.reports || [];
+
+  const totalReporterPages = Math.ceil(
+    reporters.length / REPORTERS_PER_PAGE
+  );
+
+  const paginatedReporters = reporters.slice(
+    (reporterPage - 1) * REPORTERS_PER_PAGE,
+    reporterPage * REPORTERS_PER_PAGE
+  );
 
   const activityId = report?.activityId || report?.activity?.id || report?.activity?._id;
   const currentStatus = normalizeStatus(report?.status);
@@ -266,7 +279,7 @@ export default function AdminReportDetail() {
               </div>
 
               <div className="reporter-list">
-                {(report.reports || []).map((item) => (
+                {paginatedReporters.map((item) => (
                   <div
                     className="reporter-report-item"
                     key={item.id}
@@ -299,42 +312,71 @@ export default function AdminReportDetail() {
                       <small>เหตุผลที่รายงาน</small>
 
                       <strong>
-                        {getCategoryIcon(item.reasonCategory || item.category)} {item.reasonCategory ||
+                        {(item.reasonCategory || item.category)} {item.reasonCategory ||
                           item.category ||
                           item.reason ||
                           "ไม่ระบุเหตุผล"}
                       </strong>
                     </div>
 
-                    <div className="report-description-box">
-                      <small>รายละเอียดเพิ่มเติม</small>
-
-                      <p>
-                        {item.description ||
-                          item.details ||
-                          item.reason ||
-                          "ผู้รายงานไม่ได้ระบุรายละเอียดเพิ่มเติม"}
-                      </p>
-                    </div>
-
                     <div className="report-created-meta">
                       <div>
                         <small>วันที่รายงาน</small>
                         <strong>
-                          {formatDateTimeDate(report.createdAt)}
+                          {formatDateTimeDate(item.createdAt)}
                         </strong>
                       </div>
 
                       <div>
                         <small>เวลารายงาน</small>
                         <strong>
-                          {formatDateTimeTime(report.createdAt)} น.
+                          {formatDateTimeTime(item.createdAt)} น.
                         </strong>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
+              {totalReporterPages > 1 && (
+                <div className="reporter-pagination">
+                  <button
+                    type="button"
+                    className="pagination-arrow"
+                    disabled={reporterPage === 1}
+                    onClick={() =>
+                      setReporterPage((page) => page - 1)
+                    }
+                  >
+                    ‹
+                  </button>
+
+                  {Array.from(
+                    { length: totalReporterPages },
+                    (_, index) => index + 1
+                  ).map((page) => (
+                    <button
+                      type="button"
+                      key={page}
+                      className={`pagination-number ${reporterPage === page ? "active" : ""
+                        }`}
+                      onClick={() => setReporterPage(page)}
+                    >
+                      {page}
+                    </button>
+                  ))}
+
+                  <button
+                    type="button"
+                    className="pagination-arrow"
+                    disabled={reporterPage === totalReporterPages}
+                    onClick={() =>
+                      setReporterPage((page) => page + 1)
+                    }
+                  >
+                    ›
+                  </button>
+                </div>
+              )}
             </article>
 
             <article className="report-detail-card report-decision-card">

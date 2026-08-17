@@ -114,7 +114,7 @@ function CreateActivities() {
       return;
     }
 
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) {
       alert("กรุณาเข้าสู่ระบบก่อน");
       navigate("/login");

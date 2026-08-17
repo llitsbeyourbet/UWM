@@ -62,7 +62,7 @@ export default function AdminUsers() {
       setLoading(true);
       setError("");
 
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
 
       const response = await fetch(`${API_URL}/api/admin/users`, {
         headers: {

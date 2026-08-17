@@ -47,7 +47,7 @@ function ActivitySummaryDetail() {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
 
         let user = null;
         try {

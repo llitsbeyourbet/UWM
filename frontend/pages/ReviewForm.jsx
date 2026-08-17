@@ -35,7 +35,7 @@ function ReviewForm() {
       return;
     }
 
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     setLoading(true);
     try {
       const res = await fetch(`${API_URL}/api/review/${activityId}`, {

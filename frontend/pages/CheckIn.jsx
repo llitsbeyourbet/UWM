@@ -16,7 +16,7 @@ function CheckIn() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       if (!token) {
         navigate("/login");
         return;
@@ -56,7 +56,7 @@ function CheckIn() {
   }, [activityId]);
 
   const handleCheckIn = async () => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     setCheckinLoading(true);
     try {
       const res = await fetch(`${API_URL}/api/join/${activityId}/checkin`, {

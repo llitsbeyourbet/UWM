@@ -10,11 +10,11 @@ function Profile() {
   const [createdActivities, setCreatedActivities] = useState([]);
   const [joinedActivities, setJoinedActivities] = useState([]);
   const [hostRating, setHostRating] = useState(null);
-  const [showMenu, setShowMenu] = useState(false); // 👈 เพิ่ม
+  const [showMenu, setShowMenu] = useState(false);
 
   useEffect(() => {
     const fetchAll = async () => {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       if (!token) { navigate("/login"); return; }
 
       try {
@@ -46,7 +46,7 @@ function Profile() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     navigate("/login");
   };
 

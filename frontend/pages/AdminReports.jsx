@@ -87,11 +87,11 @@ function AdminReports() {
     const [sortOrder, setSortOrder] = useState("latest");
     const [page, setPage] = useState(1);
 
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
 
     const admin = useMemo(() => {
         try {
-            return JSON.parse(localStorage.getItem("user")) || {};
+            return JSON.parse(sessionStorage.getItem("user")) || {};
         } catch {
             return {};
         }

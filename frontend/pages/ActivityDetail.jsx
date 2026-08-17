@@ -64,7 +64,7 @@ function ActivityDetail() {
 
   const fetchActivity = useCallback(async () => {
     if (!activityId) return;
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
 
     let user = null;
     try {
@@ -163,7 +163,7 @@ function ActivityDetail() {
 
     const checkReport = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         const res = await fetch(API_URL + "/api/admin/reports", {
           headers: { Authorization: "Bearer " + token },
         });
@@ -200,7 +200,7 @@ function ActivityDetail() {
 
   const loadQR = async () => {
     if (!activity) return;
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     try {
       const res = await fetch(API_URL + "/api/activities/" + activity.id + "/qr", {
         headers: { Authorization: "Bearer " + token },
@@ -211,7 +211,7 @@ function ActivityDetail() {
   };
 
   const handleJoin = async () => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) { navigate("/login"); return; }
     setJoinLoading(true);
     try {
@@ -229,7 +229,7 @@ function ActivityDetail() {
 
   const handleCancel = async () => {
     if (!window.confirm("ต้องการยกเลิกการเข้าร่วมไหม?")) return;
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     try {
       const res = await fetch(API_URL + "/api/join/" + activity.id + "/cancel", {
         method: "PUT",
@@ -266,7 +266,7 @@ function ActivityDetail() {
 
     if (!window.confirm("ต้องการลบกิจกรรมนี้ไหม?")) return;
 
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
 
     try {
       const res = await fetch(
@@ -296,7 +296,7 @@ function ActivityDetail() {
   const handleReport = async () => {
     if (!reportReason) { alert("กรุณาเลือกเหตุผล"); return; }
     if (reportReason === "อื่นๆ" && !otherReason.trim()) { alert("กรุณาระบุเหตุผลเพิ่มเติม"); return; }
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     setReportLoading(true);
     try {
       const res = await fetch(API_URL + "/api/report/" + activity.id, {
@@ -316,7 +316,7 @@ function ActivityDetail() {
 
   const handleToggleCommentVisibility = async (commentId, currentIsPublic) => {
     if (!commentId) return;
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     try {
       const res = await fetch(API_URL + "/api/review/comment/" + commentId + "/visibility", {
         method: "PUT",

@@ -31,7 +31,7 @@ function ChangePassword() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       if (!token) {
         navigate("/login");
         return;
@@ -60,7 +60,7 @@ function ChangePassword() {
     setError("");
     setMessage("");
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const data = await safeFetch(`${API_URL}/api/auth/change-password/otp`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
@@ -85,7 +85,7 @@ function ChangePassword() {
     setLoading(true);
     setError("");
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const data = await safeFetch(`${API_URL}/api/auth/change-password/verify-otp`, {
         method: "POST",
         headers: {
@@ -119,7 +119,7 @@ function ChangePassword() {
     setLoading(true);
     setError("");
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const data = await safeFetch(`${API_URL}/api/auth/change-password/update`, {
         method: "POST",
         headers: {

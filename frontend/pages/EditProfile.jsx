@@ -17,7 +17,7 @@ function EditProfile() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       if (!token) {
         navigate("/login");
         return;
@@ -68,7 +68,7 @@ function EditProfile() {
   };
 
   const handleSave = async () => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) return;
 
     setLoading(true);
@@ -97,7 +97,7 @@ function EditProfile() {
       }
 
       // อัปเดต localStorage
-      const user = JSON.parse(localStorage.getItem("user"));
+      const user = JSON.parse(sessionStorage.getItem("user"));
       localStorage.setItem("user", JSON.stringify({
         ...user,
         username,

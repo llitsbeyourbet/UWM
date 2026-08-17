@@ -9,12 +9,12 @@ function BottomNavbar() {
   const location = useLocation();
   const { socket } = useSocket();
   const [unreadCount, setUnreadCount] = useState(0);
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(sessionStorage.getItem("user"));
 
   useEffect(() => {
     const fetchCount = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         const res = await fetch(`${API_URL}/api/notifications/unread-count`, {
           headers: { Authorization: `Bearer ${token}` },
         });
