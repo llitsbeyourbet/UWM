@@ -274,18 +274,29 @@ router.post("/login", loginLimiter, async (req, res) => {
       });
 
     if (existingSession) {
+      const lastSeen = new Date(
+        existingSession.lastSeenAt
+      ).getTime();
+
       const isExpired =
         now >= new Date(existingSession.expiresAt);
 
-      // session ยังไม่ถูก revoke และยังไม่หมดอายุ
-      if (!existingSession.revokedAt && !isExpired) {
+      const isIdleExpired =
+        now.getTime() - lastSeen >= 3 * 60 * 1000;
+
+      // Session ยังใช้งานอยู่
+      if (
+        !existingSession.revokedAt &&
+        !isExpired &&
+        !isIdleExpired
+      ) {
         return res.status(409).json({
           message:
             "บัญชีนี้กำลังเข้าสู่ระบบอยู่บนอุปกรณ์หรือหน้าต่างอื่น",
         });
       }
 
-      // session เก่าถูกยกเลิกหรือหมดอายุแล้ว
+      // Session เก่าหมดอายุ / ไม่ได้ใช้งานแล้ว
       await existingSession.destroy();
     }
 

@@ -30,6 +30,7 @@ import "../components/AdminSidebar"
 import API_URL from "../config";
 import { getCategoryIcon } from "../utils/categoryIcons";
 import AdminSidebar from "../components/AdminSidebar";
+import { logoutUser } from "../utils/logout";
 
 const fallback =
   "https://placehold.co/120x90/ede9fe/6d28d9?text=Activity";
@@ -142,6 +143,11 @@ export default function AdminDashboard() {
   const [openPeriod, setOpenPeriod] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const periodRef = useRef(null);
+
+  const logout = async () => {
+    await logoutUser();
+    navigate("/login", { replace: true });
+  };
 
 
   const admin = useMemo(() => {
@@ -278,7 +284,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="admin-shell">
-      <AdminSidebar/>
+      <AdminSidebar />
       <main className="admin-main">
         <header className="admin-header">
           <div className="admin-greeting">

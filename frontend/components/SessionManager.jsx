@@ -12,6 +12,9 @@ export default function SessionManager() {
 
     if (!token) return;
 
+    // =========================
+    // HEARTBEAT
+    // =========================
     const sendHeartbeat = async () => {
       try {
         const response = await fetch(
@@ -31,8 +34,7 @@ export default function SessionManager() {
           navigate("/login", {
             replace: true,
             state: {
-              message:
-                "เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่",
+              message: "เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่",
             },
           });
         }
@@ -41,7 +43,7 @@ export default function SessionManager() {
       }
     };
 
-    // ส่งครั้งแรกทันที
+    // ส่ง heartbeat ครั้งแรกทันที
     sendHeartbeat();
 
     const interval = setInterval(
@@ -49,8 +51,31 @@ export default function SessionManager() {
       HEARTBEAT_INTERVAL
     );
 
+    // =========================
+    // ปิด TAB / ปิด WINDOW
+    // =========================
+    const handlePageHide = () => {
+      fetch(`${API_URL}/api/auth/logout`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        keepalive: true,
+      }).catch(() => {});
+    };
+
+    window.addEventListener("pagehide", handlePageHide);
+
+    // =========================
+    // CLEANUP
+    // =========================
     return () => {
       clearInterval(interval);
+
+      window.removeEventListener(
+        "pagehide",
+        handlePageHide
+      );
     };
   }, [navigate]);
 

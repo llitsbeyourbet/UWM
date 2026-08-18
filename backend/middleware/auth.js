@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const UserSession = require("../models/UserSession");
 
-const SESSION_IDLE_TIMEOUT = 60 * 60 * 1000; // ชั่วคราว 2 นาที
+const SESSION_IDLE_TIMEOUT = 3 * 60 * 1000;
 
 const auth = async (req, res, next) => {
   const token =

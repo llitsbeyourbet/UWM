@@ -4,6 +4,12 @@
   justify-content: center;
   background: #f0f0f5;
 }
+.app-content.login-layout {
+  max-width: none;
+  width: 100%;
+  padding-bottom: 0;
+  background: #f5f0e8;
+}
 
 .app-content {
   width: 100%;
