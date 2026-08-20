@@ -370,40 +370,41 @@ router.post("/:activityId/checkin", auth, async (req, res) => {
     }
 
     // ตรวจสอบเวลา Check-in
-    if (activity.checkinStart && activity.checkinEnd) {
-      const currentTime =
-        new Date().toLocaleTimeString(
-          "en-GB",
-          {
-            timeZone: "Asia/Bangkok",
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false
-          }
-        );
+    const now = new Date();
 
-      const start =
-        activity.checkinStart.slice(0, 5);
+    // Ensure activity.date is YYYY-MM-DD
+    const activityDateStr = activity.date instanceof Date
+      ? activity.date.toLocaleDateString('en-CA')
+      : activity.date;
 
-      const end =
-        activity.checkinEnd.slice(0, 5);
+    // 1. Validate that check-in occurs on the correct activity date (Asia/Bangkok)
+    const activityDateStart = new Date(`${activityDateStr}T00:00:00+07:00`);
+    const activityDateEnd = new Date(`${activityDateStr}T23:59:59.999+07:00`);
 
-      if (currentTime < start) {
+    if (now < activityDateStart || now > activityDateEnd) {
+      return res.status(400).json({
+        message: "ไม่อยู่ในวันที่สามารถเช็คอินได้"
+      });
+    }
 
+    // 2. Validate check-in start time independently (if set)
+    if (activity.checkinStart) {
+      const startDateTime = new Date(`${activityDateStr}T${activity.checkinStart}+07:00`);
+      if (now < startDateTime) {
         return res.status(400).json({
-          message: `ยังไม่ถึงเวลาเช็คอิน (เริ่ม ${start})`
+          message: `ยังไม่ถึงเวลาเช็คอิน (เริ่ม ${activity.checkinStart.slice(0, 5)})`
         });
-
       }
+    }
 
-      if (currentTime > end) {
-
+    // 3. Validate check-in end time independently (if set)
+    if (activity.checkinEnd) {
+      const endDateTime = new Date(`${activityDateStr}T${activity.checkinEnd}+07:00`);
+      if (now > endDateTime) {
         return res.status(400).json({
-          message: `หมดเขตเช็คอินแล้ว (ปิด ${end})`
+          message: `หมดเขตเช็คอินแล้ว (ปิด ${activity.checkinEnd.slice(0, 5)})`
         });
-
       }
-
     }
 
     // เปลี่ยนสถานะเป็น checked_in
