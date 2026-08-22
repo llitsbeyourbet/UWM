@@ -2,6 +2,7 @@ import API_URL from "../config";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../styles/CheckIn.css";
+import { formatDate, formatTime } from "../utils/formatDate";
 
 function CheckIn() {
   const navigate = useNavigate();
@@ -154,8 +155,8 @@ function CheckIn() {
           <>
             <h2 className="checkin-title">{activity?.activityName}</h2>
             <div className="checkin-info">
-              <p>📅 {activity?.date || "-"}</p>
-              <p>⏰ {activity?.time || "-"} - {activity?.endTime || "-"}</p>
+              <p>📅 {formatDate(activity?.date)}</p>
+              <p>⏰ {formatTime(activity?.time)} - {formatTime(activity?.endTime)}</p>
               <p>📍 {activity?.location || "-"}</p>
             </div>
 
