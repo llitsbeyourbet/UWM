@@ -5,11 +5,9 @@
 .login-page {
   min-height: 100dvh;
   padding: 35px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   background: #f5f0e8;
   font-family: "Sarabun", sans-serif;
 }

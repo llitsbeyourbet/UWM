@@ -1,5 +1,5 @@
 .app-shell {
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   justify-content: center;
   background: #f0f0f5;
@@ -14,7 +14,7 @@
 .app-content {
   width: 100%;
   max-width: 480px;
-  min-height: 100vh;
+  min-height: 100dvh;
   background: #F5F0E8;
 
   display: flex;

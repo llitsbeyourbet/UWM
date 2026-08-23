@@ -12,9 +12,6 @@ export default function SessionManager() {
 
     if (!token) return;
 
-    // =========================
-    // HEARTBEAT
-    // =========================
     const sendHeartbeat = async () => {
       try {
         const response = await fetch(
@@ -43,39 +40,17 @@ export default function SessionManager() {
       }
     };
 
-    // ส่ง heartbeat ครั้งแรกทันที
+    // เช็ก session ทันทีตอนเปิด/refresh หน้า
     sendHeartbeat();
 
+    // หลังจากนั้นเช็กทุก 1 นาที
     const interval = setInterval(
       sendHeartbeat,
       HEARTBEAT_INTERVAL
     );
 
-    // =========================
-    // ปิด TAB / ปิด WINDOW
-    // =========================
-    const handlePageHide = () => {
-      fetch(`${API_URL}/api/auth/logout`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        keepalive: true,
-      }).catch(() => {});
-    };
-
-    window.addEventListener("pagehide", handlePageHide);
-
-    // =========================
-    // CLEANUP
-    // =========================
     return () => {
       clearInterval(interval);
-
-      window.removeEventListener(
-        "pagehide",
-        handlePageHide
-      );
     };
   }, [navigate]);
 
