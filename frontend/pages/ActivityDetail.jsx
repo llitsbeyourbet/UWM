@@ -766,7 +766,7 @@ function ActivityDetail() {
               <p>QR Code สำหรับยืนยันการเข้าร่วม</p>
               <QRCodeCanvas value={window.location.origin + "/checkin/" + activity.id + "/" + qrToken} size={180} />
               <p className="qr-countdown">🔄 QR Code จะเปลี่ยนใหม่ใน {qrCountdown} วินาที</p>
-              {activity.checkinStart && activity.checkinEnd && <p className="checkin-time-info">⏰ เช็คอินได้ {activity.checkinStart} - {activity.checkinEnd}</p>}
+              {activity.checkinStart && activity.checkinEnd && <p className="checkin-time-info">⏰ เช็คอินได้ {formatTime(activity.checkinStart)} - {formatTime(activity.checkinEnd)}</p>}
             </div>
           </div>
         )}

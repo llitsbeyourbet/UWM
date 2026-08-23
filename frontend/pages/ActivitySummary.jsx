@@ -40,13 +40,15 @@ function ActivitySummary() {
         const activitiesWithStats = await Promise.all(
           userActivities.map(async (act) => {
             try {
-              const [ratingRes, detailRes] = await Promise.all([
+              const [ratingRes, detailRes, summaryRes] = await Promise.all([
                 fetch(`${API_URL}/api/review/activity/${act.id}/rating`),
                 fetch(`${API_URL}/api/activities/${act.id}`),
+                fetch(`${API_URL}/api/activities/${act.id}/summary-participants`),
               ]);
 
               const ratingData = ratingRes.ok ? await ratingRes.json() : { avgRating: 0, totalReviews: 0 };
               const detailData = detailRes.ok ? await detailRes.json() : { joinedCount: 0, participantCount: 0 };
+              const summaryData = summaryRes.ok ? await summaryRes.json() : { checkedIn: [] };
 
               return {
                 id: act.id,
@@ -55,7 +57,7 @@ function ActivitySummary() {
                 date: act.date || "ไม่ระบุวันที่", // สมมติว่าใน act มีฟิลด์ date หรือสร้างไว้รองรับ UI
                 review: ratingData.avgRating || "0.0",
                 totalReview: ratingData.totalReviews || 0,
-                checkedIn: detailData.joinedCount || 0,
+                checkedIn: summaryData.checkedIn.length || 0,
                 totalJoin: detailData.participantCount || 0,
               };
             } catch (err) {

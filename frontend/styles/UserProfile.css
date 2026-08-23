@@ -12,19 +12,22 @@
   justify-content: space-between;
 }
 
-.user-back-btn {
-  background: transparent;
-  border: none;
-  color: #000;
-  font-size: 28px;
-  font-weight: 400;
-  cursor: pointer;
-  padding: 0;
+.detail-loading {
+  text-align: center;
+  padding: 5rem 1rem;
+  color: #888888;
+  font-size: 0.95rem;
+}
+
+.back-btn {
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  line-height: 1;
+  cursor: pointer;
 }
+
 
 .profile-header-title {
   margin: 0;

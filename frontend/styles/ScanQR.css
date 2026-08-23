@@ -1,8 +1,10 @@
 .scanner-page {
-  min-height: 100vh;
+  min-height: 100dvh;
   background: #edeceb;
   font-family: "Sarabun", sans-serif;
-  padding: 48px 20px 40px;
+  padding: 48px 20px 100px;
+  box-sizing: border-box;
+  margin-bottom: -60px;
 }
 
 .scanner-header {
@@ -12,28 +14,16 @@
   margin-bottom: 28px;
 }
 
-.scanner-back-btn {
-  width: 40px;
-  height: 40px;
-  background: white;
-  border-radius: 50%;
+.back-btn {
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
 }
 
-.scanner-back-btn:hover {
-  background: #fcfcfc;
-  box-shadow: 0 6px 16px rgba(0,0,0,.12);
-  transform: translateY(-1px);
-}
 
-.scanner-back-btn:active {
-  transform: scale(0.92);
-  box-shadow: 0 2px 6px rgba(0,0,0,.06);
-  background: #f5f5f5;
-}
 
 .scanner-header-text {
   text-align: center;

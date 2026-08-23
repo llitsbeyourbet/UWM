@@ -61,7 +61,8 @@ function UserProfile() {
     fetchData();
     }, [id]);
 
-  if (!user) return <div>กำลังโหลด...</div>;
+  if (!user) return <div className="detail-loading">กำลังโหลดข้อมูล...</div>;
+
 
   const ActivityCard = ({ item }) => (
     <div
@@ -99,12 +100,11 @@ function UserProfile() {
 
         {/* Header */}
         <div className="profile-header-bar">
-        <button
-            className="user-back-btn"
-            onClick={() => navigate(-1)}
-        >
-            ‹
-        </button>
+        <div className="back-btn" onClick={() => navigate(-1)}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </div>
 
         <p className="profile-header-title">
             Profile
