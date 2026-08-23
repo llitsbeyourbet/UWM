@@ -1,5 +1,5 @@
 .review-page {
-  min-height: 100vh;
+  min-height: 100dvh;
   background: #F5F0E8;
   font-family: 'Sarabun', sans-serif;
   padding-bottom: 40px;
@@ -215,7 +215,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 100dvh;
   font-size: 14px;
   color: #888;
 }

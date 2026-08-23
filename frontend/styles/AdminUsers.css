@@ -192,7 +192,7 @@
 }
 
 .users-table-wrapper {
-  max-height: calc(100vh - 360px);
+  max-height: calc(100dvh - 360px);
   overflow-x: auto;
   overflow-y: auto;
   border: 1px solid #ebebf2;

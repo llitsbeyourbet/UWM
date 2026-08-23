@@ -26,7 +26,7 @@ button {
     top: 0;
     left: 0;
     width: 250px;
-    height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     padding: 28px 16px 24px;
@@ -140,7 +140,7 @@ button {
 .admin-main {
     min-width: 0;
     width: calc(100% - 250px);
-    min-height: 100vh;
+    min-height: 100dvh;
     margin-left: 250px;
     padding: 28px 32px 38px
 }
@@ -739,7 +739,7 @@ button {
 }
 
 .admin-loading {
-    min-height: 100vh;
+    min-height: 100dvh;
     display: grid;
     place-items: center;
     background: #f8f9fd;
@@ -889,7 +889,7 @@ button {
 
     .admin-main {
         width: 100%;
-        min-height: 100vh;
+        min-height: 100dvh;
         margin-left: 0;
         padding: 18px 14px 96px;
     }

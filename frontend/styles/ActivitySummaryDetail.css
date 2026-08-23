@@ -4,7 +4,7 @@
 .detail-mobile-container {
   width: 100%;
   max-width: 480px;
-  min-height: 100vh;
+  min-height: 100dvh;
   background-color: #fcfbfa;
   font-family: 'Sarabun', sans-serif;
   box-sizing: border-box;

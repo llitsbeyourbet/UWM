@@ -1,5 +1,5 @@
 .user-profile-page{
-    min-height:100vh;
+    min-height:100dvh;
     background:#F5F0E8;
     padding-bottom:80px;
     font-family:'Sarabun',sans-serif;
@@ -267,7 +267,7 @@
 }
 
 .profile-loading {
-  display: flex;
+  display:100dvh;
   justify-content: center;
   align-items: center;
   height: 100vh;

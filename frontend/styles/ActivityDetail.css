@@ -3,7 +3,7 @@
 ========================= */
 
 .activity-detail-page {
-    min-height: 100vh;
+    min-height: 100dvh;
 
     /* พื้นตรงกลางทั้งหมดเป็นสีขาว */
     background: #fff;
@@ -125,7 +125,7 @@
     margin: 0 auto;
 
     /* ให้กินความสูงอย่างน้อยเต็มหน้าจอ */
-    min-height: 100vh;
+    min-height: 100dvh;
 
     border-radius: 0;
     box-shadow: none;

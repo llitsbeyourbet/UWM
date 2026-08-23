@@ -7,7 +7,7 @@
   flex-direction: column;
   align-items: center;
   background-color: #f0f0f5;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 /* Cover Image */
