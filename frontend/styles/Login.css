@@ -449,6 +449,9 @@ input::-ms-clear {
 @media (max-width: 900px) {
   .login-page {
     padding: 20px;
+    min-height: 100dvh;
+    box-sizing: border-box;
+    margin-bottom: -60px;
   }
 
   .login-container {
@@ -463,7 +466,7 @@ input::-ms-clear {
   }
 
   .login-right {
-    min-height: calc(100dvh - 40px);
+    min-height: auto;
 
     padding: 45px;
   }
