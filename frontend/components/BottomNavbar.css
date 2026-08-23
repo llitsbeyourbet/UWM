@@ -6,7 +6,9 @@
 
   width: 100%;
   max-width: 480px;
-  height: 60px;
+  height: calc(60px + env(safe-area-inset-bottom));
+
+  box-sizing: border-box;
 
   background: #ffffff;
   border-top: 0.5px solid #e0e0e0;
@@ -16,6 +18,7 @@
   align-items: center;
 
   z-index: 1000;
+
   padding-bottom: env(safe-area-inset-bottom);
 }
 
