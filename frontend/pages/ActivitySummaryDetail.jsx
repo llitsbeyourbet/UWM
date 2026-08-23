@@ -554,11 +554,20 @@ function ActivitySummaryDetail() {
                           boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
                           borderRight: '1px solid #eee',
                           borderTop: '1px solid #eee',
-                          borderBottom: '1px solid #eee'
+                          borderBottom: '1px solid #eee',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'flex-start',
+                          gap: '8px'
                         }}>
-                          <p className="feed-comment-text" style={{ marginBottom: '0', paddingLeft: '0' }}>
+                          <p className="feed-comment-text" style={{ marginBottom: '0', paddingLeft: '0', flex: 1 }}>
                             <strong style={{ fontSize: '0.7rem', color: '#7d5fff', display: 'block', marginBottom: '2px' }}>กิจกรรม:</strong> {c.activityComment ? `"${c.activityComment}"` : "ไม่มีความคิดเห็น"}
                           </p>
+                          {isOwner && (
+                            <span className={`visibility-badge ${c.activityIsPublic ? "public-type" : "private-type"}`} style={{ whiteSpace: 'nowrap', fontSize: '0.6rem' }}>
+                              {c.activityIsPublic ? "สาธารณะ" : "เห็นเฉพาะเจ้าของ"}
+                            </span>
+                          )}
                         </div>
                         <div style={{
                           backgroundColor: '#fcfbfa',
@@ -568,11 +577,20 @@ function ActivitySummaryDetail() {
                           boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
                           borderRight: '1px solid #eee',
                           borderTop: '1px solid #eee',
-                          borderBottom: '1px solid #eee'
+                          borderBottom: '1px solid #eee',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'flex-start',
+                          gap: '8px'
                         }}>
-                          <p className="feed-comment-text" style={{ marginBottom: '0', paddingLeft: '0' }}>
+                          <p className="feed-comment-text" style={{ marginBottom: '0', paddingLeft: '0', flex: 1 }}>
                             <strong style={{ fontSize: '0.7rem', color: '#0369a1', display: 'block', marginBottom: '2px' }}>ผู้สร้างกิจกรรม:</strong> {c.hostComment ? `"${c.hostComment}"` : "ไม่มีความคิดเห็น"}
                           </p>
+                          {isOwner && (
+                            <span className={`visibility-badge ${c.hostIsPublic ? "public-type" : "private-type"}`} style={{ whiteSpace: 'nowrap', fontSize: '0.6rem' }}>
+                              {c.hostIsPublic ? "สาธารณะ" : "เห็นเฉพาะเจ้าของ"}
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -581,11 +599,6 @@ function ActivitySummaryDetail() {
                       <span className="feed-date">
                         {new Date(c.createdAt).toLocaleDateString("th-TH")} {new Date(c.createdAt).toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" })} น.
                       </span>
-                      {isOwner && (
-                        <span className={`visibility-badge ${c.isPublic ? "public-type" : "private-type"}`}>
-                          {c.isPublic ? "แสดงสาธารณะ" : "เห็นเฉพาะเจ้าของ"}
-                        </span>
-                      )}
                     </div>
                   </div>
                 );
