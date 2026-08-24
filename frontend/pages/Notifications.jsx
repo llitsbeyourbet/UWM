@@ -294,7 +294,34 @@ function Notifications() {
 
     return (
       <div className={`notif-card ${!n.isRead ? "new" : ""}`} onClick={handleClick}>
-        {renderIcon(n.type)}
+        {n.type === "join_request" ? (
+          <button
+            type="button"
+            className="notif-profile"
+            onClick={(e) => {
+              e.stopPropagation();
+
+              if (n.fromUserId) {
+                navigate(`/user/${n.fromUserId}`);
+              }
+            }}
+          >
+            {n.fromUser?.profileImage ? (
+              <img
+                src={n.fromUser.profileImage}
+                alt={n.fromUser.username || "profile"}
+              />
+            ) : (
+              <span>
+                {(n.fromUser?.name || n.fromUsername || "?")
+                  .charAt(0)
+                  .toUpperCase()}
+              </span>
+            )}
+          </button>
+        ) : (
+          renderIcon(n.type)
+        )}
         <div className="notif-body">
           <p className="notif-message">{renderMessage(n)}</p>
           {(n.type === "activity_warning" ||

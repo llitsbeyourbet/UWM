@@ -47,7 +47,34 @@ router.get("/", auth, async (req, res) => {
       where: { toUserId: req.userId },
       order: [["createdAt", "DESC"]],
     });
-    res.json(notifications);
+
+    const result = await Promise.all(
+      notifications.map(async (notification) => {
+        const n = notification.toJSON();
+
+        let fromUser = null;
+
+        if (n.fromUserId) {
+          fromUser = await User.findByPk(n.fromUserId, {
+            attributes: ["id", "username", "name", "profileImage"],
+          });
+        }
+
+        return {
+          ...n,
+          fromUser: fromUser
+            ? {
+                id: fromUser.id,
+                username: fromUser.username,
+                name: fromUser.name,
+                profileImage: fromUser.profileImage,
+              }
+            : null,
+        };
+      })
+    );
+
+    res.json(result);
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });

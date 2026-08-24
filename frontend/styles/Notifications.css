@@ -153,3 +153,41 @@
   font-size: 13px;
   line-height: 1.5;
 }
+
+/* รูปผู้ส่งคำขอเข้าร่วม */
+.notif-profile {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  cursor: pointer;
+  background: #dce6ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Sarabun', sans-serif;
+}
+
+.notif-profile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.notif-profile span {
+  font-size: 16px;
+  font-weight: 600;
+  color: #5577cc;
+}
+
+.notif-user-link {
+  cursor: pointer;
+}
+
+.notif-user-link:hover {
+  text-decoration: underline;
+}
