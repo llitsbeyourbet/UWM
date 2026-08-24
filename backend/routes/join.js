@@ -498,6 +498,102 @@ router.get("/checked-in", auth, async (req, res) => {
   }
 });
 
+// ประวัติการเช็คอินล่าสุดของผู้ใช้
+router.get("/checkin-history", auth, async (req, res) => {
+  try {
+
+    const checkins = await CheckIn.findAll({
+      where: {
+        userId: req.userId,
+      },
+      order: [
+        ["checkedAt", "DESC"],
+      ],
+      limit: 10,
+      raw: true,
+    });
+
+    if (checkins.length === 0) {
+      return res.json([]);
+    }
+
+    const activityIds = [
+      ...new Set(
+        checkins.map((item) => item.activityId)
+      ),
+    ];
+
+    const activities = await Activity.findAll({
+      where: {
+        id: {
+          [Op.in]: activityIds,
+        },
+      },
+      raw: true,
+    });
+
+    const activityMap = {};
+
+    activities.forEach((activity) => {
+      activityMap[activity.id] = activity;
+    });
+
+    const result = checkins
+      .map((checkin) => {
+
+        const activity =
+          activityMap[checkin.activityId];
+
+        if (!activity) {
+          return null;
+        }
+
+        return {
+          id: checkin.id,
+
+          activityId:
+            checkin.activityId,
+
+          activityName:
+            activity.activityName,
+
+          cover:
+            activity.cover || null,
+
+          date:
+            activity.date,
+
+          time:
+            activity.time,
+
+          endTime:
+            activity.endTime,
+
+          location:
+            activity.location,
+
+          checkedAt:
+            checkin.checkedAt,
+        };
+      })
+      .filter(Boolean);
+
+    return res.json(result);
+
+  } catch (err) {
+
+    console.log(
+      "checkin history error:",
+      err
+    );
+
+    return res.status(500).json({
+      message:
+        "ไม่สามารถโหลดประวัติการเช็คอินได้",
+    });
+  }
+});
+
 // ดึงกิจกรรมที่ user เข้าร่วม
 router.get("/user/:id", async (req, res) => {
   try {

@@ -294,7 +294,7 @@ function Notifications() {
 
     return (
       <div className={`notif-card ${!n.isRead ? "new" : ""}`} onClick={handleClick}>
-        {n.type === "join_request" ? (
+        {n.type === "join_request" || n.type === "member_joined" ?(
           <button
             type="button"
             className="notif-profile"
