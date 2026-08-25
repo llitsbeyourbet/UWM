@@ -88,29 +88,110 @@ function CheckIn() {
   };
 
   if (errorMessage) {
-    return (
-      <div className="checkin-page">
-        <div className="checkin-card">
+  return (
+    <div className="checkin-page">
 
-          <div className="checkin-icon">
-            <div className="icon-error">✕</div>
+      {/* Header */}
+      <header className="checkin-header">
+
+        <button
+          type="button"
+          className="checkin-back-btn"
+          onClick={() => navigate(-1)}
+        >
+          <span className="material-icons">
+            arrow_back
+          </span>
+        </button>
+
+        <div className="checkin-header-text">
+          <h1>เช็คอินกิจกรรม</h1>
+          <p>ตรวจสอบสถานะการเช็คอินของกิจกรรม</p>
+        </div>
+
+        <div className="checkin-header-space" />
+
+      </header>
+
+
+      <main className="checkin-content">
+
+        {/* Error Card */}
+        <section className="checkin-error-card">
+
+          <div className="checkin-error-icon">
+            <span className="material-icons">
+              schedule
+            </span>
           </div>
 
-          <h2 className="checkin-title">ไม่สามารถเช็คอินได้</h2>
+          <h2>ยังไม่สามารถเช็คอินได้</h2>
 
-          <p className="checkin-subtitle">{errorMessage}</p>
+          <p>{errorMessage}</p>
+
+
+          {/* ถ้ามีข้อมูลกิจกรรมแล้ว แสดงให้ด้วย */}
+          {activity && (
+            <div className="checkin-error-activity">
+
+              <div className="checkin-error-cover">
+
+                {activity.cover ? (
+                  <img
+                    src={activity.cover}
+                    alt={activity.activityName}
+                  />
+                ) : (
+                  <span className="material-icons">
+                    event
+                  </span>
+                )}
+
+              </div>
+
+              <div className="checkin-error-info">
+
+                <strong>
+                  {activity.activityName}
+                </strong>
+
+                <span>
+                  {formatDate(activity.date)}
+                </span>
+
+                <span>
+                  {formatTime(activity.time)}
+                  {" - "}
+                  {formatTime(activity.endTime)}
+                </span>
+
+              </div>
+
+            </div>
+          )}
+
 
           <button
-            className="checkin-btn done"
-            onClick={() => activity && navigate(`/activity-detail?id=${activity.id}`, { replace: true })}
+            type="button"
+            className="checkin-confirm-btn"
+            onClick={() =>
+              activity &&
+              navigate(
+                `/activity-detail?id=${activity.id}`,
+                { replace: true }
+              )
+            }
           >
             กลับหน้ากิจกรรม
           </button>
 
-        </div>
-      </div>
-    );
-  }
+        </section>
+
+      </main>
+
+    </div>
+  );
+}
 
   if (loading) return (
     <div className="checkin-page">
@@ -299,7 +380,7 @@ function CheckIn() {
             </div>
 
             <div>
-              <span>จำนวนที่รองรับ</span>
+              <span>จำนวนคนที่เปิดรับ</span>
 
               <strong>
                 {activity?.participantCount
