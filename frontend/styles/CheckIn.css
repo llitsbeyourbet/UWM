@@ -783,6 +783,15 @@
   font-size: 11px;
 }
 
+.checkin-organizer-username {
+  display: block;
+  margin-top: 2px;
+
+  color: #8b8998;
+  font-size: 11px;
+}
+
+
 
 /* =========================
    SMALL MOBILE

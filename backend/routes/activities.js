@@ -3,6 +3,7 @@ const router = express.Router();
 const { Op } = require("sequelize");
 const Activity = require("../models/Activity");
 const JoinRequest = require("../models/JoinRequest");
+const User = require("../models/User")
 const jwt = require("jsonwebtoken");
 
 const auth = (req, res, next) => {
@@ -73,11 +74,31 @@ router.get("/:id", async (req, res) => {
 
     const joinedCount = existingUsers.length;
 
+    // ดึงข้อมูลผู้สร้างกิจกรรม
+    const User = require("../models/User");
+
+    const creator = await User.findByPk(activity.createdBy, {
+      attributes: ["id", "name", "username", "profileImage"],
+    });
+
     console.log(`Activity ${activity.id} joinedCount: ${joinedCount}`);
 
     res.json({
       ...activity.toJSON(),
       joinedCount,
+
+      creator: creator
+        ? {
+          id: creator.id,
+          name: creator.name,
+          username: creator.username,
+          profileImage: creator.profileImage,
+        }
+        : null,
+
+      // เผื่อหน้าอื่นในระบบใช้อยู่
+      creatorName: creator?.name || null,
+      creatorUsername: creator?.username || null,
     });
   } catch (err) {
     console.log("Error fetching activity detail:", err);
@@ -141,210 +162,210 @@ router.post("/", auth, async (req, res) => {
   }
 });
 
-  // แก้ไขกิจกรรม 👈 เพิ่ม
-  router.put("/:id", auth, async (req, res) => {
-    try {
-      const activity = await Activity.findByPk(req.params.id);
-      if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
+// แก้ไขกิจกรรม 👈 เพิ่ม
+router.put("/:id", auth, async (req, res) => {
+  try {
+    const activity = await Activity.findByPk(req.params.id);
+    if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
 
-      const endDateTime = new Date(
-        `${activity.date}T${activity.endTime || activity.time}`
-      );
+    const endDateTime = new Date(
+      `${activity.date}T${activity.endTime || activity.time}`
+    );
 
-      if (new Date() >= endDateTime) {
-        return res.status(400).json({
-          message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถแก้ไขได้",
-        });
-      }
-
-      if (activity.createdBy !== req.userId)
-        return res.status(403).json({ message: "ไม่มีสิทธิ์แก้ไขกิจกรรมนี้" });
-
-      await activity.update(req.body);
-      res.json(activity);
-    } catch (err) {
-      console.log(err);
+    if (new Date() >= endDateTime) {
+      return res.status(400).json({
+        message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถแก้ไขได้",
+      });
     }
-  });
 
-  // ลบกิจกรรม 👈 แก้ให้เช็คเจ้าของด้วย
-  router.delete("/:id", auth, async (req, res) => {
-    try {
-      const activity = await Activity.findByPk(req.params.id);
-      if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
+    if (activity.createdBy !== req.userId)
+      return res.status(403).json({ message: "ไม่มีสิทธิ์แก้ไขกิจกรรมนี้" });
 
-      const endDateTime = new Date(
-        `${activity.date}T${activity.endTime || activity.time}`
-      );
+    await activity.update(req.body);
+    res.json(activity);
+  } catch (err) {
+    console.log(err);
+  }
+});
 
-      if (new Date() >= endDateTime) {
-        return res.status(400).json({
-          message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถลบได้",
-        });
-      }
+// ลบกิจกรรม 👈 แก้ให้เช็คเจ้าของด้วย
+router.delete("/:id", auth, async (req, res) => {
+  try {
+    const activity = await Activity.findByPk(req.params.id);
+    if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
 
-      if (activity.createdBy !== req.userId)
-        return res.status(403).json({ message: "ไม่มีสิทธิ์ลบกิจกรรมนี้" });
+    const endDateTime = new Date(
+      `${activity.date}T${activity.endTime || activity.time}`
+    );
 
-      await activity.destroy();
-      res.json({ message: "ลบกิจกรรมสำเร็จ" });
-    } catch (err) {
-      res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+    if (new Date() >= endDateTime) {
+      return res.status(400).json({
+        message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถลบได้",
+      });
     }
-  });
 
-  // 👇 สร้าง QR Token
-  router.get("/:id/qr", auth, async (req, res) => {
-    try {
-      const activity = await Activity.findByPk(req.params.id);
+    if (activity.createdBy !== req.userId)
+      return res.status(403).json({ message: "ไม่มีสิทธิ์ลบกิจกรรมนี้" });
 
-      if (!activity)
-        return res.status(404).json({
-          message: "ไม่พบกิจกรรม",
-        });
+    await activity.destroy();
+    res.json({ message: "ลบกิจกรรมสำเร็จ" });
+  } catch (err) {
+    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+  }
+});
 
-      // อนุญาตเฉพาะเจ้าของกิจกรรม
-      if (activity.createdBy !== req.userId)
-        return res.status(403).json({
-          message: "ไม่มีสิทธิ์",
-        });
+// 👇 สร้าง QR Token
+router.get("/:id/qr", auth, async (req, res) => {
+  try {
+    const activity = await Activity.findByPk(req.params.id);
 
-      const endDateTime = new Date(
-        `${activity.date}T${activity.endTime || activity.time}+07:00`
-      );
+    if (!activity)
+      return res.status(404).json({
+        message: "ไม่พบกิจกรรม",
+      });
 
-      if (new Date() >= endDateTime) {
-        return res.status(400).json({
-          message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถสร้าง QR Code ได้",
-        });
+    // อนุญาตเฉพาะเจ้าของกิจกรรม
+    if (activity.createdBy !== req.userId)
+      return res.status(403).json({
+        message: "ไม่มีสิทธิ์",
+      });
+
+    const endDateTime = new Date(
+      `${activity.date}T${activity.endTime || activity.time}+07:00`
+    );
+
+    if (new Date() >= endDateTime) {
+      return res.status(400).json({
+        message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถสร้าง QR Code ได้",
+      });
+    }
+
+    const qrToken = jwt.sign(
+      {
+        activityId: activity.id,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "15s",
       }
+    );
 
-      const qrToken = jwt.sign(
-        {
-          activityId: activity.id,
-        },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: "15s",
+    res.json({ qrToken });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "เกิดข้อผิดพลาด",
+    });
+  }
+});
+
+// ดึงข้อมูลสรุปผู้เข้าร่วม (แยกกลุ่มเช็คอินและยังไม่เช็คอิน)
+router.get("/:id/summary-participants", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const JoinRequest = require("../models/JoinRequest");
+    const User = require("../models/User");
+
+    const requests = await JoinRequest.findAll({
+      where: {
+        activityId: id,
+        status: { [require("sequelize").Op.in]: ["approved", "checked_in"] },
+      },
+    });
+
+    const userIds = requests.map((r) => r.userId);
+    const users = await User.findAll({
+      where: { id: { [require("sequelize").Op.in]: userIds } },
+      attributes: ["id", "name", "username", "profileImage"],
+    });
+
+    const userMap = {};
+    users.forEach(u => { userMap[u.id] = u });
+
+    const checkedIn = [];
+    const approved = [];
+
+    requests.forEach(r => {
+      const user = userMap[r.userId];
+      if (user) {
+        if (r.status === "checked_in") {
+          checkedIn.push(user);
+        } else if (r.status === "approved") {
+          approved.push(user);
         }
-      );
+      }
+    });
 
-      res.json({ qrToken });
-    } catch (err) {
-      console.log(err);
-      res.status(500).json({
-        message: "เกิดข้อผิดพลาด",
-      });
-    }
-  });
+    res.json({
+      checkedIn,
+      approved,
+      totalJoined: checkedIn.length + approved.length
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+  }
+});
 
-  // ดึงข้อมูลสรุปผู้เข้าร่วม (แยกกลุ่มเช็คอินและยังไม่เช็คอิน)
-  router.get("/:id/summary-participants", async (req, res) => {
-    try {
-      const { id } = req.params;
-      const JoinRequest = require("../models/JoinRequest");
-      const User = require("../models/User");
+// ดึงรายชื่อผู้ที่เช็คอินแล้ว
+router.get("/:id/participants/checked-in", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const JoinRequest = require("../models/JoinRequest");
+    const User = require("../models/User");
 
-      const requests = await JoinRequest.findAll({
-        where: {
-          activityId: id,
-          status: { [require("sequelize").Op.in]: ["approved", "checked_in"] },
+    const requests = await JoinRequest.findAll({
+      where: { activityId: id, status: "checked_in" },
+    });
+
+    const userIds = requests.map((r) => r.userId);
+    const participants = await User.findAll({
+      where: {
+        id: {
+          [require("sequelize").Op.in]: userIds,
         },
-      });
+      },
+      attributes: ["id", "name", "username", "profileImage"],
+    });
 
-      const userIds = requests.map((r) => r.userId);
-      const users = await User.findAll({
-        where: { id: { [require("sequelize").Op.in]: userIds } },
-        attributes: ["id", "name", "username", "profileImage"],
-      });
+    res.json(participants);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+  }
+});
 
-      const userMap = {};
-      users.forEach(u => { userMap[u.id] = u });
+// ดึงรายชื่อผู้เข้าร่วม
+router.get("/:id/participants", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const JoinRequest = require("../models/JoinRequest");
+    const User = require("../models/User");
 
-      const checkedIn = [];
-      const approved = [];
-
-      requests.forEach(r => {
-        const user = userMap[r.userId];
-        if (user) {
-          if (r.status === "checked_in") {
-            checkedIn.push(user);
-          } else if (r.status === "approved") {
-            approved.push(user);
-          }
-        }
-      });
-
-      res.json({
-        checkedIn,
-        approved,
-        totalJoined: checkedIn.length + approved.length
-      });
-    } catch (err) {
-      console.log(err);
-      res.status(500).json({ message: "เกิดข้อผิดพลาด" });
-    }
-  });
-
-  // ดึงรายชื่อผู้ที่เช็คอินแล้ว
-  router.get("/:id/participants/checked-in", async (req, res) => {
-    try {
-      const { id } = req.params;
-      const JoinRequest = require("../models/JoinRequest");
-      const User = require("../models/User");
-
-      const requests = await JoinRequest.findAll({
-        where: { activityId: id, status: "checked_in" },
-      });
-
-      const userIds = requests.map((r) => r.userId);
-      const participants = await User.findAll({
-        where: {
-          id: {
-            [require("sequelize").Op.in]: userIds,
-          },
+    const requests = await JoinRequest.findAll({
+      where: {
+        activityId: id,
+        status: {
+          [require("sequelize").Op.in]: ["approved", "checked_in"],
         },
-        attributes: ["id", "name", "username", "profileImage"],
-      });
+      },
+    });
 
-      res.json(participants);
-    } catch (err) {
-      console.log(err);
-      res.status(500).json({ message: "เกิดข้อผิดพลาด" });
-    }
-  });
-
-  // ดึงรายชื่อผู้เข้าร่วม
-  router.get("/:id/participants", async (req, res) => {
-    try {
-      const { id } = req.params;
-      const JoinRequest = require("../models/JoinRequest");
-      const User = require("../models/User");
-
-      const requests = await JoinRequest.findAll({
-        where: {
-          activityId: id,
-          status: {
-            [require("sequelize").Op.in]: ["approved", "checked_in"],
-          },
+    const userIds = requests.map((r) => r.userId);
+    const participants = await User.findAll({
+      where: {
+        id: {
+          [require("sequelize").Op.in]: userIds,
         },
-      });
+      },
+      attributes: ["id", "name", "username", "profileImage"],
+    });
 
-      const userIds = requests.map((r) => r.userId);
-      const participants = await User.findAll({
-        where: {
-          id: {
-            [require("sequelize").Op.in]: userIds,
-          },
-        },
-        attributes: ["id", "name", "username", "profileImage"],
-      });
+    res.json(participants);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+  }
+});
 
-      res.json(participants);
-    } catch (err) {
-      console.log(err);
-      res.status(500).json({ message: "เกิดข้อผิดพลาด" });
-    }
-  });
-
-  module.exports = router;
+module.exports = router;
