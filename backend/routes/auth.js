@@ -265,40 +265,13 @@ router.post("/login", loginLimiter, async (req, res) => {
 
     const now = new Date();
 
-    /*ตรวจว่าบัญชีนี้มี session อยู่หรือไม่*/
-    const existingSession =
-      await UserSession.findOne({
-        where: {
-          userId: user.id,
-        },
-      });
-
-    if (existingSession) {
-      const lastSeen = new Date(
-        existingSession.lastSeenAt
-      ).getTime();
-
-      const isExpired =
-        now >= new Date(existingSession.expiresAt);
-
-      const isIdleExpired =
-        now.getTime() - lastSeen >= 3 * 60 * 1000;
-
-      // Session ยังใช้งานอยู่
-      if (
-        !existingSession.revokedAt &&
-        !isExpired &&
-        !isIdleExpired
-      ) {
-        return res.status(409).json({
-          message:
-            "บัญชีนี้กำลังเข้าสู่ระบบอยู่บนอุปกรณ์หรือหน้าต่างอื่น",
-        });
-      }
-
-      // Session เก่าหมดอายุ / ไม่ได้ใช้งานแล้ว
-      await existingSession.destroy();
-    }
+    // ถ้ามี session เดิม ให้เปลี่ยน sessionId ใหม่
+    // เพื่อให้เครื่องเก่าหมดสิทธิ์ทันที
+    const existingSession = await UserSession.findOne({
+      where: {
+        userId: user.id,
+      },
+    });
 
     const sessionId = crypto.randomUUID();
 
@@ -306,12 +279,22 @@ router.post("/login", loginLimiter, async (req, res) => {
       now.getTime() + 8 * 60 * 60 * 1000
     );
 
-    await UserSession.create({
-      userId: user.id,
-      sessionId,
-      lastSeenAt: now,
-      expiresAt,
-    });
+    if (existingSession) {
+      await existingSession.update({
+        sessionId,
+        lastSeenAt: now,
+        expiresAt,
+        revokedAt: null,
+      });
+    } else {
+      await UserSession.create({
+        userId: user.id,
+        sessionId,
+        lastSeenAt: now,
+        expiresAt,
+        revokedAt: null,
+      });
+    }
 
     const token = jwt.sign(
       {
@@ -386,26 +369,29 @@ router.post("/logout", auth, async (req, res) => {
 }
 );
 
-router.get("/me", async (req, res) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) return res.status(401).json({ message: "ไม่มี token" });
-
+router.get("/me", auth, async (req, res) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findByPk(decoded.id, {
+    const user = await User.findByPk(req.userId, {
       attributes: { exclude: ["password"] }
     });
 
-    if (!user) return res.status(404).json({ message: "ไม่พบผู้ใช้งาน" });
+    if (!user) {
+      return res.status(404).json({
+        message: "ไม่พบผู้ใช้งาน"
+      });
+    }
 
     res.json(user);
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+
+    res.status(500).json({
+      message: "เกิดข้อผิดพลาด"
+    });
   }
 });
 
-router.put("/update", async (req, res) => {
+router.put("/update",auth, async (req, res) => {
   const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) {

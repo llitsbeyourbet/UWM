@@ -56,7 +56,7 @@ function Register() {
       setError("ชื่อบัญชีผู้ใช้ไม่สามารถใช้ภาษาไทยได้ กรุณาใช้ภาษาอังกฤษหรือตัวเลข");
       return;
     }
-    
+
     if (!/^[a-zA-Z0-9_]{3,20}$/.test(cleanUsername)) {
       setError(
         "ชื่อผู้ใช้ต้องมี 3-20 ตัว และใช้ได้เฉพาะตัวอักษร ตัวเลข หรือ _"
@@ -169,6 +169,34 @@ function Register() {
         document.getElementById(`reg-otp-${index - 1}`).focus();
       }
     }
+  };
+
+  const handleOtpPaste = (e) => {
+    e.preventDefault();
+
+    const pasted = e.clipboardData
+      .getData("text")
+      .replace(/\D/g, "")
+      .slice(0, 6);
+
+    if (!pasted) return;
+
+    const newOtp = ["", "", "", "", "", ""];
+
+    pasted.split("").forEach((number, index) => {
+      newOtp[index] = number;
+    });
+
+    setOtp(newOtp);
+    setError("");
+
+    const focusIndex = Math.min(pasted.length, 5);
+
+    setTimeout(() => {
+      document
+        .getElementById(`reg-otp-${focusIndex}`)
+        ?.focus();
+    }, 0);
   };
 
   const handleVerifyAndRegister = async () => {
@@ -472,7 +500,7 @@ function Register() {
                   onClick={handleNext}
                   disabled={loading}
                 >
-                  {loading ? "กำลังส่ง OTP..." : "ถัดไป →"}
+                  {loading ? "กำลังส่ง OTP..." : "ถัดไป"}
                 </button>
 
                 <p className="reg-login-text">
@@ -486,28 +514,6 @@ function Register() {
               <>
                 {/* ================= STEP 2 OTP ================= */}
 
-                <div className="register-heading otp-heading">
-                  <h2>ยืนยันอีเมลของคุณ</h2>
-
-                  <p>
-                    เราได้ส่งรหัส OTP 6 หลักไปยังอีเมลของคุณ
-                  </p>
-                </div>
-
-                <div className="register-steps">
-                  <div className="register-step completed">
-                    <span>✓</span>
-                    <p>ข้อมูลส่วนตัว</p>
-                  </div>
-
-                  <div className="step-line active"></div>
-
-                  <div className="register-step active">
-                    <span>2</span>
-                    <p>ยืนยันตัวตน</p>
-                  </div>
-                </div>
-
                 <div className="otp-section">
 
                   <div className="otp-mail-icon">
@@ -516,22 +522,38 @@ function Register() {
                     </span>
                   </div>
 
-                  <p className="otp-message">
-                    กรอกรหัสยืนยันที่ส่งไปยัง
-                  </p>
+                  <div className="otp-title">
+                    <span className="otp-step-badge">ขั้นตอนสุดท้าย</span>
 
-                  <p className="otp-email">
-                    {email}
-                  </p>
+                    <h2>ยืนยันอีเมลของคุณ</h2>
 
-                  {/* OTP เดิม */}
-                  <div className="otp-boxes">
+                    <p>
+                      ใส่รหัสยืนยัน 6 หลักที่เราส่งไปยังอีเมล
+                    </p>
+                  </div>
+
+                  <div className="otp-email-card">
+                    <span className="material-icons">
+                      mail_outline
+                    </span>
+
+                    <div>
+                      <small>ส่งรหัสยืนยันไปที่</small>
+                      <strong>{email}</strong>
+                    </div>
+                  </div>
+
+                  <div
+                    className="otp-boxes"
+                    onPaste={handleOtpPaste}
+                  >
                     {otp.map((val, i) => (
                       <input
                         key={i}
                         id={`reg-otp-${i}`}
                         type="text"
                         inputMode="numeric"
+                        autoComplete={i === 0 ? "one-time-code" : "off"}
                         maxLength={1}
                         className={`otp-box ${val ? "filled" : ""}`}
                         value={val}
@@ -545,14 +567,22 @@ function Register() {
                     ))}
                   </div>
 
-                  <p className="otp-timer">
-                    รหัสหมดอายุใน{" "}
-                    <span
-                      className={timer < 60 ? "timer-warning" : ""}
-                    >
-                      {formatTime(timer)}
+                  <div className="otp-timer">
+                    <span className="material-icons">
+                      schedule
                     </span>
-                  </p>
+
+                    <p>
+                      รหัสหมดอายุใน{" "}
+                      <strong
+                        className={
+                          timer < 60 ? "timer-warning" : ""
+                        }
+                      >
+                        {formatTime(timer)}
+                      </strong>
+                    </p>
+                  </div>
 
                   {error && (
                     <p className="reg-error">
@@ -561,13 +591,13 @@ function Register() {
                   )}
 
                   <button
-                    className="reg-btn"
+                    className="reg-btn otp-submit-btn"
                     onClick={handleVerifyAndRegister}
                     disabled={loading}
                   >
                     {loading
                       ? "กำลังยืนยัน..."
-                      : "ยืนยัน OTP →"}
+                      : "ยืนยันตัวตน"}
                   </button>
 
                   <p className="resend-text">
@@ -592,7 +622,10 @@ function Register() {
                       setOtp(["", "", "", "", "", ""]);
                     }}
                   >
-                    ← กลับไปแก้ไขข้อมูล
+                    <span className="material-icons">
+                      arrow_back
+                    </span>
+                    กลับไปแก้ไขข้อมูล
                   </button>
 
                 </div>

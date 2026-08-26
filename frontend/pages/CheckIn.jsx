@@ -385,7 +385,7 @@ function CheckIn() {
               </div>
 
               <div>
-                <span>จำนวนคนที่เปิดรับ</span>
+                <span>จำนวนผู้เข้าร่วม</span>
 
                 <strong>
                   {activity?.participantCount

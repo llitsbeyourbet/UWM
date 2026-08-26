@@ -159,9 +159,51 @@ function Home() {
                     </span>
                   ))}
                 </div>
-
                 <div className="card-bottom">
-                  <div className="card-days-badge">
+                  <div
+                    className={`card-days-badge ${(() => {
+                      if (!item.date) return "";
+
+                      const now = new Date();
+
+                      const startDateTime = new Date(
+                        `${item.date}T${item.time || "00:00"}`
+                      );
+
+                      const endDateTime = new Date(
+                        `${item.date}T${item.endTime || item.time || "23:59"}`
+                      );
+
+                      // 🔴 สิ้นสุดแล้ว
+                      if (now >= endDateTime) {
+                        return "finished";
+                      }
+
+                      // 🟢 กำลังดำเนินกิจกรรม
+                      if (now >= startDateTime && now < endDateTime) {
+                        return "ongoing";
+                      }
+
+                      // คำนวณจำนวนวันก่อนเริ่มกิจกรรม
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+
+                      const eventDate = new Date(item.date);
+                      eventDate.setHours(0, 0, 0, 0);
+
+                      const diff = Math.round(
+                        (eventDate - today) / (1000 * 60 * 60 * 24)
+                      );
+
+                      // 🟠 วันนี้
+                      if (diff === 0 && now < startDateTime) {
+                        return "today";
+                      }
+
+                      // 🔵 กำลังจะถึง
+                      return "upcoming";
+                    })()}`}
+                  >
                     {(() => {
                       if (!item.date) return "-";
 
@@ -175,10 +217,17 @@ function Home() {
                         `${item.date}T${item.endTime || item.time || "23:59"}`
                       );
 
+                      // 🔴 สิ้นสุดแล้ว
                       if (now >= endDateTime) {
                         return "สิ้นสุดแล้ว";
                       }
 
+                      // 🟢 กำลังดำเนินกิจกรรม
+                      if (now >= startDateTime && now < endDateTime) {
+                        return "กำลังดำเนินกิจกรรม";
+                      }
+
+                      // คำนวณจำนวนวันก่อนเริ่มกิจกรรม
                       const today = new Date();
                       today.setHours(0, 0, 0, 0);
 
@@ -189,19 +238,20 @@ function Home() {
                         (eventDate - today) / (1000 * 60 * 60 * 24)
                       );
 
+                      // 🟠 วันนี้
                       if (diff === 0 && now < startDateTime) {
-                        return "🔥 วันนี้";
+                        return "วันนี้";
                       }
 
-                      if (diff === 0 && now >= startDateTime && now < endDateTime) {
-                        return "กำลังดำเนินกิจกรรม";
-                      }
-
-                      return `📅 อีก ${diff} วัน`;
+                      // 🔵 กำลังจะถึง
+                      return `อีก ${diff} วัน`;
                     })()}
                   </div>
+
                   <div className="card-btn">ดูรายละเอียด →</div>
                 </div>
+
+
               </div>
             </div>
           ))
