@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API_URL from "../config";
+import { useAlert } from "../hooks/useAlert";
 import "../styles/ForgotPassword.css";
 
 function ForgotPassword() {
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -102,7 +104,11 @@ function ForgotPassword() {
       });
       const data = await res.json();
       if (!res.ok) { setError(data.message); return; }
-      alert("รีเซ็ตรหัสผ่านสำเร็จ!");
+      await showAlert({
+        type: 'success',
+        title: 'รีเซ็ตรหัสผ่านสำเร็จ!',
+        message: 'คุณได้เปลี่ยนรหัสผ่านใหม่เรียบร้อยแล้ว',
+      });
       navigate("/login");
     } catch {
       setError("ไม่สามารถเชื่อมต่อ server ได้");

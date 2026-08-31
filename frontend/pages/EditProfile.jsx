@@ -1,10 +1,12 @@
 import API_URL from "../config";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAlert } from "../hooks/useAlert";
 import "../styles/EditProfile.css";
 
 function EditProfile() {
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
   const [username, setUsername] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -92,7 +94,11 @@ function EditProfile() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message || "เกิดข้อผิดพลาด");
+        await showAlert({
+          type: 'error',
+          title: 'เกิดข้อผิดพลาด',
+          message: data.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล",
+        });
         return;
       }
 
@@ -108,10 +114,18 @@ function EditProfile() {
         profileImage: profileImage || user.profileImage,
       }));
 
-      alert("บันทึกสำเร็จ");
+      await showAlert({
+        type: 'success',
+        title: 'บันทึกสำเร็จ!',
+        message: 'ข้อมูลโปรไฟล์ของคุณได้รับการอัปเดตเรียบร้อยแล้ว',
+      });
       navigate("/profile");
     } catch (err) {
-      alert("ไม่สามารถเชื่อมต่อ server ได้");
+      await showAlert({
+        type: 'error',
+        title: 'เกิดข้อผิดพลาด',
+        message: 'ไม่สามารถเชื่อมต่อ server ได้',
+      });
     } finally {
       setLoading(false);
     }

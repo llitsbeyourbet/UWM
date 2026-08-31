@@ -1,0 +1,135 @@
+.alert-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  font-family: 'Sarabun', sans-serif;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Ensure it's above everything */
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.alert-modal {
+  background-color: #fff;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 28px;
+  padding: 24px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease-out;
+  position: relative;
+  z-index: 10000;
+}
+
+.alert-modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.alert-modal-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.alert-icon {
+  display: block;
+}
+
+.alert-icon.success { color: #28a745; }
+.alert-icon.error { color: #dc3545; }
+.alert-icon.warning { color: #ffc107; }
+.alert-icon.info { color: #17a2b8; }
+.alert-icon.confirm { color: #6f42c1; }
+
+.alert-modal-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0 0 12px 0;
+  color: #333;
+}
+
+.alert-modal-message {
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.alert-modal-actions {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  justify-content: center;
+}
+
+.alert-btn {
+  padding: 12px 24px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s, transform 0.1s;
+  flex: 1;
+  max-width: 150px;
+}
+
+.alert-btn:active {
+  transform: scale(0.95);
+}
+
+.alert-btn-cancel {
+  background-color: #eee;
+  color: #555;
+}
+
+.alert-btn-cancel:hover {
+  background-color: #ddd;
+}
+
+.alert-btn-confirm {
+  color: #fff;
+}
+
+.alert-btn-confirm.success { background-color: #28a745; }
+.alert-btn-confirm.error { background-color: #dc3545; }
+.alert-btn-confirm.warning { background-color: #ffc107; color: #333; }
+.alert-btn-confirm.info { background-color: #17a2b8; }
+.alert-btn-confirm.confirm { background-color: #6f42c1; }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive for mobile/iPhone */
+@media (max-width: 480px) {
+  .alert-modal {
+    width: 85%;
+    padding: 20px;
+  }
+  .alert-modal-title {
+    font-size: 20px;
+  }
+  .alert-modal-message {
+    font-size: 14px;
+  }
+}
