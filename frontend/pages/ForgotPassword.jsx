@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API_URL from "../config";
 import "../styles/ForgotPassword.css";
@@ -13,15 +13,15 @@ function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [timer, setTimer] = useState(600);
+  const otpRefs = useRef([]);
 
-  const startTimer = () => {
+  useEffect(() => {
+    if (step !== 2 || timer <= 0) return;
     const interval = setInterval(() => {
-      setTimer((prev) => {
-        if (prev <= 1) { clearInterval(interval); return 0; }
-        return prev - 1;
-      });
+      setTimer((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
-  };
+    return () => clearInterval(interval);
+  }, [step, timer]);
 
   const formatTime = (sec) => {
     const m = Math.floor(sec / 60).toString().padStart(2, "0");
@@ -43,7 +43,6 @@ function ForgotPassword() {
       if (!res.ok) { setError(data.message); return; }
       setStep(2);
       setTimer(600);
-      startTimer();
     } catch {
       setError("ไม่สามารถเชื่อมต่อ server ได้");
     } finally {
@@ -52,18 +51,30 @@ function ForgotPassword() {
   };
 
   const handleOtpChange = (index, value) => {
-    if (!/^\d*$/.test(value)) return;
-    const newOtp = [...otp];
-    newOtp[index] = value;
-    setOtp(newOtp);
-    if (value && index < 5) {
-      document.getElementById(`otp-${index + 1}`).focus();
+    const digits = value.replace(/\D/g, "");
+
+    // วาง OTP 6 หลักทีเดียวได้
+    if (digits.length > 1) {
+      const pasted = digits.slice(0, 6).split("");
+      const nextOtp = ["", "", "", "", "", ""];
+      pasted.forEach((digit, i) => { nextOtp[i] = digit; });
+      setOtp(nextOtp);
+      otpRefs.current[Math.min(pasted.length, 5)]?.focus();
+      return;
+    }
+
+    const nextOtp = [...otp];
+    nextOtp[index] = digits;
+    setOtp(nextOtp);
+
+    if (digits && index < 5) {
+      otpRefs.current[index + 1]?.focus();
     }
   };
 
   const handleOtpKeyDown = (index, e) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
-      document.getElementById(`otp-${index - 1}`).focus();
+      otpRefs.current[index - 1]?.focus();
     }
   };
 
@@ -112,19 +123,61 @@ function ForgotPassword() {
   };
 
   const handleResend = async () => {
+    if (loading || timer > 0) return;
+
     setOtp(["", "", "", "", "", ""]);
-    setTimer(600);
-    await handleSendOTP();
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await fetch(`${API_URL}/api/forgot/send-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || "ไม่สามารถส่ง OTP ได้");
+        return;
+      }
+
+      setTimer(600);
+      otpRefs.current[0]?.focus();
+    } catch {
+      setError("ไม่สามารถเชื่อมต่อ server ได้");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
+
     <div className="forgot-page">
 
-      <div className="forgot-back" onClick={() => step === 1 ? navigate("/login") : setStep(step - 1)}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.5" strokeLinecap="round">
-          <polyline points="15 18 9 12 15 6"/>
-        </svg>
+
+      <img src="/logo.png" alt="Until We Meet" className="forgot-logo" />
+
+      <div className="forgot-step-label">ขั้นตอนที่ {step} จาก 3</div>
+
+      <div className="forgot-steps">
+        <div className={`step-item ${step >= 1 ? "active" : ""}`}>
+          <span className="step-number">{step > 1 ? "✓" : "1"}</span>
+          <span>กรอกอีเมล</span>
+        </div>
+        <div className={`step-line ${step >= 2 ? "active" : ""}`} />
+        <div className={`step-item ${step >= 2 ? "active" : ""}`}>
+          <span className="step-number">{step > 2 ? "✓" : "2"}</span>
+          <span>ยืนยันตัวตน</span>
+        </div>
+        <div className={`step-line ${step >= 3 ? "active" : ""}`} />
+        <div className={`step-item ${step >= 3 ? "active" : ""}`}>
+          <span className="step-number">3</span>
+          <span>ตั้งรหัสใหม่</span>
+        </div>
       </div>
+
+
 
       {/* Step 1 — กรอกอีเมล */}
       {step === 1 && (
@@ -146,18 +199,28 @@ function ForgotPassword() {
             </div>
             {error && <p className="forgot-error">{error}</p>}
             <button className="forgot-btn" onClick={handleSendOTP} disabled={loading}>
-              {loading ? "กำลังส่ง..." : "ส่ง OTP →"}
+              {loading ? "กำลังส่ง..." : "ส่ง OTP"}
             </button>
           </div>
+          <p className="back-login-text">
+            จำรหัสผ่านได้แล้ว?{" "}
+            <span
+              className="back-login-link"
+              onClick={() => navigate("/login")}
+            >
+              เข้าสู่ระบบ
+            </span>
+          </p>
         </div>
+
       )}
 
       {/* Step 2 — กรอก OTP */}
       {step === 2 && (
         <div className="forgot-content">
           <p className="forgot-sub">ยืนยัน OTP</p>
-          <h1 className="forgot-title">กรอกรหัส<br/>OTP</h1>
-          <p className="forgot-desc">ส่งไปที่ {email} แล้ว</p>
+          <h1 className="forgot-title">กรอกรหัส OTP</h1>
+          <p className="forgot-desc">ส่ง OTP ไปที่ {email} แล้ว</p>
 
           <div className="forgot-card">
             <div className="otp-boxes">
@@ -166,7 +229,10 @@ function ForgotPassword() {
                   key={i}
                   id={`otp-${i}`}
                   type="text"
-                  maxLength={1}
+                  inputMode="numeric"
+                  autoComplete={i === 0 ? "one-time-code" : "off"}
+                  maxLength={6}
+                  ref={(el) => { otpRefs.current[i] = el; }}
                   className={`otp-box ${val ? "filled" : ""}`}
                   value={val}
                   onChange={(e) => handleOtpChange(i, e.target.value)}
@@ -185,7 +251,7 @@ function ForgotPassword() {
             {error && <p className="forgot-error">{error}</p>}
 
             <button className="forgot-btn" onClick={handleVerifyOTP} disabled={loading}>
-              {loading ? "กำลังยืนยัน..." : "ยืนยัน OTP →"}
+              {loading ? "กำลังยืนยัน..." : "ยืนยัน OTP"}
             </button>
 
             <p className="resend-text">
@@ -229,7 +295,7 @@ function ForgotPassword() {
             {error && <p className="forgot-error">{error}</p>}
 
             <button className="forgot-btn" onClick={handleResetPassword} disabled={loading}>
-              {loading ? "กำลังรีเซ็ต..." : "รีเซ็ตรหัสผ่าน →"}
+              {loading ? "กำลังรีเซ็ต..." : "รีเซ็ตรหัสผ่าน"}
             </button>
           </div>
         </div>

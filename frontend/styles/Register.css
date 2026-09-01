@@ -44,7 +44,7 @@
 .register-left {
   position: relative;
 
-  padding: 50px 48px;
+  padding: 50px 42px;
 
   overflow: hidden;
 
@@ -58,12 +58,12 @@
 }
 
 .register-main-logo {
-  width: 145px;
+  width: 200px;
   height: auto;
 }
 
 .register-hero {
-  margin-top: 75px;
+  margin-top: 60px;
 }
 
 .register-hero h1 {
@@ -523,7 +523,7 @@
 }
 
 .otp-mail-icon .material-icons {
-  color: #6338ff;
+  color: #2873ff;
   font-size: 36px;
 }
 
@@ -543,7 +543,7 @@
 
   background: #f1edff;
 
-  color: #6338ff;
+  color: #2873ff;
 
   font-size: 11px;
   font-weight: 700;
@@ -600,7 +600,7 @@
 
   background: #ffffff;
 
-  color: #6338ff;
+  color: #2873ff;
 
   font-size: 20px;
 }
@@ -672,7 +672,7 @@
 
 .otp-box:focus {
   background: #ffffff !important;
-  border-color: #6338ff;
+  border-color: #2873ff;
 
   box-shadow:
     0 0 0 3px rgba(99, 56, 255, 0.08);
@@ -683,7 +683,7 @@
 
   background: #faf9ff !important; 
 
-  color: #6338ff;
+  color: #2873ff;
 }
 
 /* ---------- TIMER ---------- */
@@ -711,7 +711,7 @@
 }
 
 .otp-timer strong {
-  color: #6338ff;
+  color: #2873ff;
   font-size: 13px;
 }
 
@@ -724,27 +724,14 @@
 .otp-submit-btn {
   margin-top: 18px;
   margin-bottom: 20px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #6338ff,
-      #7c4dff
-    );
-
+  background:#2873ff;
   border-radius: 13px;
-
   box-shadow:
     0 8px 20px rgba(99, 56, 255, 0.18);
 }
 
 .otp-submit-btn:hover {
-  background:
-    linear-gradient(
-      135deg,
-      #5730ee,
-      #7041f1
-    );
+  background: #1764e9;
 }
 
 /* ---------- RESEND ---------- */
@@ -760,7 +747,7 @@
 .resend-link {
   margin-left: 3px;
 
-  color: #6338ff;
+  color: #2873ff;
 
   font-weight: 700;
 
@@ -802,7 +789,7 @@
 }
 
 .register-back:hover {
-  color: #6338ff;
+  color: #1764e9;
 }
 
 /* =========================
@@ -822,11 +809,11 @@
   }
 
   .register-left {
-    padding: 35px 38px;
+    padding: 35px 32px;
   }
 
   .register-main-logo {
-    width: 125px;
+    width: 180px;
   }
 
   .register-hero {
@@ -834,7 +821,7 @@
   }
 
   .register-hero h1 {
-    font-size: 37px;
+    font-size: 35px;
   }
 
   .register-hero p {
@@ -850,7 +837,7 @@
   }
 
   .register-right {
-    padding: 30px 45px;
+    padding: 30px 48px;
   }
 
   .register-heading h2 {
@@ -1088,13 +1075,14 @@
 
 .otp-submit-btn {
   height: 50px;
+
 }
 
 .resend-text {
-  margin-top: 14px;
+  margin-top: 30px;
 }
 
 .register-back {
-  margin-top: 13px;
+  margin-top: 17px;
 }
 }

@@ -53,7 +53,7 @@ function App() {
   const isAdmin = location.pathname.startsWith("/admin") ||
     (location.pathname === "/activity-detail" && new URLSearchParams(location.search).get("from") === "admin");
 
-  const hideNavbar = ["/login", "/register", "/scan"].includes(location.pathname) || isAdmin;
+  const hideNavbar = ["/login", "/register", "/scan","/forgot-password"].includes(location.pathname) || isAdmin;
 
 
   return (
