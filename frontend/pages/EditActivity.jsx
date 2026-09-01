@@ -1,11 +1,13 @@
 import API_URL from "../config";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useAlert } from "../hooks/useAlert";
 import "../styles/CreateActivities.css";
 import { getCategoryIcon } from "../utils/categoryIcons";
 
 function EditActivity() {
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
   const { id } = useParams();
   const hasFetched = useRef(false);
   const isIOS = /iPhone|iPod|iPad/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -68,7 +70,11 @@ function EditActivity() {
         const data = await res.json();
 
         if (!user || data.createdBy !== user.id) {
-          alert("คุณไม่มีสิทธิ์แก้ไขกิจกรรมนี้");
+          await showAlert({
+            type: 'error',
+            title: 'ไม่มีสิทธิ์เข้าถึง',
+            message: 'คุณไม่มีสิทธิ์แก้ไขกิจกรรมนี้',
+          });
           navigate("/");
           return;
         }
@@ -117,26 +123,34 @@ function EditActivity() {
       if (res.ok) {
         setCoverFilename(data.filename);
       } else {
-        alert(data.message || "Upload failed");
+        await showAlert({
+          type: 'error',
+          title: 'อัปโหลดไม่สำเร็จ',
+          message: data.message || "เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ",
+        });
       }
     } catch (err) {
       console.error("Upload error:", err);
-      alert("ไม่สามารถอัปโหลดรูปภาพได้");
+      await showAlert({
+        type: 'error',
+        title: 'เกิดข้อผิดพลาด',
+        message: 'ไม่สามารถอัปโหลดรูปภาพได้ กรุณาลองใหม่อีกครั้ง',
+      });
     }
   };
 
   const handleSubmit = async () => {
     if (!activityName) {
-      alert("กรุณากรอกชื่อกิจกรรม");
+      await showAlert({ type: 'warning', title: 'ข้อมูลไม่ครบถ้วน', message: 'กรุณากรอกชื่อกิจกรรม' });
       return;
     }
     if (!date || !time || !endTime) {
-      alert("กรุณากรอกวันและเวลาให้ครบ");
+      await showAlert({ type: 'warning', title: 'ข้อมูลไม่ครบถ้วน', message: 'กรุณากรอกวันและเวลาให้ครบ' });
       return;
     }
 
     if (endTime <= time) {
-      alert("เวลาสิ้นสุดต้องมากกว่าเวลาเริ่ม");
+      await showAlert({ type: 'warning', title: 'เวลาไม่ถูกต้อง', message: 'เวลาสิ้นสุดต้องมากกว่าเวลาเริ่ม' });
       return;
     }
 
@@ -145,7 +159,7 @@ function EditActivity() {
       checkinEnd &&
       checkinEnd <= checkinStart
     ) {
-      alert("เวลาสิ้นสุดเช็คอินต้องมากกว่าเวลาเริ่มเช็คอิน");
+      await showAlert({ type: 'warning', title: 'เวลาไม่ถูกต้อง', message: 'เวลาสิ้นสุดเช็คอินต้องมากกว่าเวลาเริ่มเช็คอิน' });
       return;
     }
 
@@ -186,11 +200,19 @@ function EditActivity() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message || "เกิดข้อผิดพลาดในการบันทึก");
+        await showAlert({
+          type: 'error',
+          title: 'เกิดข้อผิดพลาด',
+          message: data.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล",
+        });
         return;
       }
 
-      alert("แก้ไขกิจกรรมสำเร็จ");
+      await showAlert({
+        type: 'success',
+        title: 'แก้ไขกิจกรรมสำเร็จ!',
+        message: 'ข้อมูลกิจกรรมของคุณได้รับการอัปเดตเรียบร้อยแล้ว',
+      });
 
       // ส่งสัญญาณบอกหน้า ActivityDetail ให้รีเฟรชข้อมูล
       window.dispatchEvent(new Event("activityUpdated"));
@@ -198,7 +220,11 @@ function EditActivity() {
       navigate(-1);
     } catch (err) {
       console.error("Submit error:", err);
-      alert("ไม่สามารถเชื่อมต่อ server ได้");
+      await showAlert({
+        type: 'error',
+        title: 'เกิดข้อผิดพลาด',
+        message: 'ไม่สามารถเชื่อมต่อ server ได้ กรุณาลองใหม่อีกครั้ง',
+      });
     }
   };
 

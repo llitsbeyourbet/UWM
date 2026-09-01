@@ -8,6 +8,7 @@ import {
 import { MdGroups } from "react-icons/md";
 
 import API_URL from "../config";
+import { useAlert } from "../hooks/useAlert";
 import "../styles/AdminDashboard.css";
 import "../styles/AdminReportDetail.css";
 import "../components/AdminSidebar"
@@ -36,6 +37,7 @@ const formatDate = (value, includeTime = false) => {
 export default function AdminReportDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { showAlert, showConfirm } = useAlert();
   const token = sessionStorage.getItem("token");
 
   const admin = useMemo(() => {
@@ -121,8 +123,17 @@ export default function AdminReportDetail() {
   };
 
   const saveDecision = async () => {
-    if (!decision) { alert("กรุณาเลือกผลการตรวจสอบ"); return; }
-    if (!window.confirm("ยืนยันการบันทึกผลการตรวจสอบหรือไม่?")) return;
+    if (!decision) {
+      await showAlert({ type: 'warning', title: 'ข้อมูลไม่ครบถ้วน', message: 'กรุณาเลือกผลการตรวจสอบ' });
+      return;
+    }
+    const confirmed = await showConfirm({
+      title: 'ยืนยันการบันทึก',
+      message: 'ยืนยันการบันทึกผลการตรวจสอบหรือไม่?',
+      confirmText: 'บันทึก',
+      cancelText: 'ยกเลิก',
+    });
+    if (!confirmed) return;
     try {
       setSaving(true);
       await updateReportStatus({
@@ -130,26 +141,45 @@ export default function AdminReportDetail() {
         decision,
         adminNote: adminNote.trim(),
       });
-      alert("บันทึกผลการตรวจสอบสำเร็จ");
+      await showAlert({ type: 'success', title: 'สำเร็จ', message: 'บันทึกผลการตรวจสอบสำเร็จ' });
       await loadReport();
-    } catch (err) { alert(err.message || "เกิดข้อผิดพลาด"); }
+    } catch (err) {
+      await showAlert({ type: 'error', title: 'เกิดข้อผิดพลาด', message: err.message || "เกิดข้อผิดพลาดในการบันทึก" });
+    }
     finally { setSaving(false); }
   };
 
   const rejectReport = async () => {
-    if (!window.confirm("ยืนยันการปฏิเสธรายงานนี้หรือไม่?")) return;
+    const confirmed = await showConfirm({
+      title: 'ปฏิเสธรายงาน',
+      message: 'ยืนยันการปฏิเสธรายงานนี้หรือไม่?',
+      confirmText: 'ปฏิเสธ',
+      cancelText: 'ยกเลิก',
+    });
+    if (!confirmed) return;
     try {
       setSaving(true);
       await updateReportStatus({ status: "rejected", decision: "reject_report", adminNote: adminNote.trim() });
-      alert("ปฏิเสธรายงานเรียบร้อยแล้ว");
+      await showAlert({ type: 'success', title: 'สำเร็จ', message: 'ปฏิเสธรายงานเรียบร้อยแล้ว' });
       await loadReport();
-    } catch (err) { alert(err.message || "เกิดข้อผิดพลาด"); }
+    } catch (err) {
+      await showAlert({ type: 'error', title: 'เกิดข้อผิดพลาด', message: err.message || "เกิดข้อผิดพลาดในการปฏิเสธรายงาน" });
+    }
     finally { setSaving(false); }
   };
 
   const suspendActivity = async () => {
-    if (!activityId) { alert("ไม่พบรหัสกิจกรรม"); return; }
-    if (!window.confirm("ยืนยันการระงับกิจกรรมนี้หรือไม่?")) return;
+    if (!activityId) {
+      await showAlert({ type: 'error', title: 'ไม่พบข้อมูล', message: 'ไม่พบรหัสกิจกรรม กรุณาลองใหม่อีกครั้ง' });
+      return;
+    }
+    const confirmed = await showConfirm({
+      title: 'ระงับกิจกรรม',
+      message: 'ยืนยันการระงับกิจกรรมนี้หรือไม่?',
+      confirmText: 'ระงับกิจกรรม',
+      cancelText: 'ยกเลิก',
+    });
+    if (!confirmed) return;
     try {
       setSaving(true);
       const response = await fetch(`${API_URL}/api/admin/suspend/${activityId}`, {
@@ -157,9 +187,11 @@ export default function AdminReportDetail() {
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data?.message || "ระงับกิจกรรมไม่สำเร็จ");
-      alert("ระงับกิจกรรมเรียบร้อยแล้ว");
+      await showAlert({ type: 'success', title: 'สำเร็จ', message: 'ระงับกิจกรรมเรียบร้อยแล้ว' });
       await loadReport();
-    } catch (err) { alert(err.message || "เกิดข้อผิดพลาด"); }
+    } catch (err) {
+      await showAlert({ type: 'error', title: 'เกิดข้อผิดพลาด', message: err.message || "เกิดข้อผิดพลาดในการระงับกิจกรรม" });
+    }
     finally { setSaving(false); }
   };
 

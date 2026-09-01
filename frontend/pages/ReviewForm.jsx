@@ -1,10 +1,12 @@
 import API_URL from "../config";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useAlert } from "../hooks/useAlert";
 import "../styles/ReviewForm.css";
 
 function ReviewForm() {
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
   const { activityId } = useParams();
 
   const [activity, setActivity] = useState(null);
@@ -49,7 +51,11 @@ function ReviewForm() {
         const data = await res.json();
 
         if (!res.ok) {
-          alert(data.message || "ไม่พบข้อมูลกิจกรรม");
+          await showAlert({
+            type: 'error',
+            title: 'ไม่พบข้อมูลกิจกรรม',
+            message: data.message || "ไม่พบข้อมูลกิจกรรม",
+          });
           navigate(-1);
           return;
         }
@@ -69,12 +75,20 @@ function ReviewForm() {
 
   const handleSubmit = async () => {
     if (!activityRating) {
-      alert("กรุณาให้คะแนนกิจกรรม");
+      await showAlert({
+        type: 'warning',
+        title: 'ข้อมูลไม่ครบถ้วน',
+        message: 'กรุณาให้คะแนนกิจกรรม',
+      });
       return;
     }
 
     if (!hostRating) {
-      alert("กรุณาให้คะแนนผู้สร้างกิจกรรม");
+      await showAlert({
+        type: 'warning',
+        title: 'ข้อมูลไม่ครบถ้วน',
+        message: 'กรุณาให้คะแนนผู้สร้างกิจกรรม',
+      });
       return;
     }
 
@@ -105,17 +119,29 @@ function ReviewForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message || "เกิดข้อผิดพลาด");
+        await showAlert({
+          type: 'error',
+          title: 'เกิดข้อผิดพลาด',
+          message: data.message || "เกิดข้อผิดพลาด",
+        });
         return;
       }
 
-      alert("ส่งรีวิวสำเร็จ ขอบคุณสำหรับความคิดเห็น 🎉");
+      await showAlert({
+        type: 'success',
+        title: 'ส่งรีวิวสำเร็จ!',
+        message: 'ขอบคุณสำหรับความคิดเห็น 🎉',
+      });
 
       navigate(-1);
     } catch (err) {
       console.log(err);
 
-      alert("ไม่สามารถเชื่อมต่อ server ได้");
+      await showAlert({
+        type: 'error',
+        title: 'การเชื่อมต่อล้มเหลว',
+        message: 'ไม่สามารถเชื่อมต่อ server ได้',
+      });
     } finally {
       setLoading(false);
     }

@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API_URL from "../config";
+import { useAlert } from "../hooks/useAlert";
 import "../styles/Register.css";
 
 function Register() {
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
@@ -228,7 +230,11 @@ function Register() {
       const data = await res.json();
       if (!res.ok) { setError(data.message); return; }
 
-      alert("สมัครสมาชิกสำเร็จ!");
+      await showAlert({
+        type: 'success',
+        title: 'สมัครสมาชิกสำเร็จ!',
+        message: 'คุณได้สร้างบัญชีผู้ใช้เรียบร้อยแล้ว',
+      });
       navigate("/login");
     } catch {
       setError("ไม่สามารถเชื่อมต่อ server ได้");

@@ -1,11 +1,13 @@
 import API_URL from "../config";
 import { lazy, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAlert } from "../hooks/useAlert";
 import "../styles/CreateActivities.css";
 import { getCategoryIcon } from "../utils/categoryIcons";
 
 function CreateActivities() {
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
   const [preview, setPreview] = useState([]);
   const [coverFilename, setCoverFilename] = useState(null); // 👈 เพิ่ม
   const [activityName, setActivityName] = useState("");
@@ -105,18 +107,30 @@ function CreateActivities() {
     }
 
     if (endTime <= time) {
-      alert("เวลาสิ้นสุดต้องมากกว่าเวลาเริ่ม");
+      await showAlert({
+        type: 'warning',
+        title: 'เวลาไม่ถูกต้อง',
+        message: 'เวลาสิ้นสุดต้องมากกว่าเวลาเริ่ม',
+      });
       return;
     }
 
     if (checkinStart && checkinEnd && checkinEnd <= checkinStart) {
-      alert("เวลาเช็คอินไม่ถูกต้อง");
+      await showAlert({
+        type: 'warning',
+        title: 'เวลาไม่ถูกต้อง',
+        message: 'เวลาเช็คอินไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง',
+      });
       return;
     }
 
     const token = sessionStorage.getItem("token");
     if (!token) {
-      alert("กรุณาเข้าสู่ระบบก่อน");
+      await showAlert({
+        type: 'info',
+        title: 'เข้าสู่ระบบ',
+        message: 'กรุณาเข้าสู่ระบบก่อนสร้างกิจกรรม',
+      });
       navigate("/login");
       return;
     }
@@ -147,7 +161,11 @@ function CreateActivities() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message || "เกิดข้อผิดพลาด");
+        await showAlert({
+          type: 'error',
+          title: 'เกิดข้อผิดพลาด',
+          message: data.message || "เกิดข้อผิดพลาดในการสร้างกิจกรรม",
+        });
         return;
       }
 
@@ -163,11 +181,21 @@ function CreateActivities() {
       setPreview([]);
       setCoverFilename(null); // 👈 reset coverFilename ด้วย
 
+      await showAlert({
+        type: 'success',
+        title: 'สร้างกิจกรรมสำเร็จ!',
+        message: 'กิจกรรมของคุณถูกสร้างเรียบร้อยแล้ว',
+      });
+
       navigate(`/activity-detail?id=${data.id}`);
 
     } catch (err) {
       console.log(err);
-      alert("ไม่สามารถเชื่อมต่อ server ได้");
+      await showAlert({
+        type: 'error',
+        title: 'เกิดข้อผิดพลาด',
+        message: 'ไม่สามารถเชื่อมต่อ server ได้ กรุณาลองใหม่อีกครั้ง',
+      });
     }
   };
 

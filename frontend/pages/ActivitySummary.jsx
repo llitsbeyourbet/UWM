@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import "../styles/ActivitySummary.css";
 import API_URL from "../config";
 import { formatDate } from "../utils/formatDate";
+import { useAlert } from "../hooks/useAlert";
 
 function ActivitySummary() {
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -79,7 +81,11 @@ function ActivitySummary() {
         setActivities(activitiesWithStats);
       } catch (err) {
         console.error(err);
-        alert("เกิดข้อผิดพลาดในการดึงข้อมูลสรุปผล");
+        await showAlert({
+          type: 'error',
+          title: 'เกิดข้อผิดพลาด',
+          message: 'เกิดข้อผิดพลาดในการดึงข้อมูลสรุปผล',
+        });
       } finally {
         loading && setLoading(false);
       }

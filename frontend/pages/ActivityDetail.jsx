@@ -5,6 +5,7 @@ import "../styles/ActivityDetail.css";
 import API_URL from "../config";
 import { formatDate, formatTime } from "../utils/formatDate";
 import { getCategoryIcon } from "../utils/categoryIcons";
+import { useAlert } from "../hooks/useAlert";
 
 const getPaginationNumbers = (page, totalPages) => {
   if (totalPages <= 5) {
@@ -25,6 +26,7 @@ const getPaginationNumbers = (page, totalPages) => {
 
 function ActivityDetail() {
   const navigate = useNavigate();
+  const { showAlert, showConfirm } = useAlert();
   const [searchParams] = useSearchParams();
   const activityId = searchParams.get("id");
   const source = searchParams.get("from");
@@ -220,15 +222,31 @@ function ActivityDetail() {
         headers: { Authorization: "Bearer " + token },
       });
       const data = await res.json();
-      if (!res.ok) { alert(data.message); return; }
+      if (!res.ok) {
+        await showAlert({ type: 'error', title: 'เกิดข้อผิดพลาด', message: data.message });
+        return;
+      }
       setJoinStatus(data.status);
-      alert(data.status === "approved" ? "เข้าร่วมกิจกรรมสำเร็จ!" : "ส่งคำขอเข้าร่วมสำเร็จ! รอการอนุมัติ");
-    } catch { alert("ไม่สามารถเชื่อมต่อ server ได้"); }
+      await showAlert({
+        type: data.status === "approved" ? 'success' : 'info',
+        title: data.status === "approved" ? 'เข้าร่วมสำเร็จ!' : 'ส่งคำขอแล้ว',
+        message: data.status === "approved" ? 'คุณได้เข้าร่วมกิจกรรมนี้เรียบร้อยแล้ว' : 'ส่งคำขอเข้าร่วมสำเร็จ! รอการอนุมัติจากผู้จัดกิจกรรม',
+      });
+    } catch {
+      await showAlert({ type: 'error', title: 'เกิดข้อผิดพลาด', message: 'ไม่สามารถเชื่อมต่อ server ได้' });
+    }
     finally { setJoinLoading(false); }
   };
 
   const handleCancel = async () => {
-    if (!window.confirm("ต้องการยกเลิกการเข้าร่วมไหม?")) return;
+    const confirmed = await showConfirm({
+      title: 'ยกเลิกการเข้าร่วม?',
+      message: 'คุณต้องการยกเลิกการเข้าร่วมกิจกรรมนี้ใช่หรือไม่',
+      confirmText: 'ยกเลิก',
+      cancelText: 'กลับ',
+    });
+    if (!confirmed) return;
+
     const token = sessionStorage.getItem("token");
     try {
       const res = await fetch(API_URL + "/api/join/" + activity.id + "/cancel", {
@@ -236,10 +254,15 @@ function ActivityDetail() {
         headers: { Authorization: "Bearer " + token },
       });
       const data = await res.json();
-      if (!res.ok) { alert(data.message); return; }
+      if (!res.ok) {
+        await showAlert({ type: 'error', title: 'เกิดข้อผิดพลาด', message: data.message });
+        return;
+      }
       setJoinStatus("cancelled");
-      alert("ยกเลิกการเข้าร่วมสำเร็จ");
-    } catch { alert("ไม่สามารถเชื่อมต่อ server ได้"); }
+      await showAlert({ type: 'success', title: 'ยกเลิกสำเร็จ', message: 'คุณได้ยกเลิกการเข้าร่วมกิจกรรมนี้เรียบร้อยแล้ว' });
+    } catch {
+      await showAlert({ type: 'error', title: 'เกิดข้อผิดพลาด', message: 'ไม่สามารถเชื่อมต่อ server ได้' });
+    }
   };
 
   const handleDelete = async () => {
@@ -250,21 +273,27 @@ function ActivityDetail() {
       ) <= new Date();
 
     if (activity.status === "suspended") {
-      alert("กิจกรรมที่ถูกระงับโดยแอดมินไม่สามารถลบได้");
+      await showAlert({ type: 'warning', title: 'ไม่สามารถลบได้', message: 'กิจกรรมที่ถูกระงับโดยแอดมินไม่สามารถลบได้' });
       return;
     }
 
     if (ended) {
-      alert("กิจกรรมที่สิ้นสุดแล้วไม่สามารถลบได้");
+      await showAlert({ type: 'warning', title: 'ไม่สามารถลบได้', message: 'กิจกรรมที่สิ้นสุดแล้วไม่สามารถลบได้' });
       return;
     }
 
     if (Number(activity.joinedCount || participants.length || 0) > 0) {
-      alert("ไม่สามารถลบกิจกรรมที่มีผู้เข้าร่วมแล้วได้");
+      await showAlert({ type: 'warning', title: 'ไม่สามารถลบได้', message: 'ไม่สามารถลบกิจกรรมที่มีผู้เข้าร่วมแล้วได้' });
       return;
     }
 
-    if (!window.confirm("ต้องการลบกิจกรรมนี้ไหม?")) return;
+    const confirmed = await showConfirm({
+      title: 'ลบกิจกรรม?',
+      message: 'คุณต้องการลบกิจกรรมนี้ใช่หรือไม่ การดำเนินการนี้ไม่สามารถย้อนกลับได้',
+      confirmText: 'ลบกิจกรรม',
+      cancelText: 'ยกเลิก',
+    });
+    if (!confirmed) return;
 
     const token = sessionStorage.getItem("token");
 
@@ -282,20 +311,26 @@ function ActivityDetail() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message);
+        await showAlert({ type: 'error', title: 'เกิดข้อผิดพลาด', message: data.message });
         return;
       }
 
-      alert("ลบกิจกรรมสำเร็จ");
+      await showAlert({ type: 'success', title: 'ลบกิจกรรมสำเร็จ', message: 'กิจกรรมของคุณถูกลบออกเรียบร้อยแล้ว' });
       navigate("/");
     } catch {
-      alert("ไม่สามารถเชื่อมต่อ server ได้");
+      await showAlert({ type: 'error', title: 'เกิดข้อผิดพลาด', message: 'ไม่สามารถเชื่อมต่อ server ได้' });
     }
   };
 
   const handleReport = async () => {
-    if (!reportReason) { alert("กรุณาเลือกเหตุผล"); return; }
-    if (reportReason === "อื่นๆ" && !otherReason.trim()) { alert("กรุณาระบุเหตุผลเพิ่มเติม"); return; }
+    if (!reportReason) {
+      await showAlert({ type: 'warning', title: 'ข้อมูลไม่ครบถ้วน', message: 'กรุณาเลือกเหตุผลในการรายงาน' });
+      return;
+    }
+    if (reportReason === "อื่นๆ" && !otherReason.trim()) {
+      await showAlert({ type: 'warning', title: 'ข้อมูลไม่ครบถ้วน', message: 'กรุณาระบุเหตุผลเพิ่มเติม' });
+      return;
+    }
     const token = sessionStorage.getItem("token");
     setReportLoading(true);
     try {
@@ -305,12 +340,17 @@ function ActivityDetail() {
         body: JSON.stringify({ reason: reportReason === "อื่นๆ" ? otherReason : reportReason }),
       });
       const data = await res.json();
-      if (!res.ok) { alert(data.message); return; }
-      alert("รายงานสำเร็จ ขอบคุณที่แจ้งเตือน");
+      if (!res.ok) {
+        await showAlert({ type: 'error', title: 'เกิดข้อผิดพลาด', message: data.message });
+        return;
+      }
+      await showAlert({ type: 'success', title: 'รายงานสำเร็จ', message: 'ขอบคุณที่แจ้งเตือน เราจะตรวจสอบและดำเนินการโดยเร็วที่สุด' });
       setShowReportModal(false);
       setReportReason("");
       setOtherReason("");
-    } catch { alert("ไม่สามารถเชื่อมต่อ server ได้"); }
+    } catch {
+      await showAlert({ type: 'error', title: 'เกิดข้อผิดพลาด', message: 'ไม่สามารถเชื่อมต่อ server ได้' });
+    }
     finally { setReportLoading(false); }
   };
 
@@ -324,7 +364,10 @@ function ActivityDetail() {
         body: JSON.stringify({ isPublic: !currentIsPublic }),
       });
       const data = await res.json();
-      if (!res.ok) { alert(data.message || "ไม่สามารถเปลี่ยนการมองเห็นความคิดเห็นได้"); return; }
+      if (!res.ok) {
+        await showAlert({ type: 'error', title: 'เกิดข้อผิดพลาด', message: data.message || "ไม่สามารถเปลี่ยนการมองเห็นความคิดเห็นได้" });
+        return;
+      }
 
       setDetailedReviews((prev) => prev.map((rev) => {
         if (rev.activityCommentId === commentId) {
@@ -335,7 +378,10 @@ function ActivityDetail() {
         }
         return rev;
       }));
-    } catch (err) { console.log(err); alert("ไม่สามารถเชื่อมต่อ server ได้"); }
+    } catch (err) {
+      console.log(err);
+      await showAlert({ type: 'error', title: 'เกิดข้อผิดพลาด', message: 'ไม่สามารถเชื่อมต่อ server ได้' });
+    }
   };
 
   if (!activityId) return <div className="loading">ไม่พบ ID กิจกรรม</div>;
@@ -401,10 +447,14 @@ function ActivityDetail() {
 
                         <>
                           <button type="button" className="menu-action-btn"
-                            onClick={() => {
+                            onClick={async () => {
                               setShowReportMenu(false);
                               if (activityEnded) {
-                                alert("กิจกรรมที่สิ้นสุดแล้วไม่สามารถแสดง QR Code ได้");
+                                await showAlert({
+                                  type: 'warning',
+                                  title: 'ไม่สามารถแสดงได้',
+                                  message: 'กิจกรรมที่สิ้นสุดแล้วไม่สามารถแสดง QR Code ได้',
+                                });
                                 return;
                               }
                               setShowQR((prev) => !prev); setQrCountdown(15);
@@ -412,10 +462,14 @@ function ActivityDetail() {
                             <span className="menu-action-icon">▦</span> {showQR ? "ซ่อน QR Code" : "แสดง QR Code"}
                           </button>
                           <button type="button" className="menu-action-btn"
-                            onClick={() => {
+                            onClick={async () => {
                               setShowReportMenu(false);
                               if (activityEnded) {
-                                alert("กิจกรรมที่สิ้นสุดแล้ว ไม่สามารถแก้ไขได้");
+                                await showAlert({
+                                  type: 'warning',
+                                  title: 'ไม่สามารถแก้ไขได้',
+                                  message: 'กิจกรรมที่สิ้นสุดแล้ว ไม่สามารถแก้ไขได้',
+                                });
                                 return;
                               }
                               navigate("/edit-activity/" + activity.id);

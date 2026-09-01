@@ -1,11 +1,13 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../utils/logout";
+import { useAlert } from "../hooks/useAlert";
 
 const IDLE_TIME = 60 * 60 * 1000; // 1 ชั่วโมง
 
 function AutoLogout() {
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     let timeout;
@@ -13,9 +15,11 @@ function AutoLogout() {
     const logout = async () => {
       await logoutUser();
 
-      alert(
-        "ไม่มีการใช้งานเกิน 1 ชั่วโมง ระบบได้ออกจากระบบอัตโนมัติ"
-      );
+      await showAlert({
+        type: 'info',
+        title: 'ออกจากระบบอัตโนมัติ',
+        message: 'ไม่มีการใช้งานเกิน 1 ชั่วโมง ระบบได้ออกจากระบบเพื่อความปลอดภัย',
+      });
 
       navigate("/login", { replace: true });
     };

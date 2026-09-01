@@ -2,10 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Html5Qrcode } from "html5-qrcode";
 import API_URL from "../config";
+import { useAlert } from "../hooks/useAlert";
 import "../styles/ScanQR.css";
 
 function ScanQR() {
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
 
   const scannerRef = useRef(null);
   const scannedRef = useRef(false);
@@ -121,9 +123,11 @@ function ScanQR() {
               if (
                 !url.pathname.startsWith("/checkin/")
               ) {
-                alert(
-                  "QR นี้ไม่ใช่ QR สำหรับเช็คอิน"
-                );
+                showAlert({
+                  type: 'warning',
+                  title: 'QR ไม่ถูกต้อง',
+                  message: 'QR นี้ไม่ใช่ QR สำหรับเช็คอิน',
+                });
 
                 scannedRef.current = false;
                 window.location.reload();
@@ -135,7 +139,11 @@ function ScanQR() {
                 url.pathname.split("/");
 
               if (parts.length !== 4) {
-                alert("QR ไม่ถูกต้อง");
+                showAlert({
+                  type: 'error',
+                  title: 'QR ไม่ถูกต้อง',
+                  message: 'ข้อมูลใน QR Code ไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง',
+                });
 
                 scannedRef.current = false;
                 window.location.reload();
@@ -147,7 +155,11 @@ function ScanQR() {
               const qrToken = parts[3];
 
               if (!activityId || !qrToken) {
-                alert("QR ไม่ถูกต้อง");
+                showAlert({
+                  type: 'error',
+                  title: 'QR ไม่ถูกต้อง',
+                  message: 'ข้อมูลใน QR Code ไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง',
+                });
 
                 scannedRef.current = false;
                 window.location.reload();
@@ -161,7 +173,11 @@ function ScanQR() {
             } catch (err) {
               console.log(err);
 
-              alert("QR ไม่ถูกต้อง");
+              showAlert({
+                type: 'error',
+                title: 'QR ไม่ถูกต้อง',
+                message: 'เกิดข้อผิดพลาดในการอ่าน QR Code กรุณาลองใหม่อีกครั้ง',
+              });
 
               scannedRef.current = false;
               window.location.reload();
@@ -256,9 +272,11 @@ function ScanQR() {
     } catch (err) {
       console.log("Torch not supported:", err);
 
-      alert(
-        "อุปกรณ์นี้ไม่รองรับการเปิดไฟฉายผ่านเว็บไซต์"
-      );
+      showAlert({
+        type: 'info',
+        title: 'ไม่รองรับไฟฉาย',
+        message: 'อุปกรณ์นี้ไม่รองรับการเปิดไฟฉายผ่านเว็บไซต์',
+      });
     }
   };
 

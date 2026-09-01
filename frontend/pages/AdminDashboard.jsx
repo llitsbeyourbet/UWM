@@ -25,6 +25,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import { useAlert } from "../hooks/useAlert";
 import "../styles/AdminDashboard.css";
 import "../components/AdminSidebar"
 import API_URL from "../config";
@@ -129,6 +130,7 @@ function CategoryTick({ x, y, payload }) {
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
   const token = sessionStorage.getItem("token");
 
   const [loading, setLoading] = useState(true);
@@ -230,7 +232,11 @@ export default function AdminDashboard() {
       );
     } catch (error) {
       console.error(error);
-      alert(error.message || "ไม่สามารถโหลดข้อมูล Dashboard ได้");
+      await showAlert({
+        type: 'error',
+        title: 'เกิดข้อผิดพลาด',
+        message: error.message || "ไม่สามารถโหลดข้อมูล Dashboard ได้",
+      });
     } finally {
       setLoading(false);
     }
