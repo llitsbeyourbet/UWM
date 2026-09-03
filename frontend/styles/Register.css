@@ -5,7 +5,7 @@
 .register-page {
   min-height: 100dvh;
 
-  padding: 35px;
+  padding: 0px;
 
   display: flex;
   align-items: center;
@@ -798,10 +798,6 @@
 
 @media (max-width: 1366px) {
 
-  .register-page {
-    padding: 22px;
-  }
-
   .register-container {
     max-width: 1180px;
 
@@ -873,10 +869,6 @@
 
 @media (max-width: 900px) {
 
-  .register-page {
-    padding: 20px;
-  }
-
   .register-container {
     display: block;
 
@@ -913,7 +905,7 @@
   .register-page {
     min-height: 100dvh;
 
-    padding: 0;
+    padding: 0; 
 
     background: #ffffff;
   }
