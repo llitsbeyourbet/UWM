@@ -1,21 +1,10 @@
 const express = require("express");
 const router = express.Router();
+const { auth } = require("../middleware/auth");
 const Notification = require("../models/Notification");
-const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { emitCountUpdate } = require("../services/notificationService");
 
-const auth = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) return res.status(401).json({ message: "ไม่มี token" });
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.userId = decoded.id;
-    next();
-  } catch {
-    res.status(401).json({ message: "token ไม่ถูกต้อง" });
-  }
-};
 
 // ดึงจำนวนการแจ้งเตือนที่ยังไม่ได้อ่าน
 router.get("/unread-count", auth, async (req, res) => {
@@ -157,7 +146,9 @@ router.put("/:id", auth, async (req, res) => {
   try {
     const { type } = req.body;
 
-    const notif = await Notification.findByPk(req.params.id);
+    const notif = await Notification.findOne({
+      where: { id: req.params.id, toUserId: req.userId },
+    });
     if (!notif) return res.status(404).json({ message: "ไม่พบการแจ้งเตือน" });
 
     await notif.update({ type, isRead: true });
@@ -198,7 +189,15 @@ router.put("/:id", auth, async (req, res) => {
 // อ่านแจ้งเตือนแล้ว
 router.put("/:id/read", auth, async (req, res) => {
   try {
-    await Notification.update({ isRead: true }, { where: { id: req.params.id } });
+    const [updated] = await Notification.update(
+      { isRead: true },
+      { where: { id: req.params.id, toUserId: req.userId } }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ message: "ไม่พบการแจ้งเตือน" });
+    }
+
     emitCountUpdate(req.userId);
     res.json({ message: "อ่านแล้ว" });
   } catch (err) {

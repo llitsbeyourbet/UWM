@@ -1,32 +1,115 @@
+const jwt = require("jsonwebtoken");
 const Notification = require("../models/Notification");
+const User = require("../models/User");
+const UserSession = require("../models/UserSession");
 
 let io = null;
 const userSockets = new Map();
+const SESSION_IDLE_TIMEOUT = 3 * 60 * 1000;
+
+const addSocket = (userId, socketId) => {
+  const key = String(userId);
+  if (!userSockets.has(key)) {
+    userSockets.set(key, new Set());
+  }
+  userSockets.get(key).add(socketId);
+};
+
+const removeSocket = (userId, socketId) => {
+  const key = String(userId);
+  const sockets = userSockets.get(key);
+  if (!sockets) return;
+
+  sockets.delete(socketId);
+  if (sockets.size === 0) {
+    userSockets.delete(key);
+  }
+};
+
+const emitToUser = (userId, event, payload) => {
+  if (!io) return;
+
+  const sockets = userSockets.get(String(userId));
+  if (!sockets) return;
+
+  for (const socketId of sockets) {
+    io.to(socketId).emit(event, payload);
+  }
+};
+
+const authenticateSocket = async (socket, next) => {
+  try {
+    const token = socket.handshake.auth?.token;
+    if (!token) {
+      return next(new Error("AUTH_REQUIRED"));
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (!decoded.id || !decoded.sessionId) {
+      return next(new Error("INVALID_SESSION"));
+    }
+
+    const [user, session] = await Promise.all([
+      User.findByPk(decoded.id),
+      UserSession.findOne({
+        where: {
+          userId: decoded.id,
+          sessionId: decoded.sessionId,
+        },
+      }),
+    ]);
+
+    if (!user || !session || session.revokedAt) {
+      return next(new Error("INVALID_SESSION"));
+    }
+
+    const now = new Date();
+    if (now >= new Date(session.expiresAt)) {
+      await session.update({ revokedAt: now });
+      return next(new Error("SESSION_EXPIRED"));
+    }
+
+    const lastSeen = new Date(session.lastSeenAt).getTime();
+    if (now.getTime() - lastSeen > SESSION_IDLE_TIMEOUT) {
+      await session.update({ revokedAt: now });
+      return next(new Error("SESSION_IDLE_TIMEOUT"));
+    }
+
+    socket.userId = user.id;
+    socket.sessionId = session.sessionId;
+    return next();
+  } catch (error) {
+    return next(new Error("INVALID_TOKEN"));
+  }
+};
 
 const init = (socketio) => {
   io = socketio;
+  io.use(authenticateSocket);
 
   io.on("connection", (socket) => {
-    console.log("New socket connection:", socket.id);
+    addSocket(socket.userId, socket.id);
+    console.log(`User ${socket.userId} connected socket ${socket.id}`);
 
-    socket.on("join", (userId) => {
-      userSockets.set(userId, socket.id);
-      console.log(`User ${userId} joined socket ${socket.id}`);
-    });
+    // ไม่รับ userId จาก client เพื่อป้องกันการปลอมตัวเป็นผู้ใช้อื่น
+    socket.on("join", () => {});
 
     socket.on("disconnect", () => {
-      for (const [userId, socketId] of userSockets.entries()) {
-        if (socketId === socket.id) {
-          userSockets.delete(userId);
-          console.log(`User ${userId} disconnected`);
-          break;
-        }
-      }
+      removeSocket(socket.userId, socket.id);
+      console.log(`User ${socket.userId} disconnected socket ${socket.id}`);
     });
   });
 };
 
-const createNotification = async (toUserId, type, activityId, activityName, fromUserId = null, fromUsername = null, options = {}) => {
+const createNotification = async (
+  toUserId,
+  type,
+  activityId,
+  activityName,
+  fromUserId = null,
+  fromUsername = null,
+  options = {}
+) => {
   try {
     if (options.deduplicate) {
       const exists = await Notification.findOne({
@@ -51,13 +134,10 @@ const createNotification = async (toUserId, type, activityId, activityName, from
       isRead: false,
     });
 
-    const socketId = userSockets.get(toUserId);
-    if (socketId && io) {
-      io.to(socketId).emit("notification", {
-        message: "คุณมีการแจ้งเตือนใหม่",
-        notification: notif,
-      });
-    }
+    emitToUser(toUserId, "notification", {
+      message: "คุณมีการแจ้งเตือนใหม่",
+      notification: notif,
+    });
 
     return notif;
   } catch (error) {
@@ -67,10 +147,7 @@ const createNotification = async (toUserId, type, activityId, activityName, from
 };
 
 const emitCountUpdate = (userId) => {
-  const socketId = userSockets.get(userId);
-  if (socketId && io) {
-    io.to(socketId).emit("unreadCountUpdated");
-  }
+  emitToUser(userId, "unreadCountUpdated");
 };
 
 module.exports = {

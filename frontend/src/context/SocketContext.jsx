@@ -19,12 +19,6 @@ export const SocketProvider = ({ children }) => {
 
     newSocket.on("connect", () => {
       console.log("Connected to Socket.io");
-      // Join user room
-      const user = JSON.parse(sessionStorage.getItem("user") || "null");
-
-      if (user?.id) {
-        newSocket.emit("join", user.id);
-      }
     });
 
     return () => {

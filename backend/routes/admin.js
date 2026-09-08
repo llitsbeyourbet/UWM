@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const jwt = require("jsonwebtoken");
+const { auth, isAdmin } = require("../middleware/auth");
 const { Op, fn, col } = require("sequelize");
 
 const Activity = require("../models/Activity");
@@ -11,31 +11,6 @@ const ActivityReview = require("../models/ActivityReview");
 const HostReview = require("../models/HostReview");
 const Comment = require("../models/Comment");
 const notificationService = require("../services/notificationService");
-
-const auth = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
-
-  if (!token) {
-    return res.status(401).json({ message: "ไม่มี token" });
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.userId = decoded.id;
-    req.role = decoded.role;
-    next();
-  } catch {
-    return res.status(401).json({ message: "token ไม่ถูกต้อง" });
-  }
-};
-
-const isAdmin = (req, res, next) => {
-  if (req.role !== "admin") {
-    return res.status(403).json({ message: "ไม่มีสิทธิ์เข้าถึง" });
-  }
-
-  next();
-};
 
 const validDays = (value) => {
   const days = Number(value || 7);

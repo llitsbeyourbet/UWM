@@ -208,7 +208,7 @@ function Register() {
     setLoading(true);
     try {
       // ยืนยัน OTP ก่อน
-      const verifyRes = await fetch(`${API_URL}/api/forgot/verify-otp`, {
+      const verifyRes = await fetch(`${API_URL}/api/forgot/verify-otp-register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp: otpValue }),
@@ -221,11 +221,19 @@ function Register() {
         return;
       }
 
+      if (!verifyData.registrationToken) {
+        setError("ไม่สามารถยืนยันตัวตนได้ กรุณาขอ OTP ใหม่");
+        return;
+      }
+
       // สมัครสมาชิก
       const res = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, username, email, password, phone, birthdate }),
+        body: JSON.stringify({
+          name, username, email, password, phone, birthdate,
+          registrationToken: verifyData.registrationToken,
+        }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.message); return; }

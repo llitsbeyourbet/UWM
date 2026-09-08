@@ -1,22 +1,11 @@
 const express = require("express");
 const router = express.Router();
+const { auth } = require("../middleware/auth");
 const { Op } = require("sequelize");
 const Activity = require("../models/Activity");
 const JoinRequest = require("../models/JoinRequest");
 const User = require("../models/User")
-const jwt = require("jsonwebtoken");
 
-const auth = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) return res.status(401).json({ message: "ไม่มี token" });
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.userId = decoded.id;
-    next();
-  } catch {
-    res.status(401).json({ message: "token ไม่ถูกต้อง" });
-  }
-};
 
 // ดึงกิจกรรมทั้งหมด
 router.get("/", async (req, res) => {

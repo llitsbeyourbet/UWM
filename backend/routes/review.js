@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const jwt = require("jsonwebtoken");
+const { auth } = require("../middleware/auth");
 const ActivityReview = require("../models/ActivityReview");
 const HostReview = require("../models/HostReview");
 const Comment = require("../models/Comment");
@@ -10,17 +10,6 @@ const User = require("../models/User");
 const Notification = require("../models/Notification");
 const notificationService = require("../services/notificationService");
 
-const auth = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) return res.status(401).json({ message: "ไม่มี token" });
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.userId = decoded.id;
-    next();
-  } catch {
-    res.status(401).json({ message: "token ไม่ถูกต้อง" });
-  }
-};
 
 // เช็คว่า checked_in แล้วไหม
 const checkCheckedIn = async (userId, activityId) => {

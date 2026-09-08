@@ -12,6 +12,7 @@ function ForgotPassword() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [resetToken, setResetToken] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [timer, setTimer] = useState(600);
@@ -94,6 +95,8 @@ function ForgotPassword() {
       });
       const data = await res.json();
       if (!res.ok) { setError(data.message); return; }
+      if (!data.resetToken) { setError("ไม่สามารถยืนยันตัวตนได้ กรุณาขอ OTP ใหม่"); return; }
+      setResetToken(data.resetToken);
       setStep(3); // 👈 ไป step 3
     } catch {
       setError("ไม่สามารถเชื่อมต่อ server ได้");
@@ -104,14 +107,16 @@ function ForgotPassword() {
 
   const handleResetPassword = async () => {
     if (!newPassword) { setError("กรุณากรอกรหัสผ่านใหม่"); return; }
+    if (newPassword.length < 6) { setError("รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร"); return; }
     if (newPassword !== confirmPassword) { setError("รหัสผ่านไม่ตรงกัน"); return; }
+    if (!resetToken) { setError("การยืนยันตัวตนหมดอายุ กรุณาขอ OTP ใหม่"); return; }
     setError("");
     setLoading(true);
     try {
       const res = await fetch(`${API_URL}/api/forgot/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, newPassword }),
+        body: JSON.stringify({ email, resetToken, newPassword, confirmPassword }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.message); return; }
@@ -132,6 +137,7 @@ function ForgotPassword() {
     if (loading || timer > 0) return;
 
     setOtp(["", "", "", "", "", ""]);
+    setResetToken("");
     setError("");
     setLoading(true);
 
