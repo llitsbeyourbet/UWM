@@ -7,6 +7,9 @@ import "../styles/Notifications.css";
 function Notifications() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("all");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [swipedId, setSwipedId] = useState(null);
   const navigate = useNavigate();
   const { socket } = useSocket();
 
@@ -96,8 +99,118 @@ function Notifications() {
     }
   };
 
-  const newNotifs = notifications.filter((n) => !n.isRead);
-  const oldNotifs = notifications.filter((n) => n.isRead);
+  const handleReadAll = async () => {
+    try {
+      const token = sessionStorage.getItem("token");
+
+      const res = await fetch(`${API_URL}/api/notifications/read-all`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error("อ่านแจ้งเตือนทั้งหมดไม่สำเร็จ");
+
+      setMenuOpen(false);
+      await fetchNotifications();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    const confirmed = window.confirm(
+      "ต้องการลบการแจ้งเตือนนี้หรือไม่?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      const token = sessionStorage.getItem("token");
+
+      const res = await fetch(`${API_URL}/api/notifications/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error("ลบการแจ้งเตือนไม่สำเร็จ");
+
+      setSwipedId(null);
+      await fetchNotifications();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    const confirmed = window.confirm(
+      "ต้องการลบการแจ้งเตือนทั้งหมดใช่หรือไม่?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      const token = sessionStorage.getItem("token");
+
+      const res = await fetch(
+        `${API_URL}/api/notifications/delete-all`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!res.ok) throw new Error("ลบการแจ้งเตือนทั้งหมดไม่สำเร็จ");
+
+      setMenuOpen(false);
+      setSwipedId(null);
+      await fetchNotifications();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const getNotificationCategory = (type) => {
+    if (["reminder"].includes(type)) {
+      return "activity";
+    }
+
+    if (
+      ["report", "activity_warning", "activity_suspended"].includes(type)
+    ) {
+      return "report";
+    }
+
+    if (
+      [
+        "join_request",
+        "join_confirmed",
+        "join_rejected",
+        "member_joined",
+        "checkin",
+      ].includes(type)
+    ) {
+      return "join";
+    }
+
+    if (["review", "review_request"].includes(type)) {
+      return "review";
+    }
+
+    return "other";
+  };
+
+  const filteredNotifications =
+    activeTab === "all"
+      ? notifications
+      : notifications.filter(
+        (n) => getNotificationCategory(n.type) === activeTab
+      );
 
   const renderIcon = (type) => {
     if (type === "join_request") return (
@@ -271,6 +384,27 @@ function Notifications() {
   };
 
   const NotifCard = ({ n }) => {
+    const [touchStartX, setTouchStartX] = useState(null);
+
+    const handleTouchStart = (e) => {
+      setTouchStartX(e.touches[0].clientX);
+    };
+
+    const handleTouchEnd = (e) => {
+      if (touchStartX === null) return;
+
+      const touchEndX = e.changedTouches[0].clientX;
+      const diff = touchStartX - touchEndX;
+
+      if (diff > 60) {
+        setSwipedId(n.id);
+      } else if (diff < -30) {
+        setSwipedId(null);
+      }
+
+      setTouchStartX(null);
+    };
+
     const handleClick = async () => {
       try {
         const token = sessionStorage.getItem("token");
@@ -293,80 +427,217 @@ function Notifications() {
     };
 
     return (
-      <div className={`notif-card ${!n.isRead ? "new" : ""}`} onClick={handleClick}>
-        {n.type === "join_request" || n.type === "member_joined" ?(
-          <button
-            type="button"
-            className="notif-profile"
-            onClick={(e) => {
-              e.stopPropagation();
+  <div
+    className={`notif-swipe-wrapper ${
+      swipedId === n.id ? "swiped" : ""
+    }`}
+  >
+    <button
+      type="button"
+      className="notif-delete-btn"
+      onClick={(e) => {
+        e.stopPropagation();
+        handleDelete(n.id);
+      }}
+      aria-label="ลบการแจ้งเตือน"
+    >
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <polyline points="3 6 5 6 21 6" />
+        <path d="M19 6l-1 14H6L5 6" />
+        <path d="M10 11v6" />
+        <path d="M14 11v6" />
+        <path d="M9 6V4h6v2" />
+      </svg>
+    </button>
 
-              if (n.fromUserId) {
-                navigate(`/user/${n.fromUserId}`);
-              }
-            }}
-          >
-            {n.fromUser?.profileImage ? (
-              <img
-                src={n.fromUser.profileImage}
-                alt={n.fromUser.username || "profile"}
-              />
-            ) : (
-              <span>
-                {(n.fromUser?.name || n.fromUsername || "?")
-                  .charAt(0)
-                  .toUpperCase()}
-              </span>
-            )}
-          </button>
-        ) : (
-          renderIcon(n.type)
-        )}
-        <div className="notif-body">
-          <p className="notif-message">{renderMessage(n)}</p>
-          {(n.type === "activity_warning" ||
-            n.type === "activity_suspended") &&
-            n.adminNote && (
-              <div className="notif-admin-note">
-                <span>หมายเหตุจากผู้ดูแลระบบ :</span>
-                <p>{n.adminNote}</p>
-              </div>
-            )}
-          <p className="notif-time">{formatTime(n.createdAt)}</p>
-          {n.type === "join_request" && (
-            <div className="notif-actions" onClick={(e) => e.stopPropagation()}>
-              <button className="btn-accept" onClick={() => handleAccept(n)}>ยอมรับ</button>
-              <button className="btn-reject" onClick={() => handleReject(n)}>ปฏิเสธ</button>
+    <div
+      className={`notif-card ${!n.isRead ? "new" : ""}`}
+      onClick={handleClick}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      {n.type === "join_request" || n.type === "member_joined" ? (
+        <button
+          type="button"
+          className="notif-profile"
+          onClick={(e) => {
+            e.stopPropagation();
+
+            if (n.fromUserId) {
+              navigate(`/user/${n.fromUserId}`);
+            }
+          }}
+        >
+          {n.fromUser?.profileImage ? (
+            <img
+              src={n.fromUser.profileImage}
+              alt={n.fromUser.username || "profile"}
+            />
+          ) : (
+            <span>
+              {(n.fromUser?.name || n.fromUsername || "?")
+                .charAt(0)
+                .toUpperCase()}
+            </span>
+          )}
+        </button>
+      ) : (
+        renderIcon(n.type)
+      )}
+
+      <div className="notif-body">
+        <p className="notif-message">
+          {renderMessage(n)}
+        </p>
+
+        {(n.type === "activity_warning" ||
+          n.type === "activity_suspended") &&
+          n.adminNote && (
+            <div className="notif-admin-note">
+              <span>หมายเหตุจากผู้ดูแลระบบ :</span>
+              <p>{n.adminNote}</p>
             </div>
           )}
-        </div>
+
+        <p className="notif-time">
+          {formatTime(n.createdAt)}
+        </p>
+
+        {n.type === "join_request" && (
+          <div
+            className="notif-actions"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="btn-accept"
+              onClick={() => handleAccept(n)}
+            >
+              ยอมรับ
+            </button>
+
+            <button
+              className="btn-reject"
+              onClick={() => handleReject(n)}
+            >
+              ปฏิเสธ
+            </button>
+          </div>
+        )}
       </div>
-    );
+    </div>
+  </div>
+);
   };
 
   return (
     <div className="notifications-page">
       <div className="notif-header">
-        <p className="notif-title">Notification</p>
+        <p className="notif-title">การแจ้งเตือน</p>
+
+        <div className="notif-menu-wrapper">
+          <button
+            type="button"
+            className="notif-menu-btn"
+            onClick={() => setMenuOpen((prev) => !prev)}
+            aria-label="เมนูการแจ้งเตือน"
+          >
+            ⋮
+          </button>
+
+          {menuOpen && (
+            <div className="notif-dropdown">
+              <button type="button" onClick={handleReadAll}>
+                <span>✓</span>
+                อ่านการแจ้งเตือนทั้งหมด
+              </button>
+
+              <button
+                type="button"
+                className="danger"
+                onClick={handleDeleteAll}
+              >
+                <span>🗑</span>
+                ลบการแจ้งเตือนทั้งหมด
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="notif-tabs">
+        <button
+          className={activeTab === "all" ? "active" : ""}
+          onClick={() => setActiveTab("all")}
+        >
+          ทั้งหมด
+        </button>
+
+        <button
+          className={activeTab === "activity" ? "active" : ""}
+          onClick={() => setActiveTab("activity")}
+        >
+          กิจกรรม
+        </button>
+
+        <button
+          className={activeTab === "join" ? "active" : ""}
+          onClick={() => setActiveTab("join")}
+        >
+          การเข้าร่วม
+        </button>
+
+        <button
+          className={activeTab === "review" ? "active" : ""}
+          onClick={() => setActiveTab("review")}
+        >
+          รีวิว
+        </button>
+
+        <button
+          className={activeTab === "report" ? "active" : ""}
+          onClick={() => setActiveTab("report")}
+        >
+          รายงาน
+        </button>
       </div>
 
       <div className="notif-list">
         {loading ? (
           <p className="empty-text">กำลังโหลด...</p>
-        ) : notifications.length === 0 ? (
+        ) : filteredNotifications.length === 0 ? (
           <p className="empty-text">ไม่มีการแจ้งเตือน</p>
         ) : (
           <>
-            {newNotifs.length > 0 && (
+            {filteredNotifications.filter((n) => !n.isRead).length > 0 && (
               <>
                 <p className="notif-section-label">ยังไม่ได้อ่าน</p>
-                {newNotifs.map((n) => <NotifCard key={n.id} n={n} />)}
+
+                {filteredNotifications
+                  .filter((n) => !n.isRead)
+                  .map((n) => (
+                    <NotifCard key={n.id} n={n} />
+                  ))}
               </>
             )}
-            {oldNotifs.length > 0 && (
+
+            {filteredNotifications.filter((n) => n.isRead).length > 0 && (
               <>
                 <p className="notif-section-label">อ่านแล้ว</p>
-                {oldNotifs.map((n) => <NotifCard key={n.id} n={n} />)}
+
+                {filteredNotifications
+                  .filter((n) => n.isRead)
+                  .map((n) => (
+                    <NotifCard key={n.id} n={n} />
+                  ))}
               </>
             )}
           </>
