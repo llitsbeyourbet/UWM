@@ -2,7 +2,7 @@ import API_URL from "../config";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../src/context/SocketContext";
-import { useAlert } from "../src/context/AlertContext";
+import { useAlert } from "../components/AlertModal";
 import "../styles/Notifications.css";
 
 function Notifications() {
