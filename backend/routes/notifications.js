@@ -40,6 +40,28 @@ router.put("/read-all", auth, async (req, res) => {
   }
 });
 
+// ลบการแจ้งเตือนทั้งหมดของผู้ใช้
+router.delete("/delete-all", auth, async (req, res) => {
+  try {
+    await Notification.destroy({
+      where: {
+        toUserId: req.userId,
+      },
+    });
+
+    emitCountUpdate(req.userId);
+
+    res.json({
+      message: "ลบการแจ้งเตือนทั้งหมดสำเร็จ",
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "เกิดข้อผิดพลาด",
+    });
+  }
+});
+
 // ลบการแจ้งเตือนรายการเดียว
 router.delete("/:id", auth, async (req, res) => {
   try {
@@ -69,27 +91,6 @@ router.delete("/:id", auth, async (req, res) => {
   }
 });
 
-// ลบการแจ้งเตือนทั้งหมดของผู้ใช้
-router.delete("/delete-all", auth, async (req, res) => {
-  try {
-    await Notification.destroy({
-      where: {
-        toUserId: req.userId,
-      },
-    });
-
-    emitCountUpdate(req.userId);
-
-    res.json({
-      message: "ลบการแจ้งเตือนทั้งหมดสำเร็จ",
-    });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({
-      message: "เกิดข้อผิดพลาด",
-    });
-  }
-});
 
 // ดึงการแจ้งเตือนของ user
 router.get("/", auth, async (req, res) => {

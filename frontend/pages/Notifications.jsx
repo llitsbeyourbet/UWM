@@ -2,7 +2,7 @@ import API_URL from "../config";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../src/context/SocketContext";
-import { useAlert } from "../components/AlertModal";
+import AlertModal from "../components/AlertModal";
 import "../styles/Notifications.css";
 
 function Notifications() {
@@ -13,7 +13,7 @@ function Notifications() {
   const [swipedId, setSwipedId] = useState(null);
   const navigate = useNavigate();
   const { socket } = useSocket();
-  const { showConfirm } = useAlert();
+  const [alertConfig, setAlertConfig] = useState(null);
 
   useEffect(() => {
     fetchNotifications();
@@ -122,54 +122,11 @@ function Notifications() {
   };
 
   const handleDelete = async (id) => {
-    const confirmed = await showConfirm({
-      title: "ลบการแจ้งเตือน?",
-      message: "ต้องการลบการแจ้งเตือนนี้หรือไม่?",
-      confirmText: "ลบ",
-      cancelText: "ยกเลิก",
-    });
-
-    if (!confirmed) return;
-
-    try {
-      const token = sessionStorage.getItem("token");
-
-      const res = await fetch(
-        `${API_URL}/api/notifications/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!res.ok) {
-        throw new Error("ลบการแจ้งเตือนไม่สำเร็จ");
-      }
-
-      setSwipedId(null);
-      await fetchNotifications();
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-const handleDeleteAll = async () => {
-  const confirmed = await showConfirm({
-    title: "ลบการแจ้งเตือนทั้งหมด?",
-    message: "ต้องการลบการแจ้งเตือนทั้งหมดหรือไม่?",
-    confirmText: "ลบทั้งหมด",
-    cancelText: "ยกเลิก",
-  });
-
-  if (!confirmed) return;
-
   try {
     const token = sessionStorage.getItem("token");
 
     const res = await fetch(
-      `${API_URL}/api/notifications/delete-all`,
+      `${API_URL}/api/notifications/${id}`,
       {
         method: "DELETE",
         headers: {
@@ -179,15 +136,41 @@ const handleDeleteAll = async () => {
     );
 
     if (!res.ok) {
-      throw new Error("ลบการแจ้งเตือนทั้งหมดไม่สำเร็จ");
+      throw new Error("ลบการแจ้งเตือนไม่สำเร็จ");
     }
 
-    setMenuOpen(false);
     setSwipedId(null);
     await fetchNotifications();
   } catch (err) {
     console.log(err);
   }
+};
+
+const handleDeleteAll = () => {
+  setAlertConfig({
+    type: "delete",
+    title: "ลบการแจ้งเตือนทั้งหมด?",
+    message: "ต้องการลบการแจ้งเตือนทั้งหมดหรือไม่?",
+    confirmText: "ลบทั้งหมด",
+    cancelText: "ยกเลิก",
+    onConfirm: async () => {
+      setAlertConfig(null);
+      try {
+        const token = sessionStorage.getItem("token");
+        const res = await fetch(`${API_URL}/api/notifications/delete-all`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error("ลบการแจ้งเตือนทั้งหมดไม่สำเร็จ");
+        setMenuOpen(false);
+        setSwipedId(null);
+        await fetchNotifications();
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    onCancel: () => setAlertConfig(null),
+  });
 };
 
   const getNotificationCategory = (type) => {
@@ -451,7 +434,21 @@ const handleDeleteAll = async () => {
           className="notif-delete-btn"
           onClick={(e) => {
             e.stopPropagation();
-            handleDelete(n.id);
+            setAlertConfig({
+              type: "delete",
+              title: "ลบการแจ้งเตือน?",
+              message: "ต้องการลบการแจ้งเตือนนี้หรือไม่?",
+              confirmText: "ลบ",
+              cancelText: "ยกเลิก",
+              onConfirm: async () => {
+                setAlertConfig(null);
+                await handleDelete(n.id);
+              },
+              onCancel: () => {
+                setAlertConfig(null);
+                setSwipedId(null);
+              },
+            });
           }}
           aria-label="ลบการแจ้งเตือน"
         >
@@ -657,6 +654,12 @@ const handleDeleteAll = async () => {
           </>
         )}
       </div>
+      {alertConfig && (
+        <AlertModal
+          config={alertConfig}
+          onClose={() => setAlertConfig(null)}
+        />
+      )}
     </div>
   );
 }

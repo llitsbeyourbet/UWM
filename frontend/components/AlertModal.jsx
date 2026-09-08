@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaCheckCircle, FaTimesCircle, FaExclamationTriangle, FaInfoCircle, FaQuestionCircle } from 'react-icons/fa';
+import { FaCheckCircle, FaTimesCircle, FaExclamationTriangle, FaInfoCircle, FaQuestionCircle, FaTrash } from 'react-icons/fa';
 import '../styles/AlertModal.css';
 
 const AlertModal = ({ config, onClose }) => {
@@ -12,6 +12,7 @@ const AlertModal = ({ config, onClose }) => {
       case 'warning': return <FaExclamationTriangle className="alert-icon warning" />;
       case 'info': return <FaInfoCircle className="alert-icon info" />;
       case 'confirm': return <FaQuestionCircle className="alert-icon confirm" />;
+      case 'delete': return <FaTrash className="alert-icon delete" />;
       default: return <FaInfoCircle className="alert-icon info" />;
     }
   };
@@ -26,7 +27,7 @@ const AlertModal = ({ config, onClose }) => {
           <h2 className="alert-modal-title">{title}</h2>
           <p className="alert-modal-message">{message}</p>
           <div className="alert-modal-actions">
-            {type === 'confirm' && cancelText && (
+            {(type === 'confirm' || type === 'delete') && cancelText && (
               <button className="alert-btn alert-btn-cancel" onClick={onCancel}>
                 {cancelText}
               </button>

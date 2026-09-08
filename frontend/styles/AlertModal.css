@@ -46,7 +46,9 @@
 .alert-icon.error { color: #dc3545; }
 .alert-icon.warning { color: #ffc107; }
 .alert-icon.info { color: #17a2b8; }
-.alert-icon.confirm { color: #6f42c1; }
+.alert-icon.confirm { color: #6f42c1; }ฃ
+.alert-icon.delete { color: #ff4d4f; }
+
 
 .alert-modal-title {
   font-size: 18px;
@@ -103,6 +105,10 @@
 .alert-btn-confirm.warning { background-color: #ffc107; color: #333; }
 .alert-btn-confirm.info { background-color: #17a2b8; }
 .alert-btn-confirm.confirm { background-color: #6f42c1; }
+.alert-btn-confirm.delete {
+  background-color: #ff4d4f;
+  color: #fff;
+}
 
 @keyframes fadeIn {
   from { opacity: 0; }
