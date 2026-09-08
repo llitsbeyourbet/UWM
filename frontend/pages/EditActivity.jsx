@@ -109,6 +109,17 @@ function EditActivity() {
     const file = e.target.files[0];
     if (!file) return;
 
+    const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+    if (file.size > MAX_IMAGE_SIZE) {
+      e.target.value = "";
+      await showAlert({
+        type: "warning",
+        title: "รูปภาพมีขนาดใหญ่เกินไป",
+        message: "รูปภาพต้องมีขนาดไม่เกิน 5 MB",
+      });
+      return;
+    }
+
     const objectUrl = URL.createObjectURL(file);
     setPreview(objectUrl);
 

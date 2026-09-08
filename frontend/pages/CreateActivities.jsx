@@ -46,31 +46,51 @@ function CreateActivities() {
 
   // 👈 แก้ handleImage ให้อัปโหลดรูปไป server
   const handleImage = async (e) => {
-    const files = Array.from(e.target.files);
-    const urls = files.map((file) => URL.createObjectURL(file));
-    setPreview(urls);
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    if (files[0]) {
-      const formData = new FormData();
-      formData.append("image", files[0]);
+    const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+    if (file.size > MAX_IMAGE_SIZE) {
+      e.target.value = "";
+      await showAlert({
+        type: "warning",
+        title: "รูปภาพมีขนาดใหญ่เกินไป",
+        message: "รูปภาพต้องมีขนาดไม่เกิน 5 MB",
+      });
+      return;
+    }
 
-      try {
-        const token = sessionStorage.getItem("token");
-        const res = await fetch(`${API_URL}/api/upload`, {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
-          body: formData,
-        });
-        const data = await res.json();
+    const objectUrl = URL.createObjectURL(file);
+    setPreview([objectUrl]);
 
-        if (!res.ok) {
-          throw new Error(data.message || "อัปโหลดรูปไม่สำเร็จ");
-        }
+    const formData = new FormData();
+    formData.append("image", file);
 
-        setCoverFilename(data.filename); // 👈 เก็บแค่ชื่อไฟล์
-      } catch (err) {
-        console.error("Upload error:", err);
+    try {
+      const token = sessionStorage.getItem("token");
+      const res = await fetch(`${API_URL}/api/upload`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "อัปโหลดรูปไม่สำเร็จ");
       }
+
+      setCoverFilename(data.filename); // 👈 เก็บแค่ชื่อไฟล์
+      setError("");
+    } catch (err) {
+      console.error("Upload error:", err);
+      setPreview([]);
+      setCoverFilename(null);
+      e.target.value = "";
+      await showAlert({
+        type: "error",
+        title: "อัปโหลดไม่สำเร็จ",
+        message: err.message || "เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ",
+      });
     }
   };
   const categoryOptions = ["กีฬา", "ดนตรี", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่", "ภาพยนตร์"];
