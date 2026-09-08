@@ -6,6 +6,7 @@ const HostReview = require("../models/HostReview");
 const Comment = require("../models/Comment");
 const JoinRequest = require("../models/JoinRequest");
 const Activity = require("../models/Activity");
+const User = require("../models/User");
 
 const auth = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -25,6 +26,21 @@ const checkCheckedIn = async (userId, activityId) => {
     where: { userId, activityId, status: "checked_in" }
   });
   return !!joinRequest;
+};
+
+const attachUsersToComments = async (comments) => {
+  return Promise.all(
+    comments.map(async (comment) => {
+      const user = await User.findByPk(comment.userId, {
+        attributes: ["id", "name", "username", "profileImage"],
+      });
+
+      return {
+        ...comment.toJSON(),
+        user,
+      };
+    })
+  );
 };
 
 // ส่งรีวิว
@@ -134,20 +150,25 @@ router.get("/:activityId/status", auth, async (req, res) => {
 router.get("/activity/:activityId/comments", auth, async (req, res) => {
   try {
     const activity = await Activity.findByPk(req.params.activityId);
-    if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
 
-    // เช็คว่าเป็นเจ้าของไหม
-    if (activity.createdBy !== req.userId)
+    if (!activity) {
+      return res.status(404).json({ message: "ไม่พบกิจกรรม" });
+    }
+
+    if (Number(activity.createdBy) !== Number(req.userId)) {
       return res.status(403).json({ message: "ไม่มีสิทธิ์ดู comment" });
+    }
 
     const comments = await Comment.findAll({
       where: { activityId: req.params.activityId },
       order: [["createdAt", "DESC"]],
     });
 
-    res.json(comments);
+    const commentsWithUsers = await attachUsersToComments(comments);
+
+    res.json(commentsWithUsers);
   } catch (err) {
-    console.log(err);
+    console.error(err);
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
 });
@@ -173,18 +194,70 @@ router.get("/activity/:activityId/rating", async (req, res) => {
 router.get("/activity/:activityId/comments/public", async (req, res) => {
   try {
     const activity = await Activity.findByPk(req.params.activityId);
-    if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
 
-    if (!activity.commentPublic)
-      return res.json([]); // ปิดสาธารณะ ส่ง array ว่างกลับ
+    if (!activity) {
+      return res.status(404).json({ message: "ไม่พบกิจกรรม" });
+    }
 
     const comments = await Comment.findAll({
-      where: { activityId: req.params.activityId },
+      where: {
+        activityId: req.params.activityId,
+        isPublic: true,
+      },
       order: [["createdAt", "DESC"]],
     });
 
-    res.json(comments);
+    const commentsWithUsers = await attachUsersToComments(comments);
+
+    res.json(commentsWithUsers);
   } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+  }
+});
+
+router.put("/comment/:commentId/visibility", auth, async (req, res) => {
+  try {
+    const { commentId } = req.params;
+    const { isPublic } = req.body;
+
+    if (typeof isPublic !== "boolean") {
+      return res.status(400).json({
+        message: "isPublic ต้องเป็น boolean",
+      });
+    }
+
+    const comment = await Comment.findByPk(commentId);
+
+    if (!comment) {
+      return res.status(404).json({
+        message: "ไม่พบความคิดเห็น",
+      });
+    }
+
+    const activity = await Activity.findByPk(comment.activityId);
+
+    if (!activity) {
+      return res.status(404).json({
+        message: "ไม่พบกิจกรรม",
+      });
+    }
+
+    // เฉพาะเจ้าของกิจกรรมเท่านั้น
+    if (Number(activity.createdBy) !== Number(req.userId)) {
+      return res.status(403).json({
+        message: "ไม่มีสิทธิ์เปลี่ยนการมองเห็นความคิดเห็น",
+      });
+    }
+
+    await comment.update({ isPublic });
+
+    res.json({
+      message: "อัปเดตสถานะสำเร็จ",
+      comment,
+    });
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
 });

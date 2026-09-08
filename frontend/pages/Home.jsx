@@ -10,7 +10,6 @@ function Home() {
   const [activeCategory, setActiveCategory] = useState("ทั้งหมด");
   const [username, setUsername] = useState("");
   const [joinCounts, setJoinCounts] = useState({});
-  const [error, setError] = useState(null);
 
   const categories = ["ทั้งหมด", "กีฬา", "ดนตรี", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่"];
 
@@ -26,6 +25,36 @@ function Home() {
   };
 
   useEffect(() => {
+
+    const fetchJoinCounts = async (activities) => {
+      const counts = {};
+      await Promise.all(
+        activities.map(async (item) => {
+          try {
+            const res = await fetch(`${API_URL}/api/join/${item.id}/count`);
+            const data = await res.json();
+            counts[item.id] = data.count || 0;
+          } catch {
+            counts[item.id] = 0;
+          }
+        })
+      );
+      setJoinCounts(counts);
+    };
+
+    const fetchActivities = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/activities`);
+        const data = await res.json();
+        setActivities(data);
+        await fetchJoinCounts(data);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
     const fetchUser = async () => {
       const token = localStorage.getItem("token");
       try {
@@ -35,51 +64,9 @@ function Home() {
         const data = await res.json();
         setUsername(data.username || "");
       } catch (err) {
-        console.error("Failed to fetch user:", err);
+        console.log(err);
       }
     };
-
-    const fetchActivities = async () => {
-      try {
-        const res = await fetch(`${API_URL}/api/activities`);
-        if (!res.ok) throw new Error("Failed to fetch activities");
-        const data = await res.json();
-        setActivities(data);
-        fetchJoinCounts(data);
-        setError(null);
-      } catch (err) {
-        console.error("Failed to fetch activities:", err);
-        setError("ไม่สามารถโหลดกิจกรรมได้");
-        setActivities([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    const fetchJoinCounts = async (activities) => {
-      const counts = {};
-      try {
-        const results = await Promise.allSettled(
-          activities.map(async (item) => {
-            const res = await fetch(`${API_URL}/api/join/${item.id}/count`);
-            if (!res.ok) throw new Error(`Failed to fetch count for ${item.id}`);
-            const data = await res.json();
-            return { id: item.id, count: data.count || 0 };
-          })
-        );
-
-        results.forEach((result) => {
-          if (result.status === "fulfilled") {
-            counts[result.value.id] = result.value.count;
-          } else {
-            console.warn("Failed to fetch join count:", result.reason);
-          }
-        });
-      } catch (err) {
-        console.error("Error fetching join counts:", err);
-      }
-      setJoinCounts(counts);
-    };
-
     fetchUser();
     fetchActivities();
   }, []);
@@ -138,9 +125,6 @@ function Home() {
 
       {/* Cards */}
       <div className="home-cards">
-        {error && (
-          <p className="error-text" style={{ color: "#e53935" }}>❌ {error}</p>
-        )}
         {loading ? (
           <p className="loading-text">กำลังโหลด...</p>
         ) : filtered.length === 0 ? (
@@ -177,20 +161,20 @@ function Home() {
                 </div>
 
                 <div className="card-bottom">
-                    <div className="card-days-badge">
-                      {(() => {
-                        if (!item.date) return "-";
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        const eventDate = new Date(item.date);
-                        eventDate.setHours(0, 0, 0, 0);
-                        const diff = Math.round((eventDate - today) / (1000 * 60 * 60 * 24));
-                        if (diff < 0) return "ผ่านไปแล้ว";
-                        if (diff === 0) return "🔥 วันนี้";
-                        return `📅 อีก ${diff} วัน`;
-                      })()}
-                    </div>
-                    <div className="card-btn">ดูรายละเอียด →</div>
+                  <div className="card-days-badge">
+                    {(() => {
+                      if (!item.date) return "-";
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      const eventDate = new Date(item.date);
+                      eventDate.setHours(0, 0, 0, 0);
+                      const diff = Math.round((eventDate - today) / (1000 * 60 * 60 * 24));
+                      if (diff < 0) return "ผ่านไปแล้ว";
+                      if (diff === 0) return "🔥 วันนี้";
+                      return `📅 อีก ${diff} วัน`;
+                    })()}
+                  </div>
+                  <div className="card-btn">ดูรายละเอียด →</div>
                 </div>
               </div>
             </div>

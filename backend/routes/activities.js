@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const { Op } = require("sequelize");
 const Activity = require("../models/Activity");
+const JoinRequest = require("../models/JoinRequest");
 const jwt = require("jsonwebtoken");
 
 const auth = (req, res, next) => {
@@ -49,8 +51,24 @@ router.get("/:id", async (req, res) => {
   try {
     const activity = await Activity.findByPk(req.params.id);
     if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
-    res.json(activity);
+
+    const joinedCount = await JoinRequest.count({
+      where: {
+        activityId: activity.id,
+        status: {
+          [Op.in]: ["approved", "checked_in"],
+        },
+      },
+    });
+
+    console.log(`Activity ${activity.id} joinedCount: ${joinedCount}`);
+
+    res.json({
+      ...activity.toJSON(),
+      joinedCount,
+    });
   } catch (err) {
+    console.log("Error fetching activity detail:", err);
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
 });
@@ -131,6 +149,39 @@ router.get("/:id/qr", auth, async (req, res) => {
     res.status(500).json({
       message: "เกิดข้อผิดพลาด",
     });
+  }
+});
+
+// ดึงรายชื่อผู้เข้าร่วม
+router.get("/:id/participants", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const JoinRequest = require("../models/JoinRequest");
+    const User = require("../models/User");
+
+    const requests = await JoinRequest.findAll({
+      where: {
+        activityId: id,
+        status: {
+          [require("sequelize").Op.in]: ["approved", "checked_in"],
+        },
+      },
+    });
+
+    const userIds = requests.map((r) => r.userId);
+    const participants = await User.findAll({
+      where: {
+        id: {
+          [require("sequelize").Op.in]: userIds,
+        },
+      },
+      attributes: ["id", "name", "username", "profileImage"],
+    });
+
+    res.json(participants);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
 });
 
