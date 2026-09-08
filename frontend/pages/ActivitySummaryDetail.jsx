@@ -65,7 +65,9 @@ function ActivitySummaryDetail() {
           fetch(`${API_URL}/api/activities/${id}`),
           fetch(`${API_URL}/api/review/activity/${id}/rating`),
           fetch(`${API_URL}/api/activities/${id}/summary-participants`),
-          fetch(`${API_URL}/api/review/activity/${id}/detailed-reviews`),
+          fetch(`${API_URL}/api/review/activity/${id}/detailed-reviews-owner`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
           fetch(`${API_URL}/api/activities/${id}/participants`)
         ]);
 

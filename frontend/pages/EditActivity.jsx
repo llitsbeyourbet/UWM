@@ -115,8 +115,10 @@ function EditActivity() {
     const formData = new FormData();
     formData.append("image", file);
     try {
+      const token = sessionStorage.getItem("token");
       const res = await fetch(`${API_URL}/api/upload`, {
         method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
       const data = await res.json();

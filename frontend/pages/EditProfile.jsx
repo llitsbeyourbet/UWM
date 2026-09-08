@@ -58,14 +58,21 @@ function EditProfile() {
     formData.append("image", file);
 
     try {
+      const token = sessionStorage.getItem("token");
       const res = await fetch(`${API_URL}/api/upload`, {
         method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
       const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "อัปโหลดรูปไม่สำเร็จ");
+      }
+
       setProfileImage(data.filename);
     } catch (err) {
-      console.log(err);
+      console.error("Upload error:", err);
     }
   };
 

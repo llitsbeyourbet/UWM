@@ -55,14 +55,21 @@ function CreateActivities() {
       formData.append("image", files[0]);
 
       try {
+        const token = sessionStorage.getItem("token");
         const res = await fetch(`${API_URL}/api/upload`, {
           method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
           body: formData,
         });
         const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.message || "อัปโหลดรูปไม่สำเร็จ");
+        }
+
         setCoverFilename(data.filename); // 👈 เก็บแค่ชื่อไฟล์
       } catch (err) {
-        console.log(err);
+        console.error("Upload error:", err);
       }
     }
   };

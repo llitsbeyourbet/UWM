@@ -25,6 +25,12 @@ const normalizeEmail = (email) => String(email || "").trim().toLowerCase();
 const hashResetToken = (token) =>
   crypto.createHash("sha256").update(token).digest("hex");
 
+const hashOtp = (email, purpose, otp) =>
+  crypto
+    .createHash("sha256")
+    .update(`${normalizeEmail(email)}:${purpose}:${String(otp)}`)
+    .digest("hex");
+
 const sendOtpLimiter = rateLimit({
   windowMs: 10 * 60 * 1000,
   max: 5,
@@ -96,7 +102,11 @@ router.post("/send-otp", sendOtpLimiter, async (req, res) => {
     const expiredAt = new Date(Date.now() + OTP_TTL_MS);
 
     await OTP.destroy({ where: { email } });
-    await OTP.create({ email, otp, expiredAt });
+    await OTP.create({
+      email,
+      otp: hashOtp(email, "forgot", otp),
+      expiredAt,
+    });
 
     await sendOTPEmail(email, otp, "Until We Meet — รหัส OTP สำหรับรีเซ็ตรหัสผ่าน");
 
@@ -125,7 +135,11 @@ router.post("/send-otp-register", sendOtpLimiter, async (req, res) => {
     const expiredAt = new Date(Date.now() + OTP_TTL_MS);
 
     await OTP.destroy({ where: { email } });
-    await OTP.create({ email, otp: `${REGISTER_OTP_PREFIX}${otp}`, expiredAt });
+    await OTP.create({
+      email,
+      otp: `${REGISTER_OTP_PREFIX}${hashOtp(email, "register", otp)}`,
+      expiredAt,
+    });
 
     await sendOTPEmail(email, otp, "Until We Meet — รหัส OTP สำหรับสมัครสมาชิก");
 
@@ -151,7 +165,10 @@ router.post("/verify-otp-register", verifyOtpLimiter, async (req, res) => {
     }
 
     const otpRecord = await OTP.findOne({
-      where: { email, otp: `${REGISTER_OTP_PREFIX}${otp}` },
+      where: {
+        email,
+        otp: `${REGISTER_OTP_PREFIX}${hashOtp(email, "register", otp)}`,
+      },
       transaction,
       lock: transaction.LOCK.UPDATE,
     });
@@ -208,7 +225,10 @@ router.post("/verify-otp", verifyOtpLimiter, async (req, res) => {
     }
 
     const otpRecord = await OTP.findOne({
-      where: { email, otp },
+      where: {
+        email,
+        otp: hashOtp(email, "forgot", otp),
+      },
       transaction,
       lock: transaction.LOCK.UPDATE,
     });
