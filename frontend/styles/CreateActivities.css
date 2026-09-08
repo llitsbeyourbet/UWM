@@ -4,10 +4,13 @@
 
 .create-page {
   width: 100%;
+  max-width: 100%;
   min-height: 100dvh;
   background: #f7f9fd;
   color: #182033;
   padding: 20px 16px calc(96px + env(safe-area-inset-bottom));
+  /* safety net: never let a stray element scroll the page sideways */
+  overflow-x: hidden;
 }
 
 /* =========================
@@ -384,6 +387,27 @@
   min-width: 0;
   max-width: 90%;
   box-sizing: border-box;
+}
+
+/* iOS Safari gives native date/time inputs an intrinsic min-width based
+   on their content, so width:100% can't shrink them and they overflow /
+   overlap. Forcing min-width:0 lets them fit their container. This applies
+   to the standalone date field too (it isn't inside .two-column).
+   Keep -webkit-appearance intact — removing it breaks iOS sizing. */
+input[type="time"],
+input[type="date"] {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+/* the displayed value lives in a shadow pseudo-element on WebKit;
+   align it left there too */
+input[type="time"]::-webkit-date-and-time-value,
+input[type="date"]::-webkit-date-and-time-value {
+  text-align: left;
 }
 
 /* =========================
