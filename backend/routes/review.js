@@ -7,6 +7,8 @@ const Comment = require("../models/Comment");
 const JoinRequest = require("../models/JoinRequest");
 const Activity = require("../models/Activity");
 const User = require("../models/User");
+const Notification = require("../models/Notification");
+const notificationService = require("../services/notificationService");
 
 const auth = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -47,7 +49,7 @@ const attachUsersToComments = async (comments) => {
 router.post("/:activityId", auth, async (req, res) => {
   try {
     const { activityId } = req.params;
-    const { activityRating, hostRating, comment } = req.body;
+    const { activityRating, hostRating, comment, hostComment } = req.body;
 
     // เช็คว่า checked_in แล้วไหม
     const checkedIn = await checkCheckedIn(req.userId, activityId);
@@ -80,14 +82,32 @@ router.post("/:activityId", auth, async (req, res) => {
       rating: hostRating,
     });
 
-    // บันทึก Comment (ถ้ามี)
-    if (comment && comment.trim()) {
-      await Comment.create({
-        activityId,
-        userId: req.userId,
-        comment: comment.trim(),
-      });
-    }
+    const user = await User.findByPk(req.userId);
+
+    await notificationService.createNotification(
+      activity.createdBy,
+      "review",
+      activity.id,
+      activity.activityName,
+      req.userId,
+      user.username
+    );
+
+    // บันทึก Comment กิจกรรม (สร้างเสมอเพื่อเก็บสถานะการมองเห็น)
+    await Comment.create({
+      activityId,
+      userId: req.userId,
+      comment: (comment && comment.trim()) ? comment.trim() : "",
+      commentType: 'activity',
+    });
+
+    // บันทึก Comment ผู้จัด (สร้างเสมอเพื่อเก็บสถานะการมองเห็น)
+    await Comment.create({
+      activityId,
+      userId: req.userId,
+      comment: (hostComment && hostComment.trim()) ? hostComment.trim() : "",
+      commentType: 'host',
+    });
 
     res.status(201).json({ message: "รีวิวสำเร็จ" });
   } catch (err) {
@@ -99,19 +119,32 @@ router.post("/:activityId", auth, async (req, res) => {
 // ดึงรีวิวของกิจกรรม
 router.get("/activity/:activityId", async (req, res) => {
   try {
+    const activityId = parseInt(req.params.activityId);
+    if (isNaN(activityId)) return res.status(400).json({ message: "ID กิจกรรมไม่ถูกต้อง" });
+
     const reviews = await ActivityReview.findAll({
-      where: { activityId: req.params.activityId },
+      where: { activityId },
     });
 
     const comments = await Comment.findAll({
-      where: { activityId: req.params.activityId },
+      where: { activityId },
     });
 
-    const avgRating = reviews.length
-      ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+    // กรองเฉพาะรีวิวจากผู้ใช้ที่มีตัวตนอยู่ในระบบ
+    const reviewerIds = reviews.map(r => r.reviewerId);
+    const existingUsers = await User.findAll({
+      where: { id: { [Op.in]: reviewerIds } },
+      attributes: ["id"],
+      raw: true
+    });
+    const existingUserIds = new Set(existingUsers.map(u => u.id));
+    const filteredReviews = reviews.filter(r => existingUserIds.has(r.reviewerId));
+
+    const avgRating = filteredReviews.length
+      ? (filteredReviews.reduce((sum, r) => sum + r.rating, 0) / filteredReviews.length).toFixed(1)
       : null;
 
-    res.json({ reviews, comments, avgRating, totalReviews: reviews.length });
+    res.json({ reviews: filteredReviews, comments, avgRating, totalReviews: filteredReviews.length });
   } catch (err) {
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
@@ -124,11 +157,21 @@ router.get("/host/:hostId", async (req, res) => {
       where: { hostId: req.params.hostId },
     });
 
-    const avgRating = reviews.length
-      ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+    // กรองเฉพาะรีวิวจากผู้ใช้ที่มีตัวตนอยู่ในระบบ
+    const reviewerIds = reviews.map(r => r.reviewerId);
+    const existingUsers = await User.findAll({
+      where: { id: { [Op.in]: reviewerIds } },
+      attributes: ["id"],
+      raw: true
+    });
+    const existingUserIds = new Set(existingUsers.map(u => u.id));
+    const filteredReviews = reviews.filter(r => existingUserIds.has(r.reviewerId));
+
+    const avgRating = filteredReviews.length
+      ? (filteredReviews.reduce((sum, r) => sum + r.rating, 0) / filteredReviews.length).toFixed(1)
       : null;
 
-    res.json({ avgRating, totalReviews: reviews.length });
+    res.json({ avgRating, totalReviews: filteredReviews.length });
   } catch (err) {
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
@@ -149,7 +192,10 @@ router.get("/:activityId/status", auth, async (req, res) => {
 // ดึง comment สำหรับเจ้าของกิจกรรมเท่านั้น
 router.get("/activity/:activityId/comments", auth, async (req, res) => {
   try {
-    const activity = await Activity.findByPk(req.params.activityId);
+    const activityId = parseInt(req.params.activityId);
+    if (isNaN(activityId)) return res.status(400).json({ message: "ID กิจกรรมไม่ถูกต้อง" });
+
+    const activity = await Activity.findByPk(activityId);
 
     if (!activity) {
       return res.status(404).json({ message: "ไม่พบกิจกรรม" });
@@ -160,7 +206,7 @@ router.get("/activity/:activityId/comments", auth, async (req, res) => {
     }
 
     const comments = await Comment.findAll({
-      where: { activityId: req.params.activityId },
+      where: { activityId },
       order: [["createdAt", "DESC"]],
     });
 
@@ -176,15 +222,28 @@ router.get("/activity/:activityId/comments", auth, async (req, res) => {
 // ดึงคะแนนเฉลี่ยกิจกรรม (ทุกคนเห็นได้)
 router.get("/activity/:activityId/rating", async (req, res) => {
   try {
+    const activityId = parseInt(req.params.activityId);
+    if (isNaN(activityId)) return res.status(400).json({ message: "ID กิจกรรมไม่ถูกต้อง" });
+
     const reviews = await ActivityReview.findAll({
-      where: { activityId: req.params.activityId },
+      where: { activityId },
     });
 
-    const avgRating = reviews.length
-      ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+    // กรองเฉพาะรีวิวจากผู้ใช้ที่มีตัวตนอยู่ในระบบ
+    const reviewerIds = reviews.map(r => r.reviewerId);
+    const existingUsers = await User.findAll({
+      where: { id: { [Op.in]: reviewerIds } },
+      attributes: ["id"],
+      raw: true
+    });
+    const existingUserIds = new Set(existingUsers.map(u => u.id));
+    const filteredReviews = reviews.filter(r => existingUserIds.has(r.reviewerId));
+
+    const avgRating = filteredReviews.length
+      ? (filteredReviews.reduce((sum, r) => sum + r.rating, 0) / filteredReviews.length).toFixed(1)
       : null;
 
-    res.json({ avgRating, totalReviews: reviews.length });
+    res.json({ avgRating, totalReviews: filteredReviews.length });
   } catch (err) {
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
@@ -193,7 +252,10 @@ router.get("/activity/:activityId/rating", async (req, res) => {
 // ดึง comments สาธารณะ (ทุกคนเห็น)
 router.get("/activity/:activityId/comments/public", async (req, res) => {
   try {
-    const activity = await Activity.findByPk(req.params.activityId);
+    const activityId = parseInt(req.params.activityId);
+    if (isNaN(activityId)) return res.status(400).json({ message: "ID กิจกรรมไม่ถูกต้อง" });
+
+    const activity = await Activity.findByPk(activityId);
 
     if (!activity) {
       return res.status(404).json({ message: "ไม่พบกิจกรรม" });
@@ -201,7 +263,7 @@ router.get("/activity/:activityId/comments/public", async (req, res) => {
 
     const comments = await Comment.findAll({
       where: {
-        activityId: req.params.activityId,
+        activityId,
         isPublic: true,
       },
       order: [["createdAt", "DESC"]],
@@ -259,6 +321,92 @@ router.put("/comment/:commentId/visibility", auth, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+  }
+});
+
+const { Op } = require("sequelize");
+
+router.get("/activity/:activityId/detailed-reviews", async (req, res) => {
+  try {
+    const activityId = parseInt(req.params.activityId);
+    if (isNaN(activityId)) {
+      return res.status(400).json({ message: "ID กิจกรรมไม่ถูกต้อง" });
+    }
+
+    // 1. ดึงข้อมูลจากทุกตารางพร้อมกัน
+    const [activityReviews, hostReviews, comments] = await Promise.all([
+      ActivityReview.findAll({ where: { activityId }, raw: true }),
+      HostReview.findAll({ where: { activityId }, raw: true }),
+      Comment.findAll({ where: { activityId }, raw: true }),
+    ]);
+
+    // 2. สร้าง Map สำหรับข้อมูล
+    const activityReviewMap = new Map(activityReviews.map(r => [Number(r.reviewerId), r]));
+    const hostReviewMap = new Map(hostReviews.map(r => [Number(r.reviewerId), r]));
+
+    // แยก comment ตามประเภท
+    const activityCommentMap = new Map();
+    const hostCommentMap = new Map();
+    comments.forEach(c => {
+      if (c.commentType === 'activity') activityCommentMap.set(Number(c.userId), c);
+      if (c.commentType === 'host') hostCommentMap.set(Number(c.userId), c);
+    });
+
+    // 3. หา User ทั้งหมดที่รีวิว (ไม่ว่าจะเป็นกิจกรรมหรือผู้จัด)
+    const allReviewerIds = new Set([
+      ...activityReviews.map(r => Number(r.reviewerId)),
+      ...hostReviews.map(r => Number(r.reviewerId))
+    ]);
+
+    const result = Array.from(allReviewerIds).map(userId => {
+      const actRev = activityReviewMap.get(userId);
+      const hostRev = hostReviewMap.get(userId);
+      const actComm = activityCommentMap.get(userId);
+      const hostComm = hostCommentMap.get(userId);
+
+      // ใช้ public status จาก comment ถ้ามี ถ้าไม่มีให้ถือว่า public
+      const activityIsPublic = actComm ? actComm.isPublic : true;
+      const hostIsPublic = hostComm ? hostComm.isPublic : true;
+
+      return {
+        id: userId,
+        userId: userId,
+        activityRating: actRev ? Number(actRev.rating) : null,
+        hostRating: hostRev ? Number(hostRev.rating) : null,
+        activityComment: actComm ? actComm.comment : "",
+        hostComment: hostComm ? hostComm.comment : "",
+        activityCommentId: actComm ? actComm.id : null,
+        hostCommentId: hostComm ? hostComm.id : null,
+        activityIsPublic: activityIsPublic,
+        hostIsPublic: hostIsPublic,
+        createdAt: actRev ? actRev.createdAt : (hostRev ? hostRev.createdAt : new Date()),
+        reviewerId: userId
+      };
+    });
+
+    // 4. ดึงข้อมูล User สำหรับทุกคน
+    const finalUserIds = result.map(r => r.id);
+    const users = await User.findAll({
+      where: { id: { [Op.in]: finalUserIds } },
+      attributes: ["id", "name", "username", "profileImage"],
+      raw: true,
+    });
+    const userMap = new Map(users.map(u => [Number(u.id), u]));
+
+    // 5. ใส่ข้อมูล User กลับเข้าไป และกรองเอาเฉพาะรีวิวจากผู้ใช้ที่มีตัวตนอยู่ในระบบ
+    const finalResult = result
+      .filter(item => userMap.has(item.id))
+      .map(item => ({
+        ...item,
+        user: userMap.get(item.id)
+      }));
+
+    res.json(finalResult);
+  } catch (err) {
+    console.error("Error in detailed-reviews:", err);
+    res.status(500).json({
+      message: "เกิดข้อผิดพลาดในการดึงข้อมูลรีวิว",
+    });
   }
 });
 

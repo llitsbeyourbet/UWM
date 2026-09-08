@@ -3,6 +3,7 @@ const router = express.Router();
 const { Op } = require("sequelize");
 const Activity = require("../models/Activity");
 const JoinRequest = require("../models/JoinRequest");
+const User = require("../models/User")
 const jwt = require("jsonwebtoken");
 
 const auth = (req, res, next) => {
@@ -52,13 +53,32 @@ router.get("/:id", async (req, res) => {
     const activity = await Activity.findByPk(req.params.id);
     if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
 
-    const joinedCount = await JoinRequest.count({
+    // นับจำนวนผู้เข้าร่วมที่มีตัวตนอยู่ในระบบเท่านั้น
+    const requests = await JoinRequest.findAll({
       where: {
         activityId: activity.id,
         status: {
           [Op.in]: ["approved", "checked_in"],
         },
       },
+      attributes: ["userId"],
+      raw: true
+    });
+
+    const userIds = requests.map(r => r.userId);
+    const existingUsers = await require("../models/User").findAll({
+      where: { id: { [Op.in]: userIds } },
+      attributes: ["id"],
+      raw: true
+    });
+
+    const joinedCount = existingUsers.length;
+
+    // ดึงข้อมูลผู้สร้างกิจกรรม
+    const User = require("../models/User");
+
+    const creator = await User.findByPk(activity.createdBy, {
+      attributes: ["id", "name", "username", "profileImage"],
     });
 
     console.log(`Activity ${activity.id} joinedCount: ${joinedCount}`);
@@ -66,6 +86,19 @@ router.get("/:id", async (req, res) => {
     res.json({
       ...activity.toJSON(),
       joinedCount,
+
+      creator: creator
+        ? {
+          id: creator.id,
+          name: creator.name,
+          username: creator.username,
+          profileImage: creator.profileImage,
+        }
+        : null,
+
+      // เผื่อหน้าอื่นในระบบใช้อยู่
+      creatorName: creator?.name || null,
+      creatorUsername: creator?.username || null,
     });
   } catch (err) {
     console.log("Error fetching activity detail:", err);
@@ -76,11 +109,56 @@ router.get("/:id", async (req, res) => {
 // สร้างกิจกรรม
 router.post("/", auth, async (req, res) => {
   try {
-    const activity = await Activity.create({ ...req.body, createdBy: req.userId });
-    res.status(201).json(activity);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+    const {
+      activityName,
+      detail,
+      activityType,
+      category,
+      date,
+      time,
+      endTime,
+      location,
+      cover,
+    } = req.body;
+
+    const categories = Array.isArray(category)
+      ? category.filter(Boolean)
+      : [category].filter(Boolean);
+
+    if (
+      !activityName?.trim() ||
+      !detail?.trim() ||
+      !activityType ||
+      categories.length === 0 ||
+      !date ||
+      !time ||
+      !endTime ||
+      !location?.trim() ||
+      !cover
+    ) {
+      return res.status(400).json({
+        message: "กรุณากรอกข้อมูลให้ครบทุกช่องและอัปโหลดรูปกิจกรรม",
+      });
+    }
+
+    const activity = await Activity.create({
+      ...req.body,
+      activityName: activityName.trim(),
+      detail: detail.trim(),
+      location: location.trim(),
+      category: categories,
+      createdBy: req.userId,
+    });
+
+    return res.status(201).json(activity);
+  } catch (error) {
+    console.error("CREATE ACTIVITY ERROR:", error);
+    console.error("CREATE ACTIVITY BODY:", req.body);
+
+    return res.status(500).json({
+      message: "เกิดข้อผิดพลาด",
+      error: error.message,
+    });
   }
 });
 
@@ -90,6 +168,16 @@ router.put("/:id", auth, async (req, res) => {
     const activity = await Activity.findByPk(req.params.id);
     if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
 
+    const endDateTime = new Date(
+      `${activity.date}T${activity.endTime || activity.time}`
+    );
+
+    if (new Date() >= endDateTime) {
+      return res.status(400).json({
+        message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถแก้ไขได้",
+      });
+    }
+
     if (activity.createdBy !== req.userId)
       return res.status(403).json({ message: "ไม่มีสิทธิ์แก้ไขกิจกรรมนี้" });
 
@@ -97,7 +185,6 @@ router.put("/:id", auth, async (req, res) => {
     res.json(activity);
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
 });
 
@@ -106,6 +193,16 @@ router.delete("/:id", auth, async (req, res) => {
   try {
     const activity = await Activity.findByPk(req.params.id);
     if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
+
+    const endDateTime = new Date(
+      `${activity.date}T${activity.endTime || activity.time}`
+    );
+
+    if (new Date() >= endDateTime) {
+      return res.status(400).json({
+        message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถลบได้",
+      });
+    }
 
     if (activity.createdBy !== req.userId)
       return res.status(403).json({ message: "ไม่มีสิทธิ์ลบกิจกรรมนี้" });
@@ -133,13 +230,23 @@ router.get("/:id/qr", auth, async (req, res) => {
         message: "ไม่มีสิทธิ์",
       });
 
+    const endDateTime = new Date(
+      `${activity.date}T${activity.endTime || activity.time}+07:00`
+    );
+
+    if (new Date() >= endDateTime) {
+      return res.status(400).json({
+        message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถสร้าง QR Code ได้",
+      });
+    }
+
     const qrToken = jwt.sign(
       {
         activityId: activity.id,
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: "10s",
+        expiresIn: "15s",
       }
     );
 
@@ -149,6 +256,82 @@ router.get("/:id/qr", auth, async (req, res) => {
     res.status(500).json({
       message: "เกิดข้อผิดพลาด",
     });
+  }
+});
+
+// ดึงข้อมูลสรุปผู้เข้าร่วม (แยกกลุ่มเช็คอินและยังไม่เช็คอิน)
+router.get("/:id/summary-participants", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const JoinRequest = require("../models/JoinRequest");
+    const User = require("../models/User");
+
+    const requests = await JoinRequest.findAll({
+      where: {
+        activityId: id,
+        status: { [require("sequelize").Op.in]: ["approved", "checked_in"] },
+      },
+    });
+
+    const userIds = requests.map((r) => r.userId);
+    const users = await User.findAll({
+      where: { id: { [require("sequelize").Op.in]: userIds } },
+      attributes: ["id", "name", "username", "profileImage"],
+    });
+
+    const userMap = {};
+    users.forEach(u => { userMap[u.id] = u });
+
+    const checkedIn = [];
+    const approved = [];
+
+    requests.forEach(r => {
+      const user = userMap[r.userId];
+      if (user) {
+        if (r.status === "checked_in") {
+          checkedIn.push(user);
+        } else if (r.status === "approved") {
+          approved.push(user);
+        }
+      }
+    });
+
+    res.json({
+      checkedIn,
+      approved,
+      totalJoined: checkedIn.length + approved.length
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+  }
+});
+
+// ดึงรายชื่อผู้ที่เช็คอินแล้ว
+router.get("/:id/participants/checked-in", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const JoinRequest = require("../models/JoinRequest");
+    const User = require("../models/User");
+
+    const requests = await JoinRequest.findAll({
+      where: { activityId: id, status: "checked_in" },
+    });
+
+    const userIds = requests.map((r) => r.userId);
+    const participants = await User.findAll({
+      where: {
+        id: {
+          [require("sequelize").Op.in]: userIds,
+        },
+      },
+      attributes: ["id", "name", "username", "profileImage"],
+    });
+
+    res.json(participants);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
 });
 

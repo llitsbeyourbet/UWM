@@ -1,11 +1,12 @@
 import API_URL from "../config";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AvatarCropper from "../components/AvatarCropper";
-import "./EditProfile.css";
+import { useAlert } from "../hooks/useAlert";
+import "../styles/EditProfile.css";
 
 function EditProfile() {
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
   const [username, setUsername] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -15,11 +16,10 @@ function EditProfile() {
   const [profileImage, setProfileImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [rawImage, setRawImage] = useState(null);
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       if (!token) {
         navigate("/login");
         return;
@@ -48,20 +48,14 @@ function EditProfile() {
     fetchUser();
   }, []);
 
-  // เลือกไฟล์ → เปิดหน้าต่างครอปก่อน (ยังไม่อัปโหลด)
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    setRawImage(URL.createObjectURL(file));
-    e.target.value = ""; // ให้เลือกไฟล์เดิมซ้ำได้
-  };
 
-  // ครอปเสร็จ → แสดง preview แล้วอัปโหลดรูปที่ครอปแล้ว
-  const handleCropConfirm = async (blob) => {
-    setPreview(URL.createObjectURL(blob));
+    setPreview(URL.createObjectURL(file));
 
     const formData = new FormData();
-    formData.append("image", blob, "avatar.jpg");
+    formData.append("image", file);
 
     try {
       const res = await fetch(`${API_URL}/api/upload`, {
@@ -72,13 +66,11 @@ function EditProfile() {
       setProfileImage(data.filename);
     } catch (err) {
       console.log(err);
-    } finally {
-      setRawImage(null);
     }
   };
 
   const handleSave = async () => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) return;
 
     setLoading(true);
@@ -102,12 +94,16 @@ function EditProfile() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message || "เกิดข้อผิดพลาด");
+        await showAlert({
+          type: 'error',
+          title: 'เกิดข้อผิดพลาด',
+          message: data.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล",
+        });
         return;
       }
 
       // อัปเดต localStorage
-      const user = JSON.parse(localStorage.getItem("user"));
+      const user = JSON.parse(sessionStorage.getItem("user"));
       localStorage.setItem("user", JSON.stringify({
         ...user,
         username,
@@ -118,10 +114,18 @@ function EditProfile() {
         profileImage: profileImage || user.profileImage,
       }));
 
-      alert("บันทึกสำเร็จ");
+      await showAlert({
+        type: 'success',
+        title: 'บันทึกสำเร็จ!',
+        message: 'ข้อมูลโปรไฟล์ของคุณได้รับการอัปเดตเรียบร้อยแล้ว',
+      });
       navigate("/profile");
     } catch (err) {
-      alert("ไม่สามารถเชื่อมต่อ server ได้");
+      await showAlert({
+        type: 'error',
+        title: 'เกิดข้อผิดพลาด',
+        message: 'ไม่สามารถเชื่อมต่อ server ได้',
+      });
     } finally {
       setLoading(false);
     }
@@ -129,14 +133,6 @@ function EditProfile() {
 
   return (
     <div className="edit-profile-page">
-      {rawImage && (
-        <AvatarCropper
-          imageSrc={rawImage}
-          onCancel={() => setRawImage(null)}
-          onConfirm={handleCropConfirm}
-        />
-      )}
-
       <div className="edit-header">
         <div className="back-btn" onClick={() => navigate(-1)}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round">

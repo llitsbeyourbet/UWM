@@ -1,7 +1,7 @@
 import API_URL from "../config";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import "./UserProfile.css";
+import "../styles/UserProfile.css";
 
 function UserProfile() {
   const { id } = useParams();
@@ -61,7 +61,8 @@ function UserProfile() {
     fetchData();
     }, [id]);
 
-  if (!user) return <div>กำลังโหลด...</div>;
+  if (!user) return <div className="detail-loading">กำลังโหลดข้อมูล...</div>;
+
 
   const ActivityCard = ({ item }) => (
     <div
@@ -99,12 +100,11 @@ function UserProfile() {
 
         {/* Header */}
         <div className="profile-header-bar">
-        <button
-            className="user-back-btn"
-            onClick={() => navigate(-1)}
-        >
-            ‹
-        </button>
+        <div className="back-btn" onClick={() => navigate(-1)}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </div>
 
         <p className="profile-header-title">
             Profile
@@ -199,7 +199,7 @@ function UserProfile() {
                 <div className="stat-divider" />
 
                 <div className="stat-item">
-                <p className="stat-num blue">
+                <p className="stat-num text-blue">
                     {joinedActivities.length}
                 </p>
                 <p className="stat-lbl">
@@ -210,7 +210,7 @@ function UserProfile() {
                 <div className="stat-divider" />
 
                 <div className="stat-item">
-                <p className="stat-num pink">
+                <p className="stat-num text-pink">
                     {hostRating !== null ? Number(hostRating).toFixed(1) : "-"}
                 </p>
                 <p className="stat-lbl">
@@ -240,15 +240,6 @@ function UserProfile() {
                 onClick={() => setActiveTab("joined")}
             >
                 เข้าร่วมแล้ว
-            </div>
-
-            <div
-                className={`profile-tab ${
-                activeTab === "reviews" ? "active" : ""
-                }`}
-                onClick={() => setActiveTab("reviews")}
-            >
-                รีวิว
             </div>
 
         </div>
@@ -285,71 +276,7 @@ function UserProfile() {
                 )
             )}
 
-            {activeTab === "reviews" && (
-                reviews.length === 0 ? (
-                <p className="profile-empty">
-                    ยังไม่มีรีวิว
-                </p>
-                ) : (
-                reviews.map((review) => (
-                    <div
-                    key={review.id}
-                    className="review-card"
-                    >
-
-                    <div className="review-top">
-
-                        <div className="review-user">
-
-                        {review.User?.profileImage ? (
-                            <img
-                            src={
-                                review.User.profileImage.startsWith("http")
-                                ? review.User.profileImage
-                                : `${API_URL}/uploads/${review.User.profileImage}`
-                            }
-                            alt=""
-                            className="review-avatar"
-                            />
-                        ) : (
-                            <div className="review-avatar-placeholder">
-                            {review.User?.name
-                                ?.split(" ")
-                                .map((n) => n[0])
-                                .join("")
-                                .toUpperCase()
-                                .slice(0, 2)}
-                            </div>
-                        )}
-
-                        <div>
-                            <div className="review-name">
-                            {review.User?.name}
-                            </div>
-
-                            <div className="review-date">
-                            {new Date(review.createdAt).toLocaleDateString("th-TH")}
-                            </div>
-                        </div>
-
-                        </div>
-
-                        <div className="review-score">
-                        ⭐ {review.rating}
-                        </div>
-
-                    </div>
-
-                    {review.comment && (
-                        <div className="review-comment">
-                        {review.comment}
-                        </div>
-                    )}
-
-                    </div>
-                ))
-                )
-            )}
+            
 
         </div>
 

@@ -1,3 +1,9 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 /* ใน index.css หรือ App.css */
 html,
 body,
@@ -5,7 +11,7 @@ body,
   margin: 0;
   padding: 0;
   min-height: 100%;
-  background: #F3ECE1; /* สีครีมอ่อนเข้าธีมอบอุ่น */
+  background: #f0f0f5; /* สีเดียวกับพื้นหลังเว็บ */
   overflow-x: hidden;
 }
 
@@ -39,11 +45,11 @@ a:hover {
 body {
   margin: 0;
   min-width: 320px;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 #root {
   width: 100%;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 h1 {

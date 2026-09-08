@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Home.css";
+import "../styles/Home.css";
 import API_URL from "../config";
+import { formatDate, formatTime } from "../utils/formatDate";
+import { getCategoryIcon } from "../utils/categoryIcons";
 
 function Home() {
   const navigate = useNavigate();
@@ -11,18 +13,8 @@ function Home() {
   const [username, setUsername] = useState("");
   const [joinCounts, setJoinCounts] = useState({});
 
-  const categories = ["ทั้งหมด", "กีฬา", "ดนตรี", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่"];
+  const categories = ["ทั้งหมด", "กีฬา", "ดนตรี", "ภาพยนตร์", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่"];
 
-  const categoryEmoji = {
-    "ทั้งหมด": "🌟",
-    "กีฬา": "⚽",
-    "ดนตรี": "🎵",
-    "ท่องเที่ยว": "🏔",
-    "อาหาร": "🍜",
-    "ศิลปะ": "🎨",
-    "เกม": "🎮",
-    "คาเฟ่": "☕",
-  };
 
   useEffect(() => {
 
@@ -54,9 +46,9 @@ function Home() {
         setLoading(false);
       }
     };
-    
+
     const fetchUser = async () => {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       try {
         const res = await fetch(`${API_URL}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -77,7 +69,7 @@ function Home() {
 
   const filtered = activities
     .filter((item) => item.status !== "suspended")
-    .filter((item) => activeCategory === "ทั้งหมด" || item.category === activeCategory)
+    .filter((item) => activeCategory === "ทั้งหมด" || (Array.isArray(item.category) ? item.category.includes(activeCategory) : item.category === activeCategory))
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   return (
@@ -91,7 +83,7 @@ function Home() {
         </div>
         <div className="home-icons">
           {/* สแกน QR */}
-          <div className="icon-btn scan-btn" onClick={() => navigate("/scan")}>
+          <div className="icon-btn" onClick={() => navigate("/scan")}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
               stroke="#010101" strokeWidth="2" strokeLinecap="round">
               <path d="M3 7V3h4" />
@@ -118,7 +110,7 @@ function Home() {
             className={`category-pill ${activeCategory === cat ? "active" : ""}`}
             onClick={() => setActiveCategory(cat)}
           >
-            {categoryEmoji[cat]} {cat}
+            {cat === "ทั้งหมด" ? "🌟" : getCategoryIcon(cat)} {cat}
           </div>
         ))}
       </div>
@@ -150,32 +142,116 @@ function Home() {
                   <p className="card-name">{item.activityName}</p>
                 </div>
                 <p className="card-meta">📍 {item.location || "-"}</p>
-                <p className="card-meta">📅 {item.date || "-"}</p>
-                <p className="card-meta">⏰ {item.time || "-"} - {item.endTime || "-"}</p>
+                <p className="card-meta">📅 {formatDate(item.date)}</p>
+                <p className="card-meta">⏰  {formatTime(item.time)} - {formatTime(item.endTime)}</p>
                 <p className="card-meta">👥 {joinCounts[item.id] ?? 0} / {item.participantCount} คน</p>
 
                 <div className="card-tags">
-                  {item.category && (
-                    <span className="card-tag-chip">{categoryEmoji[item.category]} {item.category}</span>
-                  )}
+                  {(Array.isArray(item.category)
+                    ? item.category
+                    : String(item.category || "")
+                      .split(",")
+                      .map((c) => c.trim())
+                      .filter(Boolean)
+                  ).map((cat) => (
+                    <span className="card-tag-chip" key={cat}>
+                      {getCategoryIcon(cat)} {cat}
+                    </span>
+                  ))}
                 </div>
-
                 <div className="card-bottom">
-                  <div className="card-days-badge">
-                    {(() => {
-                      if (!item.date) return "-";
+                  <div
+                    className={`card-days-badge ${(() => {
+                      if (!item.date) return "";
+
+                      const now = new Date();
+
+                      const startDateTime = new Date(
+                        `${item.date}T${item.time || "00:00"}`
+                      );
+
+                      const endDateTime = new Date(
+                        `${item.date}T${item.endTime || item.time || "23:59"}`
+                      );
+
+                      // 🔴 สิ้นสุดแล้ว
+                      if (now >= endDateTime) {
+                        return "finished";
+                      }
+
+                      // 🟢 กำลังดำเนินกิจกรรม
+                      if (now >= startDateTime && now < endDateTime) {
+                        return "ongoing";
+                      }
+
+                      // คำนวณจำนวนวันก่อนเริ่มกิจกรรม
                       const today = new Date();
                       today.setHours(0, 0, 0, 0);
+
                       const eventDate = new Date(item.date);
                       eventDate.setHours(0, 0, 0, 0);
-                      const diff = Math.round((eventDate - today) / (1000 * 60 * 60 * 24));
-                      if (diff < 0) return "ผ่านไปแล้ว";
-                      if (diff === 0) return "🔥 วันนี้";
-                      return `📅 อีก ${diff} วัน`;
+
+                      const diff = Math.round(
+                        (eventDate - today) / (1000 * 60 * 60 * 24)
+                      );
+
+                      // 🟠 วันนี้
+                      if (diff === 0 && now < startDateTime) {
+                        return "today";
+                      }
+
+                      // 🔵 กำลังจะถึง
+                      return "upcoming";
+                    })()}`}
+                  >
+                    {(() => {
+                      if (!item.date) return "-";
+
+                      const now = new Date();
+
+                      const startDateTime = new Date(
+                        `${item.date}T${item.time || "00:00"}`
+                      );
+
+                      const endDateTime = new Date(
+                        `${item.date}T${item.endTime || item.time || "23:59"}`
+                      );
+
+                      // 🔴 สิ้นสุดแล้ว
+                      if (now >= endDateTime) {
+                        return "สิ้นสุดแล้ว";
+                      }
+
+                      // 🟢 กำลังดำเนินกิจกรรม
+                      if (now >= startDateTime && now < endDateTime) {
+                        return "กำลังดำเนินกิจกรรม";
+                      }
+
+                      // คำนวณจำนวนวันก่อนเริ่มกิจกรรม
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+
+                      const eventDate = new Date(item.date);
+                      eventDate.setHours(0, 0, 0, 0);
+
+                      const diff = Math.round(
+                        (eventDate - today) / (1000 * 60 * 60 * 24)
+                      );
+
+                      // 🟠 วันนี้
+                      if (diff === 0 && now < startDateTime) {
+                        return "วันนี้";
+                      }
+
+                      // 🔵 กำลังจะถึง
+                      return `อีก ${diff} วัน`;
                     })()}
                   </div>
+
                   <div className="card-btn">ดูรายละเอียด →</div>
                 </div>
+
+
               </div>
             </div>
           ))

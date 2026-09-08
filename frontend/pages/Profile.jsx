@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Profile.css";
+import "../styles/Profile.css";
 import API_URL from "../config";
+import { logoutUser } from "../utils/logout";
 
 function Profile() {
   const navigate = useNavigate();
@@ -10,11 +11,11 @@ function Profile() {
   const [createdActivities, setCreatedActivities] = useState([]);
   const [joinedActivities, setJoinedActivities] = useState([]);
   const [hostRating, setHostRating] = useState(null);
-  const [showMenu, setShowMenu] = useState(false); // 👈 เพิ่ม
+  const [showMenu, setShowMenu] = useState(false);
 
   useEffect(() => {
     const fetchAll = async () => {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       if (!token) { navigate("/login"); return; }
 
       try {
@@ -25,9 +26,9 @@ function Profile() {
         const userData = await userRes.json();
         setUser(userData);
 
-        const actRes = await fetch(`${API_URL}/api/activities`);
+        const actRes = await fetch(`${API_URL}/api/activities/user/${userData.id}`);
         const actData = await actRes.json();
-        setCreatedActivities(actData.filter((a) => a.createdBy === userData.id));
+        setCreatedActivities(actData);
 
         const joinRes = await fetch(`${API_URL}/api/join/checked-in`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -45,9 +46,9 @@ function Profile() {
     fetchAll();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+  const handleLogout = async () => {
+    await logoutUser();
+    navigate("/login", { replace: true });
   };
 
   const handleViewDetail = (activity) => {
@@ -89,20 +90,51 @@ function Profile() {
             {showMenu && (
               <div className="profile-dropdown">
                 <div className="dropdown-item" onClick={() => { setShowMenu(false); navigate("/edit-profile"); }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                  </svg>
-                  แก้ไขโปรไฟล์
+                  <span className="dropdown-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                  </span>
+                  <span className="dropdown-label">แก้ไขโปรไฟล์</span>
                 </div>
+
+                <div className="dropdown-item" onClick={() => { setShowMenu(false); navigate("/change-password"); }}>
+                  <span className="dropdown-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                  </span>
+                  <span className="dropdown-label">เปลี่ยนรหัสผ่าน</span>
+                </div>
+
+                <div className="dropdown-item" onClick={() => { setShowMenu(false); navigate("/activity-summary"); }}>
+                  <span className="dropdown-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M3 3v18h18" />
+                      <path d="M7 14l3-3 3 2 4-5" />
+                      <circle cx="7" cy="14" r="1" />
+                      <circle cx="10" cy="11" r="1" />
+                      <circle cx="13" cy="13" r="1" />
+                      <circle cx="17" cy="8" r="1" />
+                    </svg>
+                  </span>
+                  <span className="dropdown-label">สรุปผลกิจกรรม</span>
+
+                </div>
+
                 <div className="dropdown-divider" />
+
                 <div className="dropdown-item red" onClick={() => { setShowMenu(false); handleLogout(); }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e53935" strokeWidth="2" strokeLinecap="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                    <polyline points="16 17 21 12 16 7"/>
-                    <line x1="21" y1="12" x2="9" y2="12"/>
-                  </svg>
-                  ออกจากระบบ
+                  <span className="dropdown-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                      <polyline points="16 17 21 12 16 7" />
+                      <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                  </span>
+                  <span className="dropdown-label">ออกจากระบบ</span>
                 </div>
               </div>
             )}
@@ -120,14 +152,13 @@ function Profile() {
               ) : (
                 <div className="profile-avatar-initials">{getInitials(user?.name)}</div>
               )}
-              <div className="profile-online-dot" />
+
             </div>
             <div className="profile-info">
               <p className="profile-display-name">{user?.name || "ผู้ใช้งาน"}</p>
               <p className="profile-username">@{user?.username || ""}</p>
               <div className="profile-badges">
-                {hostRating && <span className="badge-host">⭐ HOST {hostRating}</span>}
-              </div>
+                {hostRating !== null && (<span className="badge-host">⭐ HOST {hostRating}</span>)}              </div>
             </div>
           </div>
           {user?.bio && <p className="profile-bio">{user.bio}</p>}
@@ -143,12 +174,12 @@ function Profile() {
           </div>
           <div className="stat-divider" />
           <div className="stat-item">
-            <p className="stat-num blue">{joinedActivities.length}</p>
+            <p className="stat-num text-blue">{joinedActivities.length}</p>
             <p className="stat-lbl">เข้าร่วม</p>
           </div>
           <div className="stat-divider" />
           <div className="stat-item">
-            <p className="stat-num pink">{hostRating || "-"}</p>
+            <p className="stat-num text-pink">{hostRating !== null ? hostRating : "-"}</p>
             <p className="stat-lbl">คะแนน</p>
           </div>
         </div>

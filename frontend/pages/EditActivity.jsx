@@ -1,11 +1,16 @@
 import API_URL from "../config";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import "./CreateActivities.css";
+import { useAlert } from "../hooks/useAlert";
+import "../styles/CreateActivities.css";
+import { getCategoryIcon } from "../utils/categoryIcons";
 
 function EditActivity() {
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
   const { id } = useParams();
+  const hasFetched = useRef(false);
+  const isIOS = /iPhone|iPod|iPad/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const [activityName, setActivityName] = useState("");
   const [detail, setDetail] = useState("");
   const [date, setDate] = useState("");
@@ -15,99 +20,219 @@ function EditActivity() {
   const [participantCount, setParticipantCount] = useState(1);
   const [activityType, setActivityType] = useState("public");
   const [coverFilename, setCoverFilename] = useState(null);
-  const [preview, setPreview] = useState([]);
+  const [preview, setPreview] = useState(null);
+  const [category, setCategory] = useState([]);
+  const [showCategory, setShowCategory] = useState(false);
+  const [checkinStart, setCheckinStart] = useState("");
+  const [checkinEnd, setCheckinEnd] = useState("");
+  const categoryOptions = ["กีฬา", "ดนตรี", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่", "ภาพยนตร์"];
+
+  const toggleCategory = (val) => {
+    setCategory((prev) =>
+      prev.includes(val)
+        ? prev.filter((item) => item !== val)
+        : [...prev, val]
+    );
+
+    setShowCategory(false);
+  };
+
+  const removeCategory = (val) => {
+    setCategory((prev) => prev.filter((item) => item !== val));
+  };
 
   useEffect(() => {
     const fetchActivity = async () => {
+      if (hasFetched.current) return;
+      hasFetched.current = true;
+
       try {
+        const token = sessionStorage.getItem("token");
+        if (!token) {
+          navigate("/login");
+          return;
+        }
+
+        let user = null;
+        try {
+          const userRes = await fetch(`${API_URL}/api/auth/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (userRes.ok) {
+            user = await userRes.json();
+          }
+        } catch (err) {
+          console.log("Error checking user context:", err);
+        }
+
         const res = await fetch(`${API_URL}/api/activities/${id}`);
+        if (!res.ok) return;
         const data = await res.json();
+
+        if (!user || data.createdBy !== user.id) {
+          await showAlert({
+            type: 'error',
+            title: 'ไม่มีสิทธิ์เข้าถึง',
+            message: 'คุณไม่มีสิทธิ์แก้ไขกิจกรรมนี้',
+          });
+          navigate("/");
+          return;
+        }
+
         setActivityName(data.activityName || "");
+        setCoverFilename(data.cover || null);
         setDetail(data.detail || "");
         setDate(data.date || "");
-        setTime(data.startTime || "");
+        setTime(data.time || "");
         setEndTime(data.endTime || "");
         setLocation(data.location || "");
         setParticipantCount(data.participantCount || 1);
         setActivityType(data.activityType || "public");
-        if (data.cover) setPreview([data.cover]);
+        setCategory(Array.isArray(data.category) ? data.category : []);
+        setCheckinStart(data.checkinStart || "");
+        setCheckinEnd(data.checkinEnd || "");
+
+        if (data.cover) {
+          const coverUrl = data.cover.startsWith("http")
+            ? data.cover
+            : `${API_URL}/uploads/${data.cover}`;
+          setPreview(coverUrl);
+        }
       } catch (err) {
-        console.log(err);
+        console.log("Error fetching activity:", err);
       }
     };
     fetchActivity();
   }, [id]);
 
   const handleImage = async (e) => {
-    const files = Array.from(e.target.files);
-    const urls = files.map((file) => URL.createObjectURL(file));
-    setPreview(urls);
+    const file = e.target.files[0];
+    if (!file) return;
 
-    if (files[0]) {
-      const formData = new FormData();
-      formData.append("image", files[0]);
-      try {
-        const res = await fetch(`${API_URL}/api/upload`, {
-          method: "POST",
-          body: formData,
-        });
-        const data = await res.json();
+    const objectUrl = URL.createObjectURL(file);
+    setPreview(objectUrl);
+
+    const formData = new FormData();
+    formData.append("image", file);
+    try {
+      const res = await fetch(`${API_URL}/api/upload`, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (res.ok) {
         setCoverFilename(data.filename);
-      } catch (err) {
-        console.log(err);
+      } else {
+        await showAlert({
+          type: 'error',
+          title: 'อัปโหลดไม่สำเร็จ',
+          message: data.message || "เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ",
+        });
       }
+    } catch (err) {
+      console.error("Upload error:", err);
+      await showAlert({
+        type: 'error',
+        title: 'เกิดข้อผิดพลาด',
+        message: 'ไม่สามารถอัปโหลดรูปภาพได้ กรุณาลองใหม่อีกครั้ง',
+      });
     }
   };
 
   const handleSubmit = async () => {
-    if (!activityName) return;
+    if (!activityName) {
+      await showAlert({ type: 'warning', title: 'ข้อมูลไม่ครบถ้วน', message: 'กรุณากรอกชื่อกิจกรรม' });
+      return;
+    }
+    if (!date || !time || !endTime) {
+      await showAlert({ type: 'warning', title: 'ข้อมูลไม่ครบถ้วน', message: 'กรุณากรอกวันและเวลาให้ครบ' });
+      return;
+    }
 
-    const token = localStorage.getItem("token");
+    if (endTime <= time) {
+      await showAlert({ type: 'warning', title: 'เวลาไม่ถูกต้อง', message: 'เวลาสิ้นสุดต้องมากกว่าเวลาเริ่ม' });
+      return;
+    }
+
+    if (
+      checkinStart &&
+      checkinEnd &&
+      checkinEnd <= checkinStart
+    ) {
+      await showAlert({ type: 'warning', title: 'เวลาไม่ถูกต้อง', message: 'เวลาสิ้นสุดเช็คอินต้องมากกว่าเวลาเริ่มเช็คอิน' });
+      return;
+    }
+
+    const token = sessionStorage.getItem("token");
     if (!token) {
       navigate("/login");
       return;
     }
 
     try {
+      const payload = {
+        activityName: activityName.trim(),
+        detail,
+        date,
+        time,
+        endTime,
+        location,
+        participantCount: Number(participantCount) || 1,
+        activityType,
+        category,
+        checkinStart,
+        checkinEnd,
+      };
+
+      if (coverFilename) {
+        payload.cover = coverFilename;
+      }
+
       const res = await fetch(`${API_URL}/api/activities/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          activityName,
-          detail,
-          date,
-          time,
-          endTime,
-          location,
-          participantCount,
-          activityType,
-          ...(coverFilename && { cover: coverFilename }),
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message || "เกิดข้อผิดพลาด");
+        await showAlert({
+          type: 'error',
+          title: 'เกิดข้อผิดพลาด',
+          message: data.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล",
+        });
         return;
       }
 
-      localStorage.setItem("currentActivity", JSON.stringify(data));
-      alert("แก้ไขกิจกรรมสำเร็จ");
-      navigate("/activity-detail");
+      await showAlert({
+        type: 'success',
+        title: 'แก้ไขกิจกรรมสำเร็จ!',
+        message: 'ข้อมูลกิจกรรมของคุณได้รับการอัปเดตเรียบร้อยแล้ว',
+      });
+
+      // ส่งสัญญาณบอกหน้า ActivityDetail ให้รีเฟรชข้อมูล
+      window.dispatchEvent(new Event("activityUpdated"));
+      // กลับไปยังหน้าก่อนหน้า (ซึ่งคือหน้า ActivityDetail)
+      navigate(-1);
     } catch (err) {
-      alert("ไม่สามารถเชื่อมต่อ server ได้");
+      console.error("Submit error:", err);
+      await showAlert({
+        type: 'error',
+        title: 'เกิดข้อผิดพลาด',
+        message: 'ไม่สามารถเชื่อมต่อ server ได้ กรุณาลองใหม่อีกครั้ง',
+      });
     }
   };
 
   return (
     <div className="create-page">
       <div className="cover-image">
-        {preview.length > 0 ? (
-          <img src={preview[0]} alt="cover" className="cover-img" />
+        {preview ? (
+          <img src={preview} alt="cover" className="cover-img" />
         ) : (
           <div className="cover-placeholder" />
         )}
@@ -119,19 +244,80 @@ function EditActivity() {
 
       <div className="detail-card">
         <label>ชื่อกิจกรรม</label>
-        <input type="text" className="title-input" value={activityName} onChange={(e) => setActivityName(e.target.value)} />
+        <input type="text" className="title-input" value={activityName} onChange={(e) => setActivityName(e.target.value.slice(0, 200))} />
 
         <label>รายละเอียดกิจกรรม</label>
-        <textarea className="detail-textarea" rows={2} value={detail} onChange={(e) => setDetail(e.target.value)} />
+        <textarea className="detail-textarea" rows={2} value={detail} onChange={(e) => setDetail(e.target.value.slice(0, 1000))} />
 
-        <div className="row-group">
+        <label>หมวดหมู่</label>
+
+        <div className="dropdown-wrap">
+          <div
+            className="dropdown-trigger"
+            onClick={() => setShowCategory((prev) => !prev)}
+          >
+            <span>
+              {category.length === 0
+                ? "เลือกหมวดหมู่"
+                : (() => {
+                  const first = category[0];
+
+                  return category.length === 1
+                    ? `${getCategoryIcon(first)} ${first}`
+                    : `${getCategoryIcon(first)} ${first} +${category.length - 1}`;
+                })()}
+            </span>
+
+            <span>{showCategory ? "▲" : "▼"}</span>
+          </div>
+
+          {showCategory && (
+            <div className="dropdown-menu">
+              {categoryOptions.map((option) => (
+                <div
+                  key={option}
+                  className={`dropdown-item ${category.includes(option) ? "selected" : ""
+                    }`}
+                  onClick={() => toggleCategory(option)}
+                >
+                  <span>{getCategoryIcon(option)} {option}</span>
+                  {category.includes(option) && <span>✓</span>}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {category.length > 0 && (
+          <div className="category-badges">
+            {category.map((item) => {
+              return (
+                <div className="category-badge" key={item}>
+                  <span>{getCategoryIcon(item)} {item}</span>
+
+                  <button
+                    type="button"
+                    className="category-badge-remove"
+                    onClick={() => removeCategory(item)}
+                    aria-label={`ลบหมวดหมู่ ${item}`}
+                  >
+                    ×
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+
+        <div className={`row-group ${isIOS ? "ios" : ""}`}>
           <div className="input-group">
             <label>วันที่</label>
             <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
           </div>
         </div>
 
-        <div className="row-group">
+        <div className={`row-group ${isIOS ? "ios" : ""}`}>
           <div className="input-group">
             <label>เวลาเริ่มต้น</label>
             <input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
@@ -142,13 +328,74 @@ function EditActivity() {
           </div>
         </div>
 
-        <label>สถานที่</label>
-        <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} />
+        <div className={`row-group ${isIOS ? "ios" : ""}`}>
+          <div className="input-group">
+            <label>เวลาเริ่มเช็คอิน</label>
+            <input
+              type="time"
+              value={checkinStart}
+              onChange={(e) => setCheckinStart(e.target.value)}
+            />
+          </div>
 
-        <label>จำนวนผู้เข้าร่วม</label>
+          <div className="input-group">
+            <label>เวลาสิ้นสุดเช็คอิน</label>
+            <input
+              type="time"
+              value={checkinEnd}
+              onChange={(e) => setCheckinEnd(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="input-group">
+          <label>สถานที่</label>
+          <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} />
+        </div>
+
         <div className="slider-container">
-          <span>Number of people {participantCount}</span>
-          <input type="range" min={1} max={100} value={participantCount} onChange={(e) => setParticipantCount(Number(e.target.value))} />
+          <label>จำนวนผู้เข้าร่วม</label>
+
+          <div className="participant-control">
+            <input
+              type="range"
+              min="1"
+              max="100"
+              value={Number(participantCount) || 1}
+              onChange={(e) => setParticipantCount(e.target.value)}
+            />
+
+            <input
+              type="number"
+              min="1"
+              max="100"
+              value={participantCount}
+              onChange={(e) => {
+                const value = e.target.value;
+
+                if (value === "") {
+                  setParticipantCount("");
+                  return;
+                }
+
+                if (!/^\d+$/.test(value)) return;
+
+                const num = Number(value);
+
+                if (num <= 100) {
+                  setParticipantCount(value);
+                }
+              }}
+              onBlur={() => {
+                if (
+                  participantCount === "" ||
+                  Number(participantCount) < 1
+                ) {
+                  setParticipantCount("1");
+                }
+              }}
+            />
+          </div>
         </div>
 
         <div className="input-group">

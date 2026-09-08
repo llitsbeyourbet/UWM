@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Activity Detail Simulation</title>
+  <style>
+    :root {
+      --primary: #7d5fff;
+      --primary-light: #f1edff;
+      --bg: #fcfbfa;
+      --surface: #ffffff;
+      --text-main: #111111;
+      --text-sub: #666666;
+      --border: #eeeeee;
+      --badge-me: #ede9fe;
+      --badge-me-text: #6d28d9;
+      --badge-member: #dcfce7;
+      --badge-member-text: #15803d;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a1a;
+        --surface: #2a2a2a;
+        --text-main: #eeeeee;
+        --text-sub: #aaaaaa;
+        --border: #333333;
+        --primary: #a38cff;
+      }
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: 'Sarabun', sans-serif;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .mobile-container {
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .section-card {
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border: 1px solid var(--border);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 17px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .view-all-btn {
+      background: #f3f4f7;
+      border: none;
+      color: #444;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* Participants */
+    .participants-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .participant-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 4px 0;
+    }
+
+    .p-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .p-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .p-name {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .p-username {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    .role-badge {
+      margin-left: auto;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+    .role-me { background: var(--badge-me); color: var(--badge-me-text); }
+    .role-member { background: var(--badge-member); color: var(--badge-member-text); }
+
+    .participants-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .grid-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .grid-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .grid-name {
+      font-size: 11px;
+      color: var(--text-sub);
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+
+    .pagination-controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid var(--border);
+    }
+
+    .pagination-info {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    .pagination-buttons {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .pagination-btn {
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pagination-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .pagination-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Reviews */
+    .review-card {
+      background: #f9fafb;
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .review-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .reviewer {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .rev-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .rev-name {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .rev-date {
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    .rev-stars {
+      color: #f3a814;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .rev-text {
+      font-size: 13px;
+      line-height: 1.5;
+      color: #444;
+      font-style: italic;
+    }
+
+    .show-more-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 15px;
+    }
+
+    .show-more-btn {
+      background: #f3f4f6;
+      border: 1px solid var(--border);
+      color: #6b7280;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="mobile-container">
+    <h2 style="text-align: center; margin-bottom: 10px;">จำลอง UI Activity Detail</h2>
+
+    <!-- Participants Section -->
+    <div class="section-card">
+      <div class="section-header">
+        <h4 class="section-title">ผู้เข้าร่วม (<span id="total-p">0</span>)</h4>
+        <button id="toggle-p" class="view-all-btn">ดูเพิ่มเติม</button>
+      </div>
+
+      <div id="participants-container">
+        <!-- Content injected by JS -->
+      </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="section-card">
+      <div class="section-header">
+        <h4 class="section-title">รีวิว (<span id="total-r">0</span>)</h4>
+      </div>
+
+      <div id="reviews-container">
+        <!-- Content injected by JS -->
+      </div>
+      <div class="show-more-container">
+        <button id="toggle-r" class="show-more-btn">ดูรีวิวเพิ่มเติม</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Mock Data
+    const participants = Array.from({ length: 42 }, (_, i) => ({
+      id: i,
+      name: `ผู้เข้าร่วม ${i + 1}`,
+      username: `user${i + 1}`,
+      isMe: i === 0
+    }));
+
+    const reviews = Array.from({ length: 12 }, (_, i) => ({
+      id: i,
+      user: `รีวิวเวอร์ ${i + 1}`,
+      rating: Math.floor(Math.random() * 2) + 4,
+      text: `กิจกรรมนี้ดีมากครับ/ค่ะ ได้ความรู้และเพื่อนใหม่เยอะเลย! รีวิวที่ ${i + 1}`,
+      date: '10 ส.ค. 2026'
+    }));
+
+    // Participants State
+    let showAllP = false;
+    let pPage = 1;
+    const ITEMS_PER_PAGE = 15;
+
+    function renderParticipants() {
+      const container = document.getElementById('participants-container');
+      const toggleBtn = document.getElementById('toggle-p');
+      document.getElementById('total-p').innerText = participants.length;
+
+      if (!showAllP) {
+        // Initial view: first 5
+        container.innerHTML = `
+          <div class="participants-list">
+            ${participants.slice(0, 5).map(p => `
+              <div class="participant-item">
+                <div class="p-avatar">${p.name[0]}</div>
+                <div class="p-info">
+                  <span class="p-name">${p.name}</span>
+                  <span class="p-username">@${p.username}</span>
+                </div>
+                <span class="role-badge ${p.isMe ? 'role-me' : 'role-member'}">${p.isMe ? 'ME' : 'MEMBER'}</span>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        toggleBtn.innerText = 'ดูเพิ่มเติม';
+      } else {
+        // Expanded view: Paginated
+        const start = (pPage - 1) * ITEMS_PER_PAGE;
+        const end = Math.min(pPage * ITEMS_PER_PAGE, participants.length);
+        const paginated = participants.slice(start, end);
+        const totalPages = Math.ceil(participants.length / ITEMS_PER_PAGE);
+
+        container.innerHTML = `
+          <div class="participants-grid">
+            ${paginated.map(p => `
+              <div class="grid-item">
+                <div class="grid-avatar" style="${p.isMe ? 'background: #6d28d9' : ''}">${p.name[0]}</div>
+                <span class="grid-name">${p.name}</span>
+              </div>
+            `).join('')}
+          </div>
+          <div class="pagination-controls">
+            <span class="pagination-info">แสดง ${start + 1}-${end} จาก ${participants.length} คน</span>
+            <div class="pagination-buttons">
+              <button class="pagination-btn" ${pPage === 1 ? 'disabled' : ''} onclick="changePage(-1)">‹</button>
+              ${renderPageNumbers(pPage, totalPages)}
+              <button class="pagination-btn" ${pPage === totalPages ? 'disabled' : ''} onclick="changePage(1)">›</button>
+            </div>
+          </div>
+        `;
+        toggleBtn.innerText = 'ย่อรายการ';
+      }
+    }
+
+    function renderPageNumbers(page, total) {
+      if (total <= 5) return Array.from({length: total}, (_, i) => `<button class="pagination-btn ${i+1 === page ? 'active' : ''}" onclick="setPage(${i+1})">${i+1}</button>`).join('');
+
+      let nums = [];
+      if (page <= 3) nums = [1, 2, 3, '...', total];
+      else if (page >= total - 2) nums = [1, '...', total - 2, total - 1, total];
+      else nums = [1, '...', page, '...', total];
+
+      return nums.map(n => typeof n === 'number'
+        ? `<button class="pagination-btn ${n === page ? 'active' : ''}" onclick="setPage(${n})">${n}</button>`
+        : `<span class="pagination-dots">${n}</span>`
+      ).join('');
+    }
+
+    window.changePage = (delta) => {
+      pPage += delta;
+      renderParticipants();
+    };
+
+    window.setPage = (num) => {
+      pPage = num;
+      renderParticipants();
+    };
+
+    document.getElementById('toggle-p').onclick = () => {
+      showAllP = !showAllP;
+      pPage = 1;
+      renderParticipants();
+    };
+
+    // Reviews State
+    let visibleR = 3;
+
+    function renderReviews() {
+      const container = document.getElementById('reviews-container');
+      const toggleBtn = document.getElementById('toggle-r');
+      document.getElementById('total-r').innerText = reviews.length;
+
+      container.innerHTML = reviews.slice(0, visibleR).map(r => `
+        <div class="review-card">
+          <div class="review-header">
+            <div class="reviewer">
+              <div class="rev-avatar">${r.user[0]}</div>
+              <span class="rev-name">${r.user}</span>
+            </div>
+            <span class="rev-date">${r.date}</span>
+          </div>
+          <div class="rev-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
+          <div class="rev-text">"${r.text}"</div>
+        </div>
+      `).join('');
+
+      if (visibleR < reviews.length) {
+        toggleBtn.innerText = `ดูรีวิวเพิ่มเติม (${reviews.length - visibleR} รีวิว)`;
+        toggleBtn.style.display = 'block';
+      } else {
+        toggleBtn.innerText = 'แสดงน้อยลง';
+        toggleBtn.style.display = 'block';
+      }
+    }
+
+    document.getElementById('toggle-r').onclick = () => {
+      if (visibleR < reviews.length) {
+        visibleR += 5;
+      } else {
+        visibleR = 3;
+      }
+      renderReviews();
+    };
+
+    // Init
+    renderParticipants();
+    renderReviews();
+  </script>
+</body>
+</html>

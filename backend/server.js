@@ -4,12 +4,23 @@ const dotenv = require("dotenv");
 const sequelize = require("./database");
 const path = require("path");
 const fs = require("fs");
+const http = require("http");
+const { Server } = require("socket.io");
+const notificationService = require("./services/notificationService");
 
 dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
 
-// 👈 แก้ตรงนี้
+notificationService.init(io);
+
 app.use(cors({
   origin: "*",
   credentials: false,
@@ -27,6 +38,7 @@ require("./models/HostReview");
 require("./models/Comment");
 require("./models/OTP");
 require("./models/Checkin")
+require("./jobs/reminderJob");
 
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/activities", require("./routes/activities"));
@@ -46,6 +58,6 @@ sequelize.sync({ force: false })
   .then(() => console.log("Tables synced"))
   .catch((err) => console.log(err));
 
-app.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, () => {
   console.log(`Server running on port ${process.env.PORT}`);
 });

@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API_URL from "../config";
-import "./Register.css";
+import { useAlert } from "../hooks/useAlert";
+import "../styles/Register.css";
 
 function Register() {
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
@@ -34,27 +36,109 @@ function Register() {
   };
 
   const handleNext = async () => {
-    if (!name || !username || !email || !password || !confirmPassword) {
-      setError("กรุณากรอกข้อมูลให้ครบ"); return;
+    const cleanName = name.trim();
+    const cleanUsername = username.trim();
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanPhone = phone.replace(/\D/g, "");
+
+    if (
+      !cleanName ||
+      !cleanUsername ||
+      !cleanEmail ||
+      !cleanPhone ||
+      !password ||
+      !confirmPassword
+    ) {
+      setError("กรุณากรอกข้อมูลให้ครบ");
+      return;
     }
-    if (password !== confirmPassword) {
-      setError("รหัสผ่านไม่ตรงกัน"); return;
+
+    // username ขั้นต่ำ 3 ตัว
+    if (/[\u0E00-\u0E7F]/.test(username)) {
+      setError("ชื่อบัญชีผู้ใช้ไม่สามารถใช้ภาษาไทยได้ กรุณาใช้ภาษาอังกฤษหรือตัวเลข");
+      return;
     }
+
+    if (!/^[a-zA-Z0-9_]{3,20}$/.test(cleanUsername)) {
+      setError(
+        "ชื่อผู้ใช้ต้องมี 3-20 ตัว และใช้ได้เฉพาะตัวอักษร ตัวเลข หรือ _"
+      );
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      setError("กรุณากรอกอีเมลให้ถูกต้อง");
+      return;
+    }
+
+    if (!/^0\d{9}$/.test(cleanPhone)) {
+      setError("กรุณากรอกเบอร์โทรศัพท์ 10 หลัก");
+      return;
+    }
+
     if (password.length < 6) {
-      setError("รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร"); return;
+      setError("รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("รหัสผ่านไม่ตรงกัน");
+      return;
     }
 
     setError("");
     setLoading(true);
+
     try {
-      // ส่ง OTP ไปที่อีเมล
-      const res = await fetch(`${API_URL}/api/forgot/send-otp-register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
+      // ตรวจชื่อผู้ใช้ อีเมล และเบอร์โทรก่อนส่ง OTP
+      const checkRes = await fetch(
+        `${API_URL}/api/auth/check-register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: cleanUsername,
+            email: cleanEmail,
+            phone: cleanPhone,
+          }),
+        }
+      );
+
+      const checkData = await checkRes.json();
+
+      if (!checkRes.ok) {
+        setError(checkData.message || "ข้อมูลนี้ถูกใช้งานแล้ว");
+        return;
+      }
+
+      // ผ่านแล้วค่อยส่ง OTP
+      const res = await fetch(
+        `${API_URL}/api/forgot/send-otp-register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: cleanEmail,
+          }),
+        }
+      );
+
       const data = await res.json();
-      if (!res.ok) { setError(data.message); return; }
+
+      if (!res.ok) {
+        setError(data.message || "ไม่สามารถส่ง OTP ได้");
+        return;
+      }
+
+      setName(cleanName);
+      setUsername(cleanUsername);
+      setEmail(cleanEmail);
+      setPhone(cleanPhone);
+
       setStep(2);
       setTimer(600);
       startTimer();
@@ -89,6 +173,34 @@ function Register() {
     }
   };
 
+  const handleOtpPaste = (e) => {
+    e.preventDefault();
+
+    const pasted = e.clipboardData
+      .getData("text")
+      .replace(/\D/g, "")
+      .slice(0, 6);
+
+    if (!pasted) return;
+
+    const newOtp = ["", "", "", "", "", ""];
+
+    pasted.split("").forEach((number, index) => {
+      newOtp[index] = number;
+    });
+
+    setOtp(newOtp);
+    setError("");
+
+    const focusIndex = Math.min(pasted.length, 5);
+
+    setTimeout(() => {
+      document
+        .getElementById(`reg-otp-${focusIndex}`)
+        ?.focus();
+    }, 0);
+  };
+
   const handleVerifyAndRegister = async () => {
     const otpValue = otp.join("");
     if (otpValue.length < 6) { setError("กรุณากรอก OTP ให้ครบ"); return; }
@@ -118,7 +230,11 @@ function Register() {
       const data = await res.json();
       if (!res.ok) { setError(data.message); return; }
 
-      alert("สมัครสมาชิกสำเร็จ!");
+      await showAlert({
+        type: 'success',
+        title: 'สมัครสมาชิกสำเร็จ!',
+        message: 'คุณได้สร้างบัญชีผู้ใช้เรียบร้อยแล้ว',
+      });
       navigate("/login");
     } catch {
       setError("ไม่สามารถเชื่อมต่อ server ได้");
@@ -144,107 +260,387 @@ function Register() {
 
   return (
     <div className="register-page">
+      <div className="register-container">
 
-      {/* Logo */}
-      <div className="register-logo">
-        <img src="/logo.png" alt="logo" className="reg-logo-img" />
+        {/* ================= LEFT SIDE ================= */}
+        <section className="register-left">
+          <img
+            src="/logo.png"
+            alt="Until We Meet"
+            className="register-main-logo"
+          />
+
+          <div className="register-hero">
+            <h1>
+              Meet Friends,
+              <br />
+              <span>Meet Activities</span>
+            </h1>
+
+            <p>
+              สร้างบัญชีเพื่อค้นหากิจกรรมที่น่าสนใจ
+              <br />
+              เชื่อมต่อกับเพื่อนใหม่ และสร้างความทรงจำดี ๆ
+              <br />
+              ไปด้วยกัน
+            </p>
+          </div>
+
+          {/* ให้เหมือนฝั่งซ้ายหน้า Login */}
+          <div className="register-decoration">
+
+            <div className="register-mini-card register-sport">
+              <span>🏐</span>
+              <div>
+                <b>วอลเลย์บอล</b>
+                <small>กิจกรรมกีฬา</small>
+              </div>
+            </div>
+
+            <div className="register-mini-card register-photo">
+              <span>📷</span>
+              <div>
+                <b>ถ่ายรูป</b>
+                <small>งานอดิเรก</small>
+              </div>
+            </div>
+
+            <div className="register-mini-card register-art">
+              <span>🎨</span>
+              <div>
+                <b>ศิลปะ</b>
+                <small>กิจกรรมสร้างสรรค์</small>
+              </div>
+            </div>
+
+            <div className="register-mini-card register-music">
+              <span>🎵</span>
+              <div>
+                <b>ดนตรี</b>
+                <small>กิจกรรมดนตรี</small>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* ================= RIGHT SIDE ================= */}
+        <section className="register-right">
+
+          <div className="register-form-box">
+
+            {/* โลโก้แสดงเฉพาะมือถือ */}
+            <img
+              src="/logo.png"
+              alt="Until We Meet"
+              className="register-mobile-logo"
+            />
+
+            {step === 1 ? (
+              <>
+                {/* ================= STEP 1 ================= */}
+
+                <div className="register-heading">
+                  <h2>สร้างบัญชีใหม่</h2>
+                  <p>กรอกข้อมูลของคุณเพื่อเริ่มต้นใช้งาน Until We Meet</p>
+                </div>
+
+                <div className="register-steps">
+                  <div className="register-step active">
+                    <span>1</span>
+                    <p>ข้อมูลส่วนตัว</p>
+                  </div>
+
+                  <div className="step-line"></div>
+
+                  <div className="register-step">
+                    <span>2</span>
+                    <p>ยืนยันตัวตน</p>
+                  </div>
+                </div>
+
+                <div className="register-form-grid">
+
+                  {/* ชื่อ */}
+                  <div className="register-field full">
+                    <label>ชื่อ - นามสกุล</label>
+
+                    <div className="register-input-box">
+                      <span className="material-icons">person</span>
+
+                      <input
+                        type="text"
+                        placeholder="เช่น นภัสสร ใจดี"
+                        value={name}
+                        onChange={(e) => {
+                          setName(e.target.value);
+                          if (error) setError("");
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Username */}
+                  <div className="register-field">
+                    <label>ชื่อผู้ใช้ (Username)</label>
+
+                    <div className="register-input-box">
+                      <span className="material-icons">person_outline</span>
+
+                      <input
+                        type="text"
+                        placeholder="เช่น happyday_"
+                        value={username}
+                        onChange={(e) => {
+                          setUsername(e.target.value);
+                          if (error) setError("");
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Email */}
+                  <div className="register-field">
+                    <label>อีเมล</label>
+
+                    <div className="register-input-box">
+                      <span className="material-icons">mail_outline</span>
+
+                      <input
+                        type="email"
+                        placeholder="example@email.com"
+                        value={email}
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          if (error) setError("");
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Phone */}
+                  <div className="register-field">
+                    <label>เบอร์โทรศัพท์</label>
+
+                    <div className="register-input-box">
+                      <span className="material-icons">phone</span>
+
+                      <input
+                        type="tel"
+                        placeholder="เช่น 081-234-5678"
+                        value={phone}
+                        onChange={(e) => {
+                          setPhone(e.target.value);
+                          if (error) setError("");
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Birthdate */}
+                  <div className="register-field">
+                    <label>วันเกิด</label>
+
+                    <div className="register-input-box">
+                      <span className="material-icons">calendar_today</span>
+
+                      <input
+                        type="date"
+                        value={birthdate}
+                        onChange={(e) => {
+                          setBirthdate(e.target.value);
+                          if (error) setError("");
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Password */}
+                  <div className="register-field">
+                    <label>รหัสผ่าน</label>
+
+                    <div className="register-input-box">
+                      <span className="material-icons">lock_outline</span>
+
+                      <input
+                        type="password"
+                        placeholder="อย่างน้อย 6 ตัวอักษร"
+                        value={password}
+                        onChange={(e) => {
+                          setPassword(e.target.value);
+                          if (error) setError("");
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Confirm password */}
+                  <div className="register-field">
+                    <label>ยืนยันรหัสผ่าน</label>
+
+                    <div className="register-input-box">
+                      <span className="material-icons">lock_outline</span>
+
+                      <input
+                        type="password"
+                        placeholder="ยืนยันรหัสผ่านอีกครั้ง"
+                        value={confirmPassword}
+                        onChange={(e) => {
+                          setConfirmPassword(e.target.value);
+                          if (error) setError("");
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                </div>
+
+                {error && (
+                  <p className="reg-error">
+                    {error}
+                  </p>
+                )}
+
+                <button
+                  className="reg-btn"
+                  onClick={handleNext}
+                  disabled={loading}
+                >
+                  {loading ? "กำลังส่ง OTP..." : "ถัดไป"}
+                </button>
+
+                <p className="reg-login-text">
+                  มีบัญชีอยู่แล้ว?{" "}
+                  <span onClick={() => navigate("/login")}>
+                    เข้าสู่ระบบ
+                  </span>
+                </p>
+              </>
+            ) : (
+              <>
+                {/* ================= STEP 2 OTP ================= */}
+
+                <div className="otp-section">
+
+                  <div className="otp-mail-icon">
+                    <span className="material-icons">
+                      mark_email_read
+                    </span>
+                  </div>
+
+                  <div className="otp-title">
+                    <span className="otp-step-badge">ขั้นตอนสุดท้าย</span>
+
+                    <h2>ยืนยันอีเมลของคุณ</h2>
+
+                    <p>
+                      ใส่รหัสยืนยัน 6 หลักที่เราส่งไปยังอีเมล
+                    </p>
+                  </div>
+
+                  <div className="otp-email-card">
+                    <span className="material-icons">
+                      mail_outline
+                    </span>
+
+                    <div>
+                      <small>ส่งรหัสยืนยันไปที่</small>
+                      <strong>{email}</strong>
+                    </div>
+                  </div>
+
+                  <div
+                    className="otp-boxes"
+                    onPaste={handleOtpPaste}
+                  >
+                    {otp.map((val, i) => (
+                      <input
+                        key={i}
+                        id={`reg-otp-${i}`}
+                        type="text"
+                        inputMode="numeric"
+                        autoComplete={i === 0 ? "one-time-code" : "off"}
+                        maxLength={1}
+                        className={`otp-box ${val ? "filled" : ""}`}
+                        value={val}
+                        onChange={(e) =>
+                          handleOtpChange(i, e.target.value)
+                        }
+                        onKeyDown={(e) =>
+                          handleOtpKeyDown(i, e)
+                        }
+                      />
+                    ))}
+                  </div>
+
+                  <div className="otp-timer">
+                    <span className="material-icons">
+                      schedule
+                    </span>
+
+                    <p>
+                      รหัสหมดอายุใน{" "}
+                      <strong
+                        className={
+                          timer < 60 ? "timer-warning" : ""
+                        }
+                      >
+                        {formatTime(timer)}
+                      </strong>
+                    </p>
+                  </div>
+
+                  {error && (
+                    <p className="reg-error">
+                      {error}
+                    </p>
+                  )}
+
+                  <button
+                    className="reg-btn otp-submit-btn"
+                    onClick={handleVerifyAndRegister}
+                    disabled={loading}
+                  >
+                    {loading
+                      ? "กำลังยืนยัน..."
+                      : "ยืนยันตัวตน"}
+                  </button>
+
+                  <p className="resend-text">
+                    ไม่ได้รับรหัส?{" "}
+                    <span
+                      className={`resend-link ${timer > 0 ? "disabled" : ""
+                        }`}
+                      onClick={() => {
+                        if (timer === 0) handleResend();
+                      }}
+                    >
+                      ส่งอีกครั้ง
+                    </span>
+                  </p>
+
+                  <button
+                    type="button"
+                    className="register-back"
+                    onClick={() => {
+                      setStep(1);
+                      setError("");
+                      setOtp(["", "", "", "", "", ""]);
+                    }}
+                  >
+                    <span className="material-icons">
+                      arrow_back
+                    </span>
+                    กลับไปแก้ไขข้อมูล
+                  </button>
+
+                </div>
+              </>
+            )}
+
+          </div>
+        </section>
       </div>
-
-      {step === 1 ? (
-        <div className="register-content">
-          <h1 className="register-title">ยินดีต้อนรับสู่ Until We Meet</h1>
-          <p className="register-desc">กรอกข้อมูลเพื่อสร้างบัญชีใหม่</p>
-
-          <div className="register-card">
-            <div className="reg-input-wrap">
-              <p className="reg-input-label">ชื่อ-นามสกุล</p>
-              <input className="reg-input" type="text" placeholder="ชื่อ-นามสกุล" value={name} onChange={(e) => setName(e.target.value)} />
-            </div>
-            <div className="reg-input-wrap">
-              <p className="reg-input-label">Username</p>
-              <input className="reg-input" type="text" placeholder="username" value={username} onChange={(e) => setUsername(e.target.value)} />
-            </div>
-            <div className="reg-input-wrap">
-              <p className="reg-input-label">อีเมล</p>
-              <input className="reg-input" type="email" placeholder="example@gmail.com" value={email} onChange={(e) => setEmail(e.target.value)} />
-            </div>
-            <div className="reg-input-wrap">
-              <p className="reg-input-label">เบอร์โทรศัพท์</p>
-              <input className="reg-input" type="tel" placeholder="089-123-4567" value={phone} onChange={(e) => setPhone(e.target.value)} />
-            </div>
-            <div className="reg-input-wrap">
-              <p className="reg-input-label">วันเกิด</p>
-              <input className="reg-input" type="date" value={birthdate} onChange={(e) => setBirthdate(e.target.value)} />
-            </div>
-            <div className="reg-input-wrap">
-              <p className="reg-input-label">รหัสผ่าน</p>
-              <input className="reg-input" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
-            </div>
-            <div className="reg-input-wrap">
-              <p className="reg-input-label">ยืนยันรหัสผ่าน</p>
-              <input className="reg-input" type="password" placeholder="••••••••" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-            </div>
-
-            {error && <p className="reg-error">{error}</p>}
-
-            <button className="reg-btn" onClick={handleNext} disabled={loading}>
-              {loading ? "กำลังส่ง OTP..." : "ถัดไป →"}
-            </button>
-
-            <p className="reg-login-text">
-              มีบัญชีแล้ว?{" "}
-              <span onClick={() => navigate("/login")}>เข้าสู่ระบบ</span>
-            </p>
-          </div>
-        </div>
-      ) : (
-        <div className="register-content">
-          <div className="reg-back-btn" onClick={() => setStep(1)}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.5" strokeLinecap="round">
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
-          </div>
-
-          <p className="register-sub">ยืนยันอีเมล</p>
-          <h1 className="register-title">ตรวจสอบ email<br />ของคุณ 📧</h1>
-          <p className="register-desc">ส่งรหัส OTP ไปที่ {email} แล้ว</p>
-
-          <div className="register-card">
-            <div className="otp-boxes">
-              {otp.map((val, i) => (
-                <input
-                  key={i}
-                  id={`reg-otp-${i}`}
-                  type="text"
-                  maxLength={1}
-                  className={`otp-box ${val ? "filled" : ""}`}
-                  value={val}
-                  onChange={(e) => handleOtpChange(i, e.target.value)}
-                  onKeyDown={(e) => handleOtpKeyDown(i, e)}
-                />
-              ))}
-            </div>
-
-            <p className="otp-timer">
-              รหัสหมดอายุใน{" "}
-              <span style={{ color: timer < 60 ? "#FF6B6B" : "#4A6FFF", fontWeight: 600 }}>
-                {formatTime(timer)}
-              </span>
-            </p>
-
-            {error && <p className="reg-error">{error}</p>}
-
-            <button className="reg-btn" onClick={handleVerifyAndRegister} disabled={loading}>
-              {loading ? "กำลังยืนยัน..." : "ยืนยัน OTP →"}
-            </button>
-
-            <p className="resend-text">
-              ไม่ได้รับรหัส?{" "}
-              <span className="resend-link" onClick={handleResend}>ส่งอีกครั้ง</span>
-            </p>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
