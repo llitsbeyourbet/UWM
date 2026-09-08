@@ -25,13 +25,18 @@ export default function SessionManager() {
         );
 
         if (response.status === 401) {
+          const data = await response.json();
+
           sessionStorage.removeItem("token");
           sessionStorage.removeItem("user");
 
           navigate("/login", {
             replace: true,
             state: {
-              message: "เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่",
+              message:
+                data.code === "SESSION_REPLACED"
+                  ? "มีการใช้งานบัญชีนี้บนอุปกรณ์ใหม่ กรุณาเข้าสู่ระบบอีกครั้ง"
+                  : "เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่",
             },
           });
         }

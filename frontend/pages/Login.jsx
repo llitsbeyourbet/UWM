@@ -25,11 +25,6 @@ export default function Login() {
       return;
     }
 
-    if (password.length < 6) {
-      setError("รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร");
-      return;
-    }
-
     setLoading(true);
 
     try {
@@ -42,9 +37,21 @@ export default function Login() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.message || "เกิดข้อผิดพลาด");
+        if (data.message === "ไม่พบผู้ใช้งาน") {
+          setError("ไม่พบชื่อผู้ใช้ อีเมล หรือเบอร์โทรศัพท์นี้ในระบบ");
+          return;
+        }
+
+        if (data.message === "รหัสผ่านไม่ถูกต้อง") {
+          setError("รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง");
+          return;
+        }
+
+        setError(data.message || "ไม่สามารถเข้าสู่ระบบได้ กรุณาลองใหม่อีกครั้ง");
         return;
       }
+
+
 
       sessionStorage.setItem("token", data.token);
       sessionStorage.setItem("user", JSON.stringify(data.user));

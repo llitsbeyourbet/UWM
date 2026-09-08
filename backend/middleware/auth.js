@@ -44,7 +44,8 @@ const auth = async (req, res, next) => {
 
     if (!session) {
       return res.status(401).json({
-        message: "เซสชันสิ้นสุดแล้ว กรุณาเข้าสู่ระบบใหม่",
+        code: "SESSION_REPLACED",
+        message: "มีการใช้งานบนอุปกรณ์ใหม่",
       });
     }
 
@@ -105,4 +106,4 @@ const isAdmin = (req, res, next) => {
   next();
 };
 
-module.exports = {auth,isAdmin,};
+module.exports = { auth, isAdmin, };
