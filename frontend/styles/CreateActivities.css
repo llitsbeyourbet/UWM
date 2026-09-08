@@ -383,32 +383,12 @@
 
 .two-column .form-input {
   display: block;
-  width: 90%;
+  width: 70%;
   min-width: 0;
-  max-width: 90%;
+  max-width: 70%;
   box-sizing: border-box;
 }
 
-/* iOS Safari gives native date/time inputs an intrinsic min-width based
-   on their content, so width:100% can't shrink them and they overflow /
-   overlap. Forcing min-width:0 lets them fit their container. This applies
-   to the standalone date field too (it isn't inside .two-column).
-   Keep -webkit-appearance intact — removing it breaks iOS sizing. */
-input[type="time"],
-input[type="date"] {
-  width: 100%;
-  min-width: 0;
-  max-width: 100%;
-  box-sizing: border-box;
-  text-align: left;
-}
-
-/* the displayed value lives in a shadow pseudo-element on WebKit;
-   align it left there too */
-input[type="time"]::-webkit-date-and-time-value,
-input[type="date"]::-webkit-date-and-time-value {
-  text-align: left;
-}
 
 /* =========================
    Check-in Info
