@@ -4,10 +4,20 @@
 
 .create-page {
   width: 100%;
+  max-width: 100%;
   min-height: 100dvh;
   background: #f7f9fd;
   color: #182033;
   padding: 20px 16px calc(96px + env(safe-area-inset-bottom));
+  /* catch-all: never let any child overflow the page horizontally */
+  overflow-x: hidden;
+}
+
+/* safety net: keep every element inside the form within its container
+   width so nothing (native date/time inputs included) spills out */
+.create-page *,
+.create-form * {
+  max-width: 100%;
 }
 
 /* =========================
@@ -369,8 +379,20 @@
 
 .two-column {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 12px;
+}
+
+/* allow grid children (and native time/date inputs inside) to shrink
+   below their intrinsic width so they don't overflow on iOS Safari */
+.two-column > * {
+  min-width: 0;
+}
+
+.two-column .form-input {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 /* =========================
