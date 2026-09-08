@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const { auth } = require("../middleware/auth");
 const { Op } = require("sequelize");
+const jwt = require("jsonwebtoken");
+const { isActivityEnded } = require("../utils/activityTime");
 const Activity = require("../models/Activity");
 const JoinRequest = require("../models/JoinRequest");
 const User = require("../models/User")
@@ -130,12 +132,37 @@ router.post("/", auth, async (req, res) => {
       });
     }
 
+    const participantCount = Number(req.body.participantCount);
+    if (!Number.isInteger(participantCount) || participantCount < 1) {
+      return res.status(400).json({ message: "จำนวนผู้เข้าร่วมต้องเป็นจำนวนเต็มอย่างน้อย 1 คน" });
+    }
+
+    if (!["public", "private"].includes(activityType)) {
+      return res.status(400).json({ message: "ประเภทกิจกรรมไม่ถูกต้อง" });
+    }
+
+    if (endTime <= time) {
+      return res.status(400).json({ message: "เวลาสิ้นสุดต้องอยู่หลังเวลาเริ่มกิจกรรม" });
+    }
+
+    const { checkinStart, checkinEnd } = req.body;
+    if (checkinStart && checkinEnd && checkinEnd <= checkinStart) {
+      return res.status(400).json({ message: "เวลาปิดเช็คอินต้องอยู่หลังเวลาเปิดเช็คอิน" });
+    }
+
     const activity = await Activity.create({
-      ...req.body,
       activityName: activityName.trim(),
       detail: detail.trim(),
-      location: location.trim(),
+      activityType,
       category: categories,
+      date,
+      time,
+      endTime,
+      location: location.trim(),
+      cover,
+      participantCount,
+      checkinStart: checkinStart || null,
+      checkinEnd: checkinEnd || null,
       createdBy: req.userId,
     });
 
@@ -151,29 +178,77 @@ router.post("/", auth, async (req, res) => {
   }
 });
 
-// แก้ไขกิจกรรม 👈 เพิ่ม
+// แก้ไขกิจกรรม
 router.put("/:id", auth, async (req, res) => {
   try {
     const activity = await Activity.findByPk(req.params.id);
     if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
 
-    const endDateTime = new Date(
-      `${activity.date}T${activity.endTime || activity.time}`
-    );
-
-    if (new Date() >= endDateTime) {
-      return res.status(400).json({
-        message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถแก้ไขได้",
-      });
+    if (activity.createdBy !== req.userId) {
+      return res.status(403).json({ message: "ไม่มีสิทธิ์แก้ไขกิจกรรมนี้" });
     }
 
-    if (activity.createdBy !== req.userId)
-      return res.status(403).json({ message: "ไม่มีสิทธิ์แก้ไขกิจกรรมนี้" });
+    if (activity.status !== "active") {
+      return res.status(403).json({ message: "กิจกรรมถูกระงับ ไม่สามารถแก้ไขได้" });
+    }
 
-    await activity.update(req.body);
-    res.json(activity);
+    if (isActivityEnded(activity)) {
+      return res.status(400).json({ message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถแก้ไขได้" });
+    }
+
+    const allowedFields = [
+      "activityName", "detail", "activityType", "category", "date", "time",
+      "endTime", "location", "cover", "participantCount", "checkinStart", "checkinEnd",
+    ];
+    const updates = {};
+    for (const field of allowedFields) {
+      if (Object.prototype.hasOwnProperty.call(req.body, field)) updates[field] = req.body[field];
+    }
+
+    if (updates.activityName !== undefined) updates.activityName = String(updates.activityName).trim();
+    if (updates.detail !== undefined) updates.detail = String(updates.detail).trim();
+    if (updates.location !== undefined) updates.location = String(updates.location).trim();
+
+    if (updates.activityType !== undefined && !["public", "private"].includes(updates.activityType)) {
+      return res.status(400).json({ message: "ประเภทกิจกรรมไม่ถูกต้อง" });
+    }
+
+    if (updates.category !== undefined && (!Array.isArray(updates.category) || updates.category.filter(Boolean).length === 0)) {
+      return res.status(400).json({ message: "กรุณาเลือกหมวดหมู่กิจกรรม" });
+    }
+    if (Array.isArray(updates.category)) updates.category = updates.category.filter(Boolean);
+
+    if (updates.participantCount !== undefined) {
+      const participantCount = Number(updates.participantCount);
+      if (!Number.isInteger(participantCount) || participantCount < 1) {
+        return res.status(400).json({ message: "จำนวนผู้เข้าร่วมต้องเป็นจำนวนเต็มอย่างน้อย 1 คน" });
+      }
+      const joinedCount = await JoinRequest.count({
+        where: { activityId: activity.id, status: { [Op.in]: ["approved", "checked_in"] } },
+      });
+      if (participantCount < joinedCount) {
+        return res.status(400).json({ message: "จำนวนผู้เข้าร่วมสูงสุดห้ามน้อยกว่าจำนวนสมาชิกที่เข้าร่วมแล้ว" });
+      }
+      updates.participantCount = participantCount;
+    }
+
+    const nextTime = updates.time ?? activity.time;
+    const nextEndTime = updates.endTime ?? activity.endTime;
+    if (nextTime && nextEndTime && nextEndTime <= nextTime) {
+      return res.status(400).json({ message: "เวลาสิ้นสุดต้องอยู่หลังเวลาเริ่มกิจกรรม" });
+    }
+
+    const nextCheckinStart = updates.checkinStart ?? activity.checkinStart;
+    const nextCheckinEnd = updates.checkinEnd ?? activity.checkinEnd;
+    if (nextCheckinStart && nextCheckinEnd && nextCheckinEnd <= nextCheckinStart) {
+      return res.status(400).json({ message: "เวลาปิดเช็คอินต้องอยู่หลังเวลาเปิดเช็คอิน" });
+    }
+
+    await activity.update(updates);
+    return res.json(activity);
   } catch (err) {
-    console.log(err);
+    console.error("UPDATE ACTIVITY ERROR:", err);
+    return res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
 });
 
@@ -183,11 +258,7 @@ router.delete("/:id", auth, async (req, res) => {
     const activity = await Activity.findByPk(req.params.id);
     if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
 
-    const endDateTime = new Date(
-      `${activity.date}T${activity.endTime || activity.time}`
-    );
-
-    if (new Date() >= endDateTime) {
+    if (isActivityEnded(activity)) {
       return res.status(400).json({
         message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถลบได้",
       });
@@ -219,11 +290,11 @@ router.get("/:id/qr", auth, async (req, res) => {
         message: "ไม่มีสิทธิ์",
       });
 
-    const endDateTime = new Date(
-      `${activity.date}T${activity.endTime || activity.time}+07:00`
-    );
+    if (activity.status !== "active") {
+      return res.status(403).json({ message: "กิจกรรมถูกระงับ ไม่สามารถสร้าง QR Code ได้" });
+    }
 
-    if (new Date() >= endDateTime) {
+    if (isActivityEnded(activity)) {
       return res.status(400).json({
         message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถสร้าง QR Code ได้",
       });

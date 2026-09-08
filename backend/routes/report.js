@@ -5,6 +5,8 @@ const Report = require("../models/Report");
 const Activity = require("../models/Activity");
 const User = require("../models/User");
 const notificationService = require("../services/notificationService");
+const sequelize = require("../database");
+const { isActivityEnded } = require("../utils/activityTime");
 
 
 router.post("/:activityId", auth, async (req, res) => {
@@ -12,20 +14,57 @@ router.post("/:activityId", auth, async (req, res) => {
     const { reason } = req.body;
     const { activityId } = req.params;
 
-    const existing = await Report.findOne({
-      where: { activityId, userId: req.userId }
+    if (!reason || !String(reason).trim()) {
+      return res.status(400).json({ message: "กรุณาระบุเหตุผลในการรายงาน" });
+    }
+
+    let activity;
+    let reporter;
+
+    await sequelize.transaction(async (transaction) => {
+      activity = await Activity.findByPk(activityId, {
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      });
+
+      if (!activity) {
+        const error = new Error("ไม่พบกิจกรรม");
+        error.statusCode = 404;
+        throw error;
+      }
+
+      if (isActivityEnded(activity)) {
+        const error = new Error("กิจกรรมสิ้นสุดแล้ว ไม่สามารถรายงานได้");
+        error.statusCode = 400;
+        throw error;
+      }
+
+      if (activity.createdBy === req.userId) {
+        const error = new Error("ไม่สามารถรายงานกิจกรรมของตัวเองได้");
+        error.statusCode = 400;
+        throw error;
+      }
+
+      const existing = await Report.findOne({
+        where: { activityId, userId: req.userId },
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      });
+      if (existing) {
+        const error = new Error("คุณรายงานกิจกรรมนี้ไปแล้ว");
+        error.statusCode = 409;
+        throw error;
+      }
+
+      await Report.create(
+        { activityId, userId: req.userId, reason: String(reason).trim() },
+        { transaction }
+      );
+
+      await activity.increment("reportCount", { by: 1, transaction });
+      reporter = await User.findByPk(req.userId, { transaction });
     });
-    if (existing)
-      return res.status(400).json({ message: "คุณรายงานกิจกรรมนี้ไปแล้ว" });
 
-    await Report.create({ activityId, userId: req.userId, reason });
-    await Activity.increment("reportCount", { where: { id: activityId } });
-
-    // 👈 ดึงข้อมูลกิจกรรมและผู้รายงาน
-    const activity = await Activity.findByPk(activityId);
-    const reporter = await User.findByPk(req.userId);
-
-    // 👈 ส่งแจ้งเตือนไปหา admin ทุกคน
     const admins = await User.findAll({ where: { role: "admin" } });
     for (const admin of admins) {
       await notificationService.createNotification(
@@ -34,14 +73,16 @@ router.post("/:activityId", auth, async (req, res) => {
         activity.id,
         activity.activityName,
         req.userId,
-        reporter.username
+        reporter?.username || ""
       );
     }
 
-    res.status(201).json({ message: "รายงานสำเร็จ" });
+    return res.status(201).json({ message: "รายงานสำเร็จ" });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+    console.error("REPORT ACTIVITY ERROR:", err);
+    return res.status(err.statusCode || 500).json({
+      message: err.statusCode ? err.message : "เกิดข้อผิดพลาด",
+    });
   }
 });
 
