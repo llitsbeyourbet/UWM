@@ -2,6 +2,7 @@ import API_URL from "../config";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../src/context/SocketContext";
+import { useAlert } from "../src/context/AlertContext";
 import "../styles/Notifications.css";
 
 function Notifications() {
@@ -12,6 +13,7 @@ function Notifications() {
   const [swipedId, setSwipedId] = useState(null);
   const navigate = useNavigate();
   const { socket } = useSocket();
+  const { showConfirm } = useAlert();
 
   useEffect(() => {
     fetchNotifications();
@@ -120,35 +122,12 @@ function Notifications() {
   };
 
   const handleDelete = async (id) => {
-    const confirmed = window.confirm(
-      "ต้องการลบการแจ้งเตือนนี้หรือไม่?"
-    );
-
-    if (!confirmed) return;
-
-    try {
-      const token = sessionStorage.getItem("token");
-
-      const res = await fetch(`${API_URL}/api/notifications/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) throw new Error("ลบการแจ้งเตือนไม่สำเร็จ");
-
-      setSwipedId(null);
-      await fetchNotifications();
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const handleDeleteAll = async () => {
-    const confirmed = window.confirm(
-      "ต้องการลบการแจ้งเตือนทั้งหมดใช่หรือไม่?"
-    );
+    const confirmed = await showConfirm({
+      title: "ลบการแจ้งเตือน?",
+      message: "ต้องการลบการแจ้งเตือนนี้หรือไม่?",
+      confirmText: "ลบ",
+      cancelText: "ยกเลิก",
+    });
 
     if (!confirmed) return;
 
@@ -156,7 +135,7 @@ function Notifications() {
       const token = sessionStorage.getItem("token");
 
       const res = await fetch(
-        `${API_URL}/api/notifications/delete-all`,
+        `${API_URL}/api/notifications/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -165,15 +144,51 @@ function Notifications() {
         }
       );
 
-      if (!res.ok) throw new Error("ลบการแจ้งเตือนทั้งหมดไม่สำเร็จ");
+      if (!res.ok) {
+        throw new Error("ลบการแจ้งเตือนไม่สำเร็จ");
+      }
 
-      setMenuOpen(false);
       setSwipedId(null);
       await fetchNotifications();
     } catch (err) {
       console.log(err);
     }
   };
+
+const handleDeleteAll = async () => {
+  const confirmed = await showConfirm({
+    title: "ลบการแจ้งเตือนทั้งหมด?",
+    message: "ต้องการลบการแจ้งเตือนทั้งหมดหรือไม่?",
+    confirmText: "ลบทั้งหมด",
+    cancelText: "ยกเลิก",
+  });
+
+  if (!confirmed) return;
+
+  try {
+    const token = sessionStorage.getItem("token");
+
+    const res = await fetch(
+      `${API_URL}/api/notifications/delete-all`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("ลบการแจ้งเตือนทั้งหมดไม่สำเร็จ");
+    }
+
+    setMenuOpen(false);
+    setSwipedId(null);
+    await fetchNotifications();
+  } catch (err) {
+    console.log(err);
+  }
+};
 
   const getNotificationCategory = (type) => {
     if (["reminder"].includes(type)) {
@@ -427,115 +442,114 @@ function Notifications() {
     };
 
     return (
-  <div
-    className={`notif-swipe-wrapper ${
-      swipedId === n.id ? "swiped" : ""
-    }`}
-  >
-    <button
-      type="button"
-      className="notif-delete-btn"
-      onClick={(e) => {
-        e.stopPropagation();
-        handleDelete(n.id);
-      }}
-      aria-label="ลบการแจ้งเตือน"
-    >
-      <svg
-        width="22"
-        height="22"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+      <div
+        className={`notif-swipe-wrapper ${swipedId === n.id ? "swiped" : ""
+          }`}
       >
-        <polyline points="3 6 5 6 21 6" />
-        <path d="M19 6l-1 14H6L5 6" />
-        <path d="M10 11v6" />
-        <path d="M14 11v6" />
-        <path d="M9 6V4h6v2" />
-      </svg>
-    </button>
-
-    <div
-      className={`notif-card ${!n.isRead ? "new" : ""}`}
-      onClick={handleClick}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-    >
-      {n.type === "join_request" || n.type === "member_joined" ? (
         <button
           type="button"
-          className="notif-profile"
+          className="notif-delete-btn"
           onClick={(e) => {
             e.stopPropagation();
-
-            if (n.fromUserId) {
-              navigate(`/user/${n.fromUserId}`);
-            }
+            handleDelete(n.id);
           }}
+          aria-label="ลบการแจ้งเตือน"
         >
-          {n.fromUser?.profileImage ? (
-            <img
-              src={n.fromUser.profileImage}
-              alt={n.fromUser.username || "profile"}
-            />
-          ) : (
-            <span>
-              {(n.fromUser?.name || n.fromUsername || "?")
-                .charAt(0)
-                .toUpperCase()}
-            </span>
-          )}
-        </button>
-      ) : (
-        renderIcon(n.type)
-      )}
-
-      <div className="notif-body">
-        <p className="notif-message">
-          {renderMessage(n)}
-        </p>
-
-        {(n.type === "activity_warning" ||
-          n.type === "activity_suspended") &&
-          n.adminNote && (
-            <div className="notif-admin-note">
-              <span>หมายเหตุจากผู้ดูแลระบบ :</span>
-              <p>{n.adminNote}</p>
-            </div>
-          )}
-
-        <p className="notif-time">
-          {formatTime(n.createdAt)}
-        </p>
-
-        {n.type === "join_request" && (
-          <div
-            className="notif-actions"
-            onClick={(e) => e.stopPropagation()}
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            <button
-              className="btn-accept"
-              onClick={() => handleAccept(n)}
-            >
-              ยอมรับ
-            </button>
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6l-1 14H6L5 6" />
+            <path d="M10 11v6" />
+            <path d="M14 11v6" />
+            <path d="M9 6V4h6v2" />
+          </svg>
+        </button>
 
+        <div
+          className={`notif-card ${!n.isRead ? "new" : ""}`}
+          onClick={handleClick}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
+          {n.type === "join_request" || n.type === "member_joined" ? (
             <button
-              className="btn-reject"
-              onClick={() => handleReject(n)}
+              type="button"
+              className="notif-profile"
+              onClick={(e) => {
+                e.stopPropagation();
+
+                if (n.fromUserId) {
+                  navigate(`/user/${n.fromUserId}`);
+                }
+              }}
             >
-              ปฏิเสธ
+              {n.fromUser?.profileImage ? (
+                <img
+                  src={n.fromUser.profileImage}
+                  alt={n.fromUser.username || "profile"}
+                />
+              ) : (
+                <span>
+                  {(n.fromUser?.name || n.fromUsername || "?")
+                    .charAt(0)
+                    .toUpperCase()}
+                </span>
+              )}
             </button>
+          ) : (
+            renderIcon(n.type)
+          )}
+
+          <div className="notif-body">
+            <p className="notif-message">
+              {renderMessage(n)}
+            </p>
+
+            {(n.type === "activity_warning" ||
+              n.type === "activity_suspended") &&
+              n.adminNote && (
+                <div className="notif-admin-note">
+                  <span>หมายเหตุจากผู้ดูแลระบบ :</span>
+                  <p>{n.adminNote}</p>
+                </div>
+              )}
+
+            <p className="notif-time">
+              {formatTime(n.createdAt)}
+            </p>
+
+            {n.type === "join_request" && (
+              <div
+                className="notif-actions"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  className="btn-accept"
+                  onClick={() => handleAccept(n)}
+                >
+                  ยอมรับ
+                </button>
+
+                <button
+                  className="btn-reject"
+                  onClick={() => handleReject(n)}
+                >
+                  ปฏิเสธ
+                </button>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
-    </div>
-  </div>
-);
+    );
   };
 
   return (
