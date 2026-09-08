@@ -12,16 +12,34 @@ function CreateActivities() {
   const [coverFilename, setCoverFilename] = useState(null); // 👈 เพิ่ม
   const [activityName, setActivityName] = useState("");
   const [detail, setDetail] = useState("");
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [endTime, setEndTime] = useState("");
+  const now = new Date();
+
+  const today = `${now.getFullYear()}-${String(
+    now.getMonth() + 1
+  ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+
+  const formatTime = (date) =>
+    `${String(date.getHours()).padStart(2, "0")}:${String(
+      date.getMinutes()
+    ).padStart(2, "0")}`;
+
+  const endActivityTime = new Date(now);
+  endActivityTime.setMinutes(endActivityTime.getMinutes() + 60);
+
+  const endCheckinTime = new Date(now);
+  endCheckinTime.setMinutes(endCheckinTime.getMinutes() + 15);
+
+  const [date, setDate] = useState(today);
+  const [time, setTime] = useState(formatTime(now));
+  const [endTime, setEndTime] = useState(formatTime(endActivityTime));
+
+  const [checkinStart, setCheckinStart] = useState(formatTime(now));
+  const [checkinEnd, setCheckinEnd] = useState(formatTime(endCheckinTime));
   const [location, setLocation] = useState("");
   const [participantCount, setParticipantCount] = useState("1");
   const [activityType, setActivityType] = useState("public");
   const [category, setCategory] = useState([]);
   const [showCategory, setShowCategory] = useState(false);
-  const [checkinStart, setCheckinStart] = useState("");
-  const [checkinEnd, setCheckinEnd] = useState("");
   const [error, setError] = useState("");
   const isIOS = /iPhone|iPod|iPad/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
@@ -60,7 +78,7 @@ function CreateActivities() {
     setShowCategory(false);
   };
   const handleSubmit = async () => {
-    setError(""); 
+    setError("");
     if (!activityName.trim()) {
       setError("กรุณากรอกชื่อกิจกรรม");
       return;
@@ -201,71 +219,199 @@ function CreateActivities() {
 
   return (
     <div className="create-page">
-      <div className="cover-image">
-        {preview.length > 0 ? (
-          <img src={preview[0]} alt="cover" className="cover-img" />
-        ) : (
-          <div className="cover-placeholder" />
-        )}
-        <label className="change-image-btn">
-          Change Image
-          <input type="file" accept="image/*" multiple onChange={handleImage} hidden />
-        </label>
+
+      {/* Header */}
+      <div className="create-header">
+
+        <div className="create-header-text">
+          <h1>สร้างกิจกรรมใหม่</h1>
+          <p>มาชวนเพื่อน ๆ มาทำกิจกรรมดี ๆ กันเถอะ!</p>
+        </div>
       </div>
 
-      <div className="detail-card">
-        <label>ชื่อกิจกรรม</label>
-        <input
-          type="text"
-          className="title-input"
-          value={activityName}
-          onChange={(e) => setActivityName(e.target.value.slice(0, 200))}
-        />
+      <div className="create-form">
 
-        <label>รายละเอียดกิจกรรม</label>
-        <textarea
-          className="detail-textarea"
-          rows={2}
-          value={detail}
-          onChange={(e) => setDetail(e.target.value.slice(0, 1000))}
-        />
-
-        <label>หมวดหมู่</label>
-        <div className="dropdown-wrap">
-          <div className="dropdown-trigger" onClick={() => setShowCategory(!showCategory)}>
-            <span>
-              {category.length === 0
-                ? ""
-                : (() => {
-                  const first = category[0];
-                  return category.length === 1
-                    ? `${getCategoryIcon(first)} ${first}`
-                    : `${getCategoryIcon(first)} ${first} +${category.length - 1}`;
-                })()}
-            </span>
-            <span>{showCategory ? "▲" : "▼"}</span>
+        {/* รูปกิจกรรม */}
+        <section className="form-section cover-section">
+          <div className="section-title">
+            <h2>รูปภาพกิจกรรม</h2>
+            <span>รูปปกกิจกรรม</span>
           </div>
-          {showCategory && (
-            <div className="dropdown-menu">
-              {categoryOptions.map((opt) => (
-                <div
-                  key={opt}
-                  className={`dropdown-item ${category.includes(opt) ? "selected" : ""}`}
-                  onClick={() => toggleCategory(opt)}
-                >
-                  <span>{getCategoryIcon(opt)} {opt}</span>
-                  {category.includes(opt) && <span>✓</span>}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-        {category.length > 0 && (
-          <div className="category-badges">
-            {category.map((item) => {
-              return (
+
+          <div className="cover-upload">
+            {preview.length > 0 ? (
+              <div className="cover-preview">
+                <img
+                  src={preview[0]}
+                  alt="รูปปกกิจกรรม"
+                  className="cover-img"
+                />
+
+                <label className="change-image-btn">
+                  เปลี่ยนรูป
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImage}
+                    hidden
+                  />
+                </label>
+              </div>
+            ) : (
+              <label className="upload-placeholder">
+                <div className="upload-icon">↑</div>
+
+                <strong>เพิ่มรูปภาพกิจกรรม</strong>
+
+                <span>
+                  คลิกเพื่อเลือกรูปภาพจากเครื่อง
+                </span>
+
+                <small>
+                  รองรับ JPG, PNG และขนาดไม่เกิน 5MB
+                </small>
+
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImage}
+                  hidden
+                />
+              </label>
+            )}
+          </div>
+        </section>
+
+        {/* ชื่อกิจกรรม */}
+        <section className="form-section">
+          <label className="form-label">
+            ชื่อกิจกรรม <span>*</span>
+          </label>
+
+          <input
+            type="text"
+            className="form-input"
+            placeholder="เช่น ไปเที่ยวด้วยกัน"
+            value={activityName}
+            onChange={(e) =>
+              setActivityName(e.target.value.slice(0, 200))
+            }
+          />
+
+          <div className="input-counter">
+            {activityName.length}/200
+          </div>
+        </section>
+
+        {/* รายละเอียด */}
+        <section className="form-section">
+          <label className="form-label">
+            รายละเอียดกิจกรรม <span>*</span>
+          </label>
+
+          <textarea
+            className="form-textarea"
+            placeholder="รายละเอียดเกี่ยวกับกิจกรรม เช่น สิ่งที่ทำ, สิ่งที่ต้องเตรียม, ค่าใช้จ่าย ฯลฯ"
+            value={detail}
+            onChange={(e) =>
+              setDetail(e.target.value.slice(0, 1000))
+            }
+          />
+
+          <div className="input-counter">
+            {detail.length}/1000
+          </div>
+        </section>
+
+        {/* ประเภทกิจกรรม */}
+        <section className="form-section">
+          <label className="form-label">
+            ประเภทกิจกรรม <span>*</span>
+          </label>
+
+          <div className="activity-type-group">
+
+            <button
+              type="button"
+              className={`activity-type-btn ${activityType === "private" ? "active" : ""
+                }`}
+              onClick={() => setActivityType("private")}
+            >
+              🔒
+              <span>แบบส่วนตัว</span>
+            </button>
+
+            <button
+              type="button"
+              className={`activity-type-btn ${activityType === "public" ? "active" : ""
+                }`}
+              onClick={() => setActivityType("public")}
+            >
+              👥
+              <span>แบบสาธารณะ</span>
+            </button>
+
+          </div>
+        </section>
+
+        {/* หมวดหมู่ */}
+        <section className="form-section">
+          <label className="form-label">
+            หมวดหมู่ <span>*</span>
+          </label>
+
+          <div className="dropdown-wrap">
+            <button
+              type="button"
+              className="dropdown-trigger"
+              onClick={() => setShowCategory(!showCategory)}
+            >
+              <span>
+                {category.length === 0
+                  ? "เลือกหมวดหมู่"
+                  : category.length === 1
+                    ? `${getCategoryIcon(category[0])} ${category[0]}`
+                    : `${getCategoryIcon(category[0])} ${category[0]} +${category.length - 1
+                    }`}
+              </span>
+
+              <span className="dropdown-arrow">
+                {showCategory ? "⌃" : "⌄"}
+              </span>
+            </button>
+
+            {showCategory && (
+              <div className="dropdown-menu">
+                {categoryOptions.map((opt) => (
+                  <button
+                    type="button"
+                    key={opt}
+                    className={`dropdown-item ${category.includes(opt) ? "selected" : ""
+                      }`}
+                    onClick={() => toggleCategory(opt)}
+                  >
+                    <span>
+                      {getCategoryIcon(opt)} {opt}
+                    </span>
+
+                    {category.includes(opt) && (
+                      <span className="category-check">✓</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {category.length > 0 && (
+            <div className="category-badges">
+              {category.map((item) => (
                 <div className="category-badge" key={item}>
-                  <span>{getCategoryIcon(item)} {item}</span>
+                  <span>
+                    {getCategoryIcon(item)} {item}
+                  </span>
 
                   <button
                     type="button"
@@ -276,52 +422,112 @@ function CreateActivities() {
                     ×
                   </button>
                 </div>
-              );
-            })}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </section>
 
-        <div className={`row-group ${isIOS ? "ios" : ""}`}>
-          <div className="input-group">
-            <label>วันที่</label>
-            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-          </div>
-        </div>
+        {/* วันที่ */}
+        <section className="form-section">
+          <label className="form-label">
+            วันที่จัดกิจกรรม <span>*</span>
+          </label>
 
-        <div className={`row-group ${isIOS ? "ios" : ""}`}>
-          <div className="input-group">
-            <label>เวลาเริ่มต้น</label>
-            <input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+          <div className="input-icon-wrap">
+            <input
+              type="date"
+              className="form-input"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+            />
           </div>
-          <div className="input-group">
-            <label>เวลาสิ้นสุด</label>
-            <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
-          </div>
-        </div>
+        </section>
 
-        <div className={`row-group ${isIOS ? "ios" : ""}`}>
-          <div className="input-group">
-            <label>เวลาเริ่มเช็คอิน</label>
-            <input type="time" value={checkinStart} onChange={(e) => setCheckinStart(e.target.value)} />
-          </div>
-          <div className="input-group">
-            <label>เวลาสิ้นสุดเช็คอิน</label>
-            <input type="time" value={checkinEnd} onChange={(e) => setCheckinEnd(e.target.value)} />
-          </div>
-        </div>
+        {/* เวลา */}
+        <section className="form-section two-column">
+          <div>
+            <label className="form-label">
+              เวลาเริ่มต้น <span>*</span>
+            </label>
 
-        <div className="input-group">
-          <label>สถานที่</label>
+            <input
+              type="time"
+              className="form-input"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="form-label">
+              เวลาสิ้นสุด <span>*</span>
+            </label>
+
+            <input
+              type="time"
+              className="form-input"
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
+            />
+          </div>
+        </section>
+
+        {/* Check-in */}
+        <section className="form-section">
+
+          <div className="two-column">
+            <div>
+              <label className="form-label">
+                เวลาเช็คอินเริ่ม
+              </label>
+
+              <input
+                type="time"
+                className="form-input"
+                value={checkinStart}
+                onChange={(e) =>
+                  setCheckinStart(e.target.value)
+                }
+              />
+            </div>
+
+            <div>
+              <label className="form-label">
+                เวลาเช็คอินสิ้นสุด
+              </label>
+
+              <input
+                type="time"
+                className="form-input"
+                value={checkinEnd}
+                onChange={(e) =>
+                  setCheckinEnd(e.target.value)
+                }
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* สถานที่ */}
+        <section className="form-section">
+          <label className="form-label">
+            สถานที่จัดกิจกรรม <span>*</span>
+          </label>
+
           <input
             type="text"
-            placeholder="กรอกสถานที่"
+            className="form-input"
+            placeholder="เช่น มหาวิทยาลัย, สวนสาธารณะ, คาเฟ่..."
             value={location}
             onChange={(e) => setLocation(e.target.value)}
           />
-        </div>
+        </section>
 
-        <div className="slider-container">
-          <label>จำนวนผู้เข้าร่วม</label>
+        {/* จำนวนผู้เข้าร่วม */}
+        <section className="form-section">
+          <label className="form-label">
+            จำนวนผู้เข้าร่วมสูงสุด
+          </label>
 
           <div className="participant-control">
             <input
@@ -329,7 +535,9 @@ function CreateActivities() {
               min="1"
               max="100"
               value={Number(participantCount) || 1}
-              onChange={(e) => setParticipantCount(e.target.value)}
+              onChange={(e) =>
+                setParticipantCount(e.target.value)
+              }
             />
 
             <input
@@ -340,53 +548,80 @@ function CreateActivities() {
               onChange={(e) => {
                 const value = e.target.value;
 
-                // อนุญาตให้ลบเลขทั้งหมดได้
                 if (value === "") {
                   setParticipantCount("");
                   return;
                 }
 
-                // รับเฉพาะตัวเลข
                 if (!/^\d+$/.test(value)) return;
 
                 const num = Number(value);
 
-                // จำกัดไม่เกิน 100
                 if (num <= 100) {
                   setParticipantCount(value);
                 }
               }}
               onBlur={() => {
-                if (participantCount === "" || Number(participantCount) < 1) {
+                if (
+                  participantCount === "" ||
+                  Number(participantCount) < 1
+                ) {
                   setParticipantCount("1");
                 }
               }}
             />
+
+            <span>คน</span>
           </div>
-        </div>
+        </section>
 
-        <div className="input-group">
-          <label>ประเภทกิจกรรม</label>
-          <select
-            value={activityType}
-            onChange={(e) => setActivityType(e.target.value)}
-          >
-            <option value="public">สาธารณะ</option>
-            <option value="private">ส่วนตัว</option>
-          </select>
-        </div>
-
+        {/* รูปเพิ่มเติม */}
         {preview.length > 1 && (
-          <div className="image-preview-container">
-            {preview.slice(1).map((url, index) => (
-              <img key={index} src={url} alt={`preview-${index}`} className="image-preview" />
-            ))}
-          </div>
+          <section className="form-section">
+            <label className="form-label">
+              รูปภาพเพิ่มเติม
+            </label>
+
+            <div className="image-preview-container">
+              {preview.slice(1).map((url, index) => (
+                <img
+                  key={index}
+                  src={url}
+                  alt={`preview-${index}`}
+                  className="image-preview"
+                />
+              ))}
+            </div>
+          </section>
         )}
-        {error && <p className="create-error">{error}</p>}
-        <button className="submit-btn" type="button" onClick={handleSubmit}>
-          Post
-        </button>
+
+        {/* Error */}
+        {error && (
+          <p className="create-error">
+            {error}
+          </p>
+        )}
+
+        {/* ปุ่ม */}
+        <div className="submit-area">
+          <button
+            type="button"
+            className="cancel-btn"
+            onClick={() => navigate(-1)}
+          >
+            ยกเลิก
+          </button>
+
+          <button
+            className="submit-btn"
+            type="button"
+            onClick={handleSubmit}
+          >
+            <span>➤</span>
+            สร้างกิจกรรม
+          </button>
+        </div>
+
       </div>
     </div>
   );
