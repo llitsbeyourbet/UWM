@@ -388,6 +388,20 @@
   box-sizing: border-box;
 }
 
+/* native date/time values sit oddly centered on iOS by default.
+   Align them left WITHOUT touching -webkit-appearance (removing the
+   native appearance breaks iOS intrinsic sizing → overflow/overlap).
+   The value itself lives in a shadow pseudo-element on WebKit. */
+input[type="time"],
+input[type="date"] {
+  text-align: left;
+}
+
+input[type="time"]::-webkit-date-and-time-value,
+input[type="date"]::-webkit-date-and-time-value {
+  text-align: left;
+}
+
 /* =========================
    Check-in Info
 ========================= */
@@ -675,6 +689,7 @@
     min-width: 0 !important;
     max-width: 100% !important;
     box-sizing: border-box;
+    text-align: left;
   }
 }
 
