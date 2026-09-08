@@ -375,10 +375,12 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   width: 100%;
+  min-width: 0;
 }
 
 .two-column > div {
   min-width: 0;
+  width: 100%;
 }
 
 .two-column .form-input {
@@ -388,10 +390,51 @@
   max-width: 100%;
   box-sizing: border-box;
 }
+
+/* iOS Safari gives native date/time inputs an intrinsic min-width based on
+   their content AND a default -webkit-appearance that refuses to shrink
+   below it — so min-width:0 alone can't stop the right-hand time column from
+   overflowing / overlapping. Stripping the native appearance lets the input
+   honour width:100% / min-width:0 and fit inside its grid track, so the two
+   time fields sit 50/50 instead of the old width:70% workaround. The explicit
+   height on .form-input keeps the box from collapsing once appearance is
+   removed. Applies to the standalone date field too (not in .two-column). */
 input[type="time"],
 input[type="date"] {
-  width: 70%;
-  max-width: 70%;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+/* the displayed value lives in shadow pseudo-elements on WebKit; keep them
+   from forcing an intrinsic width and align them left */
+input[type="time"]::-webkit-date-and-time-value,
+input[type="date"]::-webkit-date-and-time-value {
+  min-width: 0;
+  margin: 0;
+  text-align: left;
+}
+
+input[type="time"]::-webkit-datetime-edit,
+input[type="date"]::-webkit-datetime-edit {
+  min-width: 0;
+  padding: 0;
+}
+
+/* appearance:none strips the native vertical centring, so the value ends up
+   pinned to the top of the tall box. Making the input itself a flex box
+   centres its value (::-webkit-date-and-time-value on iOS,
+   ::-webkit-datetime-edit elsewhere) vertically at any row height. The
+   input.form-input[type=...] selector outranks `.two-column .form-input`
+   so it also wins the `display` inside the two-column grid. */
+input.form-input[type="time"],
+input.form-input[type="date"] {
+  display: flex;
+  align-items: center;
 }
 
 
@@ -696,5 +739,38 @@ input[type="date"] {
 
   .submit-area {
     grid-template-columns: 1fr 1.2fr;
+  }
+}
+
+/* iOS Safari only: hard-constrain native date/time inputs so their
+   intrinsic content width can never push past the container. */
+@supports (-webkit-touch-callout: none) {
+  .two-column > div {
+    min-width: 0;
+  }
+
+  input[type="time"],
+  input[type="date"] {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+    text-align: left;
+  }
+}
+
+/* =========================
+   Very narrow phones — fallback
+========================= */
+
+/* On genuinely cramped viewports (iPhone 12/13 mini and narrower) the 50/50
+   time columns get tight; stack them one per line so nothing can overlap.
+   Mainstream phones (>=375px) keep the preferred side-by-side layout. */
+@media (max-width: 360px) {
+  .two-column {
+    grid-template-columns: 1fr;
+    gap: 14px;
   }
 }
