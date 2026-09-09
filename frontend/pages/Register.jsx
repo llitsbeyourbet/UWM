@@ -23,7 +23,10 @@ function Register() {
   const startTimer = () => {
     const interval = setInterval(() => {
       setTimer((prev) => {
-        if (prev <= 1) { clearInterval(interval); return 0; }
+        if (prev <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
         return prev - 1;
       });
     }, 1000);
@@ -46,6 +49,7 @@ function Register() {
       !cleanUsername ||
       !cleanEmail ||
       !cleanPhone ||
+      !birthdate ||
       !password ||
       !confirmPassword
     ) {
@@ -55,7 +59,9 @@ function Register() {
 
     // username ขั้นต่ำ 3 ตัว
     if (/[\u0E00-\u0E7F]/.test(username)) {
-      setError("ชื่อบัญชีผู้ใช้ไม่สามารถใช้ภาษาไทยได้ กรุณาใช้ภาษาอังกฤษหรือตัวเลข");
+      setError(
+        "ชื่อบัญชีผู้ใช้ไม่สามารถใช้ภาษาไทยได้ กรุณาใช้ภาษาอังกฤษหรือตัวเลข"
+      );
       return;
     }
 
@@ -90,7 +96,7 @@ function Register() {
     setLoading(true);
 
     try {
-      // ตรวจชื่อผู้ใช้ อีเมล และเบอร์โทรก่อนส่ง OTP
+      // ตรวจชื่อผู้ใช้ อีเมล และเบอร์โทรก่อนสมัคร
       const checkRes = await fetch(
         `${API_URL}/api/auth/check-register`,
         {
@@ -113,35 +119,36 @@ function Register() {
         return;
       }
 
-      // ผ่านแล้วค่อยส่ง OTP
-      const res = await fetch(
-        `${API_URL}/api/forgot/send-otp-register`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: cleanEmail,
-          }),
-        }
-      );
+      // สมัครสมาชิกทันที ไม่ต้อง OTP
+      const res = await fetch(`${API_URL}/api/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: cleanName,
+          username: cleanUsername,
+          email: cleanEmail,
+          password,
+          phone: cleanPhone,
+          birthdate,
+        }),
+      });
 
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.message || "ไม่สามารถส่ง OTP ได้");
+        setError(data.message || "ไม่สามารถสมัครสมาชิกได้");
         return;
       }
 
-      setName(cleanName);
-      setUsername(cleanUsername);
-      setEmail(cleanEmail);
-      setPhone(cleanPhone);
+      await showAlert({
+        type: "success",
+        title: "สมัครสมาชิกสำเร็จ!",
+        message: "คุณได้สร้างบัญชีผู้ใช้เรียบร้อยแล้ว",
+      });
 
-      setStep(2);
-      setTimer(600);
-      startTimer();
+      navigate("/login");
     } catch {
       setError("ไม่สามารถเชื่อมต่อ server ได้");
     } finally {
@@ -151,9 +158,11 @@ function Register() {
 
   const handleOtpChange = (index, value) => {
     if (!/^\d*$/.test(value)) return;
+
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
+
     if (value && index < 5) {
       document.getElementById(`reg-otp-${index + 1}`).focus();
     }
@@ -162,6 +171,7 @@ function Register() {
   const handleOtpKeyDown = (index, e) => {
     if (e.key === "Backspace") {
       const newOtp = [...otp];
+
       if (newOtp[index]) {
         newOtp[index] = "";
         setOtp(newOtp);
@@ -203,20 +213,36 @@ function Register() {
 
   const handleVerifyAndRegister = async () => {
     const otpValue = otp.join("");
-    if (otpValue.length < 6) { setError("กรุณากรอก OTP ให้ครบ"); return; }
+
+    if (otpValue.length < 6) {
+      setError("กรุณากรอก OTP ให้ครบ");
+      return;
+    }
+
     setError("");
     setLoading(true);
+
     try {
       // ยืนยัน OTP ก่อน
-      const verifyRes = await fetch(`${API_URL}/api/forgot/verify-otp-register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, otp: otpValue }),
-      });
+      const verifyRes = await fetch(
+        `${API_URL}/api/forgot/verify-otp-register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            otp: otpValue,
+          }),
+        }
+      );
+
       const verifyData = await verifyRes.json();
+
       if (!verifyRes.ok) {
         setError(verifyData.message);
-        setOtp(["", "", "", "", "", ""]); // 👈 เคลียร์ OTP ถ้าผิด
+        setOtp(["", "", "", "", "", ""]);
         document.getElementById("reg-otp-0")?.focus();
         return;
       }
@@ -229,20 +255,33 @@ function Register() {
       // สมัครสมาชิก
       const res = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
-          name, username, email, password, phone, birthdate,
+          name,
+          username,
+          email,
+          password,
+          phone,
+          birthdate,
           registrationToken: verifyData.registrationToken,
         }),
       });
+
       const data = await res.json();
-      if (!res.ok) { setError(data.message); return; }
+
+      if (!res.ok) {
+        setError(data.message);
+        return;
+      }
 
       await showAlert({
-        type: 'success',
-        title: 'สมัครสมาชิกสำเร็จ!',
-        message: 'คุณได้สร้างบัญชีผู้ใช้เรียบร้อยแล้ว',
+        type: "success",
+        title: "สมัครสมาชิกสำเร็จ!",
+        message: "คุณได้สร้างบัญชีผู้ใช้เรียบร้อยแล้ว",
       });
+
       navigate("/login");
     } catch {
       setError("ไม่สามารถเชื่อมต่อ server ได้");
@@ -255,11 +294,16 @@ function Register() {
     setOtp(["", "", "", "", "", ""]);
     setTimer(600);
     startTimer();
+
     try {
       await fetch(`${API_URL}/api/forgot/send-otp-register`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+        }),
       });
     } catch {
       setError("ไม่สามารถส่ง OTP ได้");
@@ -350,21 +394,9 @@ function Register() {
 
                 <div className="register-heading">
                   <h2>สร้างบัญชีใหม่</h2>
-                  <p>กรอกข้อมูลของคุณเพื่อเริ่มต้นใช้งาน Until We Meet</p>
-                </div>
-
-                <div className="register-steps">
-                  <div className="register-step active">
-                    <span>1</span>
-                    <p>ข้อมูลส่วนตัว</p>
-                  </div>
-
-                  <div className="step-line"></div>
-
-                  <div className="register-step">
-                    <span>2</span>
-                    <p>ยืนยันตัวตน</p>
-                  </div>
+                  <p>
+                    กรอกข้อมูลของคุณเพื่อเริ่มต้นใช้งาน Until We Meet
+                  </p>
                 </div>
 
                 <div className="register-form-grid">
@@ -393,7 +425,9 @@ function Register() {
                     <label>ชื่อผู้ใช้ (Username)</label>
 
                     <div className="register-input-box">
-                      <span className="material-icons">person_outline</span>
+                      <span className="material-icons">
+                        person_outline
+                      </span>
 
                       <input
                         type="text"
@@ -412,7 +446,9 @@ function Register() {
                     <label>อีเมล</label>
 
                     <div className="register-input-box">
-                      <span className="material-icons">mail_outline</span>
+                      <span className="material-icons">
+                        mail_outline
+                      </span>
 
                       <input
                         type="email"
@@ -450,7 +486,9 @@ function Register() {
                     <label>วันเกิด</label>
 
                     <div className="register-input-box">
-                      <span className="material-icons">calendar_today</span>
+                      <span className="material-icons">
+                        calendar_today
+                      </span>
 
                       <input
                         type="date"
@@ -468,7 +506,9 @@ function Register() {
                     <label>รหัสผ่าน</label>
 
                     <div className="register-input-box">
-                      <span className="material-icons">lock_outline</span>
+                      <span className="material-icons">
+                        lock_outline
+                      </span>
 
                       <input
                         type="password"
@@ -487,7 +527,9 @@ function Register() {
                     <label>ยืนยันรหัสผ่าน</label>
 
                     <div className="register-input-box">
-                      <span className="material-icons">lock_outline</span>
+                      <span className="material-icons">
+                        lock_outline
+                      </span>
 
                       <input
                         type="password"
@@ -514,7 +556,9 @@ function Register() {
                   onClick={handleNext}
                   disabled={loading}
                 >
-                  {loading ? "กำลังส่ง OTP..." : "ถัดไป"}
+                  {loading
+                    ? "กำลังสมัครสมาชิก..."
+                    : "สมัครสมาชิก"}
                 </button>
 
                 <p className="reg-login-text">
@@ -537,7 +581,9 @@ function Register() {
                   </div>
 
                   <div className="otp-title">
-                    <span className="otp-step-badge">ขั้นตอนสุดท้าย</span>
+                    <span className="otp-step-badge">
+                      ขั้นตอนสุดท้าย
+                    </span>
 
                     <h2>ยืนยันอีเมลของคุณ</h2>
 
@@ -567,12 +613,21 @@ function Register() {
                         id={`reg-otp-${i}`}
                         type="text"
                         inputMode="numeric"
-                        autoComplete={i === 0 ? "one-time-code" : "off"}
+                        autoComplete={
+                          i === 0
+                            ? "one-time-code"
+                            : "off"
+                        }
                         maxLength={1}
-                        className={`otp-box ${val ? "filled" : ""}`}
+                        className={`otp-box ${
+                          val ? "filled" : ""
+                        }`}
                         value={val}
                         onChange={(e) =>
-                          handleOtpChange(i, e.target.value)
+                          handleOtpChange(
+                            i,
+                            e.target.value
+                          )
                         }
                         onKeyDown={(e) =>
                           handleOtpKeyDown(i, e)
@@ -590,7 +645,9 @@ function Register() {
                       รหัสหมดอายุใน{" "}
                       <strong
                         className={
-                          timer < 60 ? "timer-warning" : ""
+                          timer < 60
+                            ? "timer-warning"
+                            : ""
                         }
                       >
                         {formatTime(timer)}
@@ -617,10 +674,13 @@ function Register() {
                   <p className="resend-text">
                     ไม่ได้รับรหัส?{" "}
                     <span
-                      className={`resend-link ${timer > 0 ? "disabled" : ""
-                        }`}
+                      className={`resend-link ${
+                        timer > 0 ? "disabled" : ""
+                      }`}
                       onClick={() => {
-                        if (timer === 0) handleResend();
+                        if (timer === 0) {
+                          handleResend();
+                        }
                       }}
                     >
                       ส่งอีกครั้ง
@@ -633,7 +693,14 @@ function Register() {
                     onClick={() => {
                       setStep(1);
                       setError("");
-                      setOtp(["", "", "", "", "", ""]);
+                      setOtp([
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                      ]);
                     }}
                   >
                     <span className="material-icons">

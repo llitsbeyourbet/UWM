@@ -168,16 +168,20 @@ router.post("/register", async (req, res) => {
   const transaction = await sequelize.transaction();
 
   try {
-    const { username, name, email, password, phone, birthdate, registrationToken } = req.body;
+    const {
+      username,
+      name,
+      email,
+      password,
+      phone,
+      birthdate,
+    } = req.body;
+
     if (!username || !name || !email || !phone || !birthdate || !password) {
       await transaction.rollback();
-      return res.status(400).json({ message: "กรุณากรอกข้อมูลให้ครบ" });
-    }
 
-    if (!registrationToken) {
-      await transaction.rollback();
-      return res.status(401).json({
-        message: "กรุณายืนยัน OTP ก่อนสมัครสมาชิก",
+      return res.status(400).json({
+        message: "กรุณากรอกข้อมูลให้ครบ",
       });
     }
 
@@ -189,6 +193,7 @@ router.post("/register", async (req, res) => {
 
     if (!usernameRegex.test(cleanUsername)) {
       await transaction.rollback();
+
       return res.status(400).json({
         message: "ชื่อผู้ใช้ต้องเป็นภาษาอังกฤษหรือตัวเลขเท่านั้น",
       });
@@ -196,35 +201,9 @@ router.post("/register", async (req, res) => {
 
     if (password.length < 6) {
       await transaction.rollback();
+
       return res.status(400).json({
         message: "รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร",
-      });
-    }
-
-    const registrationTokenHash = crypto
-      .createHash("sha256")
-      .update(String(registrationToken))
-      .digest("hex");
-
-    const otpRecord = await OTP.findOne({
-      where: {
-        email: cleanEmail,
-        otp: `register-token:${registrationTokenHash}`,
-      },
-      transaction,
-      lock: transaction.LOCK.UPDATE,
-    });
-
-    if (!otpRecord || new Date() > new Date(otpRecord.expiredAt)) {
-      if (otpRecord) {
-        await otpRecord.destroy({ transaction });
-        await transaction.commit();
-      } else {
-        await transaction.rollback();
-      }
-
-      return res.status(401).json({
-        message: "การยืนยัน OTP หมดอายุหรือไม่ถูกต้อง กรุณายืนยันใหม่",
       });
     }
 
@@ -242,16 +221,24 @@ router.post("/register", async (req, res) => {
     if (existing) {
       await transaction.rollback();
 
-      if (existing.username.toLowerCase() === cleanUsername.toLowerCase()) {
-        return res.status(400).json({ message: "ชื่อผู้ใช้นี้ถูกใช้งานแล้ว" });
+      if (
+        existing.username.toLowerCase() === cleanUsername.toLowerCase()
+      ) {
+        return res.status(400).json({
+          message: "ชื่อผู้ใช้นี้ถูกใช้งานแล้ว",
+        });
       }
 
       if (existing.email.toLowerCase() === cleanEmail) {
-        return res.status(400).json({ message: "อีเมลนี้ถูกใช้งานแล้ว" });
+        return res.status(400).json({
+          message: "อีเมลนี้ถูกใช้งานแล้ว",
+        });
       }
 
       if (existing.phone === cleanPhone) {
-        return res.status(400).json({ message: "เบอร์โทรนี้ถูกใช้งานแล้ว" });
+        return res.status(400).json({
+          message: "เบอร์โทรนี้ถูกใช้งานแล้ว",
+        });
       }
     }
 
@@ -269,17 +256,21 @@ router.post("/register", async (req, res) => {
       { transaction }
     );
 
-    // registration token ใช้ได้ครั้งเดียว
-    await otpRecord.destroy({ transaction });
     await transaction.commit();
 
-    return res.status(201).json({ message: "สมัครสมาชิกสำเร็จ" });
+    return res.status(201).json({
+      message: "สมัครสมาชิกสำเร็จ",
+    });
   } catch (err) {
     if (!transaction.finished) {
       await transaction.rollback();
     }
+
     console.error("Register error:", err);
-    return res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+
+    return res.status(500).json({
+      message: "เกิดข้อผิดพลาด",
+    });
   }
 });
 
