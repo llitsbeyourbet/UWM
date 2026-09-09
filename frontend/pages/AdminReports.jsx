@@ -250,12 +250,34 @@ function AdminReports() {
         navigate(`/activity-detail?id=${activityId}&from=admin`);
     };
 
-    const startReview = (report) => {
+    const startReview = async (report) => {
         const reportId = report.id || report._id;
 
         if (!reportId) return;
 
-        navigate(`/admin/reports/${reportId}`);
+        try {
+            const response = await fetch(
+                `${API_URL}/api/admin/reports/${reportId}/view`,
+                {
+                    method: "PUT",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(
+                    data?.message || "ไม่สามารถเริ่มตรวจสอบรายงานได้"
+                );
+            }
+
+            navigate(`/admin/reports/${reportId}`);
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     const tabs = [
@@ -263,11 +285,11 @@ function AdminReports() {
         { key: "latest", label: "รายงานล่าสุด" },
         { key: "reviewing", label: "กำลังตรวจสอบ" },
         { key: "resolved", label: "ดำเนินการแล้ว" },
-        { key: "rejected", label: "ปฏิเสธการระงับ" },
+        { key: "rejected", label: "ปฏิเสธการรายงาน" },
     ];
     return (
         <div className="admin-shell">
-            <AdminSidebar/>
+            <AdminSidebar />
             <main className="admin-main">
                 <div className="admin-reports-page">
                     <header className="reports-topbar">
@@ -332,7 +354,7 @@ function AdminReports() {
                                         <option value="latest">รายงานล่าสุด</option>
                                         <option value="reviewing">กำลังตรวจสอบ</option>
                                         <option value="resolved">ดำเนินการแล้ว</option>
-                                        <option value="rejected">ปฏิเสธการระงับ</option>
+                                        <option value="rejected">ปฏิเสธการรายงาน</option>
                                     </select>
                                 </label>
 
@@ -463,7 +485,11 @@ function AdminReports() {
                                                                 <span>
                                                                     {report.decision === "suspend_activity"
                                                                         ? "ระงับกิจกรรมเมื่อ"
-                                                                        : "ปฏิเสธการระงับเมื่อ"}
+                                                                        : report.decision === "warning"
+                                                                            ? "แจ้งเตือนผู้สร้างเมื่อ"
+                                                                            : report.decision === "no_violation"
+                                                                                ? "ตรวจสอบแล้วเมื่อ"
+                                                                                : "ปฏิเสธรายงานเมื่อ"}
                                                                 </span>
 
                                                                 <strong>

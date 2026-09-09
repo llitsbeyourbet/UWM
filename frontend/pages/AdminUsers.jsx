@@ -8,7 +8,6 @@ import { MdGroups } from "react-icons/md";
 import API_URL from "../config";
 import "../styles/AdminDashboard.css";
 import "../styles/AdminUsers.css";
-import "../components/AdminSidebar"
 import AdminSidebar from "../components/AdminSidebar";
 
 const ITEMS_PER_PAGE = 10;
@@ -71,7 +70,6 @@ export default function AdminUsers() {
       });
 
       const data = await response.json().catch(() => []);
-      console.log("ADMIN USERS RESPONSE:", JSON.stringify(data, null, 2));
 
       if (!response.ok) {
         throw new Error(data?.message || "โหลดข้อมูลผู้ใช้ไม่สำเร็จ");

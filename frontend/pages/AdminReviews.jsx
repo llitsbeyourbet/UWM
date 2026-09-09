@@ -19,7 +19,6 @@ import { MdGroups } from "react-icons/md";
 import API_URL from "../config";
 import "../styles/AdminDashboard.css";
 import "../styles/AdminReviews.css";
-import "../components/AdminSidebar"
 import AdminSidebar from "../components/AdminSidebar";
 
 const ITEMS_PER_PAGE = 8;

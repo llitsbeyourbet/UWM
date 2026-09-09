@@ -252,20 +252,30 @@ router.put("/:id", auth, async (req, res) => {
   }
 });
 
-// ลบกิจกรรม 👈 แก้ให้เช็คเจ้าของด้วย
+// ลบกิจกรรม 
 router.delete("/:id", auth, async (req, res) => {
   try {
     const activity = await Activity.findByPk(req.params.id);
-    if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
+
+    if (!activity) {
+      return res.status(404).json({ message: "ไม่พบกิจกรรม" });
+    }
+
+    if (activity.createdBy !== req.userId) {
+      return res.status(403).json({ message: "ไม่มีสิทธิ์ลบกิจกรรมนี้" });
+    }
+
+    if (activity.status === "suspended") {
+      return res.status(403).json({
+        message: "กิจกรรมถูกระงับโดยแอดมิน ไม่สามารถลบได้",
+      });
+    }
 
     if (isActivityEnded(activity)) {
       return res.status(400).json({
         message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถลบได้",
       });
     }
-
-    if (activity.createdBy !== req.userId)
-      return res.status(403).json({ message: "ไม่มีสิทธิ์ลบกิจกรรมนี้" });
 
     const joinedCount = await JoinRequest.count({
       where: {
@@ -281,13 +291,14 @@ router.delete("/:id", auth, async (req, res) => {
     }
 
     await activity.destroy();
-    res.json({ message: "ลบกิจกรรมสำเร็จ" });
+
+    return res.json({ message: "ลบกิจกรรมสำเร็จ" });
   } catch (err) {
-    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+    return res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
 });
 
-// 👇 สร้าง QR Token
+// สร้าง QR Token
 router.get("/:id/qr", auth, async (req, res) => {
   try {
     const activity = await Activity.findByPk(req.params.id);

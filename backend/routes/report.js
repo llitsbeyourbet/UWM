@@ -33,6 +33,12 @@ router.post("/:activityId", auth, async (req, res) => {
         throw error;
       }
 
+      if (activity.status !== "active") {
+        const error = new Error("กิจกรรมนี้ไม่สามารถรายงานได้");
+        error.statusCode = 400;
+        throw error;
+      }
+
       if (isActivityEnded(activity)) {
         const error = new Error("กิจกรรมสิ้นสุดแล้ว ไม่สามารถรายงานได้");
         error.statusCode = 400;
@@ -65,15 +71,23 @@ router.post("/:activityId", auth, async (req, res) => {
       reporter = await User.findByPk(req.userId, { transaction });
     });
 
-    const admins = await User.findAll({ where: { role: "admin" } });
-    for (const admin of admins) {
-      await notificationService.createNotification(
-        admin.id,
-        "report",
-        activity.id,
-        activity.activityName,
-        req.userId,
-        reporter?.username || ""
+    try {
+      const admins = await User.findAll({ where: { role: "admin" } });
+
+      for (const admin of admins) {
+        await notificationService.createNotification(
+          admin.id,
+          "report",
+          activity.id,
+          activity.activityName,
+          req.userId,
+          reporter?.username || ""
+        );
+      }
+    } catch (notificationError) {
+      console.error(
+        "Create report notification error:",
+        notificationError
       );
     }
 

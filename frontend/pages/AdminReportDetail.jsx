@@ -11,7 +11,6 @@ import API_URL from "../config";
 import { useAlert } from "../hooks/useAlert";
 import "../styles/AdminDashboard.css";
 import "../styles/AdminReportDetail.css";
-import "../components/AdminSidebar"
 import { formatDateTime, formatDateTimeDate, formatDateTimeTime, formatTime } from "../utils/formatDate";
 import { getCategoryIcon } from "../utils/categoryIcons";
 const FALLBACK_IMAGE = "https://placehold.co/900x560/F1EDFF/6846F5?text=Activity";
@@ -149,52 +148,6 @@ export default function AdminReportDetail() {
     finally { setSaving(false); }
   };
 
-  const rejectReport = async () => {
-    const confirmed = await showConfirm({
-      title: 'ปฏิเสธรายงาน',
-      message: 'ยืนยันการปฏิเสธรายงานนี้หรือไม่?',
-      confirmText: 'ปฏิเสธ',
-      cancelText: 'ยกเลิก',
-    });
-    if (!confirmed) return;
-    try {
-      setSaving(true);
-      await updateReportStatus({ status: "rejected", decision: "reject_report", adminNote: adminNote.trim() });
-      await showAlert({ type: 'success', title: 'สำเร็จ', message: 'ปฏิเสธรายงานเรียบร้อยแล้ว' });
-      await loadReport();
-    } catch (err) {
-      await showAlert({ type: 'error', title: 'เกิดข้อผิดพลาด', message: err.message || "เกิดข้อผิดพลาดในการปฏิเสธรายงาน" });
-    }
-    finally { setSaving(false); }
-  };
-
-  const suspendActivity = async () => {
-    if (!activityId) {
-      await showAlert({ type: 'error', title: 'ไม่พบข้อมูล', message: 'ไม่พบรหัสกิจกรรม กรุณาลองใหม่อีกครั้ง' });
-      return;
-    }
-    const confirmed = await showConfirm({
-      title: 'ระงับกิจกรรม',
-      message: 'ยืนยันการระงับกิจกรรมนี้หรือไม่?',
-      confirmText: 'ระงับกิจกรรม',
-      cancelText: 'ยกเลิก',
-    });
-    if (!confirmed) return;
-    try {
-      setSaving(true);
-      const response = await fetch(`${API_URL}/api/admin/suspend/${activityId}`, {
-        method: "PUT", headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(data?.message || "ระงับกิจกรรมไม่สำเร็จ");
-      await showAlert({ type: 'success', title: 'สำเร็จ', message: 'ระงับกิจกรรมเรียบร้อยแล้ว' });
-      await loadReport();
-    } catch (err) {
-      await showAlert({ type: 'error', title: 'เกิดข้อผิดพลาด', message: err.message || "เกิดข้อผิดพลาดในการระงับกิจกรรม" });
-    }
-    finally { setSaving(false); }
-  };
-
   if (loading || error || !report) {
     return (
       <div className="admin-shell">
@@ -211,7 +164,6 @@ export default function AdminReportDetail() {
 
   const reportNumber = `RPT-${String(report.id || id).padStart(5, "0")}`;
   const activityImage = report.activityCover || report.activityImage || report.activity?.cover || report.activity?.image || FALLBACK_IMAGE;
-  const activitySuspended = String(report.activityStatus || report.activity?.status || "").toLowerCase() === "suspended";
 
   return (
     <div className="admin-shell">
@@ -225,14 +177,28 @@ export default function AdminReportDetail() {
             <div>
               <span className="report-detail-label">รายละเอียดรายงาน</span>
               <h1>รายงาน #{reportNumber}</h1>
-              <p>ส่งรายงานเมื่อ {formatDate(report.createdAt || report.reportedAt, true)}</p>
+              <p>
+                ส่งรายงานเมื่อ{" "}
+                {formatDate(report.createdAt || report.reportedAt, true)}
+              </p>
             </div>
-            {isCompleted ? (
+
+            {isCompleted && (
               <div className="report-detail-heading-result">
                 {report.decision === "suspend_activity" ? (
                   <span className="heading-result-badge suspended">
                     <FiSlash />
                     ระงับกิจกรรมแล้ว
+                  </span>
+                ) : report.decision === "warning" ? (
+                  <span className="heading-result-badge rejected">
+                    <FiAlertTriangle />
+                    แจ้งเตือนผู้สร้างกิจกรรมแล้ว
+                  </span>
+                ) : report.decision === "no_violation" ? (
+                  <span className="heading-result-badge rejected">
+                    <FiCheck />
+                    ไม่พบการกระทำผิด
                   </span>
                 ) : (
                   <span className="heading-result-badge rejected">
@@ -240,30 +206,6 @@ export default function AdminReportDetail() {
                     ปฏิเสธรายงาน
                   </span>
                 )}
-              </div>
-            ) : (
-              <div className="report-detail-heading-actions">
-                <button
-                  type="button"
-                  className="report-reject-action"
-                  onClick={rejectReport}
-                  disabled={saving}
-                >
-                  <FiAlertTriangle />
-                  ปฏิเสธรายงาน
-                </button>
-
-                <button
-                  type="button"
-                  className="report-suspend-action"
-                  onClick={suspendActivity}
-                  disabled={saving || activitySuspended}
-                >
-                  <FiSlash />
-                  {activitySuspended
-                    ? "กิจกรรมถูกระงับแล้ว"
-                    : "ระงับกิจกรรม"}
-                </button>
               </div>
             )}
           </section>

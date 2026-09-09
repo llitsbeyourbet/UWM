@@ -205,10 +205,12 @@ function Profile() {
           )
         )}
         {activeTab === "joined" && (
-          joinedActivities.length === 0 ? (
+          joinedActivities.filter((item) => item.status !== "suspended").length === 0 ? (
             <p className="profile-empty">ยังไม่มีกิจกรรมที่เข้าร่วม</p>
           ) : (
-            joinedActivities.map((item) => <ActivityCard key={item.id} item={item} />)
+            joinedActivities
+              .filter((item) => item.status !== "suspended")
+              .map((item) => <ActivityCard key={item.id} item={item} />)
           )
         )}
       </div>

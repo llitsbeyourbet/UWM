@@ -1201,6 +1201,28 @@ router.put("/reports/:id/status", auth, isAdmin, async (req, res) => {
       });
     }
 
+    const allowedDecisions = [
+      "no_violation",
+      "warning",
+      "suspend_activity",
+      "reject_report",
+    ];
+
+    if (!allowedDecisions.includes(decision)) {
+      return res.status(400).json({
+        message: "ผลการตรวจสอบไม่ถูกต้อง",
+      });
+    }
+
+    if (
+      (decision === "reject_report" && status !== "rejected") ||
+      (decision !== "reject_report" && status !== "resolved")
+    ) {
+      return res.status(400).json({
+        message: "สถานะและผลการตรวจสอบไม่สอดคล้องกัน",
+      });
+    }
+
     const reviewedAt = new Date();
     const note = adminNote?.trim() || null;
 
@@ -1302,7 +1324,7 @@ router.put("/reports/:id/status", auth, isAdmin, async (req, res) => {
           "ผู้ดูแลระบบ",
           {
             deduplicate: true,
-            adminNote:note,
+            adminNote: note,
           }
         );
 

@@ -334,7 +334,7 @@ export default function AdminDashboard() {
             color="purple"
             icon={<FiCalendar />}
             title="กิจกรรมทั้งหมด"
-            value={stats.totalActivities || activities.length}
+            value={stats.totalActivities ?? activities.length}
           />
 
           <Stat
@@ -354,7 +354,7 @@ export default function AdminDashboard() {
             color="blue"
             icon={<FiUsers />}
             title="ผู้ใช้งานทั้งหมด"
-            value={stats.totalUsers || users.length}
+            value={stats.totalUsers ?? users.length}
           />
 
           <Stat
