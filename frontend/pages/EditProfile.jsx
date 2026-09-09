@@ -126,9 +126,9 @@ function EditProfile() {
         return;
       }
 
-      // อัปเดต localStorage
-      const user = JSON.parse(sessionStorage.getItem("user"));
-      localStorage.setItem("user", JSON.stringify({
+      // อัปเดตข้อมูล user ใน sessionStorage ให้ตรงกับระบบ login
+      const user = JSON.parse(sessionStorage.getItem("user")) || {};
+      sessionStorage.setItem("user", JSON.stringify({
         ...user,
         username,
         name,

@@ -41,6 +41,7 @@ function CreateActivities() {
   const [category, setCategory] = useState([]);
   const [showCategory, setShowCategory] = useState(false);
   const [error, setError] = useState("");
+  const [imageError, setImageError] = useState("");
   const isIOS = /iPhone|iPod|iPad/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
 
@@ -51,14 +52,22 @@ function CreateActivities() {
 
     const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
     if (file.size > MAX_IMAGE_SIZE) {
+      const message = "รูปภาพต้องมีขนาดไม่เกิน 5 MB";
+      setImageError(message);
+      setError(message);
+      setPreview([]);
+      setCoverFilename(null);
       e.target.value = "";
       await showAlert({
         type: "warning",
         title: "รูปภาพมีขนาดใหญ่เกินไป",
-        message: "รูปภาพต้องมีขนาดไม่เกิน 5 MB",
+        message,
       });
       return;
     }
+
+    setImageError("");
+    setError("");
 
     const objectUrl = URL.createObjectURL(file);
     setPreview([objectUrl]);
@@ -80,11 +89,14 @@ function CreateActivities() {
       }
 
       setCoverFilename(data.filename); // 👈 เก็บแค่ชื่อไฟล์
+      setImageError("");
       setError("");
     } catch (err) {
       console.error("Upload error:", err);
       setPreview([]);
       setCoverFilename(null);
+      setImageError(err.message || "เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ");
+      setError(err.message || "เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ");
       e.target.value = "";
       await showAlert({
         type: "error",
@@ -147,7 +159,7 @@ function CreateActivities() {
     }
 
     if (!coverFilename) {
-      setError("กรุณาอัปโหลดรูปปกกิจกรรม");
+      setError(imageError || "กรุณาอัปโหลดรูปปกกิจกรรม");
       return;
     }
 

@@ -6,10 +6,13 @@ const SocketContext = createContext();
 
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
+  const token = sessionStorage.getItem("token");
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
-    if (!token) return;
+    if (!token) {
+      setSocket(null);
+      return;
+    }
 
     const newSocket = io(API_URL, {
       auth: { token },
@@ -24,7 +27,7 @@ export const SocketProvider = ({ children }) => {
     return () => {
       newSocket.disconnect();
     };
-  }, []);
+  }, [token]);
 
   return (
     <SocketContext.Provider value={{ socket }}>

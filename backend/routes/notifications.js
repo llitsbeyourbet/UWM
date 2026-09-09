@@ -122,68 +122,19 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
-// สร้างการแจ้งเตือน
-router.post("/", auth, async (req, res) => {
-  try {
-    const { type, toUserId, activityId, activityName, fromUsername } = req.body;
-    const notif = await Notification.create({
-      type,
-      fromUserId: req.userId,
-      toUserId,
-      activityId,
-      activityName,
-      fromUsername,
-    });
-    res.status(201).json(notif);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
-  }
+// การสร้าง/เปลี่ยนประเภท notification ต้องเกิดจาก business flow ฝั่ง server เท่านั้น
+// เช่น join.js, report.js, review.js ผ่าน notificationService.createNotification()
+// ไม่เปิดให้ client สร้าง notification หรือกำหนด type/toUserId เอง
+router.post("/", auth, (req, res) => {
+  return res.status(405).json({
+    message: "ไม่อนุญาตให้สร้างการแจ้งเตือนโดยตรง",
+  });
 });
 
-// อัปเดตสถานะ (ยอมรับ/ปฏิเสธ)
-router.put("/:id", auth, async (req, res) => {
-  try {
-    const { type } = req.body;
-
-    const notif = await Notification.findOne({
-      where: { id: req.params.id, toUserId: req.userId },
-    });
-    if (!notif) return res.status(404).json({ message: "ไม่พบการแจ้งเตือน" });
-
-    await notif.update({ type, isRead: true });
-
-    const owner = await User.findByPk(req.userId);
-
-    if (type === "join_confirmed") {
-      await Notification.create({
-        type: "join_confirmed",
-        fromUserId: req.userId,
-        toUserId: notif.fromUserId,
-        activityId: notif.activityId,
-        activityName: notif.activityName,
-        fromUsername: owner.username,
-        isRead: false,
-      });
-    }
-
-    if (type === "join_rejected") {
-      await Notification.create({
-        type: "join_rejected",
-        fromUserId: req.userId,
-        toUserId: notif.fromUserId,
-        activityId: notif.activityId,
-        activityName: notif.activityName,
-        fromUsername: owner.username,
-        isRead: false,
-      });
-    }
-
-    res.json({ message: "อัปเดตสำเร็จ" });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
-  }
+router.put("/:id", auth, (req, res) => {
+  return res.status(405).json({
+    message: "ไม่อนุญาตให้เปลี่ยนประเภทการแจ้งเตือนโดยตรง",
+  });
 });
 
 // อ่านแจ้งเตือนแล้ว
