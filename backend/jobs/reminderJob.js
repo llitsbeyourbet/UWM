@@ -2,6 +2,7 @@ const Activity = require("../models/Activity");
 const JoinRequest = require("../models/JoinRequest");
 const Notification = require("../models/Notification");
 const notificationService = require("../services/notificationService");
+const { buildBangkokDateTime } = require("../utils/activityTime");
 
 async function checkReminder() {
   try {
@@ -18,16 +19,11 @@ async function checkReminder() {
 
       if (!activity.date || !activity.time) continue;
 
-      // รองรับทั้ง HH:mm และ HH:mm:ss
-      const time =
-        activity.time.length === 5
-          ? `${activity.time}:00`
-          : activity.time;
+      // ใช้ helper เดียวกับ Join/Check-in เพื่อรองรับค่า date จาก Sequelize
+      // และตีความเวลาของกิจกรรมเป็นเวลา Asia/Bangkok อย่างสม่ำเสมอ
+      const activityStart = buildBangkokDateTime(activity.date, activity.time);
 
-      // สร้างวันเวลาเริ่มกิจกรรม
-      const activityStart = new Date(`${activity.date}T${time}+07:00`);
-
-      if (isNaN(activityStart.getTime())) {
+      if (!activityStart) {
         console.log(
           "Invalid Date:",
           activity.activityName,

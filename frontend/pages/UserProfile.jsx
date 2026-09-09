@@ -27,14 +27,14 @@ function UserProfile() {
         // ดึงกิจกรรมที่สร้าง
         const actRes = await fetch(`${API_URL}/api/activities/user/${id}`);
         const actData = await actRes.json();
-        setActivities(actData);
+        setActivities(Array.isArray(actData) ? actData.filter((item) => item.status !== "suspended") : []);
 
         // ดึงกิจกรรมที่เข้าร่วม
         const joinRes = await fetch(`${API_URL}/api/join/user/${id}`);
 
         if (joinRes.ok) {
             const joinData = await joinRes.json();
-            setJoinedActivities(joinData);
+            setJoinedActivities(Array.isArray(joinData) ? joinData.filter((item) => item.status !== "suspended") : []);
         }
 
         // ดึงคะแนนผู้จัด
