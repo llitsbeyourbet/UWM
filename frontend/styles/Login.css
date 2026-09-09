@@ -14,8 +14,8 @@
 
 .login-container {
   width: 100%;
-  max-width: 1250px;
-  min-height: 700px;
+  max-width: 1380px;
+  min-height: 780px;
 
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -39,11 +39,9 @@
   overflow: hidden;
 
   background:
-    radial-gradient(
-      circle at bottom left,
+    radial-gradient(circle at bottom left,
       rgba(75, 107, 255, 0.11),
-      transparent 50%
-    ),
+      transparent 50%),
     #fffdf9;
 }
 
@@ -106,7 +104,7 @@
   box-shadow: 0 8px 25px rgba(38, 56, 100, 0.08);
 }
 
-.mini-card > span {
+.mini-card>span {
   font-size: 38px;
 }
 
@@ -172,10 +170,10 @@
 ========================= */
 
 .login-right {
-  padding: 60px 70px;
+  padding: 105px 70px 60px;
 
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 
   background: #ffffff;
@@ -431,7 +429,8 @@ input::-ms-clear {
   }
 
   .login-right {
-    padding: 40px 50px;
+    padding: 70px 50px 40px;
+    align-items: flex-start;
   }
 
   .activity-decoration {
@@ -517,7 +516,8 @@ input::-ms-clear {
     width: 250px;
     margin-top: 18px;
   }
-  .login-title{
+
+  .login-title {
     margin-top: -25px;
     margin-bottom: 14px;
   }

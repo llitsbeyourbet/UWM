@@ -26,7 +26,7 @@
   min-height: 780px;
 
   display: grid;
-  grid-template-columns: 0.8fr 1.55fr;
+  grid-template-columns: 1fr 1fr;
 
   overflow: hidden;
 
@@ -49,11 +49,9 @@
   overflow: hidden;
 
   background:
-    radial-gradient(
-      circle at bottom left,
+    radial-gradient(circle at bottom left,
       rgba(70, 100, 255, 0.11),
-      transparent 50%
-    ),
+      transparent 50%),
     #fffdf9;
 }
 
@@ -123,7 +121,7 @@
   box-shadow: 0 8px 25px rgba(35, 55, 100, 0.08);
 }
 
-.register-mini-card > span {
+.register-mini-card>span {
   font-size: 38px;
 }
 
@@ -194,10 +192,10 @@
 ========================= */
 
 .register-right {
-  padding: 45px 65px;
+  padding: 105px 70px 40px;
 
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 
   background: #ffffff;
@@ -218,9 +216,8 @@
 ========================= */
 
 .register-heading {
-  margin-bottom: 24px;
-
-  text-align: center;
+  margin-bottom: 30px;
+  text-align: left;
 }
 
 .register-heading h2 {
@@ -228,7 +225,7 @@
 
   color: #172544;
 
-  font-size: 34px;
+  font-size: 32px;
 
   font-weight: 800;
 }
@@ -512,11 +509,9 @@
   border-radius: 24px;
 
   background:
-    linear-gradient(
-      135deg,
+    linear-gradient(135deg,
       #f0ecff,
-      #eaf4ff
-    );
+      #eaf4ff);
 
   box-shadow:
     0 10px 25px rgba(99, 56, 255, 0.10);
@@ -586,7 +581,7 @@
   border-radius: 15px;
 }
 
-.otp-email-card > .material-icons {
+.otp-email-card>.material-icons {
   width: 40px;
   height: 40px;
 
@@ -653,7 +648,7 @@
   border: 1.5px solid #363030 !important;
   border-radius: 14px;
 
-  background: #ffffff !important; 
+  background: #ffffff !important;
 
   color: #26213d;
 
@@ -681,7 +676,7 @@
 .otp-box.filled {
   border-color: #8a70ff;
 
-  background: #faf9ff !important; 
+  background: #faf9ff !important;
 
   color: #2873ff;
 }
@@ -724,7 +719,7 @@
 .otp-submit-btn {
   margin-top: 18px;
   margin-bottom: 20px;
-  background:#2873ff;
+  background: #2873ff;
   border-radius: 13px;
   box-shadow:
     0 8px 20px rgba(99, 56, 255, 0.18);
@@ -793,14 +788,60 @@
 }
 
 /* =========================
+   LOGIN / REGISTER TAB
+========================= */
+
+.register-auth-tabs {
+  width: 100%;
+  margin-bottom: 30px;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  border-bottom: 1px solid #e2e6ed;
+}
+
+.register-auth-tabs button {
+  position: relative;
+
+  padding: 13px;
+
+  border: none;
+  background: transparent;
+
+  color: #a0a7b6;
+  font-family: "Sarabun", sans-serif;
+  font-size: 15px;
+
+  cursor: pointer;
+}
+
+.register-auth-tabs button.active {
+  color: #2873ff;
+  font-weight: 600;
+}
+
+.register-auth-tabs button.active::after {
+  content: "";
+
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+
+  height: 3px;
+
+  background: #2873ff;
+  border-radius: 10px;
+}
+
+/* =========================
    NOTEBOOK
 ========================= */
 
 @media (max-width: 1366px) {
 
   .register-container {
-    max-width: 1180px;
-
     min-height: 650px;
   }
 
@@ -833,7 +874,8 @@
   }
 
   .register-right {
-    padding: 30px 48px;
+    padding: 70px 50px 30px;
+    align-items: flex-start;
   }
 
   .register-heading h2 {
@@ -905,7 +947,7 @@
   .register-page {
     min-height: 100dvh;
 
-    padding: 0; 
+    padding: 0;
 
     background: #ffffff;
   }
@@ -945,6 +987,7 @@
 
   .register-heading {
     margin-bottom: 16px;
+    text-align: center;
   }
 
   .register-heading h2 {
@@ -1009,72 +1052,73 @@
   .reg-login-text {
     margin-top: 15px;
   }
+
   /* OTP MOBILE */
 
-.otp-section {
-  padding-top: 12px;
-}
+  .otp-section {
+    padding-top: 12px;
+  }
 
-.otp-mail-icon {
-  width: 64px;
-  height: 64px;
+  .otp-mail-icon {
+    width: 64px;
+    height: 64px;
 
-  margin-bottom: 14px;
+    margin-bottom: 14px;
 
-  border-radius: 20px;
-}
+    border-radius: 20px;
+  }
 
-.otp-mail-icon .material-icons {
-  font-size: 30px;
-}
+  .otp-mail-icon .material-icons {
+    font-size: 30px;
+  }
 
-.otp-title {
-  margin-bottom: 18px;
-}
+  .otp-title {
+    margin-bottom: 18px;
+  }
 
-.otp-title h2 {
-  font-size: 25px;
-}
+  .otp-title h2 {
+    font-size: 25px;
+  }
 
-.otp-title p {
-  font-size: 12px;
-}
+  .otp-title p {
+    font-size: 12px;
+  }
 
-.otp-email-card {
-  margin-bottom: 22px;
-  padding: 11px 13px;
-}
+  .otp-email-card {
+    margin-bottom: 22px;
+    padding: 11px 13px;
+  }
 
-.otp-boxes {
-  width: 100%;
+  .otp-boxes {
+    width: 100%;
 
-  gap: 7px;
-}
+    gap: 7px;
+  }
 
-.otp-box {
-  width: calc((100% - 35px) / 6);
-  max-width: 48px;
-  height: 54px;
+  .otp-box {
+    width: calc((100% - 35px) / 6);
+    max-width: 48px;
+    height: 54px;
 
-  border-radius: 12px;
+    border-radius: 12px;
 
-  font-size: 20px;
-}
+    font-size: 20px;
+  }
 
-.otp-timer {
-  margin-bottom: 18px;
-}
+  .otp-timer {
+    margin-bottom: 18px;
+  }
 
-.otp-submit-btn {
-  height: 50px;
+  .otp-submit-btn {
+    height: 50px;
 
-}
+  }
 
-.resend-text {
-  margin-top: 30px;
-}
+  .resend-text {
+    margin-top: 30px;
+  }
 
-.register-back {
-  margin-top: 17px;
-}
+  .register-back {
+    margin-top: 17px;
+  }
 }

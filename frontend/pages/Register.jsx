@@ -399,6 +399,22 @@ function Register() {
                   </p>
                 </div>
 
+                <div className="register-auth-tabs">
+                  <button
+                    type="button"
+                    onClick={() => navigate("/login")}
+                  >
+                    เข้าสู่ระบบ
+                  </button>
+
+                  <button
+                    type="button"
+                    className="active"
+                  >
+                    สร้างบัญชี
+                  </button>
+                </div>
+
                 <div className="register-form-grid">
 
                   {/* ชื่อ */}
@@ -619,9 +635,8 @@ function Register() {
                             : "off"
                         }
                         maxLength={1}
-                        className={`otp-box ${
-                          val ? "filled" : ""
-                        }`}
+                        className={`otp-box ${val ? "filled" : ""
+                          }`}
                         value={val}
                         onChange={(e) =>
                           handleOtpChange(
@@ -674,9 +689,8 @@ function Register() {
                   <p className="resend-text">
                     ไม่ได้รับรหัส?{" "}
                     <span
-                      className={`resend-link ${
-                        timer > 0 ? "disabled" : ""
-                      }`}
+                      className={`resend-link ${timer > 0 ? "disabled" : ""
+                        }`}
                       onClick={() => {
                         if (timer === 0) {
                           handleResend();
