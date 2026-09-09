@@ -64,7 +64,9 @@ function ActivitySummaryDetail() {
         const [actRes, ratingRes, partRes, revRes, participantsRes] = await Promise.all([
           fetch(`${API_URL}/api/activities/${id}`),
           fetch(`${API_URL}/api/review/activity/${id}/rating`),
-          fetch(`${API_URL}/api/activities/${id}/summary-participants`),
+          fetch(`${API_URL}/api/activities/${id}/summary-participants`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
           fetch(`${API_URL}/api/review/activity/${id}/detailed-reviews-owner`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
@@ -161,7 +163,7 @@ function ActivitySummaryDetail() {
       <div className="detail-header">
         <div className="back-btn" onClick={() => navigate(-1)}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round">
-            <polyline points="15 18 9 12 15 6"/>
+            <polyline points="15 18 9 12 15 6" />
           </svg>
         </div>
         <h2>สรุปผลกิจกรรม</h2>

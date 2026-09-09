@@ -45,7 +45,9 @@ function ActivitySummary() {
               const [ratingRes, detailRes, summaryRes] = await Promise.all([
                 fetch(`${API_URL}/api/review/activity/${act.id}/rating`),
                 fetch(`${API_URL}/api/activities/${act.id}`),
-                fetch(`${API_URL}/api/activities/${act.id}/summary-participants`),
+                fetch(`${API_URL}/api/activities/${act.id}/summary-participants`, {
+                  headers: { Authorization: `Bearer ${token}` },
+                }),
               ]);
 
               const ratingData = ratingRes.ok ? await ratingRes.json() : { avgRating: 0, totalReviews: 0 };
