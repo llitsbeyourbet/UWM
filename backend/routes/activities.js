@@ -267,6 +267,19 @@ router.delete("/:id", auth, async (req, res) => {
     if (activity.createdBy !== req.userId)
       return res.status(403).json({ message: "ไม่มีสิทธิ์ลบกิจกรรมนี้" });
 
+    const joinedCount = await JoinRequest.count({
+      where: {
+        activityId: activity.id,
+        status: { [Op.in]: ["approved", "checked_in"] },
+      },
+    });
+
+    if (joinedCount > 0) {
+      return res.status(400).json({
+        message: "ไม่สามารถลบกิจกรรมที่มีผู้เข้าร่วมแล้วได้",
+      });
+    }
+
     await activity.destroy();
     res.json({ message: "ลบกิจกรรมสำเร็จ" });
   } catch (err) {
@@ -320,50 +333,60 @@ router.get("/:id/qr", auth, async (req, res) => {
 });
 
 // ดึงข้อมูลสรุปผู้เข้าร่วม (แยกกลุ่มเช็คอินและยังไม่เช็คอิน)
-router.get("/:id/summary-participants", async (req, res) => {
+router.get("/:id/summary-participants", auth, async (req, res) => {
   try {
     const { id } = req.params;
-    const JoinRequest = require("../models/JoinRequest");
-    const User = require("../models/User");
+
+    const activity = await Activity.findByPk(id);
+
+    if (!activity) {
+      return res.status(404).json({ message: "ไม่พบกิจกรรม" });
+    }
+
+    if (activity.createdBy !== req.userId) {
+      return res.status(403).json({ message: "ไม่มีสิทธิ์ดูข้อมูลสรุปกิจกรรมนี้" });
+    }
 
     const requests = await JoinRequest.findAll({
       where: {
         activityId: id,
-        status: { [require("sequelize").Op.in]: ["approved", "checked_in"] },
+        status: { [Op.in]: ["approved", "checked_in"] },
       },
     });
 
     const userIds = requests.map((r) => r.userId);
+
     const users = await User.findAll({
-      where: { id: { [require("sequelize").Op.in]: userIds } },
+      where: { id: { [Op.in]: userIds } },
       attributes: ["id", "name", "username", "profileImage"],
     });
 
     const userMap = {};
-    users.forEach(u => { userMap[u.id] = u });
+    users.forEach((u) => { userMap[u.id] = u; });
 
     const checkedIn = [];
     const approved = [];
 
-    requests.forEach(r => {
+    requests.forEach((r) => {
       const user = userMap[r.userId];
+
       if (user) {
         if (r.status === "checked_in") {
           checkedIn.push(user);
-        } else if (r.status === "approved") {
+        } else {
           approved.push(user);
         }
       }
     });
 
-    res.json({
+    return res.json({
       checkedIn,
       approved,
-      totalJoined: checkedIn.length + approved.length
+      totalJoined: checkedIn.length + approved.length,
     });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+    return res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
 });
 

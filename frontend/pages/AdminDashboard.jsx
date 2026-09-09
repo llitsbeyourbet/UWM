@@ -27,7 +27,6 @@ import {
 } from "recharts";
 import { useAlert } from "../hooks/useAlert";
 import "../styles/AdminDashboard.css";
-import "../components/AdminSidebar"
 import API_URL from "../config";
 import { getCategoryIcon } from "../utils/categoryIcons";
 import AdminSidebar from "../components/AdminSidebar";

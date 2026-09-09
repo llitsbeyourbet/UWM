@@ -17,7 +17,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ReviewForm from "./pages/ReviewForm";
 import ForgotPassword from "./pages/ForgotPassword";
 import ChangePassword from "./pages/ChangePassword";
-import "./assets/AppLayout.css"
+import "./assets/AppLayout.css";
 import ScanQR from "./pages/ScanQR";
 import UserProfile from "./pages/UserProfile";
 import { SocketProvider } from "./src/context/SocketContext";
@@ -51,11 +51,13 @@ function HomeRedirect() {
 function App() {
   const location = useLocation();
 
-  const isAdmin = location.pathname.startsWith("/admin") ||
-    (location.pathname === "/activity-detail" && new URLSearchParams(location.search).get("from") === "admin");
+  const isAdmin =
+    location.pathname.startsWith("/admin") ||
+    (location.pathname === "/activity-detail" &&
+      new URLSearchParams(location.search).get("from") === "admin");
 
-  const hideNavbar = ["/login", "/register", "/scan","/forgot-password"].includes(location.pathname) || isAdmin;
-
+  const hideNavbar =
+    ["/login", "/register", "/scan", "/forgot-password"].includes(location.pathname) || isAdmin;
 
   return (
     <AlertProvider>
@@ -63,9 +65,12 @@ function App() {
         <AdminReportProvider>
           <AutoLogout />
           <SessionManager />
+
           <div
             className={
-              isAdmin || location.pathname === "/login" || location.pathname === "/register"
+              isAdmin ||
+              location.pathname === "/login" ||
+              location.pathname === "/register"
                 ? ""
                 : "app-shell"
             }
@@ -74,7 +79,9 @@ function App() {
 
             <div
               className={
-                isAdmin || location.pathname === "/login" || location.pathname === "/register"
+                isAdmin ||
+                location.pathname === "/login" ||
+                location.pathname === "/register"
                   ? ""
                   : "app-content"
               }
@@ -82,30 +89,31 @@ function App() {
               <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+
                 <Route path="/" element={<ProtectedRoute><HomeRedirect /></ProtectedRoute>} />
                 <Route path="/CreateActivities" element={<ProtectedRoute><CreateActivities /></ProtectedRoute>} />
-                <Route path="/activities" element={<ActivityDetail />} />
-                <Route path="/activity-detail" element={<ActivityDetail />} />
-                <Route path="/search" element={<Search />} />
+                <Route path="/activities" element={<ProtectedRoute><ActivityDetail /></ProtectedRoute>} />
+                <Route path="/activity-detail" element={<ProtectedRoute><ActivityDetail /></ProtectedRoute>} />
+                <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/user/:id" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
                 <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
                 <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
                 <Route path="/edit-activity/:id" element={<ProtectedRoute><EditActivity /></ProtectedRoute>} />
-                <Route path="/checkin/:activityId/:qrToken" element={<CheckIn />} />
-                <Route path="/admin" element={<AdminDashboard />} />
-                <Route path="/review/:activityId" element={<ReviewForm />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/checkin/:activityId/:qrToken" element={<ProtectedRoute><CheckIn /></ProtectedRoute>} />
+                <Route path="/review/:activityId" element={<ProtectedRoute><ReviewForm /></ProtectedRoute>} />
                 <Route path="/change-password" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
-                <Route path="/scan" element={<ScanQR />} />
+                <Route path="/scan" element={<ProtectedRoute><ScanQR /></ProtectedRoute>} />
                 <Route path="/activity-summary" element={<ProtectedRoute><ActivitySummary /></ProtectedRoute>} />
                 <Route path="/activity-summary/:id" element={<ProtectedRoute><ActivitySummaryDetail /></ProtectedRoute>} />
-                <Route path="/admin/reports" element={<AdminReports />} />
-                <Route path="/admin/activities" element={<AdminActivities />} />
-                <Route path="/admin/users" element={<AdminUsers />} />
-                <Route path="/admin/reviews" element={<AdminReviews />} />
-                <Route path="/admin/reports/:id" element={<AdminReportDetail />} />
 
+                <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+                <Route path="/admin/reports" element={<ProtectedRoute><AdminReports /></ProtectedRoute>} />
+                <Route path="/admin/activities" element={<ProtectedRoute><AdminActivities /></ProtectedRoute>} />
+                <Route path="/admin/users" element={<ProtectedRoute><AdminUsers /></ProtectedRoute>} />
+                <Route path="/admin/reviews" element={<ProtectedRoute><AdminReviews /></ProtectedRoute>} />
+                <Route path="/admin/reports/:id" element={<ProtectedRoute><AdminReportDetail /></ProtectedRoute>} />
               </Routes>
             </div>
           </div>

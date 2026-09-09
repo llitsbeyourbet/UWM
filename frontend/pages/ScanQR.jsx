@@ -123,7 +123,7 @@ function ScanQR() {
               if (
                 !url.pathname.startsWith("/checkin/")
               ) {
-                showAlert({
+                await howAlert({
                   type: 'warning',
                   title: 'QR ไม่ถูกต้อง',
                   message: 'QR นี้ไม่ใช่ QR สำหรับเช็คอิน',
@@ -139,7 +139,7 @@ function ScanQR() {
                 url.pathname.split("/");
 
               if (parts.length !== 4) {
-                showAlert({
+                await showAlert({
                   type: 'error',
                   title: 'QR ไม่ถูกต้อง',
                   message: 'ข้อมูลใน QR Code ไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง',
@@ -155,7 +155,7 @@ function ScanQR() {
               const qrToken = parts[3];
 
               if (!activityId || !qrToken) {
-                showAlert({
+                await showAlert({
                   type: 'error',
                   title: 'QR ไม่ถูกต้อง',
                   message: 'ข้อมูลใน QR Code ไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง',
@@ -173,7 +173,7 @@ function ScanQR() {
             } catch (err) {
               console.log(err);
 
-              showAlert({
+              await showAlert({
                 type: 'error',
                 title: 'QR ไม่ถูกต้อง',
                 message: 'เกิดข้อผิดพลาดในการอ่าน QR Code กรุณาลองใหม่อีกครั้ง',

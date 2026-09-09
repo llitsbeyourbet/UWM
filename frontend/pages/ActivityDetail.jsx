@@ -887,9 +887,9 @@ function ActivityDetail() {
                 </button>
               </>
             )}
-
-            {/* ยังไม่ได้เข้าร่วม หรือเคยยกเลิก */}
-            {(joinStatus === null || joinStatus === "cancelled") && (
+            
+            {/* ยังไม่เคยเข้าร่วม */}
+            {joinStatus === null && (
               <>
                 {Number(activity.joinedCount || 0) >=
                   Number(activity.participantCount || 0) ? (
@@ -902,12 +902,17 @@ function ActivityDetail() {
                     onClick={handleJoin}
                     disabled={joinLoading}
                   >
-                    {joinLoading
-                      ? "กำลังส่ง..."
-                      : "เข้าร่วมกิจกรรม"}
+                    {joinLoading ? "กำลังส่ง..." : "เข้าร่วมกิจกรรม"}
                   </button>
                 )}
               </>
+            )}
+
+            {/* เคยยกเลิกแล้ว */}
+            {joinStatus === "cancelled" && (
+              <button className="join-btn joined" disabled>
+                คุณยกเลิกการเข้าร่วมกิจกรรมนี้แล้ว
+              </button>
             )}
           </div>
         )}

@@ -46,7 +46,7 @@ router.post("/:activityId", auth, async (req, res) => {
       }
 
       if (activity.createdBy === req.userId) {
-        const error = new Error("ไม่สามารถ join กิจกรรมของตัวเองได้");
+        const error = new Error("คุณไม่สามารถเข้าร่วมกิจกรรมที่คุณสร้างเองได้");
         error.statusCode = 400;
         throw error;
       }
@@ -57,9 +57,23 @@ router.post("/:activityId", auth, async (req, res) => {
         lock: transaction.LOCK.UPDATE,
       });
 
-      if (existing && existing.status !== "cancelled") {
-        const error = new Error("ส่งคำขอไปแล้ว");
-        error.statusCode = 400;
+      if (existing) {
+        let message = "คุณเคยส่งคำขอเข้าร่วมกิจกรรมนี้แล้ว";
+
+        if (existing.status === "pending") {
+          message = "คุณส่งคำขอเข้าร่วมกิจกรรมนี้แล้ว กรุณารอการอนุมัติจากผู้จัดกิจกรรม";
+        } else if (existing.status === "approved") {
+          message = "คุณเข้าร่วมกิจกรรมนี้แล้ว";
+        } else if (existing.status === "checked_in") {
+          message = "คุณเช็คอินกิจกรรมนี้เรียบร้อยแล้ว";
+        } else if (existing.status === "rejected") {
+          message = "คำขอเข้าร่วมกิจกรรมนี้ของคุณถูกปฏิเสธแล้ว";
+        } else if (existing.status === "cancelled") {
+          message = "คุณยกเลิกการเข้าร่วมกิจกรรมนี้แล้ว ไม่สามารถเข้าร่วมใหม่ได้";
+        }
+
+        const error = new Error(message);
+        error.statusCode = 409;
         throw error;
       }
 
@@ -73,7 +87,7 @@ router.post("/:activityId", auth, async (req, res) => {
         });
 
         if (joinedCount >= activity.participantCount) {
-          const error = new Error("กิจกรรมเต็มแล้ว");
+          const error = new Error("กิจกรรมนี้มีผู้เข้าร่วมครบแล้ว");
           error.statusCode = 400;
           throw error;
         }
@@ -87,14 +101,10 @@ router.post("/:activityId", auth, async (req, res) => {
       }
 
       resultStatus = activity.activityType === "public" ? "approved" : "pending";
-      if (existing) {
-        await existing.update({ status: resultStatus }, { transaction });
-      } else {
-        await JoinRequest.create(
-          { activityId, userId: req.userId, status: resultStatus },
-          { transaction }
-        );
-      }
+      await JoinRequest.create(
+        { activityId, userId: req.userId, status: resultStatus },
+        { transaction }
+      );
     });
 
     await notificationService.createNotification(
@@ -123,18 +133,50 @@ router.post("/:activityId", auth, async (req, res) => {
 });
 
 // ยกเลิกคำขอ
+// ยกเลิกคำขอ / ยกเลิกการเข้าร่วม
 router.put("/:activityId/cancel", auth, async (req, res) => {
   try {
     const { activityId } = req.params;
+
     const joinRequest = await JoinRequest.findOne({
-      where: { activityId, userId: req.userId }
+      where: { activityId, userId: req.userId },
     });
-    if (!joinRequest) return res.status(404).json({ message: "ไม่พบคำขอ" });
+
+    if (!joinRequest) {
+      return res.status(404).json({ message: "ไม่พบข้อมูลการเข้าร่วมกิจกรรมนี้" });
+    }
+
+    if (joinRequest.status === "checked_in") {
+      return res.status(400).json({
+        message: "คุณเช็คอินกิจกรรมนี้แล้ว ไม่สามารถยกเลิกการเข้าร่วมได้",
+      });
+    }
+
+    if (joinRequest.status === "cancelled") {
+      return res.status(409).json({
+        message: "คุณยกเลิกการเข้าร่วมกิจกรรมนี้แล้ว",
+      });
+    }
+
+    if (!["pending", "approved"].includes(joinRequest.status)) {
+      return res.status(400).json({
+        message: "ไม่สามารถยกเลิกคำขอนี้ได้",
+      });
+    }
+
+    const previousStatus = joinRequest.status;
+
     await joinRequest.update({ status: "cancelled" });
-    res.json({ message: "ยกเลิกคำขอสำเร็จ" });
+
+    return res.json({
+      message:
+        previousStatus === "pending"
+          ? "ยกเลิกคำขอสำเร็จ"
+          : "ยกเลิกการเข้าร่วมกิจกรรมสำเร็จ",
+    });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+    console.error("CANCEL JOIN ERROR:", err);
+    return res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
 });
 

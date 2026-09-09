@@ -265,10 +265,10 @@ router.get("/activity/:activityId", async (req, res) => {
     const reviewerIds = reviews.map((review) => review.reviewerId);
     const existingUsers = reviewerIds.length
       ? await User.findAll({
-          where: { id: { [Op.in]: reviewerIds } },
-          attributes: ["id"],
-          raw: true,
-        })
+        where: { id: { [Op.in]: reviewerIds } },
+        attributes: ["id"],
+        raw: true,
+      })
       : [];
 
     const existingUserIds = new Set(
@@ -280,11 +280,11 @@ router.get("/activity/:activityId", async (req, res) => {
 
     const avgRating = filteredReviews.length
       ? (
-          filteredReviews.reduce(
-            (sum, review) => sum + Number(review.rating),
-            0
-          ) / filteredReviews.length
-        ).toFixed(1)
+        filteredReviews.reduce(
+          (sum, review) => sum + Number(review.rating),
+          0
+        ) / filteredReviews.length
+      ).toFixed(1)
       : null;
 
     return res.json({
@@ -314,10 +314,10 @@ router.get("/host/:hostId", async (req, res) => {
     const reviewerIds = reviews.map((review) => review.reviewerId);
     const existingUsers = reviewerIds.length
       ? await User.findAll({
-          where: { id: { [Op.in]: reviewerIds } },
-          attributes: ["id"],
-          raw: true,
-        })
+        where: { id: { [Op.in]: reviewerIds } },
+        attributes: ["id"],
+        raw: true,
+      })
       : [];
 
     const existingUserIds = new Set(
@@ -329,11 +329,11 @@ router.get("/host/:hostId", async (req, res) => {
 
     const avgRating = filteredReviews.length
       ? (
-          filteredReviews.reduce(
-            (sum, review) => sum + Number(review.rating),
-            0
-          ) / filteredReviews.length
-        ).toFixed(1)
+        filteredReviews.reduce(
+          (sum, review) => sum + Number(review.rating),
+          0
+        ) / filteredReviews.length
+      ).toFixed(1)
       : null;
 
     return res.json({ avgRating, totalReviews: filteredReviews.length });
@@ -371,6 +371,12 @@ router.get("/activity/:activityId/comments", auth, async (req, res) => {
     if (!activity) {
       return res.status(404).json({ message: "ไม่พบกิจกรรม" });
     }
+    
+    if (isActivityEnded(activity)) {
+      return res.status(400).json({
+        message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถยกเลิกการเข้าร่วมได้",
+      });
+    }
 
     if (Number(activity.createdBy) !== Number(req.userId)) {
       return res.status(403).json({ message: "ไม่มีสิทธิ์ดู comment" });
@@ -405,10 +411,10 @@ router.get("/activity/:activityId/rating", async (req, res) => {
     const reviewerIds = reviews.map((review) => review.reviewerId);
     const existingUsers = reviewerIds.length
       ? await User.findAll({
-          where: { id: { [Op.in]: reviewerIds } },
-          attributes: ["id"],
-          raw: true,
-        })
+        where: { id: { [Op.in]: reviewerIds } },
+        attributes: ["id"],
+        raw: true,
+      })
       : [];
 
     const existingUserIds = new Set(
@@ -420,11 +426,11 @@ router.get("/activity/:activityId/rating", async (req, res) => {
 
     const avgRating = filteredReviews.length
       ? (
-          filteredReviews.reduce(
-            (sum, review) => sum + Number(review.rating),
-            0
-          ) / filteredReviews.length
-        ).toFixed(1)
+        filteredReviews.reduce(
+          (sum, review) => sum + Number(review.rating),
+          0
+        ) / filteredReviews.length
+      ).toFixed(1)
       : null;
 
     return res.json({ avgRating, totalReviews: filteredReviews.length });
