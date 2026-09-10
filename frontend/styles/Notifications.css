@@ -153,7 +153,6 @@
   overflow: hidden;
   background: #ff4d4f;
   border-radius: 18px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.045);
   transform: translateZ(0);
 }
 /* ===== Notification Card ===== */
@@ -171,7 +170,7 @@
 
   transform: translateX(0);
   transition:
-    transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.52s cubic-bezier(0.22, 1, 0.36, 1),
     background-color 0.2s ease;
 
   will-change: transform;
@@ -374,7 +373,7 @@
   z-index: 1;
 
   opacity: 0.85;
-  transition: opacity 0.25s ease;
+  transition: opacity 0.45s ease;
 }
 
 .notif-swipe-wrapper.swiped .notif-delete-btn {
