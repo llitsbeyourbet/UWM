@@ -1,73 +1,207 @@
 .notifications-page {
   min-height: 100dvh;
-  background: #f7f8fa;
+  background: #f5f0e8;
   font-family: 'Sarabun', sans-serif;
-  padding-bottom: 70px;
+  padding-bottom: 90px;
 }
 
+/* ===== Header ===== */
+
 .notif-header {
-  background: #fff;
-  padding: 22px 18px 16px;
-  border-bottom: none;
+  padding: 26px 20px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 100;
 }
 
 .notif-title {
   margin: 0;
-  font-size: 24px;
-  font-weight: 600;
-  color: #13294b;
+  font-size: 25px;
+  font-weight: 800;
+  color: #111;
 }
-.notif-bell {
+
+.notif-menu-wrapper {
+  position: relative;
+}
+
+.notif-menu-btn {
   width: 40px;
   height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  color: #111;
+  font-size: 27px;
+  line-height: 1;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #13294b;
+  padding: 0 0 7px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+  -webkit-tap-highlight-color: transparent;
 }
 
+.notif-menu-btn:focus,
+.notif-menu-btn:focus-visible {
+  outline: none;
+}
+
+/* ===== Dropdown เดิม ===== */
+
+.notif-dropdown {
+  position: absolute;
+  top: 46px;
+  right: 0;
+  width: 220px;
+  background: #fff;
+  border: 1px solid #eee9e1;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 6px;
+  z-index: 300;
+}
+
+.notif-dropdown button {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 11px 12px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  font-family: 'Sarabun', sans-serif;
+  font-size: 14px;
+  color: #26364f;
+  cursor: pointer;
+}
+
+.notif-dropdown button:hover {
+  background: #f7f4ef;
+}
+
+.notif-dropdown button.danger {
+  color: #e5484d;
+}
+
+.notif-dropdown button.danger:hover {
+  background: #fff1f1;
+}
+
+/* ===== Tabs แบบเดียวกับหมวด Home ===== */
+
+.notif-tabs {
+  display: flex;
+  gap: 9px;
+  padding: 4px 20px 14px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.notif-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.notif-tabs button {
+  flex-shrink: 0;
+  border: none;
+  background: #fff;
+  color: #777;
+  padding: 9px 17px;
+  border-radius: 999px;
+  font-family: 'Sarabun', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: 0.2s ease;
+}
+
+.notif-tabs button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.notif-tabs button.active {
+  background: #111;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ===== Notification List ===== */
+
 .notif-list {
-  padding: 12px 14px 24px;
+  padding: 4px 20px 24px;
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 10px;
 }
 
 .notif-section-label {
-  margin: 12px 4px 8px;
+  margin: 12px 4px 2px;
   font-size: 13px;
-  color: #8793a6;
+  color: #999;
   font-weight: 500;
 }
 
+/* ===== Swipe Wrapper ===== */
+
+.notif-swipe-wrapper {
+  position: relative;
+  overflow: hidden;
+  background: #ff4d4f;
+  border-radius: 18px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.045);
+}
+
+/* ===== Notification Card ===== */
+
 .notif-card {
   position: relative;
+  z-index: 2;
   background: #fff;
-  border-radius: 0;
-  padding: 16px 10px;
+  border-radius: 18px;
+  padding: 16px;
   display: flex;
   gap: 14px;
   align-items: flex-start;
-  border-bottom: 1px solid #edf0f4;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition:
+    transform 0.25s ease,
+    background-color 0.2s ease;
 }
 
 .notif-card:hover {
-  background: #fafcff;
+  background: #fdfdfd;
 }
 
+/* ยังไม่ได้อ่าน */
 .notif-card.new {
-  background: #f2f6ff;
-  border-left: 4px solid #2873ff;
-  padding-left: 6px;
+  background: #f5f8ff;
 }
+
+/* จุด unread ด้านขวา */
+.notif-card.new::after {
+  content: "";
+  position: absolute;
+  top: 18px;
+  right: 16px;
+  width: 8px;
+  height: 8px;
+  background: #2873ff;
+  border-radius: 50%;
+}
+
+.notif-card.new .notif-body {
+  padding-right: 15px;
+}
+
+/* ===== Icon ===== */
 
 .notif-icon {
   width: 44px;
@@ -88,105 +222,15 @@
 }
 
 .notif-icon.amber {
-  background: #f6ecd1;
+  background: #fff0cf;
 }
 
 .notif-icon.red {
-  background: #f8d6d6;
+  background: #fbdada;
 }
 
-.notif-body {
-  flex: 1;
-}
+/* ===== Profile ===== */
 
-.notif-message {
-  margin: 0;
-  font-size: 14px;
-  color: #111;
-  line-height: 1.45;
-}
-
-.notif-time {
-  margin: 3px 0 0;
-  font-size: 12px;
-  color: #999;
-}
-
-.notif-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.btn-accept {
-  padding: 5px 14px;
-  background: #000;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: 'Sarabun', sans-serif;
-}
-
-.btn-reject {
-  padding: 5px 14px;
-  background: #f0f0f0;
-  color: #555;
-  border: none;
-  border-radius: 8px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: 'Sarabun', sans-serif;
-}
-
-.bold {
-  font-weight: 500;
-}
-
-.empty-text {
-  text-align: center;
-  color: #aaa;
-  font-size: 14px;
-  margin-top: 40px;
-}
-.btn-review {
-  padding: 6px 16px;
-  background: #fff3e0;
-  color: #e65100;
-  border: 1px solid #e65100;
-  border-radius: 8px;
-  font-size: 13px;
-  cursor: pointer;
-  font-family: 'Sarabun', sans-serif;
-  margin-top: 4px;
-}
-
-.notif-admin-note {
-  margin-top: 8px;
-  margin-bottom: 9px;
-  padding: 9px 11px;
-  background: #f7f7f9;
-  border-left: 3px solid #8b90a0;
-  border-radius: 6px;
-}
-
-.notif-admin-note span {
-  display: block;
-  margin-bottom: 5px;
-  color: #777d8f;
-  font-size: 11px;
-  font-weight: 500;
-}
-
-.notif-admin-note p {
-  margin: 0;
-  color: #44495a;
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-/* รูปผู้ส่งคำขอเข้าร่วม */
 .notif-profile {
   width: 44px;
   height: 44px;
@@ -216,65 +260,98 @@
   color: #5577cc;
 }
 
-.notif-user-link {
-  cursor: pointer;
+/* ===== Content ===== */
+
+.notif-body {
+  flex: 1;
+  min-width: 0;
 }
 
-.notif-user-link:hover {
-  text-decoration: underline;
-}
-
-.notif-tabs {
-  display: flex;
-  gap: 10px;
-  padding: 8px 14px 14px;
-  background: #fff;
-  border-bottom: 1px solid #edf0f4;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.notif-tabs::-webkit-scrollbar {
-  display: none;
-}
-
-.notif-tabs button {
-  flex-shrink: 0;
-  border: none;
-  background: #f1f4f8;
-  color: #71809a;
-  padding: 9px 18px;
-  border-radius: 8px;
-  font-family: 'Sarabun', sans-serif;
+.notif-message {
+  margin: 0;
   font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: 0.2s ease;
+  color: #111;
+  line-height: 1.45;
 }
 
-.notif-tabs button:focus {
-  outline: none;
-  box-shadow: none;
+.bold {
+  font-weight: 600;
 }
 
-.notif-tabs button.active {
-  background: #2873ff;
+.notif-time {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: #aaa;
+}
+
+/* ===== Accept / Reject ===== */
+
+.notif-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.btn-accept {
+  padding: 6px 16px;
+  background: #111;
   color: #fff;
-  box-shadow: 0 4px 10px rgba(40, 115, 255, 0.18);
+  border: none;
+  border-radius: 999px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: 'Sarabun', sans-serif;
 }
 
-.notif-swipe-wrapper {
-  position: relative;
-  overflow: hidden;
-  background: #ff4d4f;
+.btn-reject {
+  padding: 6px 16px;
+  background: #f1efeb;
+  color: #555;
+  border: none;
+  border-radius: 999px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: 'Sarabun', sans-serif;
 }
 
-.notif-card {
-  position: relative;
-  z-index: 2;
-  transition: transform 0.25s ease;
+.btn-review {
+  padding: 6px 16px;
+  background: #fff3e0;
+  color: #e65100;
+  border: 1px solid #e65100;
+  border-radius: 999px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Sarabun', sans-serif;
+  margin-top: 6px;
 }
+
+/* ===== Admin Note ===== */
+
+.notif-admin-note {
+  margin-top: 9px;
+  margin-bottom: 9px;
+  padding: 10px 12px;
+  background: #f7f4ef;
+  border-radius: 10px;
+}
+
+.notif-admin-note span {
+  display: block;
+  margin-bottom: 5px;
+  color: #888;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.notif-admin-note p {
+  margin: 0;
+  color: #444;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ===== Swipe Delete ===== */
 
 .notif-swipe-wrapper.swiped .notif-card {
   transform: translateX(-72px);
@@ -296,68 +373,47 @@
   z-index: 1;
 }
 
-.notif-menu-wrapper {
-  position: relative;
-}
+/* ===== Empty ===== */
 
-.notif-menu-btn {
-  width: 40px;
-  height: 40px;
-  border: none;
-  background: transparent;
-  color: #13294b;
-  font-size: 28px;
-  line-height: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-bottom: 8px;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.notif-menu-btn:focus,
-.notif-menu-btn:focus-visible {
-  outline: none;
-}
-
-.notif-dropdown {
-  position: absolute;
-  top: 46px;
-  right: 0;
-  width: 220px;
-  background: #fff;
-  border: 1px solid #edf0f4;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  padding: 6px;
-  z-index: 300;
-}
-
-.notif-dropdown button {
-  width: 100%;
-  border: none;
-  background: transparent;
-  padding: 11px 12px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-align: left;
-  font-family: 'Sarabun', sans-serif;
+.empty-text {
+  text-align: center;
+  color: #aaa;
   font-size: 14px;
-  color: #26364f;
+  margin-top: 40px;
+}
+
+.notif-user-link {
   cursor: pointer;
 }
 
-.notif-dropdown button:hover {
-  background: #f5f7fa;
+.notif-user-link:hover {
+  text-decoration: underline;
 }
 
-.notif-dropdown button.danger {
-  color: #e5484d;
-}
+/* ===== Mobile ===== */
 
-.notif-dropdown button.danger:hover {
-  background: #fff1f1;
+@media (max-width: 600px) {
+  .notif-header {
+    padding: 24px 20px 14px;
+  }
+
+  .notif-title {
+    font-size: 24px;
+  }
+
+  .notif-tabs {
+    padding: 4px 20px 13px;
+  }
+
+  .notif-tabs button {
+    padding: 9px 17px;
+  }
+
+  .notif-list {
+    padding: 4px 20px 22px;
+  }
+
+  .notif-card {
+    padding: 15px 14px;
+  }
 }
