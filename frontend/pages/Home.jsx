@@ -13,7 +13,7 @@ function Home() {
   const [username, setUsername] = useState("");
   const [joinCounts, setJoinCounts] = useState({});
 
-  const categories = ["ทั้งหมด", "กีฬา", "ดนตรี", "ภาพยนตร์", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่"];
+  const categories = ["ทั้งหมด", "กีฬา", "ดนตรี", "ภาพยนตร์", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่", "เรียน", "สุขภาพ", "จิตอาสา"];
 
 
   useEffect(() => {

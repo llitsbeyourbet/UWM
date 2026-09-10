@@ -730,6 +730,9 @@ router.get("/chart-categories", auth, isAdmin, async (req, res) => {
       "คาเฟ่",
       "ศิลปะ",
       "ท่องเที่ยว",
+      "เรียน",
+      "สุขภาพ",
+      "จิตอาสา",
     ];
 
     const activities = await Activity.findAll({

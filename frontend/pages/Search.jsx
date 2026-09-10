@@ -24,7 +24,7 @@ function Search() {
   const [joinCounts, setJoinCounts] = useState({});
   const [loading, setLoading] = useState(true);
 
-  const categories = ["กีฬา", "ดนตรี", "ภาพยนตร์", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่"];
+  const categories = ["กีฬา", "ดนตรี", "ภาพยนตร์", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่", "เรียน", "สุขภาพ", "จิตอาสา"];
 
 
   useEffect(() => {
