@@ -7,6 +7,7 @@ export const CATEGORY_ICONS = {
   คาเฟ่: "☕",
   ศิลปะ: "🎨",
   ท่องเที่ยว: "✈️",
+  เรียน: "📚",
 };
 
 export const getCategoryIcon = (category) =>
