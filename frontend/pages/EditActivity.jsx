@@ -25,7 +25,7 @@ function EditActivity() {
   const [showCategory, setShowCategory] = useState(false);
   const [checkinStart, setCheckinStart] = useState("");
   const [checkinEnd, setCheckinEnd] = useState("");
-  const categoryOptions = ["กีฬา", "ดนตรี", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่", "ภาพยนตร์"];
+  const categoryOptions = ["กีฬา", "ดนตรี", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่", "ภาพยนตร์", "เรียน", "สุขภาพ", "จิตอาสา"];
 
   const toggleCategory = (val) => {
     setCategory((prev) =>

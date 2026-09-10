@@ -8,6 +8,8 @@ export const CATEGORY_ICONS = {
   ศิลปะ: "🎨",
   ท่องเที่ยว: "✈️",
   เรียน: "📚",
+  สุขภาพ: "🏃",
+  จิตอาสา: "🌍",
 };
 
 export const getCategoryIcon = (category) =>
