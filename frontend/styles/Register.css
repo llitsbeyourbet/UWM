@@ -56,12 +56,11 @@
 }
 
 .register-main-logo {
-  width: 200px;
-  height: auto;
+  width: 250px;
 }
 
 .register-hero {
-  margin-top: 60px;
+  margin-top: 0px;
 }
 
 .register-hero h1 {
