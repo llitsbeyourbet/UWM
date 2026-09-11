@@ -16,6 +16,7 @@ function EditProfile() {
   const [profileImage, setProfileImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -53,47 +54,71 @@ function EditProfile() {
     if (!file) return;
 
     const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+
     if (file.size > MAX_IMAGE_SIZE) {
       e.target.value = "";
+
       await showAlert({
         type: "warning",
         title: "รูปภาพมีขนาดใหญ่เกินไป",
         message: "รูปภาพต้องมีขนาดไม่เกิน 5 MB",
       });
+
       return;
     }
 
     setPreview(URL.createObjectURL(file));
+    setUploadingImage(true);
 
     const formData = new FormData();
     formData.append("image", file);
 
     try {
       const token = sessionStorage.getItem("token");
+
       const res = await fetch(`${API_URL}/api/upload`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: formData,
       });
+
       const data = await res.json();
 
       if (!res.ok) {
         throw new Error(data.message || "อัปโหลดรูปไม่สำเร็จ");
       }
 
+      // ได้ URL Cloudinary แล้ว
       setProfileImage(data.filename);
+
     } catch (err) {
       console.error("Upload error:", err);
+
       e.target.value = "";
+
       await showAlert({
         type: "error",
         title: "อัปโหลดไม่สำเร็จ",
         message: err.message || "เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ",
       });
+    } finally {
+      setUploadingImage(false);
     }
   };
 
+
   const handleSave = async () => {
+    if (uploadingImage) {
+      await showAlert({
+        type: "info",
+        title: "กำลังอัปโหลดรูป",
+        message: "กรุณารอให้อัปโหลดรูปเสร็จก่อนบันทึก",
+      });
+      return;
+    }
+
     const token = sessionStorage.getItem("token");
     if (!token) return;
 
@@ -160,7 +185,7 @@ function EditProfile() {
       <div className="edit-header">
         <div className="back-btn" onClick={() => navigate(-1)}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round">
-            <polyline points="15 18 9 12 15 6"/>
+            <polyline points="15 18 9 12 15 6" />
           </svg>
         </div>
         <p className="edit-title">แก้ไขโปรไฟล์</p>
@@ -174,13 +199,13 @@ function EditProfile() {
               <img src={preview} alt="avatar" className="avatar-img" />
             ) : (
               <svg width="44" height="44" viewBox="0 0 24 24" fill="#bbb">
-                <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+                <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
               </svg>
             )}
             <div className="avatar-overlay">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round">
-                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                <circle cx="12" cy="13" r="4"/>
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                <circle cx="12" cy="13" r="4" />
               </svg>
             </div>
           </label>
@@ -220,8 +245,16 @@ function EditProfile() {
           </div>
         </div>
 
-        <button className="save-btn" onClick={handleSave} disabled={loading}>
-          {loading ? "กำลังบันทึก..." : "บันทึก"}
+        <button
+          className="save-btn"
+          onClick={handleSave}
+          disabled={loading || uploadingImage}
+        >
+          {uploadingImage
+            ? "กำลังอัปโหลดรูป..."
+            : loading
+              ? "กำลังบันทึก..."
+              : "บันทึก"}
         </button>
       </div>
     </div>

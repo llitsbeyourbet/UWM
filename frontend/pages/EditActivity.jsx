@@ -26,6 +26,7 @@ function EditActivity() {
   const [checkinStart, setCheckinStart] = useState("");
   const [checkinEnd, setCheckinEnd] = useState("");
   const categoryOptions = ["กีฬา", "ดนตรี", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่", "ภาพยนตร์", "เรียน", "สุขภาพ", "จิตอาสา"];
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const toggleCategory = (val) => {
     setCategory((prev) =>
@@ -110,49 +111,72 @@ function EditActivity() {
     if (!file) return;
 
     const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+
     if (file.size > MAX_IMAGE_SIZE) {
       e.target.value = "";
+
       await showAlert({
         type: "warning",
         title: "รูปภาพมีขนาดใหญ่เกินไป",
         message: "รูปภาพต้องมีขนาดไม่เกิน 5 MB",
       });
+
       return;
     }
 
     const objectUrl = URL.createObjectURL(file);
     setPreview(objectUrl);
 
+    setUploadingImage(true);
+
     const formData = new FormData();
     formData.append("image", file);
+
     try {
       const token = sessionStorage.getItem("token");
+
       const res = await fetch(`${API_URL}/api/upload`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: formData,
       });
+
       const data = await res.json();
-      if (res.ok) {
-        setCoverFilename(data.filename);
-      } else {
-        await showAlert({
-          type: 'error',
-          title: 'อัปโหลดไม่สำเร็จ',
-          message: data.message || "เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ",
-        });
+
+      if (!res.ok) {
+        throw new Error(data.message || "อัปโหลดรูปไม่สำเร็จ");
       }
+
+      // data.filename คือ Cloudinary URL
+      setCoverFilename(data.filename);
+
     } catch (err) {
       console.error("Upload error:", err);
+
+      e.target.value = "";
+
       await showAlert({
-        type: 'error',
-        title: 'เกิดข้อผิดพลาด',
-        message: 'ไม่สามารถอัปโหลดรูปภาพได้ กรุณาลองใหม่อีกครั้ง',
+        type: "error",
+        title: "อัปโหลดไม่สำเร็จ",
+        message: err.message || "เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ",
       });
+    } finally {
+      setUploadingImage(false);
     }
   };
 
   const handleSubmit = async () => {
+    if (uploadingImage) {
+      await showAlert({
+        type: "info",
+        title: "กำลังอัปโหลดรูป",
+        message: "กรุณารอให้อัปโหลดรูปเสร็จก่อนบันทึก",
+      });
+
+      return;
+    }
     if (!activityName) {
       await showAlert({ type: 'warning', title: 'ข้อมูลไม่ครบถ้วน', message: 'กรุณากรอกชื่อกิจกรรม' });
       return;
@@ -590,12 +614,14 @@ function EditActivity() {
           </button>
 
           <button
-            className="submit-btn"
             type="button"
+            className="submit-btn"
             onClick={handleSubmit}
+            disabled={uploadingImage}
           >
-            <span>➤</span>
-            บันทึกการแก้ไข
+            {uploadingImage
+              ? "กำลังแก้ไขกิจกรรม..."
+              : "บันทึกการแก้ไข"}
           </button>
         </div>
 
