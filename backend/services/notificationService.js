@@ -5,7 +5,7 @@ const UserSession = require("../models/UserSession");
 
 let io = null;
 const userSockets = new Map();
-const SESSION_IDLE_TIMEOUT = 3 * 60 * 1000;
+const SESSION_IDLE_TIMEOUT = 60 * 60 * 1000;
 
 const addSocket = (userId, socketId) => {
   const key = String(userId);

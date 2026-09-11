@@ -620,7 +620,7 @@ function EditActivity() {
             disabled={uploadingImage}
           >
             {uploadingImage
-              ? "กำลังแก้ไขกิจกรรม..."
+              ? "กำลังอัปโหลดรูป..."
               : "บันทึกการแก้ไข"}
           </button>
         </div>
