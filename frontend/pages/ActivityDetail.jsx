@@ -915,7 +915,7 @@ function ActivityDetail() {
                 <button className="join-btn ended" disabled>
                   {activityEnded
                     ? "กิจกรรมนี้สิ้นสุดแล้ว"
-                    : "กิจกรรมเริ่มแล้ว ไม่สามารถเข้าร่วมได้"}
+                    : "กิจกรรมกำลังดำเนินการ ไม่สามารถเข้าร่วมได้"}
                 </button>
               ) : Number(activity.joinedCount || 0) >=
                 Number(activity.participantCount || 0) ? (
