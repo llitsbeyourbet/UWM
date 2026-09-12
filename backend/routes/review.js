@@ -10,6 +10,7 @@ const JoinRequest = require("../models/JoinRequest");
 const Activity = require("../models/Activity");
 const User = require("../models/User");
 const notificationService = require("../services/notificationService");
+const { isActivityEnded } = require("../utils/activityTime");
 
 const isValidRating = (value) => {
   const rating = Number(value);
@@ -164,6 +165,13 @@ router.post("/:activityId", auth, async (req, res) => {
     if (!activity) {
       await transaction.rollback();
       return res.status(404).json({ message: "ไม่พบกิจกรรม" });
+    }
+
+    if (!isActivityEnded(activity)) {
+      await transaction.rollback();
+      return res.status(400).json({
+        message: "สามารถรีวิวได้หลังจากกิจกรรมสิ้นสุดแล้วเท่านั้น",
+      });
     }
 
     const existingReview = await ActivityReview.findOne({
@@ -371,7 +379,7 @@ router.get("/activity/:activityId/comments", auth, async (req, res) => {
     if (!activity) {
       return res.status(404).json({ message: "ไม่พบกิจกรรม" });
     }
-    
+
     if (isActivityEnded(activity)) {
       return res.status(400).json({
         message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถยกเลิกการเข้าร่วมได้",

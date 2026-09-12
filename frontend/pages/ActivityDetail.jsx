@@ -405,7 +405,16 @@ function ActivityDetail() {
     return true;
   });
 
-  const activityEnded = activity && new Date(activity.date + "T" + (activity.endTime || activity.time)) <= new Date();
+  const now = new Date();
+
+  const activityStarted =
+    activity &&
+    new Date(activity.date + "T" + activity.time) <= now;
+
+  const activityEnded =
+    activity &&
+    new Date(activity.date + "T" + (activity.endTime || activity.time)) <= now;
+
 
   // Pagination for Participants
   const totalP = participants.length;
@@ -831,17 +840,12 @@ function ActivityDetail() {
               🚫 กิจกรรมนี้ถูกระงับโดย Admin
             </button>
           </div>
-        ) : activityEnded ? (
-          <div className="join-section">
-            <button className="join-btn ended" disabled>
-              กิจกรรมนี้สิ้นสุดแล้ว
-            </button>
-          </div>
+
         ) : fromAdmin || isOwner ? null : (
           <div className="join-section">
 
-            {/* เช็คอินแล้ว แต่ยังไม่ได้รีวิว */}
-            {joinStatus === "checked_in" && !reviewed && (
+            {/* เช็คอินแล้ว + กิจกรรมจบแล้ว = รีวิวได้ */}
+            {joinStatus === "checked_in" && !reviewed && activityEnded && (
               <button
                 className="review-btn"
                 onClick={() => navigate("/review/" + activity.id)}
@@ -850,70 +854,91 @@ function ActivityDetail() {
               </button>
             )}
 
-            {/* เช็คอินและรีวิวแล้ว จะไม่แสดงอะไร */}
+            {/* เช็คอินแล้ว แต่กิจกรรมยังไม่จบ */}
+            {joinStatus === "checked_in" && !activityEnded && (
+              <button className="join-btn joined" disabled>
+                ยืนยันการเข้าร่วมแล้ว
+              </button>
+            )}
 
-            {/* กิจกรรมสาธารณะเข้าร่วมแล้ว
-        หรือกิจกรรมส่วนตัวได้รับการอนุมัติแล้ว */}
+            {/* รีวิวเรียบร้อยแล้ว */}
+            {joinStatus === "checked_in" && reviewed && (
+              <button className="join-btn joined" disabled>
+                รีวิวกิจกรรมแล้ว
+              </button>
+            )}
+
+            {/* เข้าร่วมแล้ว แต่ยังไม่ได้เช็คอิน */}
             {joinStatus === "approved" && (
               <>
-                <button
-                  className="scan-btn"
-                  onClick={() => navigate("/scan")}
-                >
-                  Scan QR Code ยืนยันการเข้าร่วมกิจกรรม
-                </button>
+                {!activityEnded && (
+                  <button
+                    className="scan-btn"
+                    onClick={() => navigate("/scan")}
+                  >
+                    Scan QR Code ยืนยันการเข้าร่วมกิจกรรม
+                  </button>
+                )}
 
-                <button
-                  className="cancel-btn"
-                  onClick={handleCancel}
-                >
-                  ยกเลิกการเข้าร่วมกิจกรรม
-                </button>
+                {!activityStarted && (
+                  <button
+                    className="cancel-btn"
+                    onClick={handleCancel}
+                  >
+                    ยกเลิกการเข้าร่วมกิจกรรม
+                  </button>
+                )}
               </>
             )}
 
-            {/* กิจกรรมส่วนตัว ส่งคำขอแล้ว */}
+            {/* รออนุมัติ */}
             {joinStatus === "pending" && (
               <>
                 <button className="join-btn pending" disabled>
                   ส่งคำขอเข้าร่วมกิจกรรมแล้ว
                 </button>
 
-                <button
-                  className="cancel-btn"
-                  onClick={handleCancel}
-                >
-                  ยกเลิกคำขอ
-                </button>
-              </>
-            )}
-            
-            {/* ยังไม่เคยเข้าร่วม */}
-            {joinStatus === null && (
-              <>
-                {Number(activity.joinedCount || 0) >=
-                  Number(activity.participantCount || 0) ? (
-                  <button className="join-btn joined" disabled>
-                    กิจกรรมเต็มแล้ว
-                  </button>
-                ) : (
+                {!activityStarted && (
                   <button
-                    className="join-btn"
-                    onClick={handleJoin}
-                    disabled={joinLoading}
+                    className="cancel-btn"
+                    onClick={handleCancel}
                   >
-                    {joinLoading ? "กำลังส่ง..." : "เข้าร่วมกิจกรรม"}
+                    ยกเลิกคำขอ
                   </button>
                 )}
               </>
             )}
 
-            {/* เคยยกเลิกแล้ว */}
+            {/* ยังไม่เคยเข้าร่วม */}
+            {joinStatus === null && (
+              activityStarted ? (
+                <button className="join-btn ended" disabled>
+                  {activityEnded
+                    ? "กิจกรรมนี้สิ้นสุดแล้ว"
+                    : "กิจกรรมเริ่มแล้ว ไม่สามารถเข้าร่วมได้"}
+                </button>
+              ) : Number(activity.joinedCount || 0) >=
+                Number(activity.participantCount || 0) ? (
+                <button className="join-btn joined" disabled>
+                  กิจกรรมเต็มแล้ว
+                </button>
+              ) : (
+                <button
+                  className="join-btn"
+                  onClick={handleJoin}
+                  disabled={joinLoading}
+                >
+                  {joinLoading ? "กำลังส่ง..." : "เข้าร่วมกิจกรรม"}
+                </button>
+              )
+            )}
+
             {joinStatus === "cancelled" && (
               <button className="join-btn joined" disabled>
                 คุณยกเลิกการเข้าร่วมกิจกรรมนี้แล้ว
               </button>
             )}
+
           </div>
         )}
 

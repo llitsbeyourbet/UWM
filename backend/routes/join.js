@@ -39,8 +39,16 @@ router.post("/:activityId", auth, async (req, res) => {
         throw error;
       }
 
-      if (isActivityEnded(activity)) {
-        const error = new Error("กิจกรรมสิ้นสุดแล้ว ไม่สามารถเข้าร่วมได้");
+      const startDateTime = buildBangkokDateTime(activity.date, activity.time);
+
+      if (!startDateTime) {
+        const error = new Error("วันหรือเวลากิจกรรมไม่ถูกต้อง");
+        error.statusCode = 500;
+        throw error;
+      }
+
+      if (new Date() >= startDateTime) {
+        const error = new Error("กิจกรรมกำลังดำเนินการ ไม่สามารถเข้าร่วมได้");
         error.statusCode = 400;
         throw error;
       }
