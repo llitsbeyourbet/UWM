@@ -9,9 +9,10 @@ function CreateActivities() {
   const navigate = useNavigate();
   const { showAlert } = useAlert();
   const [preview, setPreview] = useState([]);
-  const [coverFilename, setCoverFilename] = useState(null); // 👈 เพิ่ม
+  const [coverFilename, setCoverFilename] = useState(null);
   const [activityName, setActivityName] = useState("");
   const [detail, setDetail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const now = new Date();
 
   const today = `${now.getFullYear()}-${String(
@@ -105,7 +106,7 @@ function CreateActivities() {
       });
     }
   };
-  const categoryOptions = ["กีฬา", "ดนตรี", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่", "ภาพยนตร์", "เรียน","สุขภาพ", "จิตอาสา"];
+  const categoryOptions = ["กีฬา", "ดนตรี", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่", "ภาพยนตร์", "เรียน", "สุขภาพ", "จิตอาสา"];
 
   const toggleCategory = (val) => {
     setCategory((prev) =>
@@ -117,6 +118,8 @@ function CreateActivities() {
     setShowCategory(false);
   };
   const handleSubmit = async () => {
+    if (submitting) return;
+    
     setError("");
     if (!activityName.trim()) {
       setError("กรุณากรอกชื่อกิจกรรม");
@@ -192,6 +195,8 @@ function CreateActivities() {
       return;
     }
 
+    setSubmitting(true);
+
     try {
       const res = await fetch(`${API_URL}/api/activities`, {
         method: "POST",
@@ -253,6 +258,8 @@ function CreateActivities() {
         title: 'เกิดข้อผิดพลาด',
         message: 'ไม่สามารถเชื่อมต่อ server ได้ กรุณาลองใหม่อีกครั้ง',
       });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -652,12 +659,11 @@ function CreateActivities() {
           </button>
 
           <button
-            className="submit-btn"
             type="button"
             onClick={handleSubmit}
+            disabled={submitting}
           >
-            <span>➤</span>
-            สร้างกิจกรรม
+            {submitting ? "กำลังสร้างกิจกรรม..." : "สร้างกิจกรรม"}
           </button>
         </div>
 
