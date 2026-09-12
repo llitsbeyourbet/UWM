@@ -7,7 +7,7 @@ import { getCategoryIcon } from "../utils/categoryIcons";
 
 function CreateActivities() {
   const navigate = useNavigate();
-  const { showAlert } = useAlert();
+  const { showAlert, showConfirm } = useAlert();
   const [preview, setPreview] = useState([]);
   const [coverFilename, setCoverFilename] = useState(null);
   const [activityName, setActivityName] = useState("");
@@ -117,69 +117,59 @@ function CreateActivities() {
 
     setShowCategory(false);
   };
-  const handleSubmit = async () => {
+  const handleSubmit = async (moderationConfirmed = false) => {
     if (submitting) return;
-    
+
     setError("");
     if (!activityName.trim()) {
       setError("กรุณากรอกชื่อกิจกรรม");
       return;
     }
-
     if (!detail.trim()) {
       setError("กรุณากรอกรายละเอียดกิจกรรม");
       return;
     }
-
     if (!activityType) {
       setError("กรุณาเลือกประเภทกิจกรรม");
       return;
     }
-
     if (!category || category.length === 0) {
       setError("กรุณาเลือกหมวดหมู่");
       return;
     }
-
     if (!date) {
       setError("กรุณาเลือกวันที่");
       return;
     }
-
     if (!time) {
       setError("กรุณาเลือกเวลาเริ่ม");
       return;
     }
-
     if (!endTime) {
       setError("กรุณาเลือกเวลาสิ้นสุด");
       return;
     }
-
     if (!location.trim()) {
       setError("กรุณากรอกสถานที่");
       return;
     }
-
     if (!coverFilename) {
       setError(imageError || "กรุณาอัปโหลดรูปปกกิจกรรม");
       return;
     }
-
     if (endTime <= time) {
       await showAlert({
-        type: 'warning',
-        title: 'เวลาไม่ถูกต้อง',
-        message: 'เวลาสิ้นสุดต้องมากกว่าเวลาเริ่ม',
+        type: "warning",
+        title: "เวลาไม่ถูกต้อง",
+        message: "เวลาสิ้นสุดต้องมากกว่าเวลาเริ่ม",
       });
       return;
     }
-
     if (checkinStart && checkinEnd && checkinEnd <= checkinStart) {
       await showAlert({
-        type: 'warning',
-        title: 'เวลาไม่ถูกต้อง',
-        message: 'เวลาเช็คอินไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง',
+        type: "warning",
+        title: "เวลาไม่ถูกต้อง",
+        message: "เวลาเช็คอินไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง",
       });
       return;
     }
@@ -187,9 +177,9 @@ function CreateActivities() {
     const token = sessionStorage.getItem("token");
     if (!token) {
       await showAlert({
-        type: 'info',
-        title: 'เข้าสู่ระบบ',
-        message: 'กรุณาเข้าสู่ระบบก่อนสร้างกิจกรรม',
+        type: "info",
+        title: "เข้าสู่ระบบ",
+        message: "กรุณาเข้าสู่ระบบก่อนสร้างกิจกรรม",
       });
       navigate("/login");
       return;
@@ -213,24 +203,48 @@ function CreateActivities() {
           location,
           participantCount: Number(participantCount) || 1,
           activityType,
-          cover: coverFilename || null, // 👈 ส่งแค่ชื่อไฟล์
+          cover: coverFilename || null,
           category,
           checkinStart,
           checkinEnd,
+          moderationConfirmed,
         }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
+        if (data.requiresConfirmation && data.moderation?.status === "warning") {
+          setSubmitting(false);
+
+          const categoryText =
+            data.moderation.categoryLabels?.length > 0
+              ? data.moderation.categoryLabels.join(", ")
+              : "ข้อความที่อาจไม่เหมาะสม";
+
+          const confirmed = await showConfirm({
+            title: "ตรวจพบข้อความที่ควรตรวจสอบ",
+            message: `${data.message}\nระดับความเสี่ยง ${data.moderation.riskScore}/100\nประเภท: ${categoryText}\n\nคุณต้องการยืนยันใช้ข้อความนี้หรือไม่`,
+            confirmText: "ยืนยันและสร้างกิจกรรม",
+            cancelText: "กลับไปแก้ไข",
+          });
+
+          if (confirmed) {
+            await handleSubmit(true);
+          }
+          return;
+        }
+
         await showAlert({
-          type: 'error',
-          title: 'เกิดข้อผิดพลาด',
+          type: "error",
+          title:
+            data.moderation?.status === "danger"
+              ? "ตรวจพบข้อความไม่เหมาะสม"
+              : "เกิดข้อผิดพลาด",
           message: data.message || "เกิดข้อผิดพลาดในการสร้างกิจกรรม",
         });
         return;
       }
-
 
       setActivityName("");
       setDetail("");
@@ -241,22 +255,21 @@ function CreateActivities() {
       setParticipantCount("1");
       setActivityType("public");
       setPreview([]);
-      setCoverFilename(null); // 👈 reset coverFilename ด้วย
+      setCoverFilename(null);
 
       await showAlert({
-        type: 'success',
-        title: 'สร้างกิจกรรมสำเร็จ!',
-        message: 'กิจกรรมของคุณถูกสร้างเรียบร้อยแล้ว',
+        type: "success",
+        title: "สร้างกิจกรรมสำเร็จ!",
+        message: "กิจกรรมของคุณถูกสร้างเรียบร้อยแล้ว",
       });
 
       navigate(`/activity-detail?id=${data.id}`);
-
     } catch (err) {
       console.log(err);
       await showAlert({
-        type: 'error',
-        title: 'เกิดข้อผิดพลาด',
-        message: 'ไม่สามารถเชื่อมต่อ server ได้ กรุณาลองใหม่อีกครั้ง',
+        type: "error",
+        title: "เกิดข้อผิดพลาด",
+        message: "ไม่สามารถเชื่อมต่อ server ได้ กรุณาลองใหม่อีกครั้ง",
       });
     } finally {
       setSubmitting(false);

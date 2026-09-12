@@ -7,6 +7,7 @@ const { isActivityEnded } = require("../utils/activityTime");
 const Activity = require("../models/Activity");
 const JoinRequest = require("../models/JoinRequest");
 const User = require("../models/User");
+const { analyzeFields, getModerationMessage, buildModerationResponse } = require("../services/moderationService");
 
 
 // ดึงกิจกรรมทั้งหมด
@@ -481,6 +482,7 @@ router.post("/", auth, async (req, res) => {
       endTime,
       location,
       cover,
+      moderationConfirmed,
     } = req.body;
 
 
@@ -562,6 +564,33 @@ router.post("/", auth, async (req, res) => {
       return res.status(400).json({
         message:
           "เวลาปิดเช็คอินต้องอยู่หลังเวลาเปิดเช็คอิน",
+      });
+    }
+
+
+    const moderation = analyzeFields({
+      activityName,
+      detail,
+    });
+
+
+    if (moderation.status === "danger") {
+      return res.status(422).json({
+        message: getModerationMessage(moderation),
+        requiresConfirmation: false,
+        ...buildModerationResponse(moderation),
+      });
+    }
+
+
+    if (
+      moderation.status === "warning" &&
+      moderationConfirmed !== true
+    ) {
+      return res.status(422).json({
+        message: getModerationMessage(moderation),
+        requiresConfirmation: true,
+        ...buildModerationResponse(moderation),
       });
     }
 
@@ -895,6 +924,44 @@ router.put("/:id", auth, async (req, res) => {
         message:
           "เวลาปิดเช็คอินต้องอยู่หลังเวลาเปิดเช็คอิน",
       });
+    }
+
+
+    if (
+      updates.activityName !== undefined ||
+      updates.detail !== undefined
+    ) {
+      const moderation = analyzeFields({
+        activityName:
+          updates.activityName !== undefined
+            ? updates.activityName
+            : activity.activityName,
+        detail:
+          updates.detail !== undefined
+            ? updates.detail
+            : activity.detail,
+      });
+
+
+      if (moderation.status === "danger") {
+        return res.status(422).json({
+          message: getModerationMessage(moderation),
+          requiresConfirmation: false,
+          ...buildModerationResponse(moderation),
+        });
+      }
+
+
+      if (
+        moderation.status === "warning" &&
+        req.body.moderationConfirmed !== true
+      ) {
+        return res.status(422).json({
+          message: getModerationMessage(moderation),
+          requiresConfirmation: true,
+          ...buildModerationResponse(moderation),
+        });
+      }
     }
 
 

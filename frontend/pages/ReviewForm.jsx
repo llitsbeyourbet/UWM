@@ -6,7 +6,7 @@ import "../styles/ReviewForm.css";
 
 function ReviewForm() {
   const navigate = useNavigate();
-  const { showAlert } = useAlert();
+  const { showAlert, showConfirm } = useAlert();
   const { activityId } = useParams();
 
   const [activity, setActivity] = useState(null);
@@ -73,74 +73,97 @@ function ReviewForm() {
      SUBMIT
   ========================= */
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (moderationConfirmed = false) => {
     if (!activityRating) {
       await showAlert({
-        type: 'warning',
-        title: 'ข้อมูลไม่ครบถ้วน',
-        message: 'กรุณาให้คะแนนกิจกรรม',
+        type: "warning",
+        title: "ข้อมูลไม่ครบถ้วน",
+        message: "กรุณาให้คะแนนกิจกรรม",
       });
       return;
     }
 
     if (!hostRating) {
       await showAlert({
-        type: 'warning',
-        title: 'ข้อมูลไม่ครบถ้วน',
-        message: 'กรุณาให้คะแนนผู้สร้างกิจกรรม',
+        type: "warning",
+        title: "ข้อมูลไม่ครบถ้วน",
+        message: "กรุณาให้คะแนนผู้สร้างกิจกรรม",
       });
       return;
     }
 
     const token = sessionStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
 
     setLoading(true);
 
     try {
-      const res = await fetch(
-        `${API_URL}/api/review/${activityId}`,
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-
-          body: JSON.stringify({
-            activityRating,
-            hostRating,
-            comment,
-            hostComment,
-          }),
-        }
-      );
+      const res = await fetch(`${API_URL}/api/review/${activityId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          activityRating,
+          hostRating,
+          comment,
+          hostComment,
+          moderationConfirmed,
+        }),
+      });
 
       const data = await res.json();
 
       if (!res.ok) {
+        if (data.requiresConfirmation && data.moderation?.status === "warning") {
+          setLoading(false);
+
+          const categoryText =
+            data.moderation.categoryLabels?.length > 0
+              ? data.moderation.categoryLabels.join(", ")
+              : "ข้อความที่อาจไม่เหมาะสม";
+
+          const confirmed = await showConfirm({
+            title: "ตรวจพบข้อความที่ควรตรวจสอบ",
+            message: `${data.message}\nระดับความเสี่ยง ${data.moderation.riskScore}/100\nประเภท: ${categoryText}\n\nคุณต้องการยืนยันส่งรีวิวนี้หรือไม่`,
+            confirmText: "ยืนยันส่งรีวิว",
+            cancelText: "กลับไปแก้ไข",
+          });
+
+          if (confirmed) {
+            await handleSubmit(true);
+          }
+          return;
+        }
+
         await showAlert({
-          type: 'error',
-          title: 'เกิดข้อผิดพลาด',
+          type: "error",
+          title:
+            data.moderation?.status === "danger"
+              ? "ตรวจพบข้อความไม่เหมาะสม"
+              : "เกิดข้อผิดพลาด",
           message: data.message || "เกิดข้อผิดพลาด",
         });
         return;
       }
 
       await showAlert({
-        type: 'success',
-        title: 'ส่งรีวิวสำเร็จ!',
-        message: 'ขอบคุณสำหรับความคิดเห็น 🎉',
+        type: "success",
+        title: "ส่งรีวิวสำเร็จ!",
+        message: "ขอบคุณสำหรับความคิดเห็น 🎉",
       });
 
       navigate(-1);
     } catch (err) {
       console.log(err);
-
       await showAlert({
-        type: 'error',
-        title: 'การเชื่อมต่อล้มเหลว',
-        message: 'ไม่สามารถเชื่อมต่อ server ได้',
+        type: "error",
+        title: "การเชื่อมต่อล้มเหลว",
+        message: "ไม่สามารถเชื่อมต่อ server ได้",
       });
     } finally {
       setLoading(false);

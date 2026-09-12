@@ -7,7 +7,7 @@ import { getCategoryIcon } from "../utils/categoryIcons";
 
 function EditActivity() {
   const navigate = useNavigate();
-  const { showAlert } = useAlert();
+  const { showAlert, showConfirm } = useAlert();
   const { id } = useParams();
   const hasFetched = useRef(false);
   const isIOS = /iPhone|iPod|iPad/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -167,36 +167,53 @@ function EditActivity() {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (moderationConfirmed = false) => {
     if (uploadingImage) {
       await showAlert({
         type: "info",
         title: "กำลังอัปโหลดรูป",
         message: "กรุณารอให้อัปโหลดรูปเสร็จก่อนบันทึก",
       });
-
       return;
     }
-    if (!activityName) {
-      await showAlert({ type: 'warning', title: 'ข้อมูลไม่ครบถ้วน', message: 'กรุณากรอกชื่อกิจกรรม' });
+    if (!activityName.trim()) {
+      await showAlert({
+        type: "warning",
+        title: "ข้อมูลไม่ครบถ้วน",
+        message: "กรุณากรอกชื่อกิจกรรม",
+      });
+      return;
+    }
+    if (!detail.trim()) {
+      await showAlert({
+        type: "warning",
+        title: "ข้อมูลไม่ครบถ้วน",
+        message: "กรุณากรอกรายละเอียดกิจกรรม",
+      });
       return;
     }
     if (!date || !time || !endTime) {
-      await showAlert({ type: 'warning', title: 'ข้อมูลไม่ครบถ้วน', message: 'กรุณากรอกวันและเวลาให้ครบ' });
+      await showAlert({
+        type: "warning",
+        title: "ข้อมูลไม่ครบถ้วน",
+        message: "กรุณากรอกวันและเวลาให้ครบ",
+      });
       return;
     }
-
     if (endTime <= time) {
-      await showAlert({ type: 'warning', title: 'เวลาไม่ถูกต้อง', message: 'เวลาสิ้นสุดต้องมากกว่าเวลาเริ่ม' });
+      await showAlert({
+        type: "warning",
+        title: "เวลาไม่ถูกต้อง",
+        message: "เวลาสิ้นสุดต้องมากกว่าเวลาเริ่ม",
+      });
       return;
     }
-
-    if (
-      checkinStart &&
-      checkinEnd &&
-      checkinEnd <= checkinStart
-    ) {
-      await showAlert({ type: 'warning', title: 'เวลาไม่ถูกต้อง', message: 'เวลาสิ้นสุดเช็คอินต้องมากกว่าเวลาเริ่มเช็คอิน' });
+    if (checkinStart && checkinEnd && checkinEnd <= checkinStart) {
+      await showAlert({
+        type: "warning",
+        title: "เวลาไม่ถูกต้อง",
+        message: "เวลาสิ้นสุดเช็คอินต้องมากกว่าเวลาเริ่มเช็คอิน",
+      });
       return;
     }
 
@@ -219,6 +236,7 @@ function EditActivity() {
         category,
         checkinStart,
         checkinEnd,
+        moderationConfirmed,
       };
 
       if (coverFilename) {
@@ -237,30 +255,50 @@ function EditActivity() {
       const data = await res.json();
 
       if (!res.ok) {
+        if (data.requiresConfirmation && data.moderation?.status === "warning") {
+          const categoryText =
+            data.moderation.categoryLabels?.length > 0
+              ? data.moderation.categoryLabels.join(", ")
+              : "ข้อความที่อาจไม่เหมาะสม";
+
+          const confirmed = await showConfirm({
+            title: "ตรวจพบข้อความที่ควรตรวจสอบ",
+            message: `${data.message}\nระดับความเสี่ยง ${data.moderation.riskScore}/100\nประเภท: ${categoryText}\n\nคุณต้องการยืนยันใช้ข้อความนี้หรือไม่`,
+            confirmText: "ยืนยันและบันทึก",
+            cancelText: "กลับไปแก้ไข",
+          });
+
+          if (confirmed) {
+            await handleSubmit(true);
+          }
+          return;
+        }
+
         await showAlert({
-          type: 'error',
-          title: 'เกิดข้อผิดพลาด',
+          type: "error",
+          title:
+            data.moderation?.status === "danger"
+              ? "ตรวจพบข้อความไม่เหมาะสม"
+              : "เกิดข้อผิดพลาด",
           message: data.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล",
         });
         return;
       }
 
       await showAlert({
-        type: 'success',
-        title: 'แก้ไขกิจกรรมสำเร็จ!',
-        message: 'ข้อมูลกิจกรรมของคุณได้รับการอัปเดตเรียบร้อยแล้ว',
+        type: "success",
+        title: "แก้ไขกิจกรรมสำเร็จ!",
+        message: "ข้อมูลกิจกรรมของคุณได้รับการอัปเดตเรียบร้อยแล้ว",
       });
 
-      // ส่งสัญญาณบอกหน้า ActivityDetail ให้รีเฟรชข้อมูล
       window.dispatchEvent(new Event("activityUpdated"));
-      // กลับไปยังหน้าก่อนหน้า (ซึ่งคือหน้า ActivityDetail)
       navigate(-1);
     } catch (err) {
       console.error("Submit error:", err);
       await showAlert({
-        type: 'error',
-        title: 'เกิดข้อผิดพลาด',
-        message: 'ไม่สามารถเชื่อมต่อ server ได้ กรุณาลองใหม่อีกครั้ง',
+        type: "error",
+        title: "เกิดข้อผิดพลาด",
+        message: "ไม่สามารถเชื่อมต่อ server ได้ กรุณาลองใหม่อีกครั้ง",
       });
     }
   };

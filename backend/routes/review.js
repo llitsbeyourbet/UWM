@@ -11,6 +11,7 @@ const Activity = require("../models/Activity");
 const User = require("../models/User");
 const notificationService = require("../services/notificationService");
 const { isActivityEnded } = require("../utils/activityTime");
+const { analyzeFields, getModerationMessage, buildModerationResponse } = require("../services/moderationService");
 
 const isValidRating = (value) => {
   const rating = Number(value);
@@ -125,7 +126,7 @@ router.post("/:activityId", auth, async (req, res) => {
 
   try {
     const activityId = Number(req.params.activityId);
-    const { activityRating, hostRating, comment, hostComment } = req.body;
+    const { activityRating, hostRating, comment, hostComment, moderationConfirmed } = req.body;
 
     if (!Number.isInteger(activityId) || activityId <= 0) {
       await transaction.rollback();
@@ -171,6 +172,32 @@ router.post("/:activityId", auth, async (req, res) => {
       await transaction.rollback();
       return res.status(400).json({
         message: "สามารถรีวิวได้หลังจากกิจกรรมสิ้นสุดแล้วเท่านั้น",
+      });
+    }
+
+    const moderation = analyzeFields({
+      activityComment: comment,
+      hostComment,
+    });
+
+    if (moderation.status === "danger") {
+      await transaction.rollback();
+      return res.status(422).json({
+        message: getModerationMessage(moderation),
+        requiresConfirmation: false,
+        ...buildModerationResponse(moderation),
+      });
+    }
+
+    if (
+      moderation.status === "warning" &&
+      moderationConfirmed !== true
+    ) {
+      await transaction.rollback();
+      return res.status(422).json({
+        message: getModerationMessage(moderation),
+        requiresConfirmation: true,
+        ...buildModerationResponse(moderation),
       });
     }
 
