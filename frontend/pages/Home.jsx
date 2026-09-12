@@ -4,6 +4,7 @@ import "../styles/Home.css";
 import API_URL from "../config";
 import { formatDate, formatTime } from "../utils/formatDate";
 import { getCategoryIcon } from "../utils/categoryIcons";
+import { optimizeImageUrl } from "../utils/imageUrl";
 
 function Home() {
   const navigate = useNavigate();
@@ -272,7 +273,7 @@ function Home() {
                 <div className="card-image-wrap">
                   {item.cover ? (
                     <img
-                      src={item.cover}
+                      src={optimizeImageUrl(item.cover, 900)}
                       alt="cover"
                       className="card-image"
                       loading="lazy"

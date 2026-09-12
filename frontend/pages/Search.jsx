@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "../styles/Search.css"
 import { formatDate, formatTime } from "../utils/formatDate";
 import { getCategoryIcon } from "../utils/categoryIcons";
+import { optimizeImageUrl } from "../utils/imageUrl";
 
 function Search() {
   const navigate = useNavigate();
@@ -21,35 +22,17 @@ function Search() {
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [activities, setActivities] = useState([]);
-  const [joinCounts, setJoinCounts] = useState({});
   const [loading, setLoading] = useState(true);
 
   const categories = ["กีฬา", "ดนตรี", "ภาพยนตร์", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่", "เรียน", "สุขภาพ", "จิตอาสา"];
 
 
   useEffect(() => {
-    const fetchJoinCounts = async (activities) => {
-      const counts = {};
-      await Promise.all(
-        activities.map(async (item) => {
-          try {
-            const res = await fetch(`${API_URL}/api/join/${item.id}/count`);
-            const data = await res.json();
-            counts[item.id] = data.count || 0;
-          } catch {
-            counts[item.id] = 0;
-          }
-        })
-      );
-      setJoinCounts(counts);
-    };
-
     const fetchActivities = async () => {
       try {
         const res = await fetch(`${API_URL}/api/activities`);
         const data = await res.json();
         setActivities(data);
-        await fetchJoinCounts(data);
       } catch (err) {
         console.log(err);
       } finally {
@@ -126,7 +109,7 @@ function Search() {
 
       // 7. Only available slots
       if (filters.onlyAvailable) {
-        const joined = joinCounts[item.id] || 0;
+        const joined = item.joinedCount || 0;
         if (joined >= item.participantCount) return false;
       }
 
@@ -157,7 +140,7 @@ function Search() {
       }
       return 0;
     });
-  }, [activities, filters, joinCounts]);
+  }, [activities, filters]);
 
   const handleViewDetail = (activity) => {
     navigate(`/activity-detail?id=${activity.id}`);
@@ -197,7 +180,7 @@ function Search() {
     if (diffDays === 0) badges.push({ text: "เริ่มวันนี้", type: "today" });
     else if (diffDays === 1) badges.push({ text: "เริ่มพรุ่งนี้", type: "tomorrow" });
 
-    const joined = joinCounts[item.id] || 0;
+    const joined = item.joinedCount || 0;
     const slotsLeft = item.participantCount - joined;
     if (slotsLeft > 0 && slotsLeft < 5) {
       badges.push({ text: `เหลือ ${slotsLeft} ที่`, type: "slots" });
@@ -315,9 +298,11 @@ function Search() {
               <div className="card-cover-wrap">
                 {item.cover ? (
                   <img
-                    src={item.cover.startsWith("http") ? item.cover : `${API_URL}/uploads/${item.cover}`}
+                    src={item.cover.startsWith("http") ? optimizeImageUrl(item.cover, 900) : `${API_URL}/uploads/${item.cover}`}
                     alt="cover"
                     className="card-cover"
+                    loading="lazy"
+                    decoding="async"
                   />
                 ) : (
                   <div className="card-cover-placeholder" />
@@ -328,7 +313,7 @@ function Search() {
               </div>
               <div className="card-body">
                 <p className="card-title">{item.activityName}</p>
-                <p className="card-info">📍 {item.location || "-"} &nbsp;·&nbsp; 👥 {joinCounts[item.id] ?? 0}/{item.participantCount} คน</p>
+                <p className="card-info">📍 {item.location || "-"} &nbsp;·&nbsp; 👥 {item.joinedCount ?? 0}/{item.participantCount} คน</p>
                 <p className="card-date">📅 {formatDate(item.date)} · ⏰ {formatTime(item.time)} - {formatTime(item.endTime)}</p>
               </div>
             </div>

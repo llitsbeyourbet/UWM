@@ -11,12 +11,50 @@ const { analyzeFields, getModerationMessage, buildModerationResponse } = require
 
 
 // ดึงกิจกรรมทั้งหมด
-// คง route เดิมไว้ เผื่อหน้าอื่นในระบบใช้งานอยู่
+// ส่ง joinedCount มาพร้อมกัน เพื่อลด N+1 requests จากหน้า Search
 router.get("/", async (req, res) => {
   try {
     const activities = await Activity.findAll();
-    res.json(activities);
+    if (activities.length === 0) return res.json([]);
+
+    const activityIds = activities.map((activity) => activity.id);
+    const requests = await JoinRequest.findAll({
+      where: {
+        activityId: { [Op.in]: activityIds },
+        status: { [Op.in]: ["approved", "checked_in"] },
+      },
+      attributes: ["activityId", "userId"],
+      raw: true,
+    });
+
+    const userIds = [...new Set(requests.map((request) => request.userId))];
+    const existingUsers = userIds.length
+      ? await User.findAll({
+          where: { id: { [Op.in]: userIds } },
+          attributes: ["id"],
+          raw: true,
+        })
+      : [];
+
+    const existingUserIds = new Set(existingUsers.map((user) => Number(user.id)));
+    const joinedCountMap = new Map();
+    const countedPairs = new Set();
+
+    requests.forEach((request) => {
+      const activityId = Number(request.activityId);
+      const userId = Number(request.userId);
+      const pairKey = `${activityId}:${userId}`;
+      if (!existingUserIds.has(userId) || countedPairs.has(pairKey)) return;
+      countedPairs.add(pairKey);
+      joinedCountMap.set(activityId, (joinedCountMap.get(activityId) || 0) + 1);
+    });
+
+    res.json(activities.map((activity) => ({
+      ...activity.toJSON(),
+      joinedCount: joinedCountMap.get(Number(activity.id)) || 0,
+    })));
   } catch (err) {
+    console.error("ACTIVITIES LIST ERROR:", err);
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
 });
@@ -25,7 +63,7 @@ router.get("/", async (req, res) => {
 // ======================================================
 // ดึงกิจกรรมสำหรับหน้า Home
 // ======================================================
-// - โหลดทีละ 12 รายการ
+// - โหลดทีละ 10 รายการ
 // - ไม่ส่งกิจกรรม suspended
 // - ไม่ส่งกิจกรรมที่สิ้นสุดแล้ว
 // - กรอง category ที่ backend
@@ -40,7 +78,7 @@ router.get("/home", async (req, res) => {
     );
 
     const limit = Math.min(
-      Math.max(parseInt(req.query.limit, 10) || 12, 1),
+      Math.max(parseInt(req.query.limit, 10) || 10, 1),
       30
     );
 

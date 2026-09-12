@@ -5,6 +5,7 @@ import "../styles/ActivityDetail.css";
 import API_URL from "../config";
 import { formatDate, formatTime } from "../utils/formatDate";
 import { getCategoryIcon } from "../utils/categoryIcons";
+import { optimizeImageUrl } from "../utils/imageUrl";
 import { useAlert } from "../hooks/useAlert";
 
 const getPaginationNumbers = (page, totalPages) => {
@@ -67,85 +68,84 @@ function ActivityDetail() {
   const fetchActivity = useCallback(async () => {
     if (!activityId) return;
     const token = sessionStorage.getItem("token");
+    const authHeaders = token ? { Authorization: "Bearer " + token } : {};
 
-    let user = null;
     try {
-      const userRes = await fetch(API_URL + "/api/auth/me", {
-        headers: { Authorization: "Bearer " + token },
-      });
-      if (userRes.ok) {
+      const [userRes, activityRes] = await Promise.all([
+        token
+          ? fetch(API_URL + "/api/auth/me", { headers: authHeaders }).catch(() => null)
+          : Promise.resolve(null),
+        fetch(API_URL + "/api/activities/" + activityId),
+      ]);
+
+      let user = null;
+      if (userRes?.ok) {
         user = await userRes.json();
         setCurrentUser(user);
       }
-    } catch (err) {
-      console.log(err);
-    }
 
-    try {
-      const res = await fetch(API_URL + "/api/activities/" + activityId);
-      if (!res.ok) {
-        if (res.status === 404) setNotFound(true);
+      if (!activityRes.ok) {
+        if (activityRes.status === 404) setNotFound(true);
         return;
       }
-      const activityData = await res.json();
+
+      const activityData = await activityRes.json();
       setActivity(activityData);
       setNotFound(false);
 
-      const hostRes = await fetch(API_URL + "/api/auth/user/" + activityData.createdBy);
-      if (hostRes.ok) {
-        const hostData = await hostRes.json();
-        setHost(hostData);
+      if (activityData.creator) setHost(activityData.creator);
+
+      const isCurrentUserOwner =
+        user && Number(activityData.createdBy) === Number(user.id);
+      setIsOwner(Boolean(isCurrentUserOwner));
+
+      const secondaryRequests = [
+        fetch(API_URL + "/api/review/host/" + activityData.createdBy),
+        fetch(API_URL + "/api/review/activity/" + activityId + "/rating"),
+        fetch(API_URL + "/api/review/activity/" + activityId + "/detailed-reviews"),
+        fetch(API_URL + "/api/activities/" + activityId + "/participants"),
+      ];
+
+      if (user && !isCurrentUserOwner) {
+        secondaryRequests.push(
+          fetch(API_URL + "/api/join/" + activityId + "/status", { headers: authHeaders })
+        );
       }
 
-      const hostRatingRes = await fetch(API_URL + "/api/review/host/" + activityData.createdBy);
-      if (hostRatingRes.ok) {
-        const hostRatingData = await hostRatingRes.json();
-        setHostRating(hostRatingData.avgRating);
+      const results = await Promise.allSettled(secondaryRequests);
+      const [hostRatingResult, ratingResult, detailedResult, participantsResult, statusResult] = results;
+
+      if (hostRatingResult?.status === "fulfilled" && hostRatingResult.value.ok) {
+        const data = await hostRatingResult.value.json();
+        setHostRating(data.avgRating);
       }
-
-      const ratingRes = await fetch(API_URL + "/api/review/activity/" + activityId + "/rating");
-      if (ratingRes.ok) {
-        const ratingData = await ratingRes.json();
-        setActivityRating(ratingData);
+      if (ratingResult?.status === "fulfilled" && ratingResult.value.ok) {
+        setActivityRating(await ratingResult.value.json());
       }
-
-      const detailedRes = await fetch(API_URL + "/api/review/activity/" + activityId + "/detailed-reviews");
-      if (detailedRes.ok) {
-        const detailedData = await detailedRes.json();
-        setDetailedReviews(detailedData);
+      if (detailedResult?.status === "fulfilled" && detailedResult.value.ok) {
+        setDetailedReviews(await detailedResult.value.json());
       }
-
-      const participantsRes = await fetch(API_URL + "/api/activities/" + activityId + "/participants");
-      if (participantsRes.ok) {
-        const participantsData = await participantsRes.json();
-        setParticipants(participantsData);
+      if (participantsResult?.status === "fulfilled" && participantsResult.value.ok) {
+        setParticipants(await participantsResult.value.json());
       }
+      if (statusResult?.status === "fulfilled" && statusResult.value.ok) {
+        const statusData = await statusResult.value.json();
+        setJoinStatus(statusData.status);
 
-      if (user && Number(activityData.createdBy) === Number(user.id)) {
-        setIsOwner(true);
-      } else if (user) {
-        const statusRes = await fetch(API_URL + "/api/join/" + activityId + "/status", {
-          headers: { Authorization: "Bearer " + token },
-        });
-        if (statusRes.ok) {
-          const statusData = await statusRes.json();
-          setJoinStatus(statusData.status);
-
-          if (statusData.status === "checked_in") {
-            const reviewRes = await fetch(API_URL + "/api/review/" + activityId + "/status", {
-              headers: { Authorization: "Bearer " + token },
-            });
-            if (reviewRes.ok) {
-              const reviewData = await reviewRes.json();
-              setReviewed(reviewData.reviewed);
-            }
+        if (statusData.status === "checked_in") {
+          const reviewRes = await fetch(API_URL + "/api/review/" + activityId + "/status", {
+            headers: authHeaders,
+          });
+          if (reviewRes.ok) {
+            const reviewData = await reviewRes.json();
+            setReviewed(reviewData.reviewed);
           }
         }
       }
     } catch (err) {
       console.log(err);
     }
-  }, [activityId, navigate]);
+  }, [activityId]);
 
   useEffect(() => {
     fetchActivity();
@@ -517,7 +517,7 @@ function ActivityDetail() {
         <div className="activity-cover-wrapper">
           <div className="activity-cover">
             {activity.cover ? (
-              <img src={activity.cover.startsWith("http") ? activity.cover : API_URL + "/uploads/" + activity.cover} alt={activity.activityName} className="activity-main-image" />
+              <img src={activity.cover.startsWith("http") ? optimizeImageUrl(activity.cover, 1200) : API_URL + "/uploads/" + activity.cover} alt={activity.activityName} className="activity-main-image" />
             ) : (
               <div className="activity-cover-placeholder">
                 <div className="placeholder-icon">
@@ -588,7 +588,7 @@ function ActivityDetail() {
             <div className="host-card" onClick={() => navigate("/user/" + host.id)}>
               <div className="host-avatar">
                 {host.profileImage ? (
-                  <img src={host.profileImage.startsWith("http") ? host.profileImage : API_URL + "/uploads/" + host.profileImage} alt={host.name} className="host-avatar-img" />
+                  <img src={host.profileImage.startsWith("http") ? optimizeImageUrl(host.profileImage, 160) : API_URL + "/uploads/" + host.profileImage} alt={host.name} className="host-avatar-img" />
                 ) : (
                   <div className="host-avatar-initials">{host.name?.charAt(0).toUpperCase()}</div>
                 )}
@@ -633,7 +633,7 @@ function ActivityDetail() {
                     <div key={p.id} className="participant-item" onClick={() => navigate("/user/" + p.id)}>
                       <div className="p-avatar">
                         {p.profileImage ? (
-                          <img src={p.profileImage.startsWith("http") ? p.profileImage : API_URL + "/uploads/" + p.profileImage} alt={p.name} />
+                          <img src={p.profileImage.startsWith("http") ? optimizeImageUrl(p.profileImage, 160) : API_URL + "/uploads/" + p.profileImage} alt={p.name} />
                         ) : (
                           <div className="p-avatar-initials">{p.name?.charAt(0).toUpperCase()}</div>
                         )}
@@ -657,7 +657,7 @@ function ActivityDetail() {
                       <div key={p.id} className="participant-item" onClick={() => navigate("/user/" + p.id)}>
                         <div className="p-avatar">
                           {p.profileImage ? (
-                            <img src={p.profileImage.startsWith("http") ? p.profileImage : API_URL + "/uploads/" + p.profileImage} alt={p.name} />
+                            <img src={p.profileImage.startsWith("http") ? optimizeImageUrl(p.profileImage, 160) : API_URL + "/uploads/" + p.profileImage} alt={p.name} />
                           ) : (
                             <div className="p-avatar-initials">{p.name?.charAt(0).toUpperCase()}</div>
                           )}
