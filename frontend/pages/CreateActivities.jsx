@@ -7,7 +7,7 @@ import { getCategoryIcon } from "../utils/categoryIcons";
 
 function CreateActivities() {
   const navigate = useNavigate();
-  const { showAlert, showConfirm } = useAlert();
+  const { showAlert } = useAlert();
   const [preview, setPreview] = useState([]);
   const [coverFilename, setCoverFilename] = useState(null);
   const [activityName, setActivityName] = useState("");
@@ -117,7 +117,7 @@ function CreateActivities() {
 
     setShowCategory(false);
   };
-  const handleSubmit = async (moderationConfirmed = false) => {
+  const handleSubmit = async () => {
     if (submitting) return;
 
     setError("");
@@ -207,40 +207,29 @@ function CreateActivities() {
           category,
           checkinStart,
           checkinEnd,
-          moderationConfirmed,
         }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        if (data.requiresConfirmation && data.moderation?.status === "warning") {
-          setSubmitting(false);
-
+        if (data.moderation) {
           const categoryText =
             data.moderation.categoryLabels?.length > 0
               ? data.moderation.categoryLabels.join(", ")
-              : "ข้อความที่อาจไม่เหมาะสม";
+              : "ข้อความไม่เหมาะสม";
 
-          const confirmed = await showConfirm({
-            title: "ตรวจพบข้อความที่ควรตรวจสอบ",
-            message: `${data.message}\nระดับความเสี่ยง ${data.moderation.riskScore}/100\nประเภท: ${categoryText}\n\nคุณต้องการยืนยันใช้ข้อความนี้หรือไม่`,
-            confirmText: "ยืนยันและสร้างกิจกรรม",
-            cancelText: "กลับไปแก้ไข",
+          await showAlert({
+            type: "warning",
+            title: "ตรวจพบข้อความไม่เหมาะสม",
+            message: `ประเภท: ${categoryText}\nกรุณาแก้ไขข้อความก่อนสร้างกิจกรรม`,
           });
-
-          if (confirmed) {
-            await handleSubmit(true);
-          }
           return;
         }
 
         await showAlert({
           type: "error",
-          title:
-            data.moderation?.status === "danger"
-              ? "ตรวจพบข้อความไม่เหมาะสม"
-              : "เกิดข้อผิดพลาด",
+          title: "เกิดข้อผิดพลาด",
           message: data.message || "เกิดข้อผิดพลาดในการสร้างกิจกรรม",
         });
         return;
@@ -673,6 +662,7 @@ function CreateActivities() {
 
           <button
             type="button"
+            className="submit-btn"
             onClick={handleSubmit}
             disabled={submitting}
           >

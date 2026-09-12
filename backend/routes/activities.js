@@ -482,7 +482,6 @@ router.post("/", auth, async (req, res) => {
       endTime,
       location,
       cover,
-      moderationConfirmed,
     } = req.body;
 
 
@@ -566,88 +565,43 @@ router.post("/", auth, async (req, res) => {
           "เวลาปิดเช็คอินต้องอยู่หลังเวลาเปิดเช็คอิน",
       });
     }
-
-
     const moderation = analyzeFields({
       activityName,
       detail,
+      location,
     });
 
-
-    if (moderation.status === "danger") {
+    if (moderation.status !== "safe") {
       return res.status(422).json({
         message: getModerationMessage(moderation),
-        requiresConfirmation: false,
         ...buildModerationResponse(moderation),
       });
     }
-
-
-    if (
-      moderation.status === "warning" &&
-      moderationConfirmed !== true
-    ) {
-      return res.status(422).json({
-        message: getModerationMessage(moderation),
-        requiresConfirmation: true,
-        ...buildModerationResponse(moderation),
-      });
-    }
-
 
     const activity =
       await Activity.create({
-
-        activityName:
-          activityName.trim(),
-
-        detail:
-          detail.trim(),
-
+        activityName: activityName.trim(),
+        detail: detail.trim(),
         activityType,
-
         category: categories,
-
         date,
-
         time,
-
         endTime,
-
-        location:
-          location.trim(),
-
+        location: location.trim(),
         cover,
-
         participantCount,
-
-        checkinStart:
-          checkinStart || null,
-
-        checkinEnd:
-          checkinEnd || null,
-
-        createdBy:
-          req.userId,
+        checkinStart: checkinStart || null,
+        checkinEnd: checkinEnd || null,
+        createdBy: req.userId,
       });
-
 
     return res
       .status(201)
       .json(activity);
 
   } catch (error) {
-
-    console.error(
-      "CREATE ACTIVITY ERROR:",
-      error
-    );
-
-    console.error(
-      "CREATE ACTIVITY BODY:",
-      req.body
-    );
-
+    console.error("CREATE ACTIVITY ERROR:", error);
+    console.error("CREATE ACTIVITY BODY:", req.body);
 
     return res.status(500).json({
       message:
@@ -671,43 +625,26 @@ router.put("/:id", auth, async (req, res) => {
 
 
     if (!activity) {
-      return res.status(404).json({
-        message:
-          "ไม่พบกิจกรรม",
-      });
+      return res.status(404).json({ message: "ไม่พบกิจกรรม", });
     }
-
 
     if (
       activity.createdBy !== req.userId
     ) {
-
-      return res.status(403).json({
-        message:
-          "ไม่มีสิทธิ์แก้ไขกิจกรรมนี้",
-      });
+      return res.status(403).json({ message: "ไม่มีสิทธิ์แก้ไขกิจกรรมนี้", });
     }
-
 
     if (
       activity.status !== "active"
     ) {
 
-      return res.status(403).json({
-        message:
-          "กิจกรรมถูกระงับ ไม่สามารถแก้ไขได้",
-      });
+      return res.status(403).json({ message: "กิจกรรมถูกระงับ ไม่สามารถแก้ไขได้", });
     }
 
 
     if (isActivityEnded(activity)) {
-
-      return res.status(400).json({
-        message:
-          "กิจกรรมสิ้นสุดแล้ว ไม่สามารถแก้ไขได้",
-      });
+      return res.status(400).json({ message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถแก้ไขได้", });
     }
-
 
     const allowedFields = [
       "activityName",
@@ -724,29 +661,20 @@ router.put("/:id", auth, async (req, res) => {
       "checkinEnd",
     ];
 
-
     const updates = {};
 
-
     for (const field of allowedFields) {
-
       if (
-        Object.prototype.hasOwnProperty.call(
-          req.body,
-          field
-        )
+        Object.prototype.hasOwnProperty.call(req.body, field)
       ) {
-
         updates[field] =
           req.body[field];
       }
     }
 
-
     if (
       updates.activityName !== undefined
     ) {
-
       updates.activityName =
         String(
           updates.activityName
@@ -757,7 +685,6 @@ router.put("/:id", auth, async (req, res) => {
     if (
       updates.detail !== undefined
     ) {
-
       updates.detail =
         String(
           updates.detail

@@ -7,7 +7,7 @@ import { getCategoryIcon } from "../utils/categoryIcons";
 
 function EditActivity() {
   const navigate = useNavigate();
-  const { showAlert, showConfirm } = useAlert();
+  const { showAlert } = useAlert();
   const { id } = useParams();
   const hasFetched = useRef(false);
   const isIOS = /iPhone|iPod|iPad/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -167,7 +167,7 @@ function EditActivity() {
     }
   };
 
-  const handleSubmit = async (moderationConfirmed = false) => {
+  const handleSubmit = async () => {
     if (uploadingImage) {
       await showAlert({
         type: "info",
@@ -236,7 +236,6 @@ function EditActivity() {
         category,
         checkinStart,
         checkinEnd,
-        moderationConfirmed,
       };
 
       if (coverFilename) {
@@ -255,31 +254,23 @@ function EditActivity() {
       const data = await res.json();
 
       if (!res.ok) {
-        if (data.requiresConfirmation && data.moderation?.status === "warning") {
+        if (data.moderation) {
           const categoryText =
             data.moderation.categoryLabels?.length > 0
               ? data.moderation.categoryLabels.join(", ")
-              : "ข้อความที่อาจไม่เหมาะสม";
+              : "ข้อความไม่เหมาะสม";
 
-          const confirmed = await showConfirm({
-            title: "ตรวจพบข้อความที่ควรตรวจสอบ",
-            message: `${data.message}\nระดับความเสี่ยง ${data.moderation.riskScore}/100\nประเภท: ${categoryText}\n\nคุณต้องการยืนยันใช้ข้อความนี้หรือไม่`,
-            confirmText: "ยืนยันและบันทึก",
-            cancelText: "กลับไปแก้ไข",
+          await showAlert({
+            type: "warning",
+            title: "ตรวจพบข้อความไม่เหมาะสม",
+            message: `ประเภท: ${categoryText}\nกรุณาแก้ไขข้อความก่อนบันทึกกิจกรรม`,
           });
-
-          if (confirmed) {
-            await handleSubmit(true);
-          }
           return;
         }
 
         await showAlert({
           type: "error",
-          title:
-            data.moderation?.status === "danger"
-              ? "ตรวจพบข้อความไม่เหมาะสม"
-              : "เกิดข้อผิดพลาด",
+          title: "เกิดข้อผิดพลาด",
           message: data.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล",
         });
         return;

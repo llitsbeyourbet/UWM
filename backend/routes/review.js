@@ -126,7 +126,7 @@ router.post("/:activityId", auth, async (req, res) => {
 
   try {
     const activityId = Number(req.params.activityId);
-    const { activityRating, hostRating, comment, hostComment, moderationConfirmed } = req.body;
+    const { activityRating, hostRating, comment, hostComment, } = req.body;
 
     if (!Number.isInteger(activityId) || activityId <= 0) {
       await transaction.rollback();
@@ -180,23 +180,11 @@ router.post("/:activityId", auth, async (req, res) => {
       hostComment,
     });
 
-    if (moderation.status === "danger") {
+    if (moderation.status !== "safe") {
       await transaction.rollback();
-      return res.status(422).json({
-        message: getModerationMessage(moderation),
-        requiresConfirmation: false,
-        ...buildModerationResponse(moderation),
-      });
-    }
 
-    if (
-      moderation.status === "warning" &&
-      moderationConfirmed !== true
-    ) {
-      await transaction.rollback();
       return res.status(422).json({
         message: getModerationMessage(moderation),
-        requiresConfirmation: true,
         ...buildModerationResponse(moderation),
       });
     }

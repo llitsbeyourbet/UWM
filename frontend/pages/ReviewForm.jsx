@@ -6,7 +6,7 @@ import "../styles/ReviewForm.css";
 
 function ReviewForm() {
   const navigate = useNavigate();
-  const { showAlert, showConfirm } = useAlert();
+  const { showAlert } = useAlert();
   const { activityId } = useParams();
 
   const [activity, setActivity] = useState(null);
@@ -73,7 +73,7 @@ function ReviewForm() {
      SUBMIT
   ========================= */
 
-  const handleSubmit = async (moderationConfirmed = false) => {
+  const handleSubmit = async () => {
     if (!activityRating) {
       await showAlert({
         type: "warning",
@@ -112,40 +112,29 @@ function ReviewForm() {
           hostRating,
           comment,
           hostComment,
-          moderationConfirmed,
         }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        if (data.requiresConfirmation && data.moderation?.status === "warning") {
-          setLoading(false);
-
+        if (data.moderation) {
           const categoryText =
             data.moderation.categoryLabels?.length > 0
               ? data.moderation.categoryLabels.join(", ")
-              : "ข้อความที่อาจไม่เหมาะสม";
+              : "ข้อความไม่เหมาะสม";
 
-          const confirmed = await showConfirm({
-            title: "ตรวจพบข้อความที่ควรตรวจสอบ",
-            message: `${data.message}\nระดับความเสี่ยง ${data.moderation.riskScore}/100\nประเภท: ${categoryText}\n\nคุณต้องการยืนยันส่งรีวิวนี้หรือไม่`,
-            confirmText: "ยืนยันส่งรีวิว",
-            cancelText: "กลับไปแก้ไข",
+          await showAlert({
+            type: "warning",
+            title: "ตรวจพบข้อความไม่เหมาะสม",
+            message: `ประเภท: ${categoryText}\nกรุณาแก้ไขข้อความก่อนส่งรีวิว`,
           });
-
-          if (confirmed) {
-            await handleSubmit(true);
-          }
           return;
         }
 
         await showAlert({
           type: "error",
-          title:
-            data.moderation?.status === "danger"
-              ? "ตรวจพบข้อความไม่เหมาะสม"
-              : "เกิดข้อผิดพลาด",
+          title: "เกิดข้อผิดพลาด",
           message: data.message || "เกิดข้อผิดพลาด",
         });
         return;
@@ -188,9 +177,8 @@ function ReviewForm() {
             <button
               type="button"
               key={star}
-              className={`review-star ${
-                star <= value ? "active" : ""
-              }`}
+              className={`review-star ${star <= value ? "active" : ""
+                }`}
               onClick={() => onChange(star)}
               aria-label={`${star} ดาว`}
             >
