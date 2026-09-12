@@ -60,6 +60,7 @@
 .alert-modal-message {
   font-size: 14px;
   color: #666;
+  white-space: pre-line;
   margin: 0 0 24px 0;
   line-height: 1.5;
 }
