@@ -659,12 +659,6 @@ export default function AdminDashboard() {
                       <strong>{name}</strong>
                       <small>เข้าร่วมเมื่อ {dateText(user.createdAt)}</small>
                     </span>
-
-                    <button
-                      onClick={() => navigate(`/admin/users?id=${user.id}`)}
-                    >
-                      View
-                    </button>
                   </div>
                 );
               })}

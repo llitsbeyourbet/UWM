@@ -835,6 +835,361 @@
 }
 
 /* =========================
+   PDPA CONSENT
+========================= */
+
+.register-consent {
+  margin-top: 12px;
+
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  color: #747d8e;
+
+  font-size: 12px;
+  line-height: 1.5;
+
+  cursor: pointer;
+}
+
+.register-consent input {
+  appearance: none;
+  -webkit-appearance: none;
+
+  width: 15px;
+  height: 15px;
+  margin: 0;
+
+  flex: 0 0 15px;
+
+  border: 1.5px solid #cbd2dd;
+  border-radius: 4px;
+
+  background: #ffffff;
+
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+
+.register-consent input:hover {
+  border-color: #2873ff;
+}
+
+.register-consent input:checked {
+  border-color: #2873ff;
+  background: #2873ff;
+}
+
+.register-consent input:checked::after {
+  content: "";
+
+  width: 3px;
+  height: 7px;
+
+  display: block;
+
+  margin: 2px auto 0;
+
+  border: solid #ffffff;
+  border-width: 0 1.5px 1.5px 0;
+
+  transform: rotate(45deg);
+}
+
+.register-consent span {
+  display: block;
+}
+
+.privacy-link {
+  margin: 0;
+  padding: 0;
+
+  border: none;
+  background: transparent;
+
+  color: #2873ff;
+
+  font-family: "Sarabun", sans-serif;
+  font-size: inherit;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.privacy-link:hover {
+  text-decoration: underline;
+}
+/* =========================
+   PRIVACY POLICY MODAL
+========================= */
+
+.privacy-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  padding: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(20, 30, 48, 0.58);
+  backdrop-filter: blur(4px);
+
+  animation: privacyFadeIn 0.2s ease;
+}
+
+.privacy-modal {
+  position: relative;
+
+  width: min(800px, 100%);
+  max-height: min(760px, calc(100dvh - 60px));
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  background: #ffffff;
+
+  border-radius: 22px;
+
+  box-shadow:
+    0 25px 70px rgba(15, 28, 55, 0.24);
+
+  animation: privacyModalIn 0.25s ease;
+}
+
+.privacy-modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 2;
+
+  width: 38px;
+  height: 38px;
+
+  padding: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #e4e8ef;
+  border-radius: 50%;
+
+  background: #ffffff;
+  color: #778197;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.privacy-modal-close:hover {
+  background: #f3f6fb;
+  color: #2873ff;
+}
+
+.privacy-modal-close .material-icons {
+  font-size: 21px;
+}
+
+.privacy-modal-header {
+  padding: 26px 75px 20px 28px;
+
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  border-bottom: 1px solid #edf0f5;
+}
+
+.privacy-modal-icon {
+  width: 54px;
+  height: 54px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 17px;
+
+  background: #eaf2ff;
+  color: #2873ff;
+}
+
+.privacy-modal-icon .material-icons {
+  font-size: 28px;
+}
+
+.privacy-modal-header h2 {
+  margin: 0;
+
+  color: #172544;
+
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.privacy-modal-header p {
+  margin: 3px 0 0;
+
+  color: #9299aa;
+
+  font-size: 12px;
+}
+
+.privacy-modal-content {
+  padding: 22px 28px 28px;
+
+  overflow-y: auto;
+
+  overscroll-behavior: contain;
+}
+
+.privacy-intro {
+  margin: 0 0 20px;
+
+  color: #59657a;
+
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.privacy-item {
+  margin-bottom: 14px;
+  padding: 16px;
+
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+
+  background: #f8faff;
+
+  border: 1px solid #edf1f8;
+  border-radius: 15px;
+}
+
+.privacy-item:last-child {
+  margin-bottom: 0;
+}
+
+.privacy-number {
+  width: 36px;
+  height: 36px;
+
+  flex: 0 0 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #e3edff;
+  color: #1764e9;
+
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.privacy-item h3 {
+  margin: 0 0 4px;
+
+  color: #263550;
+
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.privacy-item p {
+  margin: 0;
+
+  color: #68748a;
+
+  font-size: 12px;
+  line-height: 1.75;
+}
+/* PRIVACY CONFIRM */
+
+.privacy-confirm {
+  margin-top: 22px;
+  padding-top: 20px;
+
+  border-top: 1px solid #e8ecf2;
+
+  text-align: center;
+}
+
+.privacy-confirm p {
+  margin: 0 0 12px;
+
+  color: #747d8e;
+
+  font-size: 12px;
+}
+
+.privacy-confirm button {
+  width: 100%;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: #2873ff;
+  color: #ffffff;
+
+  font-family: "Sarabun", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.privacy-confirm button:hover {
+  background: #1764e9;
+}
+
+.privacy-confirm button .material-icons {
+  font-size: 19px;
+}
+
+@keyframes privacyFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes privacyModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+/* =========================
    NOTEBOOK
 ========================= */
 
@@ -1119,5 +1474,64 @@
 
   .register-back {
     margin-top: 17px;
+  }
+    .privacy-modal-overlay {
+    padding: 16px;
+  }
+
+  .privacy-modal {
+    max-height: calc(100dvh - 32px);
+
+    border-radius: 18px;
+  }
+
+  .privacy-modal-header {
+    padding: 20px 58px 16px 18px;
+    gap: 11px;
+  }
+
+  .privacy-modal-icon {
+    width: 44px;
+    height: 44px;
+
+    border-radius: 14px;
+  }
+
+  .privacy-modal-icon .material-icons {
+    font-size: 23px;
+  }
+
+  .privacy-modal-header h2 {
+    font-size: 20px;
+  }
+
+  .privacy-modal-content {
+    padding: 18px;
+  }
+
+  .privacy-item {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .privacy-number {
+    width: 30px;
+    height: 30px;
+
+    flex-basis: 30px;
+
+    font-size: 13px;
+  }
+
+  .privacy-item h3 {
+    font-size: 14px;
+  }
+
+  .privacy-modal-close {
+    top: 16px;
+    right: 16px;
+
+    width: 34px;
+    height: 34px;
   }
 }

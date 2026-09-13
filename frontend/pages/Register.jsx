@@ -19,6 +19,8 @@ function Register() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [timer, setTimer] = useState(600);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
 
   const startTimer = () => {
     const interval = setInterval(() => {
@@ -88,6 +90,13 @@ function Register() {
 
     if (password !== confirmPassword) {
       setError("รหัสผ่านไม่ตรงกัน");
+      return;
+    }
+
+    if (!privacyAccepted) {
+      setError(
+        "กรุณายอมรับนโยบายความเป็นส่วนตัวก่อนสมัครสมาชิก"
+      );
       return;
     }
 
@@ -571,6 +580,37 @@ function Register() {
                   </div>
 
                 </div>
+                <label className="register-consent">
+                  <input
+                    type="checkbox"
+                    checked={privacyAccepted}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setShowPrivacy(true);
+                      } else {
+                        setPrivacyAccepted(false);
+                      }
+
+                      if (error) setError("");
+                    }}
+                  />
+
+                  <span>
+                    ฉันได้อ่านและยอมรับ{" "}
+                    <button
+                      type="button"
+                      className="privacy-link"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowPrivacy(true);
+                      }}
+                    >
+                      นโยบายความเป็นส่วนตัว
+                    </button>{" "}
+                    และรับทราบการเก็บและใช้ข้อมูลส่วนบุคคล
+                  </span>
+                </label>
 
                 {error && (
                   <p className="reg-error">
@@ -741,6 +781,185 @@ function Register() {
           </div>
         </section>
       </div>
+
+      {showPrivacy && (
+        <div
+          className="privacy-modal-overlay"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowPrivacy(false);
+            }
+          }}
+        >
+          <div
+            className="privacy-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="privacy-modal-title"
+          >
+            <button
+              type="button"
+              className="privacy-modal-close"
+              onClick={() => setShowPrivacy(false)}
+              aria-label="ปิด"
+            >
+              <span className="material-icons">close</span>
+            </button>
+
+            <div className="privacy-modal-header">
+              <div className="privacy-modal-icon">
+                <span className="material-icons">
+                  verified_user
+                </span>
+              </div>
+
+              <div>
+                <h2 id="privacy-modal-title">
+                  นโยบายความเป็นส่วนตัว
+                </h2>
+                <p>Privacy Policy — Until We Meet</p>
+              </div>
+            </div>
+
+            <div className="privacy-modal-content">
+              <p className="privacy-intro">
+                Until We Meet ให้ความสำคัญกับความเป็นส่วนตัว
+                และการคุ้มครองข้อมูลส่วนบุคคลของผู้ใช้งาน
+                นโยบายฉบับนี้จัดทำขึ้นเพื่ออธิบายการเก็บรวบรวม
+                ใช้ และดูแลข้อมูลส่วนบุคคลที่เกี่ยวข้องกับการใช้งานระบบ
+              </p>
+
+              <section className="privacy-item">
+                <span className="privacy-number">1</span>
+
+                <div>
+                  <h3>ข้อมูลที่ระบบเก็บรวบรวม</h3>
+                  <p>
+                    ในการสมัครสมาชิกและใช้งานระบบ
+                    อาจมีการเก็บรวบรวมข้อมูล เช่น ชื่อ-นามสกุล
+                    ชื่อผู้ใช้ อีเมล เบอร์โทรศัพท์ วันเกิด
+                    รูปโปรไฟล์ และข้อมูลที่ผู้ใช้งานสร้างขึ้นภายในระบบ
+                    เช่น กิจกรรม การเข้าร่วมกิจกรรม และรีวิว
+                  </p>
+                </div>
+              </section>
+
+              <section className="privacy-item">
+                <span className="privacy-number">2</span>
+
+                <div>
+                  <h3>วัตถุประสงค์ในการเก็บข้อมูล</h3>
+                  <p>
+                    ข้อมูลดังกล่าวถูกนำมาใช้เพื่อสร้างและจัดการบัญชีผู้ใช้งาน
+                    ยืนยันตัวตนผ่าน OTP สนับสนุนการสร้างและเข้าร่วมกิจกรรม
+                    แสดงข้อมูลที่จำเป็นภายในระบบ
+                    รวมถึงดูแลความปลอดภัยและการทำงานของ Until We Meet
+                  </p>
+                </div>
+              </section>
+
+              <section className="privacy-item">
+                <span className="privacy-number">3</span>
+
+                <div>
+                  <h3>การยืนยันอีเมล</h3>
+                  <p>
+                    ระบบใช้อีเมลของผู้ใช้งานสำหรับส่งรหัส OTP
+                    เพื่อยืนยันอีเมลในขั้นตอนการสมัครสมาชิก
+                    และในกระบวนการที่ต้องยืนยันตัวตนตามที่ระบบกำหนด
+                  </p>
+                </div>
+              </section>
+
+              <section className="privacy-item">
+                <span className="privacy-number">4</span>
+
+                <div>
+                  <h3>การเปิดเผยข้อมูล</h3>
+                  <p>
+                    ระบบจะแสดงหรือใช้ข้อมูลส่วนบุคคลเท่าที่จำเป็น
+                    สำหรับการให้บริการและการทำงานของฟังก์ชันภายในระบบ
+                    และจะไม่เปิดเผยข้อมูลส่วนบุคคลเพื่อวัตถุประสงค์อื่น
+                    โดยไม่มีเหตุอันเหมาะสมหรือความยินยอมจากผู้ใช้งาน
+                  </p>
+                </div>
+              </section>
+
+              <section className="privacy-item">
+                <span className="privacy-number">5</span>
+
+                <div>
+                  <h3>การจัดเก็บและรักษาความปลอดภัย</h3>
+                  <p>
+                    ระบบมีการใช้มาตรการที่เกี่ยวข้องกับการยืนยันตัวตน
+                    การจัดการรหัสผ่าน และการควบคุมการเข้าถึง
+                    เพื่อช่วยป้องกันการเข้าถึงข้อมูลโดยไม่ได้รับอนุญาต
+                  </p>
+                </div>
+              </section>
+
+              <section className="privacy-item">
+                <span className="privacy-number">6</span>
+
+                <div>
+                  <h3>สิทธิของผู้ใช้งาน</h3>
+                  <p>
+                    ผู้ใช้งานสามารถตรวจสอบและแก้ไขข้อมูลส่วนบุคคลบางส่วน
+                    ผ่านฟังก์ชันจัดการโปรไฟล์ของระบบ
+                    และสามารถติดต่อผู้ดูแลระบบหากมีคำถาม
+                    หรือคำร้องเกี่ยวกับข้อมูลส่วนบุคคล
+                  </p>
+                </div>
+              </section>
+
+              <section className="privacy-item">
+                <span className="privacy-number">7</span>
+
+                <div>
+                  <h3>ความยินยอม</h3>
+                  <p>
+                    ก่อนสมัครสมาชิก ผู้ใช้งานจะต้องอ่านและยอมรับ
+                    นโยบายความเป็นส่วนตัวนี้ด้วยตนเอง
+                    โดยระบบจะไม่เลือกยอมรับไว้ล่วงหน้า
+                  </p>
+                </div>
+              </section>
+
+              <section className="privacy-item">
+                <span className="privacy-number">8</span>
+
+                <div>
+                  <h3>การปรับปรุงนโยบาย</h3>
+                  <p>
+                    นโยบายความเป็นส่วนตัวอาจได้รับการปรับปรุง
+                    เพื่อให้สอดคล้องกับการทำงานของระบบ
+                    โดยฉบับที่แสดงอยู่บนเว็บไซต์ถือเป็นฉบับปัจจุบัน
+                  </p>
+                </div>
+              </section>
+              <div className="privacy-confirm">
+                <p>
+                  ฉันได้อ่านและยอมรับนโยบายความเป็นส่วนตัวแล้ว
+                </p>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPrivacyAccepted(true);
+                    setShowPrivacy(false);
+                    setError("");
+                  }}
+                >
+                  <span className="material-icons">
+                    check_circle
+                  </span>
+                  ยอมรับและดำเนินการต่อ
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
