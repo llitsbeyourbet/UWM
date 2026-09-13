@@ -1408,13 +1408,18 @@ router.get("/reports/:id", auth, isAdmin, async (req, res) => {
       attributes: [
         "id",
         "activityName",
+        "detail",
+        "activityType",
+        "category",
         "cover",
         "location",
         "date",
         "time",
         "endTime",
+        "participantCount",
         "status",
         "createdBy",
+        "createdAt",
       ],
     });
 
@@ -1514,6 +1519,9 @@ router.get("/reports/:id", auth, isAdmin, async (req, res) => {
         activity.activityName ||
         "ไม่ระบุชื่อกิจกรรม",
 
+      activityDetail: activity.detail || "",
+      activityType: activity.activityType || "public",
+      activityCategory: activity.category || [],
       activityCover: activity.cover || null,
       activityLocation: activity.location || null,
       activityDate: activity.date || null,
@@ -1521,8 +1529,9 @@ router.get("/reports/:id", auth, isAdmin, async (req, res) => {
         activity.time && activity.endTime
           ? `${activity.time} - ${activity.endTime}`
           : activity.time || "-",
-
+      activityParticipantCount: Number(activity.participantCount || 0),
       activityStatus: activity.status || null,
+      activityCreatedAt: activity.createdAt || null,
 
       creatorName:
         creator?.name ||

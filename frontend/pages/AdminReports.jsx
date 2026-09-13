@@ -285,7 +285,7 @@ function AdminReports() {
         { key: "latest", label: "รายงานล่าสุด" },
         { key: "reviewing", label: "กำลังตรวจสอบ" },
         { key: "resolved", label: "ดำเนินการแล้ว" },
-        { key: "rejected", label: "ปฏิเสธการรายงาน" },
+        { key: "rejected", label: "ปฏิเสธการระงับกิจกรรม" },
     ];
     return (
         <div className="admin-shell">
@@ -354,7 +354,7 @@ function AdminReports() {
                                         <option value="latest">รายงานล่าสุด</option>
                                         <option value="reviewing">กำลังตรวจสอบ</option>
                                         <option value="resolved">ดำเนินการแล้ว</option>
-                                        <option value="rejected">ปฏิเสธการรายงาน</option>
+                                        <option value="rejected">ปฏิเสธการระงับกิจกรรม</option>
                                     </select>
                                 </label>
 
@@ -455,7 +455,7 @@ function AdminReports() {
                                                         <FiClock />
                                                         {formatDateTimeTime(
                                                             report.createdAt
-                                                        )}
+                                                        )}    น.
                                                     </span>
                                                 </div>
                                             </div>
@@ -489,7 +489,7 @@ function AdminReports() {
                                                                             ? "แจ้งเตือนผู้สร้างเมื่อ"
                                                                             : report.decision === "no_violation"
                                                                                 ? "ตรวจสอบแล้วเมื่อ"
-                                                                                : "ปฏิเสธรายงานเมื่อ"}
+                                                                                : "ปฏิเสธการระงับกิจกรรมเมื่อ"}
                                                                 </span>
 
                                                                 <strong>
@@ -500,14 +500,6 @@ function AdminReports() {
                                                 </div>
 
                                                 <div className="report-card-actions">
-                                                    <button
-                                                        type="button"
-                                                        className="report-outline-button"
-                                                        onClick={() => openActivity(report)}
-                                                    >
-                                                        <FiEye />
-                                                        ดูรายละเอียด
-                                                    </button>
 
                                                     {currentStatus === "resolved" ||
                                                         currentStatus === "rejected" ? (

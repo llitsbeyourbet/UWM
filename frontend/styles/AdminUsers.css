@@ -197,6 +197,13 @@
   overflow-y: auto;
   border: 1px solid #ebebf2;
   border-radius: 13px;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.users-table-wrapper::-webkit-scrollbar {
+  display: none;
 }
 
 .users-table {
