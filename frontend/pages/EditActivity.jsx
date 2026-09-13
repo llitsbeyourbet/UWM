@@ -82,6 +82,20 @@ function EditActivity() {
           navigate("/");
           return;
         }
+        const activityStart = new Date(
+          `${data.date}T${data.time}+07:00`
+        );
+
+        if (new Date() >= activityStart) {
+          await showAlert({
+            type: "warning",
+            title: "ไม่สามารถแก้ไขได้",
+            message: "กิจกรรมกำลังดำเนินการ ไม่สามารถแก้ไขข้อมูลกิจกรรมได้",
+          });
+
+          navigate(`/activity-detail?id=${id}`);
+          return;
+        }
 
         setActivityName(data.activityName || "");
         setCoverFilename(data.cover || null);

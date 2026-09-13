@@ -473,14 +473,20 @@ function ActivityDetail() {
                           <button type="button" className="menu-action-btn"
                             onClick={async () => {
                               setShowReportMenu(false);
-                              if (activityEnded) {
+
+                              const activityStart = new Date(
+                                `${activity.date}T${activity.time}+07:00`
+                              );
+
+                              if (new Date() >= activityStart) {
                                 await showAlert({
-                                  type: 'warning',
-                                  title: 'ไม่สามารถแก้ไขได้',
-                                  message: 'กิจกรรมที่สิ้นสุดแล้ว ไม่สามารถแก้ไขได้',
+                                  type: "warning",
+                                  title: "ไม่สามารถแก้ไขได้",
+                                  message: "กิจกรรมเริ่มแล้ว ไม่สามารถแก้ไขข้อมูลกิจกรรมได้",
                                 });
                                 return;
                               }
+
                               navigate("/edit-activity/" + activity.id);
                             }}>
                             <span className="menu-action-icon">✎</span> แก้ไขกิจกรรม
