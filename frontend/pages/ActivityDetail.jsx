@@ -482,7 +482,7 @@ function ActivityDetail() {
                                 await showAlert({
                                   type: "warning",
                                   title: "ไม่สามารถแก้ไขได้",
-                                  message: "กิจกรรมเริ่มแล้ว ไม่สามารถแก้ไขข้อมูลกิจกรรมได้",
+                                  message: "กิจกรรมกำลังดำเนินการ ไม่สามารถแก้ไขข้อมูลกิจกรรมได้",
                                 });
                                 return;
                               }

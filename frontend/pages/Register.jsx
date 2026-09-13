@@ -57,8 +57,7 @@ function Register() {
       return;
     }
 
-    // username ขั้นต่ำ 3 ตัว
-    if (/[\u0E00-\u0E7F]/.test(username)) {
+    if (/[\u0E00-\u0E7F]/.test(cleanUsername)) {
       setError(
         "ชื่อบัญชีผู้ใช้ไม่สามารถใช้ภาษาไทยได้ กรุณาใช้ภาษาอังกฤษหรือตัวเลข"
       );
@@ -96,7 +95,7 @@ function Register() {
     setLoading(true);
 
     try {
-      // ตรวจชื่อผู้ใช้ อีเมล และเบอร์โทรก่อนสมัคร
+      // ตรวจ username / email / phone ก่อน
       const checkRes = await fetch(
         `${API_URL}/api/auth/check-register`,
         {
@@ -115,40 +114,52 @@ function Register() {
       const checkData = await checkRes.json();
 
       if (!checkRes.ok) {
-        setError(checkData.message || "ข้อมูลนี้ถูกใช้งานแล้ว");
+        setError(
+          checkData.message || "ข้อมูลนี้ถูกใช้งานแล้ว"
+        );
         return;
       }
 
-      // สมัครสมาชิกทันที ไม่ต้อง OTP
-      const res = await fetch(`${API_URL}/api/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: cleanName,
-          username: cleanUsername,
-          email: cleanEmail,
-          password,
-          phone: cleanPhone,
-          birthdate,
-        }),
-      });
+      // ส่ง OTP ไปยังอีเมล
+      const otpRes = await fetch(
+        `${API_URL}/api/forgot/send-otp-register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: cleanEmail,
+          }),
+        }
+      );
 
-      const data = await res.json();
+      const otpData = await otpRes.json();
 
-      if (!res.ok) {
-        setError(data.message || "ไม่สามารถสมัครสมาชิกได้");
+      if (!otpRes.ok) {
+        setError(
+          otpData.message || "ไม่สามารถส่ง OTP ได้"
+        );
         return;
       }
 
-      await showAlert({
-        type: "success",
-        title: "สมัครสมาชิกสำเร็จ!",
-        message: "คุณได้สร้างบัญชีผู้ใช้เรียบร้อยแล้ว",
-      });
+      // เก็บค่าที่จัดรูปแบบแล้ว
+      setName(cleanName);
+      setUsername(cleanUsername);
+      setEmail(cleanEmail);
+      setPhone(cleanPhone);
 
-      navigate("/login");
+      // ไปหน้า OTP
+      setOtp(["", "", "", "", "", ""]);
+      setTimer(600);
+      startTimer();
+      setStep(2);
+
+      setTimeout(() => {
+        document
+          .getElementById("reg-otp-0")
+          ?.focus();
+      }, 100);
     } catch {
       setError("ไม่สามารถเชื่อมต่อ server ได้");
     } finally {

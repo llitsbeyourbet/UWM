@@ -10,6 +10,18 @@ const UserSession = require("../models/UserSession");
 const crypto = require("crypto");
 const loginLimiter = require("../middleware/loginRateLimiter");
 const Mailjet = require("node-mailjet");
+const REGISTER_TOKEN_PREFIX = "register-token:";
+
+const normalizeEmail = (email) =>
+  String(email || "")
+    .trim()
+    .toLowerCase();
+
+const hashRegistrationToken = (token) =>
+  crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
 const { auth } = require("../middleware/auth");
 
 const mailjet = Mailjet.connect(
@@ -175,9 +187,17 @@ router.post("/register", async (req, res) => {
       password,
       phone,
       birthdate,
+      registrationToken,
     } = req.body;
 
-    if (!username || !name || !email || !phone || !birthdate || !password) {
+    if (
+      !username ||
+      !name ||
+      !email ||
+      !phone ||
+      !birthdate ||
+      !password
+    ) {
       await transaction.rollback();
 
       return res.status(400).json({
@@ -185,17 +205,38 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    const cleanUsername = username.trim();
-    const cleanEmail = email.trim().toLowerCase();
-    const cleanPhone = phone.trim();
+    if (!registrationToken) {
+      await transaction.rollback();
 
-    const usernameRegex = /^[A-Za-z0-9]+$/;
+      return res.status(401).json({
+        message:
+          "กรุณายืนยัน OTP ก่อนสมัครสมาชิก",
+      });
+    }
+
+    const cleanUsername = username.trim();
+    const cleanEmail = normalizeEmail(email);
+    const cleanPhone =
+      String(phone).replace(/\D/g, "");
+
+    const usernameRegex =
+      /^[A-Za-z0-9_]{3,20}$/;
 
     if (!usernameRegex.test(cleanUsername)) {
       await transaction.rollback();
 
       return res.status(400).json({
-        message: "ชื่อผู้ใช้ต้องเป็นภาษาอังกฤษหรือตัวเลขเท่านั้น",
+        message:
+          "ชื่อผู้ใช้ต้องมี 3-20 ตัว และใช้ได้เฉพาะตัวอักษร ตัวเลข หรือ _",
+      });
+    }
+
+    if (!/^0\d{9}$/.test(cleanPhone)) {
+      await transaction.rollback();
+
+      return res.status(400).json({
+        message:
+          "กรุณากรอกเบอร์โทรศัพท์ 10 หลัก",
       });
     }
 
@@ -203,10 +244,49 @@ router.post("/register", async (req, res) => {
       await transaction.rollback();
 
       return res.status(400).json({
-        message: "รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร",
+        message:
+          "รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร",
       });
     }
 
+    // ตรวจ registration token ที่ได้จาก OTP
+    const registrationTokenHash =
+      hashRegistrationToken(
+        String(registrationToken)
+      );
+
+    const otpRecord = await OTP.findOne({
+      where: {
+        email: cleanEmail,
+        otp:
+          `${REGISTER_TOKEN_PREFIX}${registrationTokenHash}`,
+      },
+      transaction,
+      lock: transaction.LOCK.UPDATE,
+    });
+
+    if (
+      !otpRecord ||
+      new Date() >
+        new Date(otpRecord.expiredAt)
+    ) {
+      if (otpRecord) {
+        await otpRecord.destroy({
+          transaction,
+        });
+
+        await transaction.commit();
+      } else {
+        await transaction.rollback();
+      }
+
+      return res.status(401).json({
+        message:
+          "การยืนยัน OTP หมดอายุหรือไม่ถูกต้อง กรุณาขอ OTP ใหม่",
+      });
+    }
+
+    // เช็กข้อมูลซ้ำอีกครั้งก่อนสร้างจริง
     const existing = await User.findOne({
       where: {
         [Op.or]: [
@@ -216,33 +296,44 @@ router.post("/register", async (req, res) => {
         ],
       },
       transaction,
+      lock: transaction.LOCK.UPDATE,
     });
 
     if (existing) {
       await transaction.rollback();
 
       if (
-        existing.username.toLowerCase() === cleanUsername.toLowerCase()
+        existing.username?.toLowerCase() ===
+        cleanUsername.toLowerCase()
       ) {
         return res.status(400).json({
-          message: "ชื่อผู้ใช้นี้ถูกใช้งานแล้ว",
+          message:
+            "ชื่อผู้ใช้นี้ถูกใช้งานแล้ว",
         });
       }
 
-      if (existing.email.toLowerCase() === cleanEmail) {
+      if (
+        existing.email?.toLowerCase() ===
+        cleanEmail
+      ) {
         return res.status(400).json({
-          message: "อีเมลนี้ถูกใช้งานแล้ว",
+          message:
+            "อีเมลนี้ถูกใช้งานแล้ว",
         });
       }
 
       if (existing.phone === cleanPhone) {
         return res.status(400).json({
-          message: "เบอร์โทรนี้ถูกใช้งานแล้ว",
+          message:
+            "เบอร์โทรนี้ถูกใช้งานแล้ว",
         });
       }
     }
 
-    const hashed = await bcrypt.hash(password, 10);
+    const hashed = await bcrypt.hash(
+      password,
+      10
+    );
 
     await User.create(
       {
@@ -253,8 +344,15 @@ router.post("/register", async (req, res) => {
         phone: cleanPhone,
         birthdate,
       },
-      { transaction }
+      {
+        transaction,
+      }
     );
+
+    // registration token ใช้ได้ครั้งเดียว
+    await otpRecord.destroy({
+      transaction,
+    });
 
     await transaction.commit();
 
