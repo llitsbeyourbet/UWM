@@ -2,6 +2,7 @@ import API_URL from "../config";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAlert } from "../hooks/useAlert";
+import ImageCropModal from "../components/ImageCropModal";
 import "../styles/CreateActivities.css";
 import { getCategoryIcon } from "../utils/categoryIcons";
 
@@ -27,6 +28,8 @@ function EditActivity() {
   const [checkinEnd, setCheckinEnd] = useState("");
   const categoryOptions = ["กีฬา", "ดนตรี", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่", "ภาพยนตร์", "เรียน", "สุขภาพ", "จิตอาสา"];
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [cropSource, setCropSource] = useState(null);
+  const [cropFileName, setCropFileName] = useState("image.jpg");
 
   const toggleCategory = (val) => {
     setCategory((prev) =>
@@ -107,26 +110,29 @@ function EditActivity() {
   }, [id]);
 
   const handleImage = async (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
 
     const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
-
     if (file.size > MAX_IMAGE_SIZE) {
       e.target.value = "";
-
       await showAlert({
         type: "warning",
         title: "รูปภาพมีขนาดใหญ่เกินไป",
         message: "รูปภาพต้องมีขนาดไม่เกิน 5 MB",
       });
-
       return;
     }
 
     const objectUrl = URL.createObjectURL(file);
-    setPreview(objectUrl);
+    setCropSource(objectUrl);
+    setCropFileName(file.name || "image.jpg");
+    e.target.value = "";
+  };
 
+  const uploadCroppedImage = async (file) => {
+    const objectUrl = URL.createObjectURL(file);
+    setPreview(objectUrl);
     setUploadingImage(true);
 
     const formData = new FormData();
@@ -134,29 +140,17 @@ function EditActivity() {
 
     try {
       const token = sessionStorage.getItem("token");
-
       const res = await fetch(`${API_URL}/api/upload`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
-
       const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "อัปโหลดรูปไม่สำเร็จ");
-      }
-
-      // data.filename คือ Cloudinary URL
+      if (!res.ok) throw new Error(data.message || "อัปโหลดรูปไม่สำเร็จ");
       setCoverFilename(data.filename);
-
+      setCropSource(null);
     } catch (err) {
       console.error("Upload error:", err);
-
-      e.target.value = "";
-
       await showAlert({
         type: "error",
         title: "อัปโหลดไม่สำเร็จ",
@@ -655,6 +649,18 @@ function EditActivity() {
         </div>
 
       </div>
+      {cropSource && (
+        <ImageCropModal
+          src={cropSource}
+          aspect={1.7777777777777777}
+          outputWidth={1600}
+          outputHeight={900}
+          fileName={cropFileName}
+          onCancel={() => setCropSource(null)}
+          onConfirm={uploadCroppedImage}
+        />
+      )}
+
     </div>
   );
 

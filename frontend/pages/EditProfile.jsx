@@ -2,6 +2,7 @@ import API_URL from "../config";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAlert } from "../hooks/useAlert";
+import ImageCropModal from "../components/ImageCropModal";
 import "../styles/EditProfile.css";
 
 function EditProfile() {
@@ -17,6 +18,8 @@ function EditProfile() {
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [cropSource, setCropSource] = useState(null);
+  const [cropFileName, setCropFileName] = useState("image.jpg");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -50,24 +53,29 @@ function EditProfile() {
   }, []);
 
   const handleImageChange = async (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
 
     const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
-
     if (file.size > MAX_IMAGE_SIZE) {
       e.target.value = "";
-
       await showAlert({
         type: "warning",
         title: "รูปภาพมีขนาดใหญ่เกินไป",
         message: "รูปภาพต้องมีขนาดไม่เกิน 5 MB",
       });
-
       return;
     }
 
-    setPreview(URL.createObjectURL(file));
+    const objectUrl = URL.createObjectURL(file);
+    setCropSource(objectUrl);
+    setCropFileName(file.name || "image.jpg");
+    e.target.value = "";
+  };
+
+  const uploadCroppedImage = async (file) => {
+    const objectUrl = URL.createObjectURL(file);
+    setPreview(objectUrl);
     setUploadingImage(true);
 
     const formData = new FormData();
@@ -75,29 +83,17 @@ function EditProfile() {
 
     try {
       const token = sessionStorage.getItem("token");
-
       const res = await fetch(`${API_URL}/api/upload`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
-
       const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "อัปโหลดรูปไม่สำเร็จ");
-      }
-
-      // ได้ URL Cloudinary แล้ว
+      if (!res.ok) throw new Error(data.message || "อัปโหลดรูปไม่สำเร็จ");
       setProfileImage(data.filename);
-
+      setCropSource(null);
     } catch (err) {
       console.error("Upload error:", err);
-
-      e.target.value = "";
-
       await showAlert({
         type: "error",
         title: "อัปโหลดไม่สำเร็จ",
@@ -257,6 +253,18 @@ function EditProfile() {
               : "บันทึก"}
         </button>
       </div>
+      {cropSource && (
+        <ImageCropModal
+          src={cropSource}
+          aspect={1}
+          outputWidth={800}
+          outputHeight={800}
+          fileName={cropFileName}
+          onCancel={() => setCropSource(null)}
+          onConfirm={uploadCroppedImage}
+        />
+      )}
+
     </div>
   );
 }

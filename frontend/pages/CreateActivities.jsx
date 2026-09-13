@@ -2,6 +2,7 @@ import API_URL from "../config";
 import { lazy, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAlert } from "../hooks/useAlert";
+import ImageCropModal from "../components/ImageCropModal";
 import "../styles/CreateActivities.css";
 import { getCategoryIcon } from "../utils/categoryIcons";
 
@@ -43,6 +44,8 @@ function CreateActivities() {
   const [showCategory, setShowCategory] = useState(false);
   const [error, setError] = useState("");
   const [imageError, setImageError] = useState("");
+  const [cropSource, setCropSource] = useState(null);
+  const [cropFileName, setCropFileName] = useState("image.jpg");
   const isIOS = /iPhone|iPod|iPad/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
 
@@ -53,25 +56,26 @@ function CreateActivities() {
 
     const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
     if (file.size > MAX_IMAGE_SIZE) {
-      const message = "รูปภาพต้องมีขนาดไม่เกิน 5 MB";
-      setImageError(message);
-      setError(message);
-      setPreview([]);
-      setCoverFilename(null);
       e.target.value = "";
       await showAlert({
         type: "warning",
         title: "รูปภาพมีขนาดใหญ่เกินไป",
-        message,
+        message: "รูปภาพต้องมีขนาดไม่เกิน 5 MB",
       });
       return;
     }
 
-    setImageError("");
-    setError("");
+    const objectUrl = URL.createObjectURL(file);
+    setCropSource(objectUrl);
+    setCropFileName(file.name || "image.jpg");
+    e.target.value = "";
+  };
 
+  const uploadCroppedImage = async (file) => {
     const objectUrl = URL.createObjectURL(file);
     setPreview([objectUrl]);
+    setImageError("");
+    setError("");
 
     const formData = new FormData();
     formData.append("image", file);
@@ -84,26 +88,23 @@ function CreateActivities() {
         body: formData,
       });
       const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "อัปโหลดรูปไม่สำเร็จ");
-      }
-
-      setCoverFilename(data.filename); // 👈 เก็บแค่ชื่อไฟล์
+      if (!res.ok) throw new Error(data.message || "อัปโหลดรูปไม่สำเร็จ");
+      setCoverFilename(data.filename);
       setImageError("");
       setError("");
+      setCropSource(null);
     } catch (err) {
       console.error("Upload error:", err);
       setPreview([]);
       setCoverFilename(null);
       setImageError(err.message || "เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ");
       setError(err.message || "เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ");
-      e.target.value = "";
       await showAlert({
         type: "error",
         title: "อัปโหลดไม่สำเร็จ",
         message: err.message || "เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ",
       });
+    } finally {
     }
   };
   const categoryOptions = ["กีฬา", "ดนตรี", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่", "ภาพยนตร์", "เรียน", "สุขภาพ", "จิตอาสา"];
@@ -671,6 +672,18 @@ function CreateActivities() {
         </div>
 
       </div>
+      {cropSource && (
+        <ImageCropModal
+          src={cropSource}
+          aspect={1.7777777777777777}
+          outputWidth={1600}
+          outputHeight={900}
+          fileName={cropFileName}
+          onCancel={() => setCropSource(null)}
+          onConfirm={uploadCroppedImage}
+        />
+      )}
+
     </div>
   );
 }
