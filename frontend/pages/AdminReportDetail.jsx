@@ -24,6 +24,7 @@ import {
   formatDateTimeDate,
   formatDateTimeTime,
 } from "../utils/formatDate";
+import { getCategoryIcon } from "../utils/categoryIcons";
 
 const FALLBACK_IMAGE =
   "https://placehold.co/900x560/F1EDFF/6846F5?text=Activity";
@@ -303,217 +304,127 @@ export default function AdminReportDetail() {
             </div>
           </section>
 
-          <section className="report-detail-main-grid">
-            <div className="report-detail-left-column">
-              <article className="report-detail-card activity-information-card">
-                <div className="report-detail-card-title">
-                  <span>
-                    <FiCalendar />
-                  </span>
-                  <div>
-                    <h2>ข้อมูลกิจกรรม</h2>
-                    <p>ข้อมูลของกิจกรรมที่ถูกรายงาน</p>
-                  </div>
+          <section className="report-detail-content">
+            <article className="report-detail-card activity-information-card">
+              <div className="report-detail-card-title">
+                <span>
+                  <FiCalendar />
+                </span>
+                <div>
+                  <h2>ข้อมูลกิจกรรม</h2>
+                  <p>ข้อมูลของกิจกรรมที่ถูกรายงาน</p>
                 </div>
+              </div>
 
-                <img
-                  className="report-detail-activity-image"
-                  src={activityImage}
-                  alt={report.activityName || "กิจกรรม"}
-                  onError={(event) => {
-                    event.currentTarget.src = FALLBACK_IMAGE;
-                  }}
-                />
+              <div className="report-activity-layout">
+                <div className="report-activity-content">
+                  <div className="report-activity-heading-row">
+                    <div>
+                      <h3>{report.activityName || "ไม่ระบุชื่อกิจกรรม"}</h3>
 
-                <div className="report-activity-heading-row">
-                  <h3>{report.activityName || "ไม่ระบุชื่อกิจกรรม"}</h3>
+                      {categories.length > 0 && (
+                        <div className="report-activity-badges">
+                          {categories.map((category) => (
+                            <span className="activity-category-badge" key={category}>
+                              <span className="activity-category-emoji">
+                                {getCategoryIcon(category)}
+                              </span>
+                              {category}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
 
-                  <div className="report-activity-badges">
-                    {categories.map((category) => (
-                      <span className="activity-category-badge" key={category}>
-                        <FiTag />
-                        {category}
+                  <div className="report-activity-detail-box">
+                    <div className="report-activity-detail-title">
+                      <FiCalendar />
+                      <strong>รายละเอียดกิจกรรม</strong>
+                    </div>
+                    <p>{report.activityDetail || "ไม่มีรายละเอียดกิจกรรม"}</p>
+                  </div>
+
+                  <div className="report-detail-info-list">
+                    <div>
+                      <FiCalendar />
+                      <span>
+                        <small>วันที่จัดกิจกรรม</small>
+                        <strong>{formatActivityDate(report.activityDate)}</strong>
                       </span>
-                    ))}
+                    </div>
 
-                    <span className="activity-type-badge">
-                      {report.activityType === "private" ? "ส่วนตัว" : "สาธารณะ"}
-                    </span>
-
-                    <span
-                      className={`activity-status-badge ${
-                        report.activityStatus === "suspended" ? "suspended" : "active"
-                      }`}
-                    >
-                      {report.activityStatus === "suspended"
-                        ? "ระงับแล้ว"
-                        : "เปิดใช้งาน"}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="report-activity-detail-box">
-                  <div className="report-activity-detail-title">
-                    <FiCalendar />
-                    <strong>รายละเอียดกิจกรรม</strong>
-                  </div>
-                  <p>{report.activityDetail || "ไม่มีรายละเอียดกิจกรรม"}</p>
-                </div>
-
-                <div className="report-detail-info-list">
-                  <div>
-                    <FiCalendar />
-                    <span>
-                      <small>วันที่จัดกิจกรรม</small>
-                      <strong>{formatActivityDate(report.activityDate)}</strong>
-                    </span>
-                  </div>
-
-                  <div>
-                    <FiClock />
-                    <span>
-                      <small>เวลา</small>
-                      <strong>
-                        {report.activityTime
-                          ? report.activityTime
+                    <div>
+                      <FiClock />
+                      <span>
+                        <small>เวลา</small>
+                        <strong>
+                          {report.activityTime
+                            ? report.activityTime
                               .split(" - ")
                               .map((time) => time.slice(0, 5))
                               .join(" - ") + " น."
-                          : "-"}
-                      </strong>
-                    </span>
-                  </div>
+                            : "-"}
+                        </strong>
+                      </span>
+                    </div>
 
-                  <div>
-                    <FiUsers />
-                    <span>
-                      <small>จำนวนที่รับสมัคร</small>
-                      <strong>{report.activityParticipantCount || 0} คน</strong>
-                    </span>
-                  </div>
+                    <div>
+                      <FiMapPin />
+                      <span>
+                        <small>สถานที่จัดกิจกรรม</small>
+                        <strong>{report.activityLocation || "ไม่ระบุสถานที่"}</strong>
+                      </span>
+                    </div>
 
-                  <div>
-                    <FiMapPin />
-                    <span>
-                      <small>สถานที่จัดกิจกรรม</small>
-                      <strong>{report.activityLocation || "ไม่ระบุสถานที่"}</strong>
-                    </span>
-                  </div>
+                    <div>
+                      <FiUsers />
+                      <span>
+                        <small>จำนวนที่รับสมัคร</small>
+                        <strong>{report.activityParticipantCount || 0} คน</strong>
+                      </span>
+                    </div>
 
-                  <div>
-                    <FiUser />
-                    <span>
-                      <small>ผู้สร้างกิจกรรม</small>
-                      <strong>@{report.creatorUsername || "ไม่ระบุ"}</strong>
-                    </span>
-                  </div>
+                    <div>
+                      <FiUser />
+                      <span>
+                        <small>ผู้สร้างกิจกรรม</small>
+                        <strong>@{report.creatorUsername || "ไม่ระบุ"}</strong>
+                      </span>
+                    </div>
 
-                  <div>
-                    <FiCalendar />
-                    <span>
-                      <small>วันที่สร้างกิจกรรม</small>
-                      <strong>{formatDateTimeDate(report.activityCreatedAt)}</strong>
-                    </span>
-                  </div>
+                    <div>
+                      <FiCalendar />
+                      <span>
+                        <small>วันที่สร้างกิจกรรม</small>
+                        <strong>{formatDateTimeDate(report.activityCreatedAt)}</strong>
+                      </span>
+                    </div>
 
-                  <div>
-                    <FiClock />
-                    <span>
-                      <small>เวลาที่สร้างกิจกรรม</small>
-                      <strong>{formatDateTimeTime(report.activityCreatedAt)} น.</strong>
-                    </span>
-                  </div>
-                </div>
-              </article>
-
-              <article className="report-detail-card report-decision-card">
-                <div className="report-detail-card-title">
-                  <span>
-                    <FiMessageSquare />
-                  </span>
-                  <div>
-                    <h2>ผลการตรวจสอบ</h2>
-                    <p>
-                      {isCompleted
-                        ? "รายละเอียดผลการพิจารณารายงาน"
-                        : "บันทึกผลการพิจารณารายงาน"}
-                    </p>
+                    <div>
+                      <FiClock />
+                      <span>
+                        <small>เวลาที่สร้างกิจกรรม</small>
+                        <strong>{formatDateTimeTime(report.activityCreatedAt)} น.</strong>
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                <label className="report-decision-field">
-                  <span>ผลการตรวจสอบ</span>
-                  <select
-                    value={decision}
-                    onChange={(event) => setDecision(event.target.value)}
-                    disabled={isCompleted}
-                  >
-                    <option value="">เลือกผลการตรวจสอบ</option>
-                    <option value="no_violation">ไม่พบการกระทำผิด</option>
-                    <option value="warning">แจ้งเตือนผู้สร้างกิจกรรม</option>
-                    <option value="suspend_activity">ระงับกิจกรรม</option>
-                    <option value="reject_report">ปฏิเสธการระงับกิจกรรม</option>
-                  </select>
-                </label>
-
-                <label className="report-decision-field">
-                  <span>หมายเหตุจากผู้ดูแลระบบ</span>
-                  <textarea
-                    rows="5"
-                    value={adminNote}
-                    onChange={(event) => setAdminNote(event.target.value)}
-                    placeholder="ระบุรายละเอียดผลการตรวจสอบ..."
-                    disabled={isCompleted}
+                <div className="report-activity-image-wrap">
+                  <img
+                    className="report-detail-activity-image"
+                    src={activityImage}
+                    alt={report.activityName || "กิจกรรม"}
+                    onError={(event) => {
+                      event.currentTarget.src = FALLBACK_IMAGE;
+                    }}
                   />
-                </label>
+                </div>
+              </div>
+            </article>
 
-                {isCompleted && (
-                  <div className="report-review-result-info">
-                    <div>
-                      <small>สถานะรายงาน</small>
-                      <strong>
-                        {currentStatus === "rejected"
-                          ? "ปฏิเสธการระงับกิจกรรม"
-                          : "ดำเนินการเรียบร้อยแล้ว"}
-                      </strong>
-                    </div>
-
-                    <div>
-                      <small>ตรวจสอบโดย</small>
-                      <strong>
-                        {report.reviewerName ||
-                          report.reviewerUsername ||
-                          "ผู้ดูแลระบบ"}
-                      </strong>
-                    </div>
-
-                    <div>
-                      <small>วันที่ตรวจสอบ</small>
-                      <strong>{formatDateTimeDate(report.reviewedAt)}</strong>
-                    </div>
-
-                    <div>
-                      <small>เวลาที่ตรวจสอบ</small>
-                      <strong>{formatDateTimeTime(report.reviewedAt)} น.</strong>
-                    </div>
-                  </div>
-                )}
-
-                {!isCompleted && (
-                  <button
-                    type="button"
-                    className="report-save-decision"
-                    onClick={saveDecision}
-                    disabled={saving}
-                  >
-                    <FiCheck />
-                    {saving ? "กำลังบันทึก..." : "บันทึกผลการตรวจสอบ"}
-                  </button>
-                )}
-              </article>
-            </div>
-
-            <div className="report-detail-side-column">
+            <div className="report-detail-three-grid">
               <article className="report-detail-card review-status-card">
                 <div className="report-detail-card-title">
                   <span>
@@ -540,11 +451,10 @@ export default function AdminReportDetail() {
                   </div>
 
                   <div
-                    className={`report-timeline-item ${
-                      ["reviewing", "resolved", "rejected"].includes(currentStatus)
+                    className={`report-timeline-item ${["reviewing", "resolved", "rejected"].includes(currentStatus)
                         ? "complete"
                         : "current"
-                    }`}
+                      }`}
                   >
                     <span className="timeline-marker">
                       {["reviewing", "resolved", "rejected"].includes(currentStatus) ? (
@@ -581,6 +491,69 @@ export default function AdminReportDetail() {
                 </div>
               </article>
 
+              <article className="report-detail-card report-summary-card">
+                <div className="report-detail-card-title">
+                  <span>
+                    <FiAlertCircle />
+                  </span>
+                  <div>
+                    <h2>สรุปรายงาน</h2>
+                    <p>ภาพรวมของรายงานกิจกรรมนี้</p>
+                  </div>
+                </div>
+
+                <div className="report-summary-grid">
+                  <div className="report-summary-item">
+                    <FiUsers />
+                    <span>
+                      <small>จำนวนผู้รายงาน</small>
+                      <strong>{report.reportCount || reporters.length} คน</strong>
+                    </span>
+                  </div>
+
+                  <div className="report-summary-item">
+                    <FiMessageSquare />
+                    <span>
+                      <small>จำนวนเหตุผลทั้งหมด</small>
+                      <strong>
+                        {new Set(
+                          reporters
+                            .map((item) => String(item.reason || "").trim())
+                            .filter(Boolean)
+                        ).size || 0} เหตุผล
+                      </strong>
+                    </span>
+                  </div>
+
+                  <div className="report-summary-reasons">
+                    <small>เหตุผลที่ถูกรายงาน</small>
+                    <div className="report-summary-reason-tags">
+                      {Object.entries(
+                        reporters.reduce((acc, item) => {
+                          const reason = String(item.reason || "ไม่ระบุเหตุผล").trim();
+                          acc[reason] = (acc[reason] || 0) + 1;
+                          return acc;
+                        }, {})
+                      ).map(([reason, count]) => (
+                        <span key={reason}>
+                          {reason}
+                          {count > 1 ? ` (${count})` : ""}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="report-summary-item">
+                    <FiClock />
+                    <span>
+                      <small>รายงานล่าสุด</small>
+                      <strong>{formatDateTimeDate(latestReport.createdAt)}</strong>
+                      <em>{formatDateTimeTime(latestReport.createdAt)} น.</em>
+                    </span>
+                  </div>
+                </div>
+              </article>
+
               <article className="report-detail-card report-information-card">
                 <div className="report-detail-card-title reporter-card-title">
                   <span>
@@ -588,6 +561,7 @@ export default function AdminReportDetail() {
                   </span>
                   <div>
                     <h2>ผู้รายงานทั้งหมด {report.reportCount || reporters.length} คน</h2>
+                    <p>เหตุผลของผู้รายงานแต่ละคน</p>
                   </div>
                 </div>
 
@@ -595,13 +569,16 @@ export default function AdminReportDetail() {
                   {reporters.map((item) => (
                     <div className="reporter-report-item" key={item.id}>
                       <div className="reporter-profile">
-                        <img
-                          src={
-                            item.reporterProfileImage ||
-                            "https://placehold.co/80x80/EEEAFD/6846F5?text=U"
-                          }
-                          alt={item.reporterName || "ผู้รายงาน"}
-                        />
+                        {item.reporterProfileImage ? (
+                          <img
+                            src={item.reporterProfileImage}
+                            alt={item.reporterName || item.reporterUsername || "ผู้รายงาน"}
+                          />
+                        ) : (
+                          <div className="reporter-avatar-fallback" aria-hidden="true">
+                            {(item.reporterUsername || "U").trim().charAt(0).toUpperCase()}
+                          </div>
+                        )}
 
                         <div className="reporter-main-info">
                           <strong>
@@ -635,6 +612,127 @@ export default function AdminReportDetail() {
                 </div>
               </article>
             </div>
+
+            <article className="report-detail-card report-decision-card">
+              <div className="report-detail-card-title">
+                <span>
+                  <FiMessageSquare />
+                </span>
+                <div>
+                  <h2>ผลการตรวจสอบ</h2>
+                  <p>
+                    {isCompleted
+                      ? "รายละเอียดผลการพิจารณารายงาน"
+                      : "บันทึกผลการพิจารณารายงาน"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="report-decision-section">
+                <div className="report-decision-options-block">
+                  <span className="report-decision-label">ผลการตรวจสอบ</span>
+
+                  <div className="report-decision-options">
+                    {[
+                      {
+                        value: "no_violation",
+                        label: "ไม่พบการกระทำผิด",
+                        description: "กิจกรรมไม่เข้าข่ายการกระทำผิด",
+                      },
+                      {
+                        value: "warning",
+                        label: "แจ้งเตือนผู้สร้างกิจกรรม",
+                        description: "ส่งคำเตือนไปยังผู้สร้างกิจกรรม",
+                      },
+                      {
+                        value: "suspend_activity",
+                        label: "ระงับกิจกรรม",
+                        description: "ระงับกิจกรรมจากการใช้งาน",
+                      },
+                      {
+                        value: "reject_report",
+                        label: "ปฏิเสธการระงับกิจกรรม",
+                        description: "ไม่ระงับกิจกรรมจากรายงานนี้",
+                      },
+                    ].map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        className={`report-decision-option ${decision === option.value ? "selected" : ""
+                          }`}
+                        onClick={() => setDecision(option.value)}
+                        disabled={isCompleted}
+                      >
+                        <span className="report-decision-option-icon">
+                          {decision === option.value ? <FiCheck /> : null}
+                        </span>
+                        <span className="report-decision-option-text">
+                          <strong>{option.label}</strong>
+                          <small>{option.description}</small>
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="report-decision-bottom">
+                  <label className="report-decision-field report-decision-note">
+                    <span>หมายเหตุจากผู้ดูแลระบบ</span>
+                    <textarea
+                      rows="3"
+                      value={adminNote}
+                      onChange={(event) => setAdminNote(event.target.value)}
+                      placeholder="ระบุรายละเอียดผลการตรวจสอบ..."
+                      disabled={isCompleted}
+                    />
+                  </label>
+
+                  {!isCompleted && (
+                    <button
+                      type="button"
+                      className="report-save-decision"
+                      onClick={saveDecision}
+                      disabled={saving}
+                    >
+                      <FiCheck />
+                      {saving ? "กำลังบันทึก..." : "บันทึกผลการตรวจสอบ"}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {isCompleted && (
+                <div className="report-review-result-info">
+                  <div>
+                    <small>สถานะรายงาน</small>
+                    <strong>
+                      {currentStatus === "rejected"
+                        ? "ปฏิเสธการระงับกิจกรรม"
+                        : "ดำเนินการเรียบร้อยแล้ว"}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <small>ตรวจสอบโดย</small>
+                    <strong>
+                      {report.reviewerName ||
+                        report.reviewerUsername ||
+                        "ผู้ดูแลระบบ"}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <small>วันที่ตรวจสอบ</small>
+                    <strong>{formatDateTimeDate(report.reviewedAt)}</strong>
+                  </div>
+
+                  <div>
+                    <small>เวลาที่ตรวจสอบ</small>
+                    <strong>{formatDateTimeTime(report.reviewedAt)} น.</strong>
+                  </div>
+                </div>
+              )}
+            </article>
           </section>
         </div>
       </main>

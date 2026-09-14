@@ -81,9 +81,8 @@ function Profile() {
 
       {/* Header */}
       <div className="profile-header-bar">
-        <p className="profile-header-title">Profile</p>
+        <p className="profile-header-title">บัญชีผู้ใช้</p>
         <div className="profile-header-icons">
-          {/* 👈 เอาปุ่ม edit ออก เพิ่ม dropdown แทน */}
           <div className="profile-menu-wrap" onClick={(e) => e.stopPropagation()}>
             <div className="profile-icon-btn" onClick={() => setShowMenu(!showMenu)}>⚙️</div>
 
