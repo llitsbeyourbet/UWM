@@ -18,7 +18,7 @@ function AutoLogout() {
       await showAlert({
         type: 'info',
         title: 'ออกจากระบบอัตโนมัติ',
-        message: 'ไม่มีการใช้งานเกิน 1 ชั่วโมง ระบบได้ออกจากระบบเพื่อความปลอดภัย',
+        message: 'ไม่มีการใช้งานเป็นเวลา 1 ชั่วโมง ระบบได้ออกจากระบบเพื่อความปลอดภัย',
       });
 
       navigate("/login", { replace: true });

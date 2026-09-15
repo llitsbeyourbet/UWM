@@ -1,11 +1,13 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import API_URL from "../config";
+import { useAlert } from "../hooks/useAlert";
 
 const HEARTBEAT_INTERVAL = 60 * 1000; // ทุก 1 นาที
 
 export default function SessionManager() {
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     const token = sessionStorage.getItem("token");
@@ -30,15 +32,22 @@ export default function SessionManager() {
           sessionStorage.removeItem("token");
           sessionStorage.removeItem("user");
 
-          navigate("/login", {
-            replace: true,
-            state: {
+          navigate("/login", { replace: true });
+
+          if (data.code === "SESSION_REPLACED") {
+            await showAlert({
+              type: "info",
+              title: "มีการเข้าสู่ระบบจากอุปกรณ์อื่น",
               message:
-                data.code === "SESSION_REPLACED"
-                  ? "มีการใช้งานบัญชีนี้บนอุปกรณ์ใหม่ กรุณาเข้าสู่ระบบอีกครั้ง"
-                  : "เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่",
-            },
-          });
+                "บัญชีของคุณมีการเข้าสู่ระบบจากอุปกรณ์หรือเบราว์เซอร์อื่น กรุณาเข้าสู่ระบบอีกครั้ง",
+            });
+          } else {
+            await showAlert({
+              type: "info",
+              title: "เซสชันหมดอายุ",
+              message: "เซสชันของคุณหมดอายุ กรุณาเข้าสู่ระบบอีกครั้ง",
+            });
+          }
         }
       } catch (error) {
         console.error("Heartbeat error:", error);

@@ -289,7 +289,7 @@ function ActivityDetail() {
 
     const confirmed = await showConfirm({
       title: 'ลบกิจกรรม?',
-      message: 'คุณต้องการลบกิจกรรมนี้ใช่หรือไม่ การดำเนินการนี้ไม่สามารถย้อนกลับได้',
+      message: 'คุณต้องการลบกิจกรรมนี้ใช่หรือไม่\nการดำเนินการนี้ไม่สามารถย้อนกลับได้',
       confirmText: 'ลบกิจกรรม',
       cancelText: 'ยกเลิก',
     });
@@ -458,11 +458,15 @@ function ActivityDetail() {
                           <button type="button" className="menu-action-btn"
                             onClick={async () => {
                               setShowReportMenu(false);
-                              if (activityEnded) {
+                              const checkinEnd = new Date(
+                                `${activity.date}T${activity.checkinEnd}+07:00`
+                              );
+
+                              if (activity.checkinEnd && new Date() > checkinEnd) {
                                 await showAlert({
-                                  type: 'warning',
-                                  title: 'ไม่สามารถแสดงได้',
-                                  message: 'กิจกรรมที่สิ้นสุดแล้วไม่สามารถแสดง QR Code ได้',
+                                  type: "warning",
+                                  title: "หมดเวลาเช็กอินแล้ว",
+                                  message: "ไม่สามารถแสดง QR Code ได้ เนื่องจากหมดเวลาเช็กอินแล้ว",
                                 });
                                 return;
                               }

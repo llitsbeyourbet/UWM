@@ -926,8 +926,7 @@ router.get("/:id/qr", auth, async (req, res) => {
 
 
 // ดึงข้อมูลสรุปผู้เข้าร่วม
-router.get(
-  "/:id/summary-participants",
+router.get("/:id/summary-participants",
   auth,
   async (req, res) => {
     try {
@@ -1023,8 +1022,7 @@ router.get(
 
 
 // ดึงรายชื่อผู้ที่เช็คอินแล้ว
-router.get(
-  "/:id/participants/checked-in",
+router.get("/:id/participants/checked-in",
   async (req, res) => {
     try {
       const { id } = req.params;

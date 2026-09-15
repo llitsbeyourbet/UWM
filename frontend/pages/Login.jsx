@@ -1,11 +1,10 @@
 import API_URL from "../config";
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 
 export default function Login() {
   const navigate = useNavigate();
-  const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
@@ -140,12 +139,6 @@ export default function Login() {
               <h2>เข้าสู่ระบบ</h2>
               <p>ยินดีต้อนรับกลับมา!</p>
             </div>
-
-            {location.state?.message && (
-              <div className="login-success-alert">
-                {location.state.message}
-              </div>
-            )}
 
             <div className="tab">
               <button className="active">
