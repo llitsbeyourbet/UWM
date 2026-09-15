@@ -15,13 +15,14 @@ function AutoLogout() {
     const logout = async () => {
       await logoutUser();
 
-      await showAlert({
-        type: 'info',
-        title: 'ออกจากระบบอัตโนมัติ',
-        message: 'ไม่มีการใช้งานเป็นเวลา 1 ชั่วโมง ระบบได้ออกจากระบบเพื่อความปลอดภัย',
-      });
-
       navigate("/login", { replace: true });
+
+      await showAlert({
+        type: "info",
+        title: "ออกจากระบบอัตโนมัติ",
+        message:
+          "ไม่มีการใช้งานเป็นเวลา 1 ชั่วโมง ระบบได้ออกจากระบบเพื่อความปลอดภัย",
+      });
     };
 
     const resetTimer = () => {
