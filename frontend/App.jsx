@@ -29,6 +29,7 @@ import AdminActivities from "./pages/AdminActivities";
 import AdminUsers from "./pages/AdminUsers";
 import AdminReviews from "./pages/AdminReviews";
 import AdminReportDetail from "./pages/AdminReportDetail";
+import CheckinHistory from "./pages/CheckinHistory";
 import AutoLogout from "./components/AutoLogout";
 import SessionManager from "./components/SessionManager";
 
@@ -114,6 +115,7 @@ function App() {
                 <Route path="/admin/users" element={<ProtectedRoute><AdminUsers /></ProtectedRoute>} />
                 <Route path="/admin/reviews" element={<ProtectedRoute><AdminReviews /></ProtectedRoute>} />
                 <Route path="/admin/reports/:id" element={<ProtectedRoute><AdminReportDetail /></ProtectedRoute>} />
+                <Route path="/checkin-history" element={<ProtectedRoute><CheckinHistory /></ProtectedRoute>} />
               </Routes>
             </div>
           </div>

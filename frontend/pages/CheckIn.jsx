@@ -7,6 +7,7 @@ import { formatDate, formatTime } from "../utils/formatDate";
 function CheckIn() {
   const navigate = useNavigate();
   const { activityId, qrToken } = useParams();
+
   const [activity, setActivity] = useState(null);
   const [joinStatus, setJoinStatus] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -15,28 +16,69 @@ function CheckIn() {
   const [errorMessage, setErrorMessage] = useState("");
   const [alreadyCheckedIn, setAlreadyCheckedIn] = useState(false);
 
+  const getCurrentUser = () => {
+    try {
+      return JSON.parse(sessionStorage.getItem("user")) || {};
+    } catch {
+      return {};
+    }
+  };
+
+  const getProfileImage = (user) =>
+    user?.profileImage ||
+    user?.profilePicture ||
+    user?.avatar ||
+    "";
+
+  const getDisplayName = (user) =>
+    user?.name ||
+    user?.username ||
+    "ผู้ใช้งาน";
+
+  const getInitial = (user) =>
+    (user?.username || user?.name || "U")
+      .trim()
+      .charAt(0)
+      .toUpperCase();
+
+  const currentUser = getCurrentUser();
+
   useEffect(() => {
     const fetchData = async () => {
       const token = sessionStorage.getItem("token");
+
       if (!token) {
         navigate("/login");
         return;
       }
 
       try {
-        const actRes = await fetch(`${API_URL}/api/activities/${activityId}`);
+        const actRes = await fetch(
+          `${API_URL}/api/activities/${activityId}`
+        );
+
         if (!actRes.ok) {
           throw new Error("ไม่พบข้อมูลกิจกรรม");
         }
+
         const actData = await actRes.json();
         setActivity(actData);
 
-        const statusRes = await fetch(`${API_URL}/api/join/${activityId}/status`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const statusRes = await fetch(
+          `${API_URL}/api/join/${activityId}/status`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
         if (!statusRes.ok) {
-          throw new Error("ไม่สามารถตรวจสอบสถานะการเข้าร่วมได้");
+          throw new Error(
+            "ไม่สามารถตรวจสอบสถานะการเข้าร่วมได้"
+          );
         }
+
         const statusData = await statusRes.json();
         setJoinStatus(statusData.status);
 
@@ -47,31 +89,39 @@ function CheckIn() {
         }
       } catch (err) {
         console.log(err);
-        setErrorMessage(err.message || "ไม่สามารถโหลดข้อมูลกิจกรรมได้");
+        setErrorMessage(
+          err.message || "ไม่สามารถโหลดข้อมูลกิจกรรมได้"
+        );
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [activityId]);
+  }, [activityId, navigate]);
 
   const handleCheckIn = async () => {
     const token = sessionStorage.getItem("token");
+
     setCheckinLoading(true);
+
     try {
-      const res = await fetch(`${API_URL}/api/join/${activityId}/checkin`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          qrToken,
-        }),
-      });
+      const res = await fetch(
+        `${API_URL}/api/join/${activityId}/checkin`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            qrToken,
+          }),
+        }
+      );
 
       const data = await res.json();
+
       if (!res.ok) {
         setErrorMessage(data.message || "เกิดข้อผิดพลาด");
         return;
@@ -80,62 +130,47 @@ function CheckIn() {
       setDone(true);
       setJoinStatus("checked_in");
       setAlreadyCheckedIn(false);
-    } catch (err) {
+    } catch {
       setErrorMessage("ไม่สามารถเชื่อมต่อ server ได้");
     } finally {
       setCheckinLoading(false);
     }
   };
 
+  const ProfileAvatar = ({ user, className = "" }) => {
+    const image = getProfileImage(user);
+
+    return (
+      <div className={`checkin-profile-avatar ${className}`}>
+        {image ? (
+          <img
+            src={image}
+            alt={getDisplayName(user)}
+          />
+        ) : (
+          <span>{getInitial(user)}</span>
+        )}
+      </div>
+    );
+  };
+
   if (errorMessage) {
     return (
       <div className="checkin-page">
-
-        {/* Header */}
-        <header className="checkin-header">
-
-          <button
-            type="button"
-            className="checkin-back-btn"
-            onClick={() => navigate(-1)}
-          >
-            <span className="material-icons">
-              arrow_back
-            </span>
-          </button>
-
-          <div className="checkin-header-text">
-            <h1>เช็คอินกิจกรรม</h1>
-            <p>ตรวจสอบสถานะการเช็คอินของกิจกรรม</p>
-          </div>
-
-          <div className="checkin-header-space" />
-
-        </header>
-
-
         <main className="checkin-content">
-
-          {/* Error Card */}
           <section className="checkin-error-card">
-
             <div className="checkin-error-icon">
               <span className="material-icons">
                 schedule
               </span>
             </div>
 
-            <h2>ยังไม่สามารถเช็คอินได้</h2>
-
+            <h2>ไม่สามารถเช็คอินได้</h2>
             <p>{errorMessage}</p>
 
-
-            {/* ถ้ามีข้อมูลกิจกรรมแล้ว แสดงให้ด้วย */}
             {activity && (
               <div className="checkin-error-activity">
-
                 <div className="checkin-error-cover">
-
                   {activity.cover ? (
                     <img
                       src={activity.cover}
@@ -146,30 +181,20 @@ function CheckIn() {
                       event
                     </span>
                   )}
-
                 </div>
 
                 <div className="checkin-error-info">
-
-                  <strong>
-                    {activity.activityName}
-                  </strong>
-
-                  <span>
-                    {formatDate(activity.date)}
-                  </span>
+                  <strong>{activity.activityName}</strong>
+                  <span>{formatDate(activity.date)}</span>
 
                   <span>
                     {formatTime(activity.time)}
                     {" - "}
                     {formatTime(activity.endTime)}
                   </span>
-
                 </div>
-
               </div>
             )}
-
 
             <button
               type="button"
@@ -184,61 +209,27 @@ function CheckIn() {
             >
               กลับหน้ากิจกรรม
             </button>
-
           </section>
-
         </main>
-
       </div>
     );
   }
 
-  if (loading) return (
-    <div className="checkin-page">
-      <p className="loading-text">กำลังโหลด...</p>
-    </div>
-  );
+  if (loading) {
+    return (
+      <div className="checkin-page">
+        <p className="loading-text">กำลังโหลด...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="checkin-page">
-
-      {/* Header */}
-      <header className="checkin-header">
-        <button
-          type="button"
-          className="checkin-back-btn"
-          onClick={() => navigate(-1)}
-        >
-          <span className="material-icons">
-            arrow_back_ios_new
-          </span>
-        </button>
-
-        <div className="checkin-header-text">
-          <h1>
-            {done
-              ? "เช็คอินสำเร็จ"
-              : "ยืนยันการเข้าร่วมกิจกรรม"}
-          </h1>
-
-          <p>
-            {done
-              ? "ระบบบันทึกการเข้าร่วมเรียบร้อยแล้ว"
-              : "กรุณาตรวจสอบข้อมูลกิจกรรมก่อนยืนยัน"}
-          </p>
-        </div>
-
-        <div className="checkin-header-space" />
-      </header>
-
+      
 
       {done ? (
-        /* =========================
-           SUCCESS
-        ========================= */
         <main className="checkin-content">
-
           <section className="checkin-success-card">
-
             <div className="checkin-success-icon">
               <span className="material-icons">
                 check
@@ -254,7 +245,9 @@ function CheckIn() {
             <p>
               {alreadyCheckedIn
                 ? "ไม่สามารถเช็คอินกิจกรรมเดิมซ้ำได้"
-                : `คุณได้เข้าร่วม ${activity?.activityName || ""} เรียบร้อยแล้ว`}
+                : `คุณได้เข้าร่วม ${
+                    activity?.activityName || ""
+                  } เรียบร้อยแล้ว`}
             </p>
 
             <button
@@ -269,21 +262,13 @@ function CheckIn() {
             >
               กลับหน้ากิจกรรม
             </button>
-
           </section>
-
         </main>
       ) : (
-        /* =========================
-           CONFIRM
-        ========================= */
         <main className="checkin-content">
-
-          {/* Activity */}
+          {/* ACTIVITY */}
           <section className="checkin-activity-card">
-
             <div className="checkin-cover">
-
               {activity?.cover ? (
                 <img
                   src={activity.cover}
@@ -296,11 +281,9 @@ function CheckIn() {
                   </span>
                 </div>
               )}
-
             </div>
 
             <div className="checkin-activity-info">
-
               <span className="checkin-type">
                 {activity?.activityType === "private"
                   ? "กิจกรรมส่วนตัว"
@@ -314,9 +297,7 @@ function CheckIn() {
                   calendar_today
                 </span>
 
-                <p>
-                  {formatDate(activity?.date)}
-                </p>
+                <p>{formatDate(activity?.date)}</p>
               </div>
 
               <div className="checkin-info-row">
@@ -336,30 +317,21 @@ function CheckIn() {
                   location_on
                 </span>
 
-                <p>
-                  {activity?.location || "-"}
-                </p>
+                <p>{activity?.location || "-"}</p>
               </div>
-
             </div>
-
           </section>
 
+          {/* ORGANIZER */}
+          <section className="checkin-section">
+            <p className="checkin-section-label">
+              ผู้จัดกิจกรรม
+            </p>
 
-          {/* Organizer / Participants */}
-          <section className="checkin-summary-grid">
+            <div className="checkin-person-card">
+              <ProfileAvatar user={activity?.creator} />
 
-            <div className="checkin-summary-card">
-
-              <div className="summary-icon">
-                <span className="material-icons">
-                  person
-                </span>
-              </div>
-
-              <div>
-                <span>ผู้จัดกิจกรรม</span>
-
+              <div className="checkin-person-info">
                 <strong>
                   {activity?.creator?.name ||
                     activity?.creator?.username ||
@@ -367,43 +339,38 @@ function CheckIn() {
                 </strong>
 
                 {activity?.creator?.username && (
-                  <small className="checkin-organizer-username">
+                  <span>
                     @{activity.creator.username}
-                  </small>
+                  </span>
                 )}
               </div>
-
             </div>
-
-
-            <div className="checkin-summary-card">
-
-              <div className="summary-icon">
-                <span className="material-icons">
-                  groups
-                </span>
-              </div>
-
-              <div>
-                <span>จำนวนผู้เข้าร่วม</span>
-
-                <strong>
-                  {activity?.participantCount
-                    ? `${activity.participantCount} คน`
-                    : "ไม่จำกัด"}
-                </strong>
-              </div>
-
-            </div>
-
           </section>
 
+          {/* PARTICIPANTS */}
+          <section className="checkin-info-card">
+            <div className="checkin-info-icon">
+              <span className="material-icons">
+                groups
+              </span>
+            </div>
 
-          {/* Check-in time */}
-          {(activity?.checkinStart || activity?.checkinEnd) && (
-            <section className="checkin-time-card">
+            <div>
+              <span>จำนวนผู้เข้าร่วม</span>
 
-              <div className="checkin-time-icon">
+              <strong>
+                {activity?.participantCount
+                  ? `${activity.participantCount} คน`
+                  : "ไม่จำกัด"}
+              </strong>
+            </div>
+          </section>
+
+          {/* CHECK-IN TIME */}
+          {(activity?.checkinStart ||
+            activity?.checkinEnd) && (
+            <section className="checkin-info-card checkin-time-card">
+              <div className="checkin-info-icon">
                 <span className="material-icons">
                   schedule
                 </span>
@@ -412,7 +379,7 @@ function CheckIn() {
               <div>
                 <span>ช่วงเวลาเช็คอิน</span>
 
-                <strong>
+                <strong className="checkin-time-value">
                   {activity?.checkinStart
                     ? formatTime(activity.checkinStart)
                     : "--:--"}
@@ -425,66 +392,37 @@ function CheckIn() {
                   น.
                 </strong>
               </div>
-
             </section>
           )}
 
+          {/* CURRENT USER */}
+          <section className="checkin-section">
+            <p className="checkin-section-label">
+              คุณกำลังเช็คอินในฐานะ
+            </p>
 
-          {/* User */}
-          <section className="checkin-user-card">
+            <div className="checkin-person-card current-user">
+              <ProfileAvatar user={currentUser} />
 
-            <div className="checkin-user-icon">
-              <span className="material-icons">
-                person_outline
-              </span>
+              <div className="checkin-person-info">
+                <strong>
+                  {getDisplayName(currentUser)}
+                </strong>
+
+                {currentUser?.username && (
+                  <span>
+                    @{currentUser.username}
+                  </span>
+                )}
+              </div>
             </div>
-
-            <div>
-              <p>คุณกำลังเช็คอินในฐานะ</p>
-
-              <strong>
-                {(() => {
-                  try {
-                    const user = JSON.parse(
-                      sessionStorage.getItem("user")
-                    );
-
-                    return (
-                      user?.name ||
-                      user?.username ||
-                      "ผู้ใช้งาน"
-                    );
-                  } catch {
-                    return "ผู้ใช้งาน";
-                  }
-                })()}
-              </strong>
-
-              <span>
-                {(() => {
-                  try {
-                    const user = JSON.parse(
-                      sessionStorage.getItem("user")
-                    );
-
-                    return user?.username
-                      ? `@${user.username}`
-                      : "";
-                  } catch {
-                    return "";
-                  }
-                })()}
-              </span>
-            </div>
-
           </section>
-
 
           {joinStatus === "approved" ? (
             <>
-              {/* ข้อความแทนกล่องเขียว */}
               <div className="checkin-ready-text">
                 <span>พร้อมเข้าร่วมกิจกรรม 🎉</span>
+
                 <p>
                   ตรวจสอบข้อมูลด้านบน แล้วกดยืนยันได้เลย
                 </p>
@@ -516,7 +454,6 @@ function CheckIn() {
             </>
           ) : (
             <section className="checkin-not-allowed">
-
               <span className="material-icons">
                 error_outline
               </span>
@@ -543,13 +480,10 @@ function CheckIn() {
               >
                 กลับหน้ากิจกรรม
               </button>
-
             </section>
           )}
-
         </main>
       )}
-
     </div>
   );
 }

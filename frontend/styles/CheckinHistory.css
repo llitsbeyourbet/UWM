@@ -1,0 +1,213 @@
+.checkin-history-page {
+  width: 100%;
+  max-width: 480px;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 24px 20px 100px;
+  box-sizing: border-box;
+  background: #fcfbfa;
+  font-family: "Sarabun", sans-serif;
+}
+
+.checkin-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.checkin-history-header h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111;
+}
+
+.checkin-history-back {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #111;
+}
+
+.checkin-history-back .material-icons {
+  font-size: 20px;
+}
+
+.checkin-history-header-space {
+  width: 36px;
+}
+
+.checkin-history-search {
+  height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 15px;
+  margin-bottom: 24px;
+  border-radius: 22px;
+  background: #f1f0ee;
+  box-sizing: border-box;
+}
+
+.checkin-history-search .material-icons {
+  font-size: 19px;
+  color: #aaa;
+}
+
+.checkin-history-search input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: "Sarabun", sans-serif;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.checkin-history-search input::placeholder {
+  color: #aaa;
+}
+
+.checkin-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.checkin-history-card {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr);
+  grid-template-areas:
+    "image info"
+    "image button";
+  column-gap: 14px;
+  row-gap: 9px;
+  padding: 16px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.025);
+}
+
+.checkin-history-image {
+  grid-area: image;
+  width: 90px;
+  height: 90px;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.checkin-history-image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.checkin-history-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #f1edff;
+  color: #7d5fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkin-history-placeholder .material-icons {
+  font-size: 30px;
+}
+
+.checkin-history-info {
+  grid-area: info;
+  min-width: 0;
+}
+
+.checkin-history-info h3 {
+  margin: 0 0 4px;
+  color: #111;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.35;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.checkin-history-datetime {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-bottom: 6px;
+}
+
+.checkin-history-date {
+  color: #888;
+  font-size: 0.8rem;
+}
+
+.checkin-history-time {
+  color: #888;
+  font-size: 0.78rem;
+}
+
+.checkin-history-status {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  background: #eaf9ef;
+  color: #28a95b;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.checkin-history-status .material-icons {
+  font-size: 14px;
+}
+
+.checkin-history-detail-btn {
+  grid-area: button;
+  justify-self: end;
+  border: 1px solid #7d5fff;
+  border-radius: 12px;
+  padding: 6px 12px;
+  background: #fff;
+  color: #7d5fff;
+  font-family: "Sarabun", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.checkin-history-detail-btn:active {
+  transform: scale(0.97);
+}
+
+.checkin-history-empty {
+  padding: 70px 20px;
+  text-align: center;
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+.checkin-history-empty > .material-icons {
+  font-size: 38px;
+  color: #ccc;
+}
+
+.checkin-history-empty p {
+  margin: 8px 0 0;
+}

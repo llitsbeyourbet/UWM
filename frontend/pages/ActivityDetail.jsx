@@ -344,7 +344,7 @@ function ActivityDetail() {
         await showAlert({ type: 'error', title: 'เกิดข้อผิดพลาด', message: data.message });
         return;
       }
-      await showAlert({ type: 'success', title: 'รายงานสำเร็จ', message: 'ขอบคุณที่แจ้งเตือน เราจะตรวจสอบและดำเนินการโดยเร็วที่สุด' });
+      await showAlert({ type: 'success', title: 'รายงานสำเร็จ', message: 'ขอบคุณที่แจ้งเตือน\nเราจะตรวจสอบและดำเนินการโดยเร็วที่สุด' });
       setShowReportModal(false);
       setReportReason("");
       setOtherReason("");

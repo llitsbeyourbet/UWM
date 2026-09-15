@@ -190,7 +190,7 @@ function ScanQR() {
         console.log("Camera error:", err);
 
         setCameraError(
-          "ไม่สามารถเปิดกล้องได้ กรุณาอนุญาตการเข้าถึงกล้องแล้วลองอีกครั้ง"
+          "ไม่สามารถเปิดกล้องได้\nกรุณาอนุญาตการเข้าถึงกล้องแล้วลองอีกครั้ง"
         );
       }
     };
@@ -493,7 +493,7 @@ function ScanQR() {
             <button
               type="button"
               onClick={() =>
-                navigate("/activity-summary")
+                navigate("/checkin-history")
               }
             >
               ดูทั้งหมด

@@ -380,7 +380,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 6px;
 }
 
 .sheet-title {
@@ -412,6 +412,7 @@
 
 .filter-label {
   font-size: 14px;
+  margin-top: 0px;
   font-weight: 600;
   color: #555;
 }

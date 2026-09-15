@@ -5,87 +5,11 @@
 .checkin-page {
   width: 100%;
   min-height: 100dvh;
-
-  padding: 22px 16px 90px;
-
-  background:
-    radial-gradient(
-      circle at top left,
-      rgba(104, 72, 255, 0.08),
-      transparent 25%
-    ),
-    #fdfcff;
-
+  padding: 28px 16px 100px;
+  background: #fcfbfa;
   font-family: "Sarabun", sans-serif;
-  color: #17162a;
+  color: #111111;
 }
-
-/* =========================
-   HEADER
-========================= */
-
-.checkin-header {
-  display: grid;
-  grid-template-columns: 44px 1fr 44px;
-
-  align-items: center;
-  gap: 10px;
-
-  margin-bottom: 24px;
-}
-
-.checkin-header-text {
-  text-align: center;
-}
-
-.checkin-header-text h1 {
-  margin: 0;
-
-  font-size: 23px;
-  font-weight: 800;
-
-  color: #17162a;
-}
-
-.checkin-header-text p {
-  margin: 5px 0 0;
-
-  font-size: 12px;
-
-  color: #7b7992;
-}
-
-.checkin-back-btn {
-  width: 42px;
-  height: 42px;
-
-  padding: 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border: 1px solid #eeeaf8;
-  border-radius: 50%;
-
-  background: #ffffff;
-
-  color: #542ff0;
-
-  box-shadow:
-    0 5px 18px rgba(54, 35, 120, 0.08);
-
-  cursor: pointer;
-}
-
-.checkin-back-btn .material-icons {
-  font-size: 20px;
-}
-
-.checkin-header-space {
-  width: 42px;
-}
-
 
 /* =========================
    CONTENT
@@ -93,52 +17,46 @@
 
 .checkin-content {
   width: 100%;
-
   display: flex;
   flex-direction: column;
-
-  gap: 15px;
+  gap: 14px;
 }
 
-
 /* =========================
-   ACTIVITY CARD
+   ACTIVITY
 ========================= */
 
 .checkin-activity-card {
   width: 100%;
-
-  padding: 15px;
+  padding: 14px;
 
   display: grid;
-  grid-template-columns: 125px minmax(0, 1fr);
-
-  gap: 17px;
+  grid-template-columns: 118px minmax(0, 1fr);
+  gap: 15px;
 
   background: #ffffff;
 
-  border: 1px solid #eeedf5;
-  border-radius: 23px;
+  border: 1px solid #eeeeee;
+  border-radius: 20px;
 
-  box-shadow:
-    0 8px 28px rgba(39, 29, 89, 0.06);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
 }
 
 .checkin-cover {
-  width: 125px;
-  height: 160px;
+  width: 118px;
+  height: 150px;
 
   overflow: hidden;
 
-  border-radius: 16px;
-
-  background: #f2effa;
+  background: #f3f3f3;
+  border-radius: 14px;
 }
 
 .checkin-cover img {
   width: 100%;
   height: 100%;
 
+  display: block;
   object-fit: cover;
 }
 
@@ -150,9 +68,8 @@
   align-items: center;
   justify-content: center;
 
-  background: #f3f0ff;
-
-  color: #8e80c8;
+  color: #7d5fff;
+  background: #f1edff;
 }
 
 .checkin-activity-info {
@@ -160,36 +77,38 @@
 
   display: flex;
   flex-direction: column;
-
   justify-content: center;
 }
 
 .checkin-type {
   width: fit-content;
 
-  margin-bottom: 8px;
+  margin-bottom: 7px;
+  padding: 4px 9px;
 
-  padding: 5px 10px;
+  color: #7d5fff;
+  background: #f1edff;
 
   border-radius: 99px;
-
-  background: #eee9ff;
-
-  color: #5d36ec;
 
   font-size: 10px;
   font-weight: 600;
 }
 
 .checkin-activity-info h2 {
-  margin: 0 0 8px;
+  margin: 0 0 5px;
 
-  color: #18172a;
+  overflow: hidden;
 
-  font-size: 20px;
+  color: #111111;
+
+  font-size: 19px;
   font-weight: 800;
+  line-height: 1.3;
 
-  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .checkin-info-row {
@@ -197,140 +116,162 @@
 
   display: flex;
   align-items: center;
-
-  gap: 8px;
+  gap: 7px;
 }
 
 .checkin-info-row .material-icons {
   flex-shrink: 0;
 
-  color: #555485;
+  color: #7d5fff;
 
-  font-size: 18px;
+  font-size: 17px;
 }
 
 .checkin-info-row p {
   min-width: 0;
-
   margin: 0;
 
   overflow: hidden;
 
-  color: #56566f;
+  color: #666666;
 
-  font-size: 13px;
+  font-size: 12px;
 
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-
 /* =========================
-   SUMMARY
+   SECTION
 ========================= */
 
-.checkin-summary-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-
-  gap: 12px;
+.checkin-section {
+  width: 100%;
 }
 
-.checkin-summary-card {
-  min-height: 88px;
+.checkin-section-label {
+  margin: 2px 0 7px 3px;
 
-  padding: 14px;
+  color: #555555;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* =========================
+   PERSON CARD
+========================= */
+
+.checkin-person-card {
+  position: relative;
+
+  width: 100%;
+  min-height: 78px;
+
+  padding: 12px 14px;
 
   display: flex;
   align-items: center;
+  gap: 12px;
 
-  gap: 11px;
+  background: #ffffff;
 
-  border: 1px solid #e8e3fa;
-  border-radius: 18px;
+  border: 1px solid #eeeeee;
+  border-radius: 17px;
 
-  background:
-    linear-gradient(
-      135deg,
-      #faf8ff,
-      #f5f2ff
-    );
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.025);
 }
 
-.summary-icon {
-  width: 45px;
-  height: 45px;
+.checkin-profile-avatar {
+  width: 52px;
+  height: 52px;
 
   flex-shrink: 0;
+
+  overflow: hidden;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
+  color: #7d5fff;
+  background: #f1edff;
+
   border-radius: 50%;
 
-  color: #5832ef;
-
-  background: #eae3ff;
+  font-size: 19px;
+  font-weight: 700;
 }
 
-.summary-icon .material-icons {
-  font-size: 24px;
-}
+.checkin-profile-avatar img {
+  width: 100%;
+  height: 100%;
 
-.checkin-summary-card span {
   display: block;
-
-  margin-bottom: 3px;
-
-  color: #76758a;
-
-  font-size: 11px;
+  object-fit: cover;
 }
 
-.checkin-summary-card strong {
-  display: block;
+.checkin-person-info {
+  min-width: 0;
 
+  display: flex;
+  flex-direction: column;
+}
+
+.checkin-person-info strong {
   overflow: hidden;
 
-  color: #1c1a2c;
+  color: #222222;
 
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
 
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
+.checkin-person-info span {
+  margin-top: 3px;
+
+  overflow: hidden;
+
+  color: #999999;
+
+  font-size: 11px;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.checkin-person-card.current-user {
+  padding-right: 105px;
+}
 
 /* =========================
-   CHECK-IN TIME
+   INFORMATION CARDS
 ========================= */
 
-.checkin-time-card {
+.checkin-info-card {
   width: 100%;
+  min-height: 76px;
 
-  padding: 17px;
+  padding: 13px 15px;
 
   display: flex;
   align-items: center;
+  gap: 12px;
 
-  gap: 14px;
+  background: #ffffff;
 
-  border: 1px solid #ded6ff;
-  border-radius: 18px;
+  border: 1px solid #eeeeee;
+  border-radius: 17px;
 
-  background:
-    linear-gradient(
-      135deg,
-      #faf8ff,
-      #f4f1ff
-    );
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.025);
 }
 
-.checkin-time-icon {
-  width: 46px;
-  height: 46px;
+.checkin-info-icon {
+  width: 44px;
+  height: 44px;
 
   flex-shrink: 0;
 
@@ -338,114 +279,48 @@
   align-items: center;
   justify-content: center;
 
-  border-radius: 50%;
+  color: #7d5fff;
+  background: #f1edff;
 
-  background: #eae4ff;
-
-  color: #5932ef;
+  border-radius: 13px;
 }
 
-.checkin-time-icon .material-icons {
-  font-size: 25px;
+.checkin-info-icon .material-icons {
+  font-size: 23px;
 }
 
-.checkin-time-card > div:last-child {
+.checkin-info-card > div:last-child {
+  min-width: 0;
+
   display: flex;
   flex-direction: column;
 }
 
-.checkin-time-card span {
-  color: #77758c;
-
+.checkin-info-card span {
+  color: #888888;
   font-size: 11px;
 }
 
-.checkin-time-card strong {
-  margin-top: 4px;
+.checkin-info-card strong {
+  margin-top: 3px;
 
-  color: #4f28eb;
-
-  font-size: 19px;
-  font-weight: 800;
-}
-
-
-/* =========================
-   USER
-========================= */
-
-.checkin-user-card {
-  width: 100%;
-
-  padding: 17px;
-
-  display: flex;
-  align-items: center;
-
-  gap: 13px;
-
-  border: 1px solid #e5defe;
-  border-radius: 18px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #faf8ff,
-      #f6f3ff
-    );
-}
-
-.checkin-user-icon {
-  width: 49px;
-  height: 49px;
-
-  flex-shrink: 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 50%;
-
-  background: #e9e3ff;
-
-  color: #5832ef;
-}
-
-.checkin-user-icon .material-icons {
-  font-size: 27px;
-}
-
-.checkin-user-card p {
-  margin: 0 0 2px;
-
-  color: #77768b;
-
-  font-size: 11px;
-}
-
-.checkin-user-card strong {
-  display: block;
-
-  color: #1c1b2e;
+  color: #222222;
 
   font-size: 16px;
   font-weight: 700;
 }
 
-.checkin-user-card span {
-  color: #85839a;
-
-  font-size: 11px;
+.checkin-time-value {
+  color: #7d5fff !important;
+  font-size: 18px !important;
 }
 
-
 /* =========================
-   READY TEXT
+   READY
 ========================= */
 
 .checkin-ready-text {
-  margin: 6px 0 2px;
+  margin: 7px 0 2px;
 
   text-align: center;
 }
@@ -453,58 +328,48 @@
 .checkin-ready-text span {
   display: block;
 
-  color: #28253e;
+  color: #222222;
 
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 800;
 }
 
 .checkin-ready-text p {
   margin: 5px 0 0;
 
-  color: #9693a6;
+  color: #999999;
 
   font-size: 11px;
 }
 
-
 /* =========================
-   BUTTON
+   BUTTONS
 ========================= */
 
 .checkin-confirm-btn {
   width: 100%;
-  height: 56px;
+  height: 54px;
 
   display: flex;
   align-items: center;
   justify-content: center;
-
-  gap: 9px;
+  gap: 8px;
 
   border: none;
-  border-radius: 15px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #673cff,
-      #4d23ef
-    );
+  border-radius: 14px;
 
   color: #ffffff;
+  background: #7d5fff;
 
   font-family: "Sarabun", sans-serif;
-
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
 
-  box-shadow:
-    0 9px 25px rgba(83, 44, 239, 0.22);
+  box-shadow: 0 7px 18px rgba(125, 95, 255, 0.2);
 
   cursor: pointer;
 
-  transition: 0.2s;
+  transition: transform 0.2s ease;
 }
 
 .checkin-confirm-btn:hover {
@@ -512,36 +377,31 @@
 }
 
 .checkin-confirm-btn .material-icons {
-  font-size: 21px;
+  font-size: 20px;
 }
 
 .checkin-confirm-btn:disabled {
   opacity: 0.6;
-
   cursor: not-allowed;
-
   transform: none;
 }
 
 .checkin-cancel-btn {
   width: 100%;
-  height: 52px;
+  height: 50px;
 
-  border: 1.5px solid #5932ef;
-  border-radius: 15px;
+  border: 1px solid #7d5fff;
+  border-radius: 14px;
 
+  color: #7d5fff;
   background: #ffffff;
 
-  color: #522cf0;
-
   font-family: "Sarabun", sans-serif;
-
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
 
   cursor: pointer;
 }
-
 
 /* =========================
    NOT ALLOWED
@@ -552,20 +412,21 @@
 
   text-align: center;
 
-  border: 1px solid #f0e7e7;
-  border-radius: 19px;
-
   background: #ffffff;
+
+  border: 1px solid #eeeeee;
+  border-radius: 18px;
 }
 
 .checkin-not-allowed > .material-icons {
   color: #e85b5b;
-
   font-size: 38px;
 }
 
 .checkin-not-allowed h3 {
   margin: 9px 0 4px;
+
+  color: #222222;
 
   font-size: 16px;
 }
@@ -573,7 +434,7 @@
 .checkin-not-allowed p {
   margin: 0 0 18px;
 
-  color: #8b8794;
+  color: #888888;
 
   font-size: 12px;
 }
@@ -585,17 +446,14 @@
   border: none;
   border-radius: 13px;
 
-  background: #f0edff;
-
-  color: #5530ed;
+  color: #7d5fff;
+  background: #f1edff;
 
   font-family: "Sarabun", sans-serif;
-
   font-weight: 600;
 
   cursor: pointer;
 }
-
 
 /* =========================
    SUCCESS
@@ -606,10 +464,12 @@
 
   text-align: center;
 
-  border: 1px solid #ecebf4;
-  border-radius: 22px;
-
   background: #ffffff;
+
+  border: 1px solid #eeeeee;
+  border-radius: 20px;
+
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
 }
 
 .checkin-success-icon {
@@ -622,14 +482,12 @@
   align-items: center;
   justify-content: center;
 
-  border-radius: 50%;
-
+  color: #ffffff;
   background: #24b865;
 
-  color: #ffffff;
+  border-radius: 50%;
 
-  box-shadow:
-    0 9px 24px rgba(38, 180, 100, 0.2);
+  box-shadow: 0 8px 20px rgba(36, 184, 101, 0.18);
 }
 
 .checkin-success-icon .material-icons {
@@ -639,19 +497,21 @@
 .checkin-success-card h2 {
   margin: 18px 0 5px;
 
+  color: #222222;
+
   font-size: 21px;
 }
 
 .checkin-success-card p {
   margin: 0 0 24px;
 
-  color: #868494;
+  color: #888888;
 
   font-size: 13px;
 }
 
 /* =========================
-   CHECK-IN ERROR PAGE
+   ERROR
 ========================= */
 
 .checkin-error-card {
@@ -667,11 +527,10 @@
 
   background: #ffffff;
 
-  border: 1px solid #ecebf4;
-  border-radius: 22px;
+  border: 1px solid #eeeeee;
+  border-radius: 20px;
 
-  box-shadow:
-    0 8px 28px rgba(39, 29, 89, 0.06);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
 }
 
 .checkin-error-icon {
@@ -682,11 +541,10 @@
   align-items: center;
   justify-content: center;
 
-  border-radius: 50%;
-
+  color: #f2a423;
   background: #fff4dc;
 
-  color: #f2a423;
+  border-radius: 50%;
 }
 
 .checkin-error-icon .material-icons {
@@ -696,7 +554,7 @@
 .checkin-error-card h2 {
   margin: 18px 0 6px;
 
-  color: #19172b;
+  color: #222222;
 
   font-size: 21px;
   font-weight: 800;
@@ -705,7 +563,7 @@
 .checkin-error-card > p {
   margin: 0 0 20px;
 
-  color: #858397;
+  color: #888888;
 
   font-size: 13px;
   line-height: 1.6;
@@ -719,14 +577,13 @@
 
   display: flex;
   align-items: center;
-
   gap: 12px;
 
   text-align: left;
 
-  background: #f8f7fb;
+  background: #f7f7f7;
 
-  border-radius: 15px;
+  border-radius: 14px;
 }
 
 .checkin-error-cover {
@@ -741,11 +598,10 @@
   align-items: center;
   justify-content: center;
 
+  color: #7d5fff;
+  background: #f1edff;
+
   border-radius: 10px;
-
-  background: #eeeaf8;
-
-  color: #7e70b7;
 }
 
 .checkin-error-cover img {
@@ -767,7 +623,7 @@
 
   overflow: hidden;
 
-  color: #252235;
+  color: #222222;
 
   font-size: 14px;
 
@@ -778,72 +634,63 @@
 .checkin-error-info span {
   margin-top: 2px;
 
-  color: #888698;
+  color: #888888;
 
   font-size: 11px;
 }
 
-.checkin-organizer-username {
-  display: block;
-  margin-top: 2px;
+.loading-text {
+  margin-top: 80px;
 
-  color: #8b8998;
-  font-size: 11px;
+  color: #888888;
+
+  text-align: center;
 }
-
-
 
 /* =========================
    SMALL MOBILE
 ========================= */
 
 @media (max-width: 380px) {
-
   .checkin-page {
     padding-right: 12px;
     padding-left: 12px;
   }
 
   .checkin-header-text h1 {
-    font-size: 20px;
+    font-size: 19px;
   }
 
   .checkin-activity-card {
-    grid-template-columns:
-      105px minmax(0, 1fr);
+    grid-template-columns: 102px minmax(0, 1fr);
+    gap: 11px;
 
-    gap: 12px;
-
-    padding: 12px;
+    padding: 11px;
   }
 
   .checkin-cover {
-    width: 105px;
-    height: 145px;
+    width: 102px;
+    height: 140px;
   }
 
   .checkin-activity-info h2 {
     font-size: 17px;
   }
 
+  .checkin-info-row {
+    gap: 5px;
+  }
+
   .checkin-info-row p {
     font-size: 11px;
   }
 
-  .checkin-summary-grid {
-    gap: 8px;
+  .checkin-person-card.current-user {
+    padding-right: 90px;
   }
 
-  .checkin-summary-card {
-    padding: 10px;
-  }
-
-  .summary-icon {
-    width: 39px;
-    height: 39px;
-  }
-
-  .checkin-summary-card strong {
-    font-size: 12px;
+  .checkin-profile-avatar {
+    width: 48px;
+    height: 48px;
   }
 }
