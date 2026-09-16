@@ -495,6 +495,19 @@ function ActivityDetail() {
                             }}>
                             <span className="menu-action-icon">✎</span> แก้ไขกิจกรรม
                           </button>
+                          {activity.activityType === "private" && (
+                            <button
+                              type="button"
+                              className="menu-action-btn"
+                              onClick={() => {
+                                setShowReportMenu(false);
+                                navigate(`/join-requests/${activity.id}`);
+                              }}
+                            >
+                              <span className="menu-action-icon">👥</span>
+                              จัดการคำขอเข้าร่วม
+                            </button>
+                          )}
 
                           <button
                             type="button"

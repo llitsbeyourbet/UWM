@@ -44,4 +44,11 @@ module.exports = [
   { word: "kill you", category: "threat", weight: 90, match: "contains" },
   { word: "rape", category: "sexual", weight: 95, match: "word" },
   { word: "casino", category: "spam", weight: 35, match: "word" },
+
+  //ของมึนเมา
+  { word: "เหล้า", category: "alcohol", weight: 30, match: "contains" },
+  { word: "เบียร์", category: "alcohol", weight: 30, match: "contains" },
+  { word: "ไวน์", category: "alcohol", weight: 30, match: "contains" },
+  { word: "บุหรี่", category: "alcohol", weight: 30, match: "contains" },
+  { word: "บุหรี่ไฟฟ้า", category: "alcohol", weight: 30, match: "contains" },
 ];

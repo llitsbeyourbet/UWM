@@ -1,12 +1,29 @@
 // backend/services/moderationService.js
 const inappropriateWords = require("../config/inappropriateWords");
 
+let customWords = [];
+
+const setCustomWords = (words = []) => {
+  customWords = words.map((item) => ({
+    word: item.word,
+    category: item.category,
+    weight: Number(item.weight) || 0,
+    match: item.match || "contains",
+  }));
+};
+
+const getAllWords = () => [
+  ...inappropriateWords,
+  ...customWords,
+];
+
 const CATEGORY_LABELS = {
   profanity: "คำหยาบ",
   insult: "คำดูหมิ่นหรือด่าทอ",
   threat: "คำข่มขู่หรือคุกคาม",
   sexual: "เนื้อหาทางเพศที่ไม่เหมาะสม",
   spam: "สแปมหรือเนื้อหาเสี่ยง",
+  alcohol: "เนื้อหาที่เกี่ยวข้องกับเครื่องดื่มมึนเมา",
 };
 
 const normalizeText = (value) => {
@@ -86,7 +103,7 @@ const analyzeText = (text) => {
 
   const found = new Map();
 
-  for (const entry of inappropriateWords) {
+  for (const entry of getAllWords()) {
     if (!entryMatches(normalized, compact, entry)) continue;
 
     const key = `${entry.category}:${normalizeText(entry.word)}`;
@@ -126,7 +143,7 @@ const analyzeFields = (fields = {}) => {
     results[field] = result;
 
     for (const word of result.matchedWords) {
-      const candidates = inappropriateWords.filter(
+      const candidates = getAllWords().filter(
         (item) => normalizeText(item.word) === normalizeText(word)
       );
 
@@ -195,4 +212,5 @@ module.exports = {
   analyzeFields,
   getModerationMessage,
   buildModerationResponse,
+  setCustomWords,
 };

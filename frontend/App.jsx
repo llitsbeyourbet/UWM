@@ -33,6 +33,7 @@ import CheckinHistory from "./pages/CheckinHistory";
 import JoinRequests from "./pages/JoinRequests";
 import AutoLogout from "./components/AutoLogout";
 import SessionManager from "./components/SessionManager";
+import AdminInappropriateWords from "./pages/AdminInappropriateWords";
 
 function HomeRedirect() {
   let user = null;
@@ -117,6 +118,7 @@ function App() {
                 <Route path="/admin/users" element={<ProtectedRoute><AdminUsers /></ProtectedRoute>} />
                 <Route path="/admin/reviews" element={<ProtectedRoute><AdminReviews /></ProtectedRoute>} />
                 <Route path="/admin/reports/:id" element={<ProtectedRoute><AdminReportDetail /></ProtectedRoute>} />
+                <Route path="/admin/inappropriate-words"element={<ProtectedRoute><AdminInappropriateWords /></ProtectedRoute>}/>
                 <Route path="/checkin-history" element={<ProtectedRoute><CheckinHistory /></ProtectedRoute>} />
               </Routes>
             </div>

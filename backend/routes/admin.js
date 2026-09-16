@@ -11,6 +11,8 @@ const ActivityReview = require("../models/ActivityReview");
 const HostReview = require("../models/HostReview");
 const Comment = require("../models/Comment");
 const notificationService = require("../services/notificationService");
+const InappropriateWord = require("../models/InappropriateWord");
+const { setCustomWords } = require("../services/moderationService");
 
 const validDays = (value) => {
   const days = Number(value || 7);
@@ -19,6 +21,13 @@ const validDays = (value) => {
 
 const dateKey = (value) => new Date(value).toISOString().split("T")[0];
 
+const refreshModerationWords = async () => {
+  const words = await InappropriateWord.findAll({
+    raw: true,
+  });
+
+  setCustomWords(words);
+};
 /* ========================= DASHBOARD ========================= */
 
 router.get("/dashboard", auth, isAdmin, async (req, res) => {
@@ -1552,6 +1561,195 @@ router.get("/reports/:id", auth, isAdmin, async (req, res) => {
     return res.status(500).json({
       message: "ไม่สามารถโหลดรายละเอียดรายงานได้",
       error: error.message,
+    });
+  }
+});
+
+/* ========================= INAPPROPRIATE WORDS ========================= */
+
+router.get("/inappropriate-words", auth, isAdmin, async (req, res) => {
+  try {
+    const words = await InappropriateWord.findAll({
+      order: [["createdAt", "DESC"]],
+    });
+
+    return res.json(words);
+  } catch (error) {
+    console.error("Get inappropriate words error:", error);
+
+    return res.status(500).json({
+      message: "ไม่สามารถโหลดรายการคำไม่เหมาะสมได้",
+    });
+  }
+});
+
+router.post("/inappropriate-words", auth, isAdmin, async (req, res) => {
+  try {
+    const {
+      word,
+      category,
+      level,
+    } = req.body;
+
+    const cleanWord = String(word || "").trim();
+
+    if (!cleanWord) {
+      return res.status(400).json({
+        message: "กรุณากรอกคำที่ต้องการเพิ่ม",
+      });
+    }
+
+    const allowedCategories = [
+      "profanity",
+      "insult",
+      "threat",
+      "sexual",
+      "spam",
+      "alcohol",
+    ];
+
+    if (!allowedCategories.includes(category)) {
+      return res.status(400).json({
+        message: "ประเภทคำไม่ถูกต้อง",
+      });
+    }
+
+    if (!["warning", "danger"].includes(level)) {
+      return res.status(400).json({
+        message: "ระดับความรุนแรงไม่ถูกต้อง",
+      });
+    }
+
+    const exists = await InappropriateWord.findOne({
+      where: { word: cleanWord },
+    });
+
+    if (exists) {
+      return res.status(400).json({
+        message: "มีคำนี้อยู่ในรายการแล้ว",
+      });
+    }
+
+    const created = await InappropriateWord.create({
+      word: cleanWord,
+      category,
+      weight: level === "danger" ? 80 : 40,
+      match: "contains",
+      createdBy: req.userId,
+    });
+
+    await refreshModerationWords();
+
+    return res.status(201).json(created);
+  } catch (error) {
+    console.error("Create inappropriate word error:", error);
+
+    return res.status(500).json({
+      message: "ไม่สามารถเพิ่มคำไม่เหมาะสมได้",
+    });
+  }
+});
+
+router.put("/inappropriate-words/:id", auth, isAdmin, async (req, res) => {
+  try {
+    const item = await InappropriateWord.findByPk(req.params.id);
+
+    if (!item) {
+      return res.status(404).json({
+        message: "ไม่พบคำที่ต้องการแก้ไข",
+      });
+    }
+
+    const {
+      word,
+      category,
+      level,
+    } = req.body;
+
+    const cleanWord = String(word || "").trim();
+
+    if (!cleanWord) {
+      return res.status(400).json({
+        message: "กรุณากรอกคำที่ต้องการแก้ไข",
+      });
+    }
+
+    const allowedCategories = [
+      "profanity",
+      "insult",
+      "threat",
+      "sexual",
+      "spam",
+      "alcohol",
+    ];
+
+    if (!allowedCategories.includes(category)) {
+      return res.status(400).json({
+        message: "ประเภทคำไม่ถูกต้อง",
+      });
+    }
+
+    if (!["warning", "danger"].includes(level)) {
+      return res.status(400).json({
+        message: "ระดับความรุนแรงไม่ถูกต้อง",
+      });
+    }
+
+    const duplicate = await InappropriateWord.findOne({
+      where: {
+        word: cleanWord,
+        id: {
+          [Op.ne]: item.id,
+        },
+      },
+    });
+
+    if (duplicate) {
+      return res.status(400).json({
+        message: "มีคำนี้อยู่ในรายการแล้ว",
+      });
+    }
+
+    await item.update({
+      word: cleanWord,
+      category,
+      weight: level === "danger" ? 80 : 40,
+    });
+
+    await refreshModerationWords();
+
+    return res.json(item);
+  } catch (error) {
+    console.error("Update inappropriate word error:", error);
+
+    return res.status(500).json({
+      message: "ไม่สามารถแก้ไขคำไม่เหมาะสมได้",
+    });
+  }
+});
+
+router.delete("/inappropriate-words/:id", auth, isAdmin, async (req, res) => {
+  try {
+    const item = await InappropriateWord.findByPk(req.params.id);
+
+    if (!item) {
+      return res.status(404).json({
+        message: "ไม่พบคำที่ต้องการลบ",
+      });
+    }
+
+    await item.destroy();
+
+    await refreshModerationWords();
+
+    return res.json({
+      message: "ลบคำไม่เหมาะสมสำเร็จ",
+    });
+  } catch (error) {
+    console.error("Delete inappropriate word error:", error);
+
+    return res.status(500).json({
+      message: "ไม่สามารถลบคำไม่เหมาะสมได้",
     });
   }
 });

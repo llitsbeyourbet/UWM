@@ -7,6 +7,8 @@ const fs = require("fs");
 const http = require("http");
 const { Server } = require("socket.io");
 const notificationService = require("./services/notificationService");
+const { setCustomWords } = require("./services/moderationService");
+const InappropriateWord = require("./models/InappropriateWord");
 
 dotenv.config();
 
@@ -55,7 +57,19 @@ sequelize.authenticate()
   .catch((err) => console.log(err));
 
 sequelize.sync({ force: false })
-  .then(() => console.log("Tables synced"))
+  .then(async () => {
+    console.log("Tables synced");
+
+    const customWords = await InappropriateWord.findAll({
+      raw: true,
+    });
+
+    setCustomWords(customWords);
+
+    console.log(
+      `Moderation custom words loaded: ${customWords.length}`
+    );
+  })
   .catch((err) => console.log(err));
 
 server.listen(process.env.PORT, () => {

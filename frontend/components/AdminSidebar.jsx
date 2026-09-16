@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { FiCalendar, FiFlag, FiGrid, FiLogOut, FiStar, FiUsers, } from "react-icons/fi";
+import { FiCalendar, FiFlag, FiGrid, FiLogOut, FiStar, FiUsers, FiShield } from "react-icons/fi";
 import { MdGroups } from "react-icons/md";
 import { useAdminReport } from "../src/context/AdminReportContext";
 import { logoutUser } from "../utils/logout";
@@ -16,6 +16,7 @@ export default function AdminSidebar() {
     ["ผู้ใช้งาน", <FiUsers />, "/admin/users"],
     ["รายงานกิจกรรม", <FiFlag />, "/admin/reports"],
     ["รีวิว", <FiStar />, "/admin/reviews"],
+    ["เพิ่มคำไม่เหมาะสม", <FiShield />, "/admin/inappropriate-words"],
   ];
 
   const logout = async () => {
