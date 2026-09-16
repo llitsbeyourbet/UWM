@@ -166,7 +166,6 @@ function ReviewForm() {
   const StarRating = ({
     value,
     onChange,
-    labels,
     type,
   }) => {
     return (
@@ -187,23 +186,11 @@ function ReviewForm() {
           ))}
         </div>
 
-        <div className="review-rating-text">
-          {value > 0 ? (
-            <>
-              <strong>
-                {value}/5
-              </strong>
-
-              <span>
-                {labels[value]}
-              </span>
-            </>
-          ) : (
-            <span>
-              แตะดาวเพื่อให้คะแนน
-            </span>
-          )}
-        </div>
+        {value === 0 && (
+          <div className="review-rating-text">
+            <span>แตะดาวเพื่อให้คะแนน</span>
+          </div>
+        )}
 
       </div>
     );
@@ -248,34 +235,6 @@ function ReviewForm() {
 
   return (
     <div className="review-page">
-
-      {/* ================= HEADER ================= */}
-
-      <header className="review-header">
-
-        <button
-          type="button"
-          className="review-back-btn"
-          onClick={() => navigate(-1)}
-          aria-label="ย้อนกลับ"
-        >
-          <span className="material-icons">
-            arrow_back
-          </span>
-        </button>
-
-        <div className="review-header-text">
-          <h1>รีวิวกิจกรรม</h1>
-
-          <p>
-            แบ่งปันประสบการณ์ของคุณ
-            เพื่อช่วยพัฒนากิจกรรมให้ดียิ่งขึ้น
-          </p>
-        </div>
-
-      </header>
-
-
       <main className="review-content">
 
         {/* ================= ACTIVITY INFO ================= */}
@@ -398,7 +357,6 @@ function ReviewForm() {
           <StarRating
             value={activityRating}
             onChange={setActivityRating}
-            labels={activityLabels}
             type="activity-stars"
           />
 
@@ -474,7 +432,6 @@ function ReviewForm() {
           <StarRating
             value={hostRating}
             onChange={setHostRating}
-            labels={hostLabels}
             type="host-stars"
           />
 

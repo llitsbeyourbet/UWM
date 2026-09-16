@@ -30,6 +30,7 @@ import AdminUsers from "./pages/AdminUsers";
 import AdminReviews from "./pages/AdminReviews";
 import AdminReportDetail from "./pages/AdminReportDetail";
 import CheckinHistory from "./pages/CheckinHistory";
+import JoinRequests from "./pages/JoinRequests";
 import AutoLogout from "./components/AutoLogout";
 import SessionManager from "./components/SessionManager";
 
@@ -100,6 +101,7 @@ function App() {
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/user/:id" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
                 <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+                <Route path="/join-requests/:activityId" element={<ProtectedRoute><JoinRequests /></ProtectedRoute>} />
                 <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
                 <Route path="/edit-activity/:id" element={<ProtectedRoute><EditActivity /></ProtectedRoute>} />
                 <Route path="/checkin/:activityId/:qrToken" element={<ProtectedRoute><CheckIn /></ProtectedRoute>} />

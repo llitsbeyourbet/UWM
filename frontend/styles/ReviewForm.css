@@ -23,92 +23,13 @@
 
 
 /* =========================================
-   HEADER
-========================================= */
-
-.review-header {
-  width: 100%;
-
-  padding: 18px 18px 16px;
-
-  display: flex;
-  align-items: flex-start;
-
-  gap: 13px;
-
-  background:
-    rgba(255, 255, 255, 0.92);
-
-  border-bottom: 1px solid #eeecf4;
-}
-
-.review-back-btn {
-  width: 38px;
-  height: 38px;
-
-  flex-shrink: 0;
-
-  padding: 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border: none;
-  border-radius: 10px;
-
-  background: #f2efff;
-
-  color: #5634e8;
-
-  cursor: pointer;
-
-  transition: 0.2s;
-}
-
-.review-back-btn:hover {
-  background: #e8e2ff;
-
-  transform: translateX(-2px);
-}
-
-.review-back-btn .material-icons {
-  font-size: 21px;
-}
-
-.review-header-text {
-  min-width: 0;
-}
-
-.review-header-text h1 {
-  margin: 0;
-
-  color: #17162a;
-
-  font-size: 23px;
-  font-weight: 800;
-
-  line-height: 1.3;
-}
-
-.review-header-text p {
-  margin: 4px 0 0;
-
-  color: #858398;
-
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-
-/* =========================================
    CONTENT
 ========================================= */
 
 .review-content {
   width: 100%;
 
-  padding: 18px 16px 0;
+  padding: 25px 16px 0;
 
   display: flex;
   flex-direction: column;
@@ -647,18 +568,9 @@
 
 @media (max-width: 380px) {
 
-  .review-header {
-    padding-right: 14px;
-    padding-left: 14px;
-  }
-
   .review-content {
     padding-right: 12px;
     padding-left: 12px;
-  }
-
-  .review-header-text h1 {
-    font-size: 20px;
   }
 
   .review-activity-card {

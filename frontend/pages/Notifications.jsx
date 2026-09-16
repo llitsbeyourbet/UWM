@@ -29,58 +29,6 @@ function Notifications() {
     };
   }, [socket]);
 
-  const handleAccept = async (n) => {
-    try {
-      const token = sessionStorage.getItem("token");
-
-      const res = await fetch(
-        `${API_URL}/api/join/${n.activityId}/respond/${n.fromUserId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ status: "approved" }),
-        }
-      );
-
-      if (!res.ok) {
-        throw new Error("อนุมัติไม่สำเร็จ");
-      }
-
-      await fetchNotifications();
-
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-
-  // 👈 แก้ handleReject ให้เรียก API join/respond
-  const handleReject = async (n) => {
-    try {
-      const token = sessionStorage.getItem("token");
-
-      await fetch(
-        `${API_URL}/api/join/${n.activityId}/respond/${n.fromUserId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ status: "rejected" }),
-        }
-      );
-
-      await fetchNotifications();
-
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   const fetchNotifications = async () => {
     try {
       const token = sessionStorage.getItem("token");
@@ -415,7 +363,9 @@ const handleDeleteAll = () => {
         console.log(err);
       }
 
-      if (n.type === "review_request") {
+      if (n.type === "join_request" && n.activityId) {
+        navigate(`/join-requests/${n.activityId}`);
+      } else if (n.type === "review_request") {
         navigate(`/review/${n.activityId}`);
       } else if (n.type === "report") {
         navigate("/admin/reports");
@@ -523,26 +473,7 @@ const handleDeleteAll = () => {
               {formatTime(n.createdAt)}
             </p>
 
-            {n.type === "join_request" && (
-              <div
-                className="notif-actions"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <button
-                  className="btn-accept"
-                  onClick={() => handleAccept(n)}
-                >
-                  ยอมรับ
-                </button>
 
-                <button
-                  className="btn-reject"
-                  onClick={() => handleReject(n)}
-                >
-                  ปฏิเสธ
-                </button>
-              </div>
-            )}
           </div>
         </div>
       </div>

@@ -332,20 +332,38 @@ router.get("/:activityId/status", auth, async (req, res) => {
   }
 });
 
-// ดึงรายชื่อคนที่ขอเข้าร่วม (เฉพาะเจ้าของกิจกรรม)
+// ดึงคำขอเข้าร่วมทั้งหมดของกิจกรรม (เฉพาะเจ้าของกิจกรรม)
 router.get("/:activityId/requests", auth, async (req, res) => {
   try {
     const activity = await Activity.findByPk(req.params.activityId);
     if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
-
-    if (activity.createdBy !== req.userId) {
-      return res.status(403).json({ message: "ไม่มีสิทธิ์ดูคำขอเข้าร่วมกิจกรรมนี้" });
-    }
+    if (activity.createdBy !== req.userId) return res.status(403).json({ message: "ไม่มีสิทธิ์ดูคำขอเข้าร่วมกิจกรรมนี้" });
 
     const requests = await JoinRequest.findAll({
-      where: { activityId: req.params.activityId, status: "pending" },
+      where: {
+        activityId: req.params.activityId,
+        status: { [Op.in]: ["pending", "approved", "checked_in", "rejected"] },
+      },
+      order: [["createdAt", "DESC"]],
+      raw: true,
     });
-    return res.json(requests);
+
+    if (requests.length === 0) return res.json([]);
+
+    const userIds = [...new Set(requests.map((request) => request.userId))];
+    const users = await User.findAll({
+      where: { id: { [Op.in]: userIds } },
+      attributes: ["id", "name", "username", "profileImage"],
+      raw: true,
+    });
+
+    const userMap = {};
+    users.forEach((user) => { userMap[user.id] = user; });
+
+    return res.json(requests.map((request) => ({
+      ...request,
+      user: userMap[request.userId] || null,
+    })));
   } catch (err) {
     console.error("GET JOIN REQUESTS ERROR:", err);
     return res.status(500).json({ message: "เกิดข้อผิดพลาด" });
