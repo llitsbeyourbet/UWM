@@ -3,6 +3,7 @@ const router = express.Router();
 
 const { auth } = require("../middleware/auth");
 const { Op, fn, col, where } = require("sequelize");
+const sequelize = require("../database");
 const jwt = require("jsonwebtoken");
 
 const { isActivityEnded } = require("../utils/activityTime");
@@ -16,6 +17,19 @@ const {
   buildModerationResponse,
 } = require("../services/moderationService");
 
+// Helper to ensure time is in HH:mm:ss format for reliable comparison
+const normalizeTime = (t) => {
+  if (!t) return "";
+
+  const value = String(t);
+  const parts = value.split(":");
+
+  if (parts.length === 2) {
+    return `${parts[0].padStart(2, "0")}:${parts[1].padStart(2, "0")}:00`;
+  }
+
+  return value;
+};
 
 // ตรวจว่ากิจกรรมถึงเวลาเริ่มแล้วหรือยัง
 const isActivityStarted = (activity) => {
@@ -516,6 +530,53 @@ router.post("/", auth, async (req, res) => {
       });
     }
 
+    // ตรวจสอบเวลาคาบเกี่ยว (Conflict Check)
+    if (!req.body.confirmConflict) {
+      try {
+        if (!req.userId) {
+          console.error("[Conflict Check] Missing req.userId");
+        } else {
+          console.log(`[Conflict Check] Checking conflicts for UserId: ${req.userId}, Date: ${date}`);
+
+          const existingActivities = await Activity.findAll({
+            where: {
+              createdBy: req.userId,
+              status: "active",
+              date: {
+                [Op.between]: [`${date} 00:00:00`, `${date} 23:59:59`],
+              },
+            },
+          });
+
+          console.log(`[Conflict Check] Found ${existingActivities.length} activities on this date`);
+
+          const overlappingActivity = existingActivities.find((act) => {
+            const start = normalizeTime(act.time);
+            const end = normalizeTime(act.endTime);
+            const newStart = normalizeTime(time);
+            const newEnd = normalizeTime(endTime);
+            const isOverlap = start < newEnd && end > newStart;
+            console.log(`[Overlap Logic] Existing: ${start}-${end}, New: ${newStart}-${newEnd}, Overlap: ${isOverlap}`);
+            return isOverlap;
+          });
+
+          if (overlappingActivity) {
+            console.log(`[Conflict Check] Conflict detected with activity ID: ${overlappingActivity.id}`);
+            return res.status(409).json({
+              message: "กิจกรรมนี้มีช่วงเวลาคาบเกี่ยวกับกิจกรรมที่คุณสร้างไว้แล้ว",
+              conflictActivity: {
+                activityName: overlappingActivity.activityName,
+                time: overlappingActivity.time,
+                endTime: overlappingActivity.endTime,
+              },
+            });
+          }
+        }
+      } catch (conflictErr) {
+        console.error("Conflict Check Error:", conflictErr);
+      }
+    }
+
     const activity = await Activity.create({
       activityName: activityName.trim(),
       detail: detail.trim(),
@@ -779,6 +840,62 @@ router.put("/:id", auth, async (req, res) => {
             moderation
           ),
         });
+      }
+    }
+
+    // ตรวจสอบเวลาคาบเกี่ยว (Conflict Check)
+    if (!req.body.confirmConflict) {
+      try {
+        if (!req.userId) {
+          console.error("[Conflict Check Edit] Missing req.userId");
+        } else {
+          const rawDate = updates.date ?? activity.date;
+          const targetDate = rawDate instanceof Date
+            ? rawDate.toISOString().split('T')[0]
+            : (typeof rawDate === 'string' ? rawDate.split('T')[0] : rawDate);
+
+          const targetTime = updates.time ?? activity.time;
+          const targetEndTime = updates.endTime ?? activity.endTime;
+
+          console.log(`[Conflict Check Edit] Checking conflicts for UserId: ${req.userId}, Date: ${targetDate}`);
+
+          const existingActivities = await Activity.findAll({
+            where: {
+              createdBy: req.userId,
+              status: "active",
+              id: { [Op.ne]: activity.id },
+              date: {
+                [Op.between]: [`${targetDate} 00:00:00`, `${targetDate} 23:59:59`],
+              },
+            },
+          });
+
+          console.log(`[Conflict Check Edit] Found ${existingActivities.length} activities on this date`);
+
+          const overlappingActivity = existingActivities.find((act) => {
+            const start = normalizeTime(act.time);
+            const end = normalizeTime(act.endTime);
+            const newStart = normalizeTime(targetTime);
+            const newEnd = normalizeTime(targetEndTime);
+            const isOverlap = start < newEnd && end > newStart;
+            console.log(`[Overlap Logic Edit] Existing: ${start}-${end}, New: ${newStart}-${newEnd}, Overlap: ${isOverlap}`);
+            return isOverlap;
+          });
+
+          if (overlappingActivity) {
+            console.log(`[Conflict Check Edit] Conflict detected with activity ID: ${overlappingActivity.id}`);
+            return res.status(409).json({
+              message: "กิจกรรมนี้มีช่วงเวลาคาบเกี่ยวกับกิจกรรมที่คุณสร้างไว้แล้ว",
+              conflictActivity: {
+                activityName: overlappingActivity.activityName,
+                time: overlappingActivity.time,
+                endTime: overlappingActivity.endTime,
+              },
+            });
+          }
+        }
+      } catch (conflictErr) {
+        console.error("Conflict Check Error (Edit):", conflictErr);
       }
     }
 

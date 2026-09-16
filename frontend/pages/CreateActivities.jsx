@@ -8,7 +8,7 @@ import { getCategoryIcon } from "../utils/categoryIcons";
 
 function CreateActivities() {
   const navigate = useNavigate();
-  const { showAlert } = useAlert();
+  const { showAlert, showConfirm } = useAlert();
   const [preview, setPreview] = useState([]);
   const [coverFilename, setCoverFilename] = useState(null);
   const [activityName, setActivityName] = useState("");
@@ -189,29 +189,57 @@ function CreateActivities() {
     setSubmitting(true);
 
     try {
-      const res = await fetch(`${API_URL}/api/activities`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          activityName,
-          detail,
-          date,
-          time,
-          endTime,
-          location,
-          participantCount: Number(participantCount) || 1,
-          activityType,
-          cover: coverFilename || null,
-          category,
-          checkinStart,
-          checkinEnd,
-        }),
-      });
+      let requestBody = {
+        activityName,
+        detail,
+        date,
+        time,
+        endTime,
+        location,
+        participantCount: Number(participantCount) || 1,
+        activityType,
+        cover: coverFilename || null,
+        category,
+        checkinStart,
+        checkinEnd,
+      };
 
-      const data = await res.json();
+      let res;
+      let data;
+      let conflictHandled = false;
+
+      while (true) {
+        res = await fetch(`${API_URL}/api/activities`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(requestBody),
+        });
+
+        data = await res.json();
+
+        if (res.status === 409 && !conflictHandled) {
+          const { conflictActivity } = data;
+          const confirmed = await showConfirm({
+            title: "แจ้งเตือน",
+            message: `กิจกรรมนี้มีช่วงเวลาคาบเกี่ยวกับกิจกรรมที่คุณสร้างไว้แล้ว\nกิจกรรม: ${conflictActivity.activityName}\nช่วงเวลา: ${conflictActivity.time} - ${conflictActivity.endTime}\n\nคุณต้องการโพสต์กิจกรรมนี้ต่อหรือไม่?`,
+            confirmText: "ยืนยันโพสต์",
+            cancelText: "ยกเลิก",
+          });
+
+          if (confirmed) {
+            requestBody.confirmConflict = true;
+            conflictHandled = true;
+            continue;
+          } else {
+            setSubmitting(false);
+            return;
+          }
+        }
+        break;
+      }
 
       if (!res.ok) {
         if (data.moderation) {
@@ -225,6 +253,7 @@ function CreateActivities() {
             title: "ตรวจพบข้อความไม่เหมาะสม",
             message: `ประเภท: ${categoryText}\nกรุณาแก้ไขข้อความก่อนสร้างกิจกรรม`,
           });
+          setSubmitting(false);
           return;
         }
 
@@ -233,6 +262,7 @@ function CreateActivities() {
           title: "เกิดข้อผิดพลาด",
           message: data.message || "เกิดข้อผิดพลาดในการสร้างกิจกรรม",
         });
+        setSubmitting(false);
         return;
       }
 
