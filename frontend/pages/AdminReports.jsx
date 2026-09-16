@@ -25,6 +25,7 @@ import "../styles/AdminReports.css";
 import AdminSidebar from "../components/AdminSidebar";
 import { formatDate, formatTime, formatDateTime, formatDateTimeDate, formatDateTimeTime } from "../utils/formatDate";
 import { getCategoryIcon } from "../utils/categoryIcons";
+import AdminProfile from "../components/AdminProfile";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -301,6 +302,7 @@ function AdminReports() {
                             <span>/</span>
                             <strong>รายงานกิจกรรม</strong>
                         </div>
+                        <AdminProfile />
                     </header>
 
                     <main className="reports-panel">

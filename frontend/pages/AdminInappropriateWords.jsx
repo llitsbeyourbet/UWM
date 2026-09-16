@@ -8,6 +8,7 @@ import {
     FiX,
 } from "react-icons/fi";
 import AdminSidebar from "../components/AdminSidebar";
+import AdminProfile from "../components/AdminProfile";
 import { useAlert } from "../src/context/AlertContext";
 import "../styles/AdminInappropriateWords.css";
 import "../styles/AdminDashboard.css";
@@ -284,10 +285,14 @@ export default function AdminInappropriateWords() {
             <AdminSidebar />
 
             <main className="admin-main">
-                <div className="admin-word-breadcrumb">
-                    <span>หน้าหลัก</span>
-                    <span>/</span>
-                    <strong>เพิ่มคำไม่เหมาะสม</strong>
+                <div className="admin-page-top">
+                    <div className="admin-word-breadcrumb">
+                        <span>หน้าหลัก</span>
+                        <span>/</span>
+                        <strong>เพิ่มคำไม่เหมาะสม</strong>
+                    </div>
+
+                    <AdminProfile />
                 </div>
 
                 <section className="admin-word-card">
@@ -406,8 +411,8 @@ export default function AdminInappropriateWords() {
                                                 <td>
                                                     <span
                                                         className={`admin-word-level ${isDanger
-                                                                ? "danger"
-                                                                : "warning"
+                                                            ? "danger"
+                                                            : "warning"
                                                             }`}
                                                     >
                                                         {isDanger

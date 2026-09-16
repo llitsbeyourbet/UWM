@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {FiBell, FiCalendar, FiChevronLeft, FiChevronRight, FiEye,
+import {
+  FiBell, FiCalendar, FiChevronLeft, FiChevronRight, FiEye,
   FiFlag, FiGrid, FiLogOut, FiMail, FiMoreVertical, FiSearch, FiSettings, FiStar,
   FiUserCheck, FiUserX, FiUsers,
 } from "react-icons/fi";
@@ -9,6 +10,7 @@ import API_URL from "../config";
 import "../styles/AdminDashboard.css";
 import "../styles/AdminUsers.css";
 import AdminSidebar from "../components/AdminSidebar";
+import AdminProfile from "../components/AdminProfile";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -161,7 +163,7 @@ export default function AdminUsers() {
 
   return (
     <div className="admin-shell">
-      <AdminSidebar/>
+      <AdminSidebar />
       <main className="admin-main">
         <div className="admin-users-page">
           <header className="users-topbar">
@@ -176,6 +178,8 @@ export default function AdminUsers() {
               <span>/</span>
               <strong>ผู้ใช้งาน</strong>
             </div>
+
+            <AdminProfile />
           </header>
 
           <section className="users-heading-card">

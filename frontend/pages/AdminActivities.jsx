@@ -21,6 +21,7 @@ import API_URL from "../config";
 import "../styles/AdminDashboard.css";
 import "../styles/AdminActivities.css";
 import AdminSidebar from "../components/AdminSidebar";
+import AdminProfile from "../components/AdminProfile";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -307,7 +308,7 @@ export default function AdminActivities() {
 
   return (
     <div className="admin-shell">
-      <AdminSidebar/>
+      <AdminSidebar />
       <main className="admin-main">
         <div className="admin-activities-page">
           <header className="activities-topbar">
@@ -322,6 +323,8 @@ export default function AdminActivities() {
               <span>/</span>
               <strong>กิจกรรม</strong>
             </div>
+
+            <AdminProfile />
           </header>
 
           <section className="activities-panel">

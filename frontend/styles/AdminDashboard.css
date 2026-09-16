@@ -117,7 +117,18 @@ button {
     font-size: 10px;
     font-style: normal
 }
+.admin-page-top {
+    width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 18px;
+}
 
+.admin-page-top .admin-word-breadcrumb {
+  margin-bottom: 0;
+}
 .admin-logout {
     margin-top: auto;
     min-height: 52px;

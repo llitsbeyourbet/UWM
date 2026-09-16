@@ -30,6 +30,7 @@ import "../styles/AdminDashboard.css";
 import API_URL from "../config";
 import { getCategoryIcon } from "../utils/categoryIcons";
 import AdminSidebar from "../components/AdminSidebar";
+import AdminProfile from "../components/AdminProfile";
 import { logoutUser } from "../utils/logout";
 
 const fallback =
@@ -142,7 +143,6 @@ export default function AdminDashboard() {
   const [latestReports, setLatestReports] = useState([]);
   const [days, setDays] = useState(7);
   const [openPeriod, setOpenPeriod] = useState(false);
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const periodRef = useRef(null);
 
   const logout = async () => {
@@ -296,37 +296,7 @@ export default function AdminDashboard() {
             <h1>ยินดีต้อนรับกลับมา, {adminName}</h1>
             <p>นี่คือภาพรวมของระบบ Until We Meet</p>
           </div>
-
-          <div className="admin-header-actions">
-            <div className="admin-profile-menu">
-              <button
-                className="admin-profile-trigger"
-                onClick={() => setShowProfileMenu((current) => !current)}
-              >
-                <span className="admin-profile-avatar">
-                  {adminName[0]?.toUpperCase()}
-                </span>
-
-                <span>
-                  <strong>{adminName}</strong>
-                  <small>ผู้ดูแลระบบ</small>
-                </span>
-
-                <FiChevronDown />
-              </button>
-
-              {showProfileMenu && (
-                <div className="admin-profile-dropdown">
-                  <strong>{adminName}</strong>
-                  <small>{admin.email || "ผู้ดูแลระบบ"}</small>
-
-                  <button onClick={logout}>
-                    <FiLogOut /> ออกจากระบบ
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
+          <AdminProfile />
         </header>
 
         <section className="admin-stat-grid">

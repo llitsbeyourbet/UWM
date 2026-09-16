@@ -38,6 +38,12 @@
 .users-breadcrumb strong {
   color: #2a2d42;
 }
+.users-topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
 
 .users-heading-card {
   width: 100%;

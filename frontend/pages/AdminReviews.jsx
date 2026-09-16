@@ -20,6 +20,7 @@ import API_URL from "../config";
 import "../styles/AdminDashboard.css";
 import "../styles/AdminReviews.css";
 import AdminSidebar from "../components/AdminSidebar";
+import AdminProfile from "../components/AdminProfile";
 
 const ITEMS_PER_PAGE = 8;
 
@@ -315,13 +316,23 @@ export default function AdminReviews() {
 
     return (
         <div className="admin-shell">
-            <AdminSidebar/>
+            <AdminSidebar />
             <main className="admin-main">
                 <div className="admin-reviews-page">
-                    <div className="admin-reviews-breadcrumb">
-                        <button type="button" onClick={() => navigate("/admin")}>หน้าหลัก</button>
-                        <span>/</span>
-                        <strong>รีวิว</strong>
+                    <div className="admin-reviews-topbar">
+                        <div className="admin-reviews-breadcrumb">
+                            <button
+                                type="button"
+                                onClick={() => navigate("/admin")}
+                            >
+                                หน้าหลัก
+                            </button>
+
+                            <span>/</span>
+                            <strong>รีวิว</strong>
+                        </div>
+
+                        <AdminProfile />
                     </div>
 
                     <section className="admin-reviews-heading">
@@ -336,6 +347,7 @@ export default function AdminReviews() {
                                     ตรวจสอบรีวิวกิจกรรมและผู้จัดกิจกรรมทั้งหมดในระบบ
                                 </p>
                             </div>
+
                         </div>
 
                         <div className="admin-reviews-total">
@@ -467,7 +479,7 @@ export default function AdminReviews() {
                                     </option>
                                 </select>
                             </label>
-                        
+
                         </div>
 
                         {loading ? (
@@ -553,8 +565,8 @@ export default function AdminReviews() {
                                                             <div className="admin-review-main-cell">
                                                                 <div
                                                                     className={`admin-review-target-image ${type === "host"
-                                                                            ? "person"
-                                                                            : ""
+                                                                        ? "person"
+                                                                        : ""
                                                                         }`}
                                                                 >
                                                                     {targetImage ? (

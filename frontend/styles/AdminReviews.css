@@ -3,11 +3,19 @@
   min-width: 0;
 }
 
+.admin-reviews-topbar {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
 .admin-reviews-breadcrumb {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 20px;
   color: #989cad;
   font-size: 15px;
 }
@@ -32,6 +40,7 @@
 .admin-reviews-breadcrumb strong {
   color: #6c4cf5;
 }
+
 
 .admin-reviews-heading {
   display: flex;
