@@ -131,7 +131,7 @@ router.post("/:activityId", auth, async (req, res) => {
           });
 
           if (conflict) {
-            const error = new Error("กิจกรรมนี้มีช่วงเวลาทับซ้อนกับกิจกรรมที่คุณเข้าร่วมไว้แล้ว");
+            const error = new Error("กิจกรรมนี้มีช่วงเวลาทับซ้อน\nกับกิจกรรมที่คุณเข้าร่วมไว้แล้ว");
             error.statusCode = 409;
             error.conflictActivity = {
               activityName: conflict.activityName,

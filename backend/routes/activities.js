@@ -885,7 +885,7 @@ router.put("/:id", auth, async (req, res) => {
           if (overlappingActivity) {
             console.log(`[Conflict Check Edit] Conflict detected with activity ID: ${overlappingActivity.id}`);
             return res.status(409).json({
-              message: "กิจกรรมนี้มีช่วงเวลาคาบเกี่ยวกับกิจกรรมที่คุณสร้างไว้แล้ว",
+              message: "กิจกรรมนี้มีช่วงเวลาซ้อน\nกับกิจกรรมที่คุณสร้างไว้แล้ว",
               conflictActivity: {
                 activityName: overlappingActivity.activityName,
                 time: String(overlappingActivity.time).slice(0, 5),
