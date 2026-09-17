@@ -212,17 +212,33 @@ function ActivityDetail() {
     } catch (err) { console.log(err); }
   };
 
-  const handleJoin = async () => {
+  const handleJoin = async (confirmConflict = false) => {
     const token = sessionStorage.getItem("token");
     if (!token) { navigate("/login"); return; }
     setJoinLoading(true);
     try {
       const res = await fetch(API_URL + "/api/join/" + activity.id, {
         method: "POST",
-        headers: { Authorization: "Bearer " + token },
+        headers: {
+          Authorization: "Bearer " + token,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ confirmConflict }),
       });
       const data = await res.json();
       if (!res.ok) {
+        if (res.status === 409 && data.conflictActivity) {
+          const confirmed = await showConfirm({
+            title: 'แจ้งเตือน',
+            message: `${data.message}\n\nกิจกรรม: ${data.conflictActivity.activityName}\nช่วงเวลา: ${data.conflictActivity.time} - ${data.conflictActivity.endTime}\n\nต้องการเข้าร่วมกิจกรรมนี้ต่อหรือไม่?`,
+            confirmText: 'ยืนยันเข้าร่วม',
+            cancelText: 'ยกเลิก',
+          });
+          if (confirmed) {
+            await handleJoin(true);
+          }
+          return;
+        }
         await showAlert({ type: 'error', title: 'เกิดข้อผิดพลาด', message: data.message });
         return;
       }

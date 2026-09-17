@@ -563,11 +563,11 @@ router.post("/", auth, async (req, res) => {
           if (overlappingActivity) {
             console.log(`[Conflict Check] Conflict detected with activity ID: ${overlappingActivity.id}`);
             return res.status(409).json({
-              message: "กิจกรรมนี้มีช่วงเวลาคาบเกี่ยวกับกิจกรรมที่คุณสร้างไว้แล้ว",
+              message: "ช่วงเวลาของกิจกรรมนี้ทับซ้อนกับกิจกรรมที่คุณสร้างไว้แล้ว",
               conflictActivity: {
                 activityName: overlappingActivity.activityName,
-                time: overlappingActivity.time,
-                endTime: overlappingActivity.endTime,
+                time: String(overlappingActivity.time).slice(0, 5),
+                endTime: String(overlappingActivity.endTime).slice(0, 5),
               },
             });
           }
@@ -888,8 +888,8 @@ router.put("/:id", auth, async (req, res) => {
               message: "กิจกรรมนี้มีช่วงเวลาคาบเกี่ยวกับกิจกรรมที่คุณสร้างไว้แล้ว",
               conflictActivity: {
                 activityName: overlappingActivity.activityName,
-                time: overlappingActivity.time,
-                endTime: overlappingActivity.endTime,
+                time: String(overlappingActivity.time).slice(0, 5),
+                endTime: String(overlappingActivity.endTime).slice(0, 5),
               },
             });
           }
