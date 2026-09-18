@@ -686,6 +686,19 @@
   line-height: 1.8;
 }
 
+/* Tablet / iPad */
+@media (min-width: 600px) {
+  .scan-camera-area {
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .scan-camera-text {
+    padding-top: 16px;
+  }
+}
+
 /* =====================================
    SMALL MOBILE
 ===================================== */

@@ -548,7 +548,22 @@ function ActivityDetail() {
                                 `${activity.date}T${activity.time}+07:00`
                               );
 
-                              if (new Date() >= activityStart) {
+                              const activityEnd = new Date(
+                                `${activity.date}T${activity.endTime || activity.time}+07:00`
+                              );
+
+                              const now = new Date();
+
+                              if (now >= activityEnd) {
+                                await showAlert({
+                                  type: "warning",
+                                  title: "ไม่สามารถแก้ไขได้",
+                                  message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถแก้ไขข้อมูลกิจกรรมได้",
+                                });
+                                return;
+                              }
+
+                              if (now >= activityStart) {
                                 await showAlert({
                                   type: "warning",
                                   title: "ไม่สามารถแก้ไขได้",

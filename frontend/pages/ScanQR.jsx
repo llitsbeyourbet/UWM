@@ -489,7 +489,7 @@ function ScanQR() {
             </h2>
           </div>
 
-          {history.length > 3 && (
+          {history.length > 0 && (
             <button
               type="button"
               onClick={() =>

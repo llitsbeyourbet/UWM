@@ -13,7 +13,7 @@ body {
 /* Base Mobile Container */
 .summary-mobile-container {
   width: 100%;
-  max-width: 480px;
+  max-width: 820px;
   min-height: 100dvh;
   background-color: #fcfbfa;
   font-family: 'Sarabun', sans-serif;
@@ -359,4 +359,32 @@ body {
   color: #3f4e5a !important;
   font-size: 0.88rem !important;
   line-height: 1.5 !important;
+}
+
+/* Tablet / iPad */
+@media (min-width: 600px) {
+  .summary-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .summary-card {
+    height: 100%;
+    box-sizing: border-box;
+    column-gap: 18px;
+  }
+
+  .summary-img-wrap {
+    width: 100px;
+    height: 100px;
+  }
+
+  .summary-info h3 {
+    font-size: 0.95rem;
+  }
+
+  .summary-empty {
+    grid-column: 1 / -1;
+  }
 }

@@ -4,14 +4,11 @@
 
 .activity-detail-page {
     min-height: 100dvh;
-
     /* พื้นตรงกลางทั้งหมดเป็นสีขาว */
     background: #fff;
-
     display: flex;
     flex-direction: column;
     align-items: center;
-
     font-family: 'Sarabun', sans-serif;
 }
 /* =========================
@@ -48,7 +45,7 @@
 }
 
 .user-back-btn {
-    width: 36px;
+width: 36px;
   height: 36px;
   display: flex;
   align-items: center;
@@ -70,10 +67,8 @@
 .activity-cover {
     width: 100%;
     height: 260px;
-
     overflow: hidden;
     border-radius: 28px;
-
     background: #f0f2f5;
     box-shadow: none;
 }
@@ -82,7 +77,6 @@
     width: 100%;
     height: 100%;
     display: block;
-
     object-fit: cover;
     border-radius: 28px;
 }
@@ -109,24 +103,18 @@
 
 .activity-content {
     width: 100%;
-    max-width: 480px;
-
+    max-width: 820px;
     /* ให้พื้นที่ด้านในต่อเนื่องเป็นสีขาว */
     background: #fff;
-
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     gap: 18px;
-
     /* เว้นพื้นที่สำหรับ Bottom Navigation */
     padding: 18px 18px 100px;
-
     margin: 0 auto;
-
     /* ให้กินความสูงอย่างน้อยเต็มหน้าจอ */
     min-height: 100dvh;
-
     border-radius: 0;
     box-shadow: none;
 }
@@ -137,49 +125,34 @@
 ========================= */
 
 .activity-title-row{
-
     display:flex;
     justify-content:space-between;
     align-items:center;
 }
 
 .activity-title{
-
     margin:0;
-
     font-size:24px;
-
     font-weight:700;
-
     color:#222;
 }
 
 .rating-badge{
-
     display:flex;
-
     align-items:center;
-
     gap:5px;
-
     background:#FFF4C6;
-
     padding:6px 10px;
-
     border-radius:20px;
-
     font-size:13px;
-
     font-weight:600;
 }
 
 .rating-num{
-
     color:#111;
 }
 
 .rating-count{
-
     color:#777;
 }
 
@@ -188,77 +161,52 @@
 ========================= */
 
 .activity-info-row{
-
     display:flex;
-
     align-items:center;
-
     gap:14px;
 }
 
 .date-box{
-
     width:58px;
-
     height:64px;
-
     background:#EEF3FF;
-
     border-radius:14px;
-
     display:flex;
-
     flex-direction:column;
-
     justify-content:center;
-
     align-items:center;
-
     flex-shrink:0;
 }
 
 .date-month{
-
     color:#4A6FFF;
-
-    font-size:12px;
-
+    font-size:14px;
     font-weight:700;
 }
 
 .date-day{
-
-    font-size:22px;
-
+    font-size:23px;
     font-weight:700;
-
     color:#222;
 }
 
 .date-detail{
-
     display:flex;
-
     flex-direction:column;
-
     gap:4px;
+    font-size:18px;
 }
 
 .day-name{
-
     margin:0;
-
     font-weight:700;
-
     color:#222;
+    font-size:16px;
 }
 
 .time-range{
-
     margin:0;
-
     font-size:13px;
-
     color:#777;
 }
 
@@ -267,14 +215,11 @@
 ========================= */
 
 .icon{
-
     font-size:18px;
 }
 
 .activity-info-row span:last-child{
-
     color:#444;
-
     font-size:14px;
 }
 
@@ -283,32 +228,22 @@
 ========================= */
 
 .activity-section{
-
     display:flex;
-
     flex-direction:column;
-
     gap:8px;
 }
 
 .activity-section h3{
-
     margin:0;
-
-    font-size:16px;
-
+    font-size:20px;
     font-weight:700;
 }
 
 .activity-section p{
-
     margin:0;
-
     color:#666;
-
     line-height:1.7;
-
-    font-size:14px;
+    font-size:16px;
 }
 
 /* =========================
@@ -316,21 +251,13 @@
 ========================= */
 
 .host-card{
-
     display:flex;
-
     align-items:center;
-
     gap:12px;
-
     padding:14px;
-
     background:#F8F9FC;
-
     border-radius:16px;
-
     cursor:pointer;
-
     transition:.2s;
 }
 
@@ -340,74 +267,50 @@
 }
 
 .host-avatar{
-
-    width:48px;
-
-    height:48px;
-
+    width:55px;
+    height:55px;
     border-radius:50%;
-
     overflow:hidden;
 }
 
 .host-avatar-img{
-
     width:100%;
-
     height:100%;
-
     object-fit:cover;
 }
 
 .host-avatar-initials{
-
     width:100%;
     height:100%;
-
     display:flex;
     justify-content:center;
     align-items:center;
-
     background:#4A6FFF;
-
     color:white;
-
     font-weight:bold;
 }
 
 .host-info{
-
     flex:1;
 }
 
 .host-name{
-
     margin:0;
-
-    font-size:15px;
-
+    font-size:18px;
     font-weight:700;
 }
 
 .host-username{
-
     margin-top:2px;
-
-    font-size:12px;
-
+    font-size:13px;
     color:#888;
 }
 
 .host-rating{
-
     background:#FFF4C6;
-
     padding:6px 10px;
-
     border-radius:18px;
-
-    font-size:13px;
-
+    font-size:15px;
     font-weight:700;
 }
 
@@ -419,9 +322,9 @@
     border-top: 1px solid #eeeeee;
 }
 
-.section-title {
+.section-title h3 {
     margin: 0;
-    font-size: 17px;
+    font-size: 20px;
     font-weight: 700;
     color: #222;
 }
@@ -444,7 +347,7 @@
 
 .participants-header h3 {
     margin: 0;
-    font-size: 17px;
+    font-size: 20px;
     font-weight: 700;
     color: #222;
 }
@@ -512,8 +415,8 @@
 }
 
 .p-name {
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 18px;
+    font-weight: 700;
     color: #222;
     display: flex;
     align-items: center;
@@ -521,7 +424,7 @@
 }
 
 .p-username {
-    font-size: 13px;
+    font-size: 15px;
     color: #999;
 }
 
@@ -538,66 +441,46 @@
 .show-qr-btn,
 .review-btn,
 .cancel-btn{
-
     width:100%;
-
     border:none;
-
     border-radius:14px;
-
     padding:14px;
-
     cursor:pointer;
-
     font-size:15px;
-
     font-weight:600;
-
     transition:.2s;
 }
 
 .join-btn{
-
     background:#4A6FFF;
-
     color:white;
 }
 
 .join-btn:hover{
-
     background:#3562ff;
 }
 
 .join-btn.joined{
-
     background:#999;
 }
 
 .join-btn.pending{
-
     background:#FFD54F;
-
     color:#333;
 }
 
 .cancel-btn{
-
     background:#FFEAEA;
-
     color:#E53935;
 }
 
 .review-btn{
-
     background:#FFF176;
-
     color:#222;
 }
 
 .show-qr-btn{
-
     background:#EEF3FF;
-
     color:#4A6FFF;
 }
 
@@ -1362,4 +1245,19 @@
 .modal-report-btn:disabled {
     background: #ffcdd2;
     cursor: not-allowed;
+}
+/* Tablet / iPad */
+@media (min-width: 600px) {
+  .activity-content {
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+
+  .activity-cover {
+    height: 340px;
+  }
+
+  .activity-title {
+    font-size: 28px;
+  }
 }

@@ -324,3 +324,16 @@
   height: 1px;
   background: #eee;
 }
+
+/* Tablet / iPad */
+/* Tablet / iPad */
+@media (min-width: 600px) {
+  .profile-page .profile-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 12px;
+  }
+
+  .profile-page .profile-activity-card {
+    height: 150px;
+  }
+}

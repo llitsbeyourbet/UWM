@@ -526,3 +526,44 @@
 .btn-apply-filters:hover {
   background: #333;
 }
+
+/* Tablet / iPad */
+@media (min-width: 600px) {
+  .activity-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .activity-card {
+    min-width: 0;
+    height: 100%;
+  }
+
+  .card-cover-wrap {
+    height: 180px;
+  }
+
+  .card-body {
+    padding: 14px;
+  }
+
+  .card-title {
+    font-size: 16px;
+    line-height: 1.3;
+  }
+
+  .card-info {
+    font-size: 12px;
+  }
+
+  .card-date {
+    font-size: 11.5px;
+  }
+
+  .empty-state,
+  .empty-text {
+    grid-column: 1 / -1;
+  }
+}

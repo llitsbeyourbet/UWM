@@ -496,17 +496,13 @@
 
 .checkin-success-card h2 {
   margin: 18px 0 5px;
-
   color: #222222;
-
   font-size: 21px;
 }
 
 .checkin-success-card p {
   margin: 0 0 24px;
-
   color: #888888;
-
   font-size: 13px;
 }
 
@@ -516,34 +512,25 @@
 
 .checkin-error-card {
   width: 100%;
-
   padding: 28px 20px;
-
   display: flex;
   flex-direction: column;
   align-items: center;
-
   text-align: center;
-
   background: #ffffff;
-
   border: 1px solid #eeeeee;
   border-radius: 20px;
-
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
 }
 
 .checkin-error-icon {
   width: 72px;
   height: 72px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   color: #f2a423;
   background: #fff4dc;
-
   border-radius: 50%;
 }
 
@@ -553,80 +540,60 @@
 
 .checkin-error-card h2 {
   margin: 18px 0 6px;
-
   color: #222222;
-
   font-size: 21px;
   font-weight: 800;
 }
 
 .checkin-error-card > p {
   margin: 0 0 20px;
-
   color: #888888;
-
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.6;
 }
 
 .checkin-error-activity {
   width: 100%;
-
   margin-bottom: 20px;
   padding: 12px;
-
   display: flex;
   align-items: center;
   gap: 12px;
-
   text-align: left;
-
   background: #f7f7f7;
-
   border-radius: 14px;
 }
 
 .checkin-error-cover {
   width: 65px;
   height: 60px;
-
   flex-shrink: 0;
-
   overflow: hidden;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   color: #7d5fff;
   background: #f1edff;
-
   border-radius: 10px;
 }
 
 .checkin-error-cover img {
   width: 100%;
   height: 100%;
-
   object-fit: cover;
 }
 
 .checkin-error-info {
   min-width: 0;
-
   display: flex;
   flex-direction: column;
 }
 
 .checkin-error-info strong {
   margin-bottom: 4px;
-
   overflow: hidden;
-
   color: #222222;
-
-  font-size: 14px;
-
+  font-size: 17px;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
@@ -636,7 +603,7 @@
 
   color: #888888;
 
-  font-size: 11px;
+  font-size: 15px;
 }
 
 .loading-text {
@@ -645,6 +612,18 @@
   color: #888888;
 
   text-align: center;
+}
+/* Center error / success state */
+.checkin-page:has(.checkin-error-card),
+.checkin-page:has(.checkin-success-card) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkin-page:has(.checkin-error-card) .checkin-content,
+.checkin-page:has(.checkin-success-card) .checkin-content {
+  width: 80%;
 }
 
 /* =========================
