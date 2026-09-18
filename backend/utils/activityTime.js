@@ -1,5 +1,18 @@
 const BANGKOK_OFFSET = "+07:00";
 
+function normalizeTime(t) {
+  if (!t) return "";
+
+  const value = String(t);
+  const parts = value.split(":");
+
+  if (parts.length === 2) {
+    return `${parts[0].padStart(2, "0")}:${parts[1].padStart(2, "0")}:00`;
+  }
+
+  return value;
+}
+
 function getActivityDateString(value) {
   if (!value) return null;
 
@@ -48,4 +61,5 @@ module.exports = {
   buildBangkokDateTime,
   getActivityEndDateTime,
   isActivityEnded,
+  normalizeTime,
 };

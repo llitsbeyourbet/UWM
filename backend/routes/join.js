@@ -4,7 +4,7 @@ const { auth } = require("../middleware/auth");
 const { Op } = require("sequelize");
 const jwt = require("jsonwebtoken");
 const sequelize = require("../database");
-const { getActivityDateString, buildBangkokDateTime, isActivityEnded } = require("../utils/activityTime");
+const { getActivityDateString, buildBangkokDateTime, isActivityEnded, normalizeTime } = require("../utils/activityTime");
 const Activity = require("../models/Activity");
 const Notification = require("../models/Notification");
 const User = require("../models/User");
@@ -101,6 +101,48 @@ router.post("/:activityId", auth, async (req, res) => {
         }
       }
 
+      // ตรวจสอบเวลาทับซ้อน (Conflict Check)
+      if (!req.body.confirmConflict) {
+        const existingJoins = await JoinRequest.findAll({
+          where: {
+            userId: req.userId,
+            status: { [Op.in]: ["approved", "checked_in"] },
+          },
+          transaction,
+        });
+
+        const existingActivityIds = existingJoins.map((j) => j.activityId);
+        if (existingActivityIds.length > 0) {
+          const overlappingActivities = await Activity.findAll({
+            where: {
+              id: { [Op.in]: existingActivityIds },
+              status: "active",
+              date: activity.date,
+            },
+            transaction,
+          });
+
+          const conflict = overlappingActivities.find((act) => {
+            const start = normalizeTime(act.time);
+            const end = normalizeTime(act.endTime);
+            const newStart = normalizeTime(activity.time);
+            const newEnd = normalizeTime(activity.endTime);
+            return start < newEnd && end > newStart;
+          });
+
+          if (conflict) {
+            const error = new Error("กิจกรรมนี้มีช่วงเวลาทับซ้อน\nกับกิจกรรมที่คุณเข้าร่วมไว้แล้ว");
+            error.statusCode = 409;
+            error.conflictActivity = {
+              activityName: conflict.activityName,
+              time: String(conflict.time).slice(0, 5),
+              endTime: String(conflict.endTime).slice(0, 5),
+            };
+            throw error;
+          }
+        }
+      }
+
       user = await User.findByPk(req.userId, { transaction });
       if (!user) {
         const error = new Error("ไม่พบผู้ใช้");
@@ -134,9 +176,13 @@ router.post("/:activityId", auth, async (req, res) => {
     });
   } catch (err) {
     console.error("JOIN ACTIVITY ERROR:", err);
-    return res.status(err.statusCode || 500).json({
+    const response = {
       message: err.statusCode ? err.message : "เกิดข้อผิดพลาด",
-    });
+    };
+    if (err.conflictActivity) {
+      response.conflictActivity = err.conflictActivity;
+    }
+    return res.status(err.statusCode || 500).json(response);
   }
 });
 

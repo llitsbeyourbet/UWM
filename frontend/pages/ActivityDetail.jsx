@@ -212,30 +212,96 @@ function ActivityDetail() {
     } catch (err) { console.log(err); }
   };
 
-  const handleJoin = async () => {
+  const handleJoin = async (confirmConflict = false) => {
     const token = sessionStorage.getItem("token");
-    if (!token) { navigate("/login"); return; }
+
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
     setJoinLoading(true);
+
     try {
       const res = await fetch(API_URL + "/api/join/" + activity.id, {
         method: "POST",
-        headers: { Authorization: "Bearer " + token },
+        headers: {
+          Authorization: "Bearer " + token,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          confirmConflict: confirmConflict === true,
+        }),
       });
-      const data = await res.json();
+
+      const text = await res.text();
+
+      let data = {};
+      try {
+        data = text ? JSON.parse(text) : {};
+      } catch (parseError) {
+        console.error("JOIN RESPONSE IS NOT JSON:", text);
+        throw new Error("Server ส่งข้อมูลกลับมาไม่ถูกต้อง");
+      }
+
+      console.log("JOIN RESPONSE:", res.status, data);
+
       if (!res.ok) {
-        await showAlert({ type: 'error', title: 'เกิดข้อผิดพลาด', message: data.message });
+        if (res.status === 409 && data.conflictActivity) {
+          const confirmed = await showConfirm({
+            title: "แจ้งเตือน",
+            message:
+              `${data.message}\n\n` +
+              `กิจกรรม: ${data.conflictActivity.activityName}\n` +
+              `ช่วงเวลา: ${data.conflictActivity.time} - ${data.conflictActivity.endTime}\n\n` +
+              `ต้องการเข้าร่วมกิจกรรมนี้ต่อหรือไม่?`,
+            confirmText: "ยืนยันเข้าร่วม",
+            cancelText: "ยกเลิก",
+          });
+
+          console.log("CONFLICT CONFIRM RESULT:", confirmed);
+
+          // รองรับเฉพาะค่าที่เป็น boolean เท่านั้น
+          if (confirmed === true) {
+            return await handleJoin(true);
+          }
+
+          return;
+        }
+
+        await showAlert({
+          type: "error",
+          title: "เกิดข้อผิดพลาด",
+          message: data.message || "ไม่สามารถเข้าร่วมกิจกรรมได้",
+        });
+
         return;
       }
+
       setJoinStatus(data.status);
+
       await showAlert({
-        type: data.status === "approved" ? 'success' : 'info',
-        title: data.status === "approved" ? 'เข้าร่วมสำเร็จ!' : 'ส่งคำขอแล้ว',
-        message: data.status === "approved" ? 'คุณได้เข้าร่วมกิจกรรมนี้เรียบร้อยแล้ว' : 'ส่งคำขอเข้าร่วมสำเร็จ! รอการอนุมัติจากผู้จัดกิจกรรม',
+        type: data.status === "approved" ? "success" : "info",
+        title:
+          data.status === "approved"
+            ? "เข้าร่วมสำเร็จ!"
+            : "ส่งคำขอแล้ว",
+        message:
+          data.status === "approved"
+            ? "คุณได้เข้าร่วมกิจกรรมนี้เรียบร้อยแล้ว"
+            : "ส่งคำขอเข้าร่วมสำเร็จ! รอการอนุมัติจากผู้จัดกิจกรรม",
       });
-    } catch {
-      await showAlert({ type: 'error', title: 'เกิดข้อผิดพลาด', message: 'ไม่สามารถเชื่อมต่อ server ได้' });
+    } catch (error) {
+      console.error("HANDLE JOIN ERROR:", error);
+
+      await showAlert({
+        type: "error",
+        title: "เกิดข้อผิดพลาด",
+        message: error.message || "ไม่สามารถเชื่อมต่อ server ได้",
+      });
+    } finally {
+      setJoinLoading(false);
     }
-    finally { setJoinLoading(false); }
   };
 
   const handleCancel = async () => {

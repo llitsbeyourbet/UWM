@@ -8,7 +8,7 @@ import { getCategoryIcon } from "../utils/categoryIcons";
 
 function EditActivity() {
   const navigate = useNavigate();
-  const { showAlert } = useAlert();
+  const { showAlert, showConfirm } = useAlert();
   const { id } = useParams();
   const hasFetched = useRef(false);
   const isIOS = /iPhone|iPod|iPad/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -232,7 +232,7 @@ function EditActivity() {
     }
 
     try {
-      const payload = {
+      let payload = {
         activityName: activityName.trim(),
         detail,
         date,
@@ -250,16 +250,41 @@ function EditActivity() {
         payload.cover = coverFilename;
       }
 
-      const res = await fetch(`${API_URL}/api/activities/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
+      let res;
+      let data;
+      let conflictHandled = false;
 
-      const data = await res.json();
+      while (true) {
+        res = await fetch(`${API_URL}/api/activities/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        });
+
+        data = await res.json();
+
+        if (res.status === 409 && !conflictHandled) {
+          const { conflictActivity } = data;
+          const confirmed = await showConfirm({
+            title: "แจ้งเตือน",
+            message: `กิจกรรมนี้มีช่วงเวลาคาบเกี่ยวกับกิจกรรมที่คุณสร้างไว้แล้ว\nกิจกรรม: ${conflictActivity.activityName}\nช่วงเวลา: ${conflictActivity.time} - ${conflictActivity.endTime}\n\nคุณต้องการโพสต์กิจกรรมนี้ต่อหรือไม่?`,
+            confirmText: "ยืนยันโพสต์",
+            cancelText: "ยกเลิก",
+          });
+
+          if (confirmed) {
+            payload.confirmConflict = true;
+            conflictHandled = true;
+            continue;
+          } else {
+            return;
+          }
+        }
+        break;
+      }
 
       if (!res.ok) {
         if (data.moderation) {
