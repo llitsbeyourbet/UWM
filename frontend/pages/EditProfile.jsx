@@ -12,7 +12,6 @@ function EditProfile() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [birthdate, setBirthdate] = useState("");
   const [bio, setBio] = useState("");
   const [profileImage, setProfileImage] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -39,7 +38,6 @@ function EditProfile() {
         setName(data.name || "");
         setEmail(data.email || "");
         setPhone(data.phone || "");
-        setBirthdate(data.birthdate || "");
         setBio(data.bio || "");
         if (data.profileImage) {
           setPreview(data.profileImage);
@@ -130,7 +128,6 @@ function EditProfile() {
           username,
           name,
           phone,
-          birthdate,
           bio,
           profileImage,
         }),
@@ -154,7 +151,6 @@ function EditProfile() {
         username,
         name,
         phone,
-        birthdate,
         bio,
         profileImage: profileImage || user.profileImage,
       }));
@@ -228,11 +224,6 @@ function EditProfile() {
           <div className="form-group">
             <label>เบอร์โทรศัพท์</label>
             <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
-          </div>
-
-          <div className="form-group">
-            <label>วันเกิด</label>
-            <input type="date" value={birthdate} onChange={(e) => setBirthdate(e.target.value)} />
           </div>
 
           <div className="form-group">

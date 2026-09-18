@@ -42,6 +42,7 @@ export default function Login() {
         }
 
         if (data.message === "รหัสผ่านไม่ถูกต้อง") {
+          setPassword("");
           setError("รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง");
           return;
         }

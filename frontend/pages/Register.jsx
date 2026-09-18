@@ -12,7 +12,6 @@ function Register() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [birthdate, setBirthdate] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -51,7 +50,6 @@ function Register() {
       !cleanUsername ||
       !cleanEmail ||
       !cleanPhone ||
-      !birthdate ||
       !password ||
       !confirmPassword
     ) {
@@ -284,7 +282,6 @@ function Register() {
           email,
           password,
           phone,
-          birthdate,
           registrationToken: verifyData.registrationToken,
         }),
       });
@@ -511,26 +508,6 @@ function Register() {
                         value={phone}
                         onChange={(e) => {
                           setPhone(e.target.value);
-                          if (error) setError("");
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Birthdate */}
-                  <div className="register-field">
-                    <label>วันเกิด</label>
-
-                    <div className="register-input-box">
-                      <span className="material-icons">
-                        calendar_today
-                      </span>
-
-                      <input
-                        type="date"
-                        value={birthdate}
-                        onChange={(e) => {
-                          setBirthdate(e.target.value);
                           if (error) setError("");
                         }}
                       />
@@ -837,7 +814,7 @@ function Register() {
                   <p>
                     ในการสมัครสมาชิกและใช้งานระบบ
                     อาจมีการเก็บรวบรวมข้อมูล เช่น ชื่อ-นามสกุล
-                    ชื่อผู้ใช้ อีเมล เบอร์โทรศัพท์ วันเกิด
+                    ชื่อผู้ใช้ อีเมล เบอร์โทรศัพท์ 
                     รูปโปรไฟล์ และข้อมูลที่ผู้ใช้งานสร้างขึ้นภายในระบบ
                     เช่น กิจกรรม การเข้าร่วมกิจกรรม และรีวิว
                   </p>

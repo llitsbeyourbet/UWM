@@ -186,7 +186,6 @@ router.post("/register", async (req, res) => {
       email,
       password,
       phone,
-      birthdate,
       registrationToken,
     } = req.body;
 
@@ -195,7 +194,6 @@ router.post("/register", async (req, res) => {
       !name ||
       !email ||
       !phone ||
-      !birthdate ||
       !password
     ) {
       await transaction.rollback();
@@ -342,7 +340,6 @@ router.post("/register", async (req, res) => {
         email: cleanEmail,
         password: hashed,
         phone: cleanPhone,
-        birthdate,
       },
       {
         transaction,
@@ -544,7 +541,6 @@ router.put("/update",auth, async (req, res) => {
       username,
       name,
       phone,
-      birthdate,
       bio,
       profileImage,
     } = req.body;
@@ -621,7 +617,6 @@ router.put("/update",auth, async (req, res) => {
       username: cleanUsername,
       name: name?.trim(),
       phone: cleanPhone || null,
-      birthdate: birthdate || null,
       bio: bio || "",
     };
 
