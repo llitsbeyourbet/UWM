@@ -56,12 +56,12 @@ router.get("/", async (req, res) => {
 
     const existingUsers = userIds.length
       ? await User.findAll({
-          where: {
-            id: { [Op.in]: userIds },
-          },
-          attributes: ["id"],
-          raw: true,
-        })
+        where: {
+          id: { [Op.in]: userIds },
+        },
+        attributes: ["id"],
+        raw: true,
+      })
       : [];
 
     const existingUserIds = new Set(
@@ -365,14 +365,14 @@ router.get("/:id", async (req, res) => {
 
     const existingUsers = userIds.length
       ? await User.findAll({
-          where: {
-            id: {
-              [Op.in]: userIds,
-            },
+        where: {
+          id: {
+            [Op.in]: userIds,
           },
-          attributes: ["id"],
-          raw: true,
-        })
+        },
+        attributes: ["id"],
+        raw: true,
+      })
       : [];
 
     const joinedCount = existingUsers.length;
@@ -399,11 +399,11 @@ router.get("/:id", async (req, res) => {
 
       creator: creator
         ? {
-            id: creator.id,
-            name: creator.name,
-            username: creator.username,
-            profileImage: creator.profileImage,
-          }
+          id: creator.id,
+          name: creator.name,
+          username: creator.username,
+          profileImage: creator.profileImage,
+        }
         : null,
 
       creatorName:
@@ -738,7 +738,8 @@ router.put("/:id", auth, async (req, res) => {
 
     if (
       updates.activityName !== undefined ||
-      updates.detail !== undefined
+      updates.detail !== undefined ||
+      updates.location !== undefined
     ) {
       const moderation = analyzeFields({
         activityName:
@@ -750,8 +751,12 @@ router.put("/:id", auth, async (req, res) => {
           updates.detail !== undefined
             ? updates.detail
             : activity.detail,
-      });
 
+        location:
+          updates.location !== undefined
+            ? updates.location
+            : activity.location,
+      });
       if (moderation.status === "danger") {
         return res.status(422).json({
           message:
@@ -967,18 +972,18 @@ router.get("/:id/summary-participants",
 
       const users = userIds.length
         ? await User.findAll({
-            where: {
-              id: {
-                [Op.in]: userIds,
-              },
+          where: {
+            id: {
+              [Op.in]: userIds,
             },
-            attributes: [
-              "id",
-              "name",
-              "username",
-              "profileImage",
-            ],
-          })
+          },
+          attributes: [
+            "id",
+            "name",
+            "username",
+            "profileImage",
+          ],
+        })
         : [];
 
       const userMap = {};
@@ -1041,18 +1046,18 @@ router.get("/:id/participants/checked-in",
 
       const participants = userIds.length
         ? await User.findAll({
-            where: {
-              id: {
-                [Op.in]: userIds,
-              },
+          where: {
+            id: {
+              [Op.in]: userIds,
             },
-            attributes: [
-              "id",
-              "name",
-              "username",
-              "profileImage",
-            ],
-          })
+          },
+          attributes: [
+            "id",
+            "name",
+            "username",
+            "profileImage",
+          ],
+        })
         : [];
 
       return res.json(participants);
@@ -1093,18 +1098,18 @@ router.get(
 
       const participants = userIds.length
         ? await User.findAll({
-            where: {
-              id: {
-                [Op.in]: userIds,
-              },
+          where: {
+            id: {
+              [Op.in]: userIds,
             },
-            attributes: [
-              "id",
-              "name",
-              "username",
-              "profileImage",
-            ],
-          })
+          },
+          attributes: [
+            "id",
+            "name",
+            "username",
+            "profileImage",
+          ],
+        })
         : [];
 
       return res.json(participants);

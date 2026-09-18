@@ -66,8 +66,21 @@ function Search() {
 
 
       // 3. Keyword search
-      if (filters.search && !item.activityName.toLowerCase().includes(filters.search.toLowerCase())) {
-        return false;
+      if (filters.search) {
+        const keyword = filters.search.toLowerCase().trim();
+        const itemCats = Array.isArray(item.category)
+          ? item.category
+          : String(item.category || "").split(",").map(c => c.trim());
+
+        const matchName = item.activityName
+          .toLowerCase()
+          .includes(keyword);
+
+        const matchCategory = itemCats.some(cat =>
+          cat.toLowerCase().includes(keyword)
+        );
+
+        if (!matchName && !matchCategory) return false;
       }
 
       // 4. Categories filter
@@ -226,8 +239,8 @@ function Search() {
         <div className="search-bar-container">
           <div className="search-input-box">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2" strokeLinecap="round">
-              <circle cx="11" cy="11" r="8"/>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
             <input
               type="text"
