@@ -496,7 +496,7 @@ function Register() {
                   </div>
 
                   {/* Phone */}
-                  <div className="register-field">
+                  <div className="register-field full">
                     <label>เบอร์โทรศัพท์</label>
 
                     <div className="register-input-box">
