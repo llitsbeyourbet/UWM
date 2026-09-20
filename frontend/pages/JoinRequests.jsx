@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAlert } from "../hooks/useAlert";
 import { formatDate } from "../utils/formatDate";
 import "../styles/JoinRequests.css";
+import Loading from "../components/Loading";
 
 function JoinRequests() {
     const { activityId } = useParams();
@@ -142,7 +143,7 @@ function JoinRequests() {
         );
     };
 
-    if (loading) return <div className="jr-loading">กำลังโหลดข้อมูล...</div>;
+    if (loading) return <Loading />;
     if (!activity) return null;
     const cover = imageUrl(activity.cover);
 

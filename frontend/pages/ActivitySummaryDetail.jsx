@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import "../styles/ActivitySummaryDetail.css";
 import API_URL from "../config";
 import { formatDate } from "../utils/formatDate";
+import Loading from "../components/Loading";
 
 const getPaginationNumbers = (page, totalPages) => {
   if (totalPages <= 5) {
@@ -120,7 +121,7 @@ function ActivitySummaryDetail() {
     fetchDetails();
   }, [id, navigate]);
 
-  if (loading) return <div className="detail-loading">กำลังโหลดข้อมูล...</div>;
+  if (loading) return <Loading />;
   if (notFound || !activity) return <div className="detail-loading">ไม่พบข้อมูลสรุปผลกิจกรรม</div>;
 
   const total = attendance?.totalJoined || 0;

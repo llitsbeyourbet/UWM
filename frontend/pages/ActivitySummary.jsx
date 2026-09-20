@@ -4,6 +4,7 @@ import "../styles/ActivitySummary.css";
 import API_URL from "../config";
 import { formatDate } from "../utils/formatDate";
 import { useAlert } from "../hooks/useAlert";
+import Loading from "../components/Loading";
 
 function ActivitySummary() {
   const navigate = useNavigate();
@@ -101,9 +102,7 @@ function ActivitySummary() {
     item.activityName.toLowerCase().includes(searchTerm.trim().toLowerCase())
   );
 
-  if (loading) {
-    return <div className="loading">กำลังโหลดข้อมูล...</div>;
-  }
+  if (loading) return <Loading />;
 
   return (
     <div className="summary-mobile-container">
