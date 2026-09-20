@@ -289,7 +289,7 @@ function ActivityDetail() {
         message:
           data.status === "approved"
             ? "คุณได้เข้าร่วมกิจกรรมนี้เรียบร้อยแล้ว"
-            : "ส่งคำขอเข้าร่วมสำเร็จ! รอการอนุมัติจากผู้จัดกิจกรรม",
+            : "ส่งคำขอเข้าร่วมสำเร็จ!\nรอการอนุมัติจากผู้สร้างกิจกรรม",
       });
     } catch (error) {
       console.error("HANDLE JOIN ERROR:", error);
@@ -1007,7 +1007,7 @@ function ActivityDetail() {
                     className="cancel-btn"
                     onClick={handleCancel}
                   >
-                    ยกเลิกคำขอ
+                    ยกเลิกคำขอเข้าร่วมกิจกรรม
                   </button>
                 )}
               </>

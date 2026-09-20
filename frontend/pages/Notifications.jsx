@@ -277,27 +277,27 @@ const handleDeleteAll = () => {
 
   const renderMessage = (n) => {
     if (n.type === "join_request")
-      return <><span className="bold">{n.fromUsername}</span> ส่งคำขอเข้าร่วมกิจกรรม <span className="bold">{n.activityName}</span></>;
+      return <><span className="bold">{n.fromUsername}</span> ส่งคำขอเข้าร่วมกิจกรรม <br/><span className="bold">{n.activityName}</span></>;
     if (n.type === "join_confirmed")
-      return <><span className="bold">{n.fromUsername}</span> {" "}อนุมัติให้คุณเข้าร่วมกิจกรรม{" "} <span className="bold">{n.activityName}</span> {" "}แล้ว </>;
+      return <><span className="bold">{n.fromUsername}</span> {" "}อนุมัติให้คุณเข้าร่วมกิจกรรม<br/> <span className="bold">{n.activityName}</span> {" "}แล้ว </>;
     if (n.type === "join_rejected")
-      return <><span className="bold">{n.fromUsername}</span>{" "} ปฏิเสธคำขอเข้าร่วมกิจกรรม{" "} <span className="bold">{n.activityName}</span> </>;
+      return <><span className="bold">{n.fromUsername}</span>{" "} ปฏิเสธคำขอเข้าร่วมกิจกรรม<br/> <span className="bold">{n.activityName}</span> </>;
     if (n.type === "member_joined")
-      return <><span className="bold">{n.fromUsername}</span>{" "} เข้าร่วมกิจกรรม{" "}<span className="bold">{n.activityName}</span>{" "} แล้ว </>;
+      return <><span className="bold">{n.fromUsername}</span>{" "} เข้าร่วมกิจกรรม<br/><span className="bold">{n.activityName}</span>{" "} แล้ว </>;
     if (n.type === "reminder")
-      return <>กิจกรรม <span className="bold">{n.activityName}</span> จะเริ่มในอีก <span className="bold">1 ชั่วโมง</span></>;
+      return <>กิจกรรม <span className="bold">{n.activityName}</span><br/> จะเริ่มในอีก <span className="bold">1 ชั่วโมง</span></>;
     if (n.type === "report")
       return <><span className="bold">{n.fromUsername}</span> รายงานกิจกรรม <span className="bold">{n.activityName}</span></>;
     if (n.type === "review_request")
-      return <>คุณสามารถรีวิวกิจกรรม{" "} <span className="bold">{n.activityName}</span> {" "}ได้แล้ว </>;
+      return <>คุณสามารถรีวิวกิจกรรม<br/> <span className="bold">{n.activityName}</span> {" "}ได้แล้ว </>;
     if (n.type === "checkin")
-      return <><span className="bold">{n.fromUsername}</span> {" "}ยืนยันการเข้าร่วมกิจกรรม{" "} <span className="bold">{n.activityName}</span> {" "}แล้ว </>;
+      return <><span className="bold">{n.fromUsername}</span> {" "}ยืนยันการเข้าร่วมกิจกรรม<br/> <span className="bold">{n.activityName}</span> {" "}แล้ว </>;
     if (n.type === "review")
-      return <><span className="bold">{n.fromUsername}</span> {" "}รีวิวกิจกรรม{" "} <span className="bold">{n.activityName}</span> {" "}แล้ว </>;
+      return <><span className="bold">{n.fromUsername}</span> {" "}รีวิวกิจกรรม<br/> <span className="bold">{n.activityName}</span> {" "}แล้ว </>;
     if (n.type === "activity_warning")
-      return (<>กิจกรรม{" "}<span className="bold">{n.activityName}</span>{" "}ได้รับคำเตือนจากผู้ดูแลระบบ</>);
+      return (<>กิจกรรม{" "}<span className="bold">{n.activityName}</span><br/>ได้รับคำเตือนจากผู้ดูแลระบบ</>);
     if (n.type === "activity_suspended")
-      return (<>กิจกรรม{" "}<span className="bold">{n.activityName}</span>{" "}ถูกระงับโดยผู้ดูแลระบบ</>);
+      return (<>กิจกรรม{" "}<span className="bold">{n.activityName}</span><br/>ถูกระงับโดยผู้ดูแลระบบ</>);
   };
 
   const formatTime = (dateStr) => {
