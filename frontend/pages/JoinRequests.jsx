@@ -43,9 +43,8 @@ function JoinRequests() {
             `${activity.date}T${activity.time}+07:00`
         );
 
-        const activityEnd = new Date(
-            `${activity.date}T${activity.endTime || activity.time}+07:00`
-        );
+        const activityEnd = new Date(`${activity.date}T${activity.endTime || activity.time}+07:00`);
+        if (activity.endsNextDay) activityEnd.setDate(activityEnd.getDate() + 1);
 
         const now = new Date();
 

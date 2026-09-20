@@ -4,7 +4,12 @@ const { auth } = require("../middleware/auth");
 const { Op } = require("sequelize");
 const jwt = require("jsonwebtoken");
 const sequelize = require("../database");
-const { getActivityDateString, buildBangkokDateTime, isActivityEnded, normalizeTime } = require("../utils/activityTime");
+const {
+  getActivityDateString,
+  buildBangkokDateTime,
+  isActivityEnded,
+  isActivityOverlap,
+} = require("../utils/activityTime");
 const Activity = require("../models/Activity");
 const Notification = require("../models/Notification");
 const User = require("../models/User");
@@ -117,18 +122,14 @@ router.post("/:activityId", auth, async (req, res) => {
             where: {
               id: { [Op.in]: existingActivityIds },
               status: "active",
-              date: activity.date,
             },
             transaction,
           });
+          const conflict = overlappingActivities.find((act) =>
+            isActivityOverlap(act, activity)
+          );
 
-          const conflict = overlappingActivities.find((act) => {
-            const start = normalizeTime(act.time);
-            const end = normalizeTime(act.endTime);
-            const newStart = normalizeTime(activity.time);
-            const newEnd = normalizeTime(activity.endTime);
-            return start < newEnd && end > newStart;
-          });
+
 
           if (conflict) {
             const error = new Error("กิจกรรมนี้มีช่วงเวลาทับซ้อน\nกับกิจกรรมที่คุณเข้าร่วมไว้แล้ว");
@@ -528,30 +529,77 @@ router.post("/:activityId/checkin", auth, async (req, res) => {
         throw error;
       }
 
-      const activityDateStart = new Date(`${activityDateStr}T00:00:00+07:00`);
-      const activityDateEnd = new Date(`${activityDateStr}T23:59:59.999+07:00`);
+      const activityDateStart = new Date(
+        `${activityDateStr}T00:00:00+07:00`
+      );
+
+      const activityDateEnd = new Date(
+        `${activityDateStr}T23:59:59.999+07:00`
+      );
+
+      if (activity.endsNextDay) {
+        activityDateEnd.setDate(activityDateEnd.getDate() + 1);
+      }
+
       if (now < activityDateStart || now > activityDateEnd) {
-        const error = new Error("ไม่อยู่ในวันที่สามารถเช็คอินได้");
+        const error = new Error(
+          "ไม่อยู่ในวันที่สามารถเช็คอินได้"
+        );
         error.statusCode = 400;
         throw error;
       }
 
+      let checkinStartDateTime = null;
+      let checkinEndDateTime = null;
+
       if (activity.checkinStart) {
-        const startDateTime = buildBangkokDateTime(activity.date, activity.checkinStart);
-        if (!startDateTime || now < startDateTime) {
-          const error = new Error(`ยังไม่ถึงเวลาเช็คอิน (เริ่ม ${String(activity.checkinStart).slice(0, 5)})`);
-          error.statusCode = 400;
-          throw error;
-        }
+        checkinStartDateTime = buildBangkokDateTime(
+          activity.date,
+          activity.checkinStart
+        );
       }
 
       if (activity.checkinEnd) {
-        const endDateTime = buildBangkokDateTime(activity.date, activity.checkinEnd);
-        if (!endDateTime || now > endDateTime) {
-          const error = new Error(`หมดเขตเช็คอินแล้ว (ปิด ${String(activity.checkinEnd).slice(0, 5)})`);
-          error.statusCode = 400;
-          throw error;
+        checkinEndDateTime = buildBangkokDateTime(
+          activity.date,
+          activity.checkinEnd
+        );
+
+        if (
+          activity.endsNextDay &&
+          activity.checkinStart &&
+          activity.checkinEnd < activity.checkinStart
+        ) {
+          checkinEndDateTime.setDate(
+            checkinEndDateTime.getDate() + 1
+          );
         }
+      }
+
+      if (
+        checkinStartDateTime &&
+        now < checkinStartDateTime
+      ) {
+        const error = new Error(
+          `ยังไม่ถึงเวลาเช็คอิน (เริ่ม ${String(
+            activity.checkinStart
+          ).slice(0, 5)})`
+        );
+        error.statusCode = 400;
+        throw error;
+      }
+
+      if (
+        checkinEndDateTime &&
+        now > checkinEndDateTime
+      ) {
+        const error = new Error(
+          `หมดเขตเช็คอินแล้ว (ปิด ${String(
+            activity.checkinEnd
+          ).slice(0, 5)})`
+        );
+        error.statusCode = 400;
+        throw error;
       }
 
       await joinRequest.update({ status: "checked_in" }, { transaction });

@@ -7,6 +7,7 @@ const Activity = sequelize.define("Activity", {
   date: { type: DataTypes.DATE },
   time: { type: DataTypes.TIME },
   endTime: { type: DataTypes.TIME },
+  endsNextDay: { type: DataTypes.BOOLEAN, defaultValue: false },
   location: { type: DataTypes.STRING },
   participantCount: { type: DataTypes.INTEGER, defaultValue: 1 },
   activityType: { type: DataTypes.ENUM("public", "private"), defaultValue: "public" },

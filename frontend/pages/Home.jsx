@@ -175,6 +175,10 @@ function Home() {
       `${item.date}T${item.endTime || item.time || "23:59"}`
     );
 
+    if (item.endsNextDay) {
+      endDateTime.setDate(endDateTime.getDate() + 1);
+    }
+
     if (now >= startDateTime && now < endDateTime) {
       return {
         className: "ongoing",
@@ -285,8 +289,8 @@ function Home() {
 
                   <span
                     className={`card-tag ${item.activityType === "public"
-                        ? "tag-public"
-                        : "tag-private"
+                      ? "tag-public"
+                      : "tag-private"
                       }`}
                   >
                     {item.activityType === "public"

@@ -826,6 +826,7 @@ router.get("/chart-status", auth, isAdmin, async (req, res) => {
         "date",
         "time",
         "endTime",
+        "endsNextDay",
         "status",
       ],
       raw: true,
@@ -860,9 +861,8 @@ router.get("/chart-status", auth, isAdmin, async (req, res) => {
         `${date}T${activity.time}`
       );
 
-      const endDateTime = new Date(
-        `${date}T${activity.endTime || activity.time}`
-      );
+      const endDateTime = new Date(`${date}T${activity.endTime || activity.time}`);
+      if (activity.endsNextDay) endDateTime.setDate(endDateTime.getDate() + 1);
 
       if (now < startDateTime) {
         counts.upcoming += 1;

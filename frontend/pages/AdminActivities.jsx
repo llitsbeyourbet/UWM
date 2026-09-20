@@ -77,6 +77,7 @@ const getActivityPhase = (activity) => {
 
   const startDateTime = new Date(`${date}T${startTime}`);
   const endDateTime = new Date(`${date}T${endTime}`);
+  if (activity.endsNextDay) endDateTime.setDate(endDateTime.getDate() + 1);
 
   if (now < startDateTime) {
     return "upcoming";

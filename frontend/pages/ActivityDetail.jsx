@@ -26,6 +26,20 @@ const getPaginationNumbers = (page, totalPages) => {
 };
 
 
+const getActivityEnd = (activity) => {
+  if (!activity?.date) return null;
+  const end = new Date(`${activity.date}T${activity.endTime || activity.time}+07:00`);
+  if (activity.endsNextDay) end.setDate(end.getDate() + 1);
+  return end;
+};
+
+const getCheckinEnd = (activity) => {
+  if (!activity?.date || !activity?.checkinEnd) return null;
+  const end = new Date(`${activity.date}T${activity.checkinEnd}+07:00`);
+  if (activity.endsNextDay && activity.checkinStart && activity.checkinEnd < activity.checkinStart) end.setDate(end.getDate() + 1);
+  return end;
+};
+
 function ActivityDetail() {
   const navigate = useNavigate();
   const { showAlert, showConfirm } = useAlert();
@@ -333,11 +347,7 @@ function ActivityDetail() {
   };
 
   const handleDelete = async () => {
-    const ended =
-      activity &&
-      new Date(
-        activity.date + "T" + (activity.endTime || activity.time)
-      ) <= new Date();
+    const ended = activity && getActivityEnd(activity) <= new Date();
 
     if (activity.status === "suspended") {
       await showAlert({ type: 'warning', title: 'ไม่สามารถลบได้', message: 'กิจกรรมที่ถูกระงับโดยแอดมินไม่สามารถลบได้' });
@@ -478,9 +488,7 @@ function ActivityDetail() {
     activity &&
     new Date(activity.date + "T" + activity.time) <= now;
 
-  const activityEnded =
-    activity &&
-    new Date(activity.date + "T" + (activity.endTime || activity.time)) <= now;
+  const activityEnded = activity && getActivityEnd(activity) <= now;
 
 
   // Pagination for Participants
@@ -525,9 +533,7 @@ function ActivityDetail() {
                           <button type="button" className="menu-action-btn"
                             onClick={async () => {
                               setShowReportMenu(false);
-                              const checkinEnd = new Date(
-                                `${activity.date}T${activity.checkinEnd}+07:00`
-                              );
+                              const checkinEnd = getCheckinEnd(activity);
 
                               if (activity.checkinEnd && new Date() > checkinEnd) {
                                 await showAlert({
@@ -549,9 +555,7 @@ function ActivityDetail() {
                                 `${activity.date}T${activity.time}+07:00`
                               );
 
-                              const activityEnd = new Date(
-                                `${activity.date}T${activity.endTime || activity.time}+07:00`
-                              );
+                              const activityEnd = getActivityEnd(activity);
 
                               const now = new Date();
 

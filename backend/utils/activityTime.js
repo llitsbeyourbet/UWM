@@ -45,15 +45,51 @@ function buildBangkokDateTime(dateValue, timeValue) {
 }
 
 function getActivityEndDateTime(activity) {
-  return buildBangkokDateTime(
+  const end = buildBangkokDateTime(
     activity?.date,
     activity?.endTime || activity?.time
   );
+
+  if (!end) return null;
+
+  if (activity?.endsNextDay) {
+    end.setDate(end.getDate() + 1);
+  }
+
+  return end;
 }
 
 function isActivityEnded(activity, now = new Date()) {
   const end = getActivityEndDateTime(activity);
   return !end || now >= end;
+}
+
+function getActivityStartDateTime(activity) {
+  return buildBangkokDateTime(
+    activity?.date,
+    activity?.time
+  );
+}
+
+function getActivityDateRange(activity) {
+  const start = getActivityStartDateTime(activity);
+  const end = getActivityEndDateTime(activity);
+
+  if (!start || !end) return null;
+
+  return { start, end };
+}
+
+function isActivityOverlap(activityA, activityB) {
+  const rangeA = getActivityDateRange(activityA);
+  const rangeB = getActivityDateRange(activityB);
+
+  if (!rangeA || !rangeB) return false;
+
+  return (
+    rangeA.start < rangeB.end &&
+    rangeA.end > rangeB.start
+  );
 }
 
 module.exports = {
@@ -62,4 +98,7 @@ module.exports = {
   getActivityEndDateTime,
   isActivityEnded,
   normalizeTime,
+  getActivityStartDateTime,
+  getActivityDateRange,
+  isActivityOverlap,
 };

@@ -34,7 +34,7 @@ function CreateActivities() {
   const [date, setDate] = useState(today);
   const [time, setTime] = useState(formatTime(now));
   const [endTime, setEndTime] = useState(formatTime(endActivityTime));
-
+  const [endsNextDay, setEndsNextDay] = useState(false);
   const [checkinStart, setCheckinStart] = useState(formatTime(now));
   const [checkinEnd, setCheckinEnd] = useState(formatTime(endCheckinTime));
   const [location, setLocation] = useState("");
@@ -158,20 +158,16 @@ function CreateActivities() {
       setError(imageError || "กรุณาอัปโหลดรูปปกกิจกรรม");
       return;
     }
-    if (endTime <= time) {
-      await showAlert({
-        type: "warning",
-        title: "เวลาไม่ถูกต้อง",
-        message: "เวลาสิ้นสุดต้องมากกว่าเวลาเริ่ม",
-      });
+    if (!endsNextDay && endTime <= time) {
+      await showAlert({ type: "warning", title: "เวลาไม่ถูกต้อง", message: "เวลาสิ้นสุดต้องมากกว่าเวลาเริ่ม หรือเลือกว่าสิ้นสุดในวันถัดไป" });
       return;
     }
-    if (checkinStart && checkinEnd && checkinEnd <= checkinStart) {
-      await showAlert({
-        type: "warning",
-        title: "เวลาไม่ถูกต้อง",
-        message: "เวลาเช็คอินไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง",
-      });
+    if (endsNextDay && endTime === time) {
+      await showAlert({ type: "warning", title: "เวลาไม่ถูกต้อง", message: "ระยะเวลากิจกรรมต้องน้อยกว่า 24 ชั่วโมง" });
+      return;
+    }
+    if (checkinStart && checkinEnd && ((!endsNextDay && checkinEnd <= checkinStart) || (endsNextDay && checkinEnd === checkinStart))) {
+      await showAlert({ type: "warning", title: "เวลาไม่ถูกต้อง", message: "เวลาเช็คอินไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง" });
       return;
     }
 
@@ -195,6 +191,7 @@ function CreateActivities() {
         date,
         time,
         endTime,
+        endsNextDay,
         location,
         participantCount: Number(participantCount) || 1,
         activityType,
@@ -271,6 +268,7 @@ function CreateActivities() {
       setDate("");
       setTime("");
       setEndTime("");
+      setEndsNextDay(false);
       setLocation("");
       setParticipantCount("1");
       setActivityType("public");
@@ -550,6 +548,14 @@ function CreateActivities() {
             />
           </div>
         </section>
+        <label className="next-day-option">
+          <input
+            type="checkbox"
+            checked={endsNextDay}
+            onChange={(e) => setEndsNextDay(e.target.checked)}
+          />
+          <span>กิจกรรมสิ้นสุดในวันถัดไป</span>
+        </label>
 
         {/* Check-in */}
         <section className="form-section">

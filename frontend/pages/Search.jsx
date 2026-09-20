@@ -56,6 +56,7 @@ function Search() {
 
         if (!isNaN(year)) {
           const endDateTime = new Date(year, month - 1, day, hours || 0, minutes || 0);
+          if (item.endsNextDay) endDateTime.setDate(endDateTime.getDate() + 1);
           if (endDateTime < new Date()) return false;
         }
       }
@@ -139,10 +140,12 @@ function Search() {
         const [yA, mA, dA] = (datePartA || "").split('-').map(Number);
         const [hA, minA] = (a.endTime || a.time || "00:00").split(':').map(Number);
         const dateA = new Date(yA, mA - 1, dA, hA || 0, minA || 0);
+        if (a.endsNextDay) dateA.setDate(dateA.getDate() + 1);
 
         const [yB, mB, dB] = (datePartB || "").split('-').map(Number);
         const [hB, minB] = (b.endTime || b.time || "00:00").split(':').map(Number);
         const dateB = new Date(yB, mB - 1, dB, hB || 0, minB || 0);
+        if (b.endsNextDay) dateB.setDate(dateB.getDate() + 1);
 
         return dateA - dateB;
       } else if (filters.sortBy === "newest") {

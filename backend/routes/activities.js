@@ -6,7 +6,10 @@ const { Op, fn, col, where } = require("sequelize");
 const sequelize = require("../database");
 const jwt = require("jsonwebtoken");
 
-const { isActivityEnded } = require("../utils/activityTime");
+const {
+  isActivityEnded,
+  isActivityOverlap,
+} = require("../utils/activityTime");
 const Activity = require("../models/Activity");
 const JoinRequest = require("../models/JoinRequest");
 const User = require("../models/User");
@@ -17,19 +20,6 @@ const {
   buildModerationResponse,
 } = require("../services/moderationService");
 
-// Helper to ensure time is in HH:mm:ss format for reliable comparison
-const normalizeTime = (t) => {
-  if (!t) return "";
-
-  const value = String(t);
-  const parts = value.split(":");
-
-  if (parts.length === 2) {
-    return `${parts[0].padStart(2, "0")}:${parts[1].padStart(2, "0")}:00`;
-  }
-
-  return value;
-};
 
 // ตรวจว่ากิจกรรมถึงเวลาเริ่มแล้วหรือยัง
 const isActivityStarted = (activity) => {
@@ -168,21 +158,42 @@ router.get("/home", async (req, res) => {
     const currentTime =
       `${bangkokParts.hour}:${bangkokParts.minute}:${bangkokParts.second}`;
 
+    const todayDate = new Date(`${today}T00:00:00+07:00`);
+
+    const yesterdayDate = new Date(
+      todayDate.getTime() - 24 * 60 * 60 * 1000
+    );
+
+    const yesterday = yesterdayDate.toLocaleDateString("en-CA", {
+      timeZone: "Asia/Bangkok",
+    });
+
     const conditions = [
-      {
-        status: "active",
-      },
-      {
-        [Op.or]: [
-          // กิจกรรมหลังจากวันนี้
+      {status: "active",},
+      {[Op.or]: [
           where(fn("DATE", col("date")), {
             [Op.gt]: today,
           }),
+          {[Op.and]: [
+              where(fn("DATE", col("date")), today),
+              { endsNextDay: true },
+            ],
+          },
+          {[Op.and]: [
+              where(fn("DATE", col("date")), today),
+              { endsNextDay: false },
+              {
+                endTime: {
+                  [Op.gt]: currentTime,
+                },
+              },
+            ],
+          },
 
-          // กิจกรรมวันนี้ แต่ยังไม่หมดเวลา
           {
             [Op.and]: [
-              where(fn("DATE", col("date")), today),
+              where(fn("DATE", col("date")), yesterday),
+              { endsNextDay: true },
               {
                 endTime: {
                   [Op.gt]: currentTime,
@@ -219,6 +230,7 @@ router.get("/home", async (req, res) => {
         "time",
         "endTime",
         "location",
+        "endsNextDay",
         "participantCount",
         "activityType",
         "cover",
@@ -450,6 +462,7 @@ router.post("/", auth, async (req, res) => {
       date,
       time,
       endTime,
+      endsNextDay,
       location,
       cover,
       checkinStart,
@@ -497,22 +510,39 @@ router.post("/", auth, async (req, res) => {
         message: "ประเภทกิจกรรมไม่ถูกต้อง",
       });
     }
-
-    if (endTime <= time) {
+    if (!endsNextDay && endTime <= time) {
       return res.status(400).json({
         message:
-          "เวลาสิ้นสุดต้องอยู่หลังเวลาเริ่มกิจกรรม",
+          "เวลาสิ้นสุดต้องมากกว่าเวลาเริ่ม หรือเลือกว่าสิ้นสุดในวันถัดไป",
+      });
+    }
+    if (endsNextDay && endTime === time) {
+      return res.status(400).json({
+        message: "ระยะเวลากิจกรรมต้องน้อยกว่า 24 ชั่วโมง",
       });
     }
 
     if (
       checkinStart &&
       checkinEnd &&
+      !endsNextDay &&
       checkinEnd <= checkinStart
     ) {
       return res.status(400).json({
         message:
-          "เวลาปิดเช็คอินต้องอยู่หลังเวลาเปิดเช็คอิน",
+          "เวลาสิ้นสุดเช็คอินต้องอยู่หลังเวลาเริ่มเช็คอิน",
+      });
+    }
+
+    if (
+      checkinStart &&
+      checkinEnd &&
+      endsNextDay &&
+      checkinEnd === checkinStart
+    ) {
+      return res.status(400).json({
+        message:
+          "เวลาเริ่มและสิ้นสุดการเช็คอินต้องไม่ตรงกัน",
       });
     }
 
@@ -538,27 +568,44 @@ router.post("/", auth, async (req, res) => {
         } else {
           console.log(`[Conflict Check] Checking conflicts for UserId: ${req.userId}, Date: ${date}`);
 
+          const targetDate = new Date(`${date}T00:00:00+07:00`);
+
+          const previousDate = new Date(
+            targetDate.getTime() - 24 * 60 * 60 * 1000
+          );
+
+          const nextDate = new Date(
+            targetDate.getTime() + 24 * 60 * 60 * 1000
+          );
+
+          const formatDate = (value) =>
+            value.toLocaleDateString("en-CA", {
+              timeZone: "Asia/Bangkok",
+            });
+
           const existingActivities = await Activity.findAll({
             where: {
               createdBy: req.userId,
               status: "active",
               date: {
-                [Op.between]: [`${date} 00:00:00`, `${date} 23:59:59`],
+                [Op.between]: [
+                  `${formatDate(previousDate)} 00:00:00`,
+                  `${formatDate(nextDate)} 23:59:59`,
+                ],
               },
             },
           });
 
-          console.log(`[Conflict Check] Found ${existingActivities.length} activities on this date`);
+          const newActivity = {
+            date,
+            time,
+            endTime,
+            endsNextDay: Boolean(endsNextDay),
+          };
 
-          const overlappingActivity = existingActivities.find((act) => {
-            const start = normalizeTime(act.time);
-            const end = normalizeTime(act.endTime);
-            const newStart = normalizeTime(time);
-            const newEnd = normalizeTime(endTime);
-            const isOverlap = start < newEnd && end > newStart;
-            console.log(`[Overlap Logic] Existing: ${start}-${end}, New: ${newStart}-${newEnd}, Overlap: ${isOverlap}`);
-            return isOverlap;
-          });
+          const overlappingActivity = existingActivities.find((act) =>
+            isActivityOverlap(act, newActivity)
+          );
 
           if (overlappingActivity) {
             console.log(`[Conflict Check] Conflict detected with activity ID: ${overlappingActivity.id}`);
@@ -585,6 +632,7 @@ router.post("/", auth, async (req, res) => {
       date,
       time,
       endTime,
+      endsNextDay: Boolean(endsNextDay),
       location: location.trim(),
       cover,
       participantCount,
@@ -657,6 +705,7 @@ router.put("/:id", auth, async (req, res) => {
       "date",
       "time",
       "endTime",
+      "endsNextDay",
       "location",
       "cover",
       "participantCount",
@@ -767,14 +816,30 @@ router.put("/:id", auth, async (req, res) => {
     const nextEndTime =
       updates.endTime ?? activity.endTime;
 
+    const nextEndsNextDay =
+      updates.endsNextDay ?? activity.endsNextDay;
+
     if (
       nextTime &&
       nextEndTime &&
+      !nextEndsNextDay &&
       nextEndTime <= nextTime
     ) {
       return res.status(400).json({
         message:
-          "เวลาสิ้นสุดต้องอยู่หลังเวลาเริ่มกิจกรรม",
+          "เวลาสิ้นสุดต้องมากกว่าเวลาเริ่ม หรือเลือกว่าสิ้นสุดในวันถัดไป",
+      });
+    }
+
+    if (
+      nextTime &&
+      nextEndTime &&
+      nextEndsNextDay &&
+      nextEndTime === nextTime
+    ) {
+      return res.status(400).json({
+        message:
+          "ระยะเวลากิจกรรมต้องน้อยกว่า 24 ชั่วโมง",
       });
     }
 
@@ -789,11 +854,24 @@ router.put("/:id", auth, async (req, res) => {
     if (
       nextCheckinStart &&
       nextCheckinEnd &&
+      !nextEndsNextDay &&
       nextCheckinEnd <= nextCheckinStart
     ) {
       return res.status(400).json({
         message:
-          "เวลาปิดเช็คอินต้องอยู่หลังเวลาเปิดเช็คอิน",
+          "เวลาสิ้นสุดเช็คอินต้องอยู่หลังเวลาเริ่มเช็คอิน",
+      });
+    }
+
+    if (
+      nextCheckinStart &&
+      nextCheckinEnd &&
+      nextEndsNextDay &&
+      nextCheckinEnd === nextCheckinStart
+    ) {
+      return res.status(400).json({
+        message:
+          "เวลาเริ่มและสิ้นสุดการเช็คอินต้องไม่ตรงกัน",
       });
     }
 
@@ -861,6 +939,25 @@ router.put("/:id", auth, async (req, res) => {
 
           const targetTime = updates.time ?? activity.time;
           const targetEndTime = updates.endTime ?? activity.endTime;
+          const targetEndsNextDay =
+            updates.endsNextDay ?? activity.endsNextDay;
+
+          const baseDate = new Date(
+            `${targetDate}T00:00:00+07:00`
+          );
+
+          const previousDate = new Date(
+            baseDate.getTime() - 24 * 60 * 60 * 1000
+          );
+
+          const nextDate = new Date(
+            baseDate.getTime() + 24 * 60 * 60 * 1000
+          );
+
+          const formatDate = (value) =>
+            value.toLocaleDateString("en-CA", {
+              timeZone: "Asia/Bangkok",
+            });
 
           console.log(`[Conflict Check Edit] Checking conflicts for UserId: ${req.userId}, Date: ${targetDate}`);
 
@@ -870,22 +967,26 @@ router.put("/:id", auth, async (req, res) => {
               status: "active",
               id: { [Op.ne]: activity.id },
               date: {
-                [Op.between]: [`${targetDate} 00:00:00`, `${targetDate} 23:59:59`],
+                [Op.between]: [
+                  `${formatDate(previousDate)} 00:00:00`,
+                  `${formatDate(nextDate)} 23:59:59`,
+                ],
               },
             },
           });
 
           console.log(`[Conflict Check Edit] Found ${existingActivities.length} activities on this date`);
 
-          const overlappingActivity = existingActivities.find((act) => {
-            const start = normalizeTime(act.time);
-            const end = normalizeTime(act.endTime);
-            const newStart = normalizeTime(targetTime);
-            const newEnd = normalizeTime(targetEndTime);
-            const isOverlap = start < newEnd && end > newStart;
-            console.log(`[Overlap Logic Edit] Existing: ${start}-${end}, New: ${newStart}-${newEnd}, Overlap: ${isOverlap}`);
-            return isOverlap;
-          });
+          const editedActivity = {
+            date: targetDate,
+            time: targetTime,
+            endTime: targetEndTime,
+            endsNextDay: Boolean(targetEndsNextDay),
+          };
+
+          const overlappingActivity = existingActivities.find((act) =>
+            isActivityOverlap(act, editedActivity)
+          );
 
           if (overlappingActivity) {
             console.log(`[Conflict Check Edit] Conflict detected with activity ID: ${overlappingActivity.id}`);
