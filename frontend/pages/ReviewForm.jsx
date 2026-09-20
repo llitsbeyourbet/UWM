@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAlert } from "../hooks/useAlert";
 import "../styles/ReviewForm.css";
+import Loading from "../components/Loading";
 
 function ReviewForm() {
   const navigate = useNavigate();
@@ -224,15 +225,7 @@ function ReviewForm() {
 
   /* ========================= */
 
-  if (!activity) {
-    return (
-      <div className="review-loading">
-        <div className="review-loading-spinner" />
-        <p>กำลังโหลด...</p>
-      </div>
-    );
-  }
-
+if (!activity) return <Loading />;
   return (
     <div className="review-page">
       <main className="review-content">

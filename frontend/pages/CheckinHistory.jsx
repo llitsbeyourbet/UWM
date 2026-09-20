@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API_URL from "../config";
 import "../styles/CheckinHistory.css";
+import Loading from "../components/Loading";
 
 function CheckinHistory() {
     const navigate = useNavigate();
@@ -104,9 +105,7 @@ function CheckinHistory() {
             </div>
 
             {loading ? (
-                <div className="checkin-history-empty">
-                    กำลังโหลด...
-                </div>
+                <Loading />
             ) : filteredHistory.length === 0 ? (
                 <div className="checkin-history-empty">
                     <span className="material-icons">history</span>

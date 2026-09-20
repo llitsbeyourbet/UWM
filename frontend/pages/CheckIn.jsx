@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../styles/CheckIn.css";
 import { formatDate, formatTime } from "../utils/formatDate";
+import Loading from "../components/Loading";
 
 function CheckIn() {
   const navigate = useNavigate();
@@ -215,13 +216,7 @@ function CheckIn() {
     );
   }
 
-  if (loading) {
-    return (
-      <div className="checkin-page">
-        <p className="loading-text">กำลังโหลด...</p>
-      </div>
-    );
-  }
+if (loading) return <Loading />;
 
   return (
     <div className="checkin-page">

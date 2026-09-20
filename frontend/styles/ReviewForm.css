@@ -5,9 +5,7 @@
 .review-page {
   width: 100%;
   min-height: 100dvh;
-
   padding-bottom: 95px;
-
   background:
     radial-gradient(
       circle at top left,
@@ -17,7 +15,6 @@
     #fbfaff;
 
   color: #18172b;
-
   font-family: "Sarabun", sans-serif;
 }
 
@@ -28,12 +25,9 @@
 
 .review-content {
   width: 100%;
-
   padding: 25px 16px 0;
-
   display: flex;
   flex-direction: column;
-
   gap: 16px;
 }
 
@@ -44,21 +38,14 @@
 
 .review-activity-card {
   width: 100%;
-
   padding: 14px;
-
   display: grid;
   grid-template-columns: 110px minmax(0, 1fr);
-
   gap: 15px;
-
   align-items: center;
-
   background: #ffffff;
-
   border: 1px solid #eeedf5;
   border-radius: 20px;
-
   box-shadow:
     0 7px 26px rgba(38, 30, 82, 0.06);
 }
@@ -66,31 +53,24 @@
 .review-activity-image {
   width: 110px;
   height: 130px;
-
   overflow: hidden;
-
   border-radius: 15px;
-
   background: #f0eef8;
 }
 
 .review-activity-image img {
   width: 100%;
   height: 100%;
-
   object-fit: cover;
 }
 
 .review-no-image {
   width: 100%;
   height: 100%;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   background: #f1edff;
-
   color: #725bd4;
 }
 
@@ -104,34 +84,23 @@
 
 .review-activity-badge {
   width: fit-content;
-
   display: block;
-
   margin-bottom: 7px;
   padding: 4px 9px;
-
   border-radius: 99px;
-
   background: #eee9ff;
-
   color: #643df2;
-
   font-size: 10px;
   font-weight: 600;
 }
 
 .review-activity-info h2 {
   margin: 0 0 9px;
-
   overflow: hidden;
-
   color: #19172b;
-
   font-size: 19px;
   font-weight: 800;
-
   line-height: 1.3;
-
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -139,32 +108,23 @@
 
 .review-activity-detail {
   margin-top: 6px;
-
   display: flex;
   align-items: center;
-
   gap: 7px;
 }
 
 .review-activity-detail .material-icons {
   flex-shrink: 0;
-
   color: #5b5883;
-
   font-size: 17px;
 }
 
 .review-activity-detail p {
   min-width: 0;
-
   margin: 0;
-
   overflow: hidden;
-
   color: #68667c;
-
   font-size: 12px;
-
   white-space: nowrap;
   text-overflow: ellipsis;
 }
@@ -176,11 +136,8 @@
 
 .review-section {
   width: 100%;
-
   padding: 18px 16px;
-
   border-radius: 21px;
-
   background: #ffffff;
 }
 
@@ -206,26 +163,21 @@
 .review-section-heading {
   display: flex;
   align-items: flex-start;
-
   gap: 12px;
 }
 
 .review-section-icon {
   width: 45px;
   height: 45px;
-
   flex-shrink: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   border-radius: 50%;
 }
 
 .activity-icon {
   color: #f7b500;
-
   background: #fff4cf;
 }
 
@@ -247,45 +199,34 @@
 .review-section-title > div {
   display: flex;
   align-items: center;
-
   flex-wrap: wrap;
-
   gap: 8px;
 }
 
 .review-section-title h2 {
   margin: 0;
-
   color: #252237;
-
   font-size: 16px;
   font-weight: 800;
 }
 
 .required-badge {
   padding: 3px 8px;
-
   border-radius: 99px;
-
   background: #fff0ed;
-
   color: #e66356;
-
   font-size: 9px;
   font-weight: 600;
 }
 
 .required-badge.host {
   background: #f0ebff;
-
   color: #6844e9;
 }
 
 .review-section-title p {
   margin: 4px 0 0;
-
   color: #8b899b;
-
   font-size: 11px;
   line-height: 1.5;
 }
@@ -304,27 +245,19 @@
 .review-stars {
   display: flex;
   justify-content: center;
-
   gap: 5px;
 }
 
 .review-star {
   width: 45px;
   height: 45px;
-
   padding: 0;
-
   border: none;
-
   background: transparent;
-
   color: #d7d5dd;
-
   font-size: 39px;
   line-height: 1;
-
   cursor: pointer;
-
   transition:
     transform 0.14s ease,
     color 0.14s ease;
@@ -344,25 +277,20 @@
 
 .review-rating-text {
   min-height: 26px;
-
   margin-top: 6px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   gap: 7px;
 }
 
 .review-rating-text strong {
   color: #29263a;
-
   font-size: 13px;
 }
 
 .review-rating-text span {
   color: #868496;
-
   font-size: 11px;
 }
 
@@ -373,72 +301,51 @@
 
 .review-comment-box {
   position: relative;
-
   width: 100%;
-
   padding: 13px 13px 28px;
-
   border: 1px solid #eceaf1;
   border-radius: 15px;
-
   background: #fbfbfd;
 }
 
 .review-comment-header {
   margin-bottom: 8px;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   gap: 10px;
 }
 
 .review-comment-header label {
   color: #333043;
-
   font-size: 12px;
   font-weight: 700;
 }
 
 .review-comment-header span {
   flex-shrink: 0;
-
   color: #aaa8b5;
-
   font-size: 9px;
 }
 
 .review-textarea {
   width: 100%;
-
   min-height: 95px;
-
   padding: 11px;
-
   resize: none;
-
   border: none;
   border-radius: 11px;
-
   outline: none;
-
   background: #f0eff2;
-
   color: #373543;
-
   font-family: "Sarabun", sans-serif;
-
   font-size: 12px;
-
   line-height: 1.6;
-
   transition: 0.2s;
 }
 
 .review-textarea:focus {
   background: #ffffff;
-
   box-shadow:
     0 0 0 2px rgba(102, 70, 238, 0.1);
 }
@@ -449,12 +356,9 @@
 
 .review-character-count {
   position: absolute;
-
   right: 14px;
   bottom: 8px;
-
   color: #a4a2ae;
-
   font-size: 9px;
 }
 
@@ -466,16 +370,12 @@
 .review-submit-btn {
   width: 100%;
   height: 54px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   gap: 9px;
-
   border: none;
   border-radius: 15px;
-
   background:
     linear-gradient(
       135deg,
@@ -484,17 +384,13 @@
     );
 
   color: #ffffff;
-
   font-family: "Sarabun", sans-serif;
-
   font-size: 16px;
   font-weight: 700;
-
   box-shadow:
     0 9px 25px rgba(93, 55, 231, 0.22);
 
   cursor: pointer;
-
   transition: 0.2s;
 }
 
@@ -508,59 +404,9 @@
 
 .review-submit-btn:disabled {
   opacity: 0.55;
-
   cursor: not-allowed;
-
   transform: none;
 }
-
-
-/* =========================================
-   LOADING
-========================================= */
-
-.review-loading {
-  width: 100%;
-  min-height: 100dvh;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  gap: 10px;
-
-  background: #fbfaff;
-
-  color: #858397;
-
-  font-family: "Sarabun", sans-serif;
-
-  font-size: 12px;
-}
-
-.review-loading p {
-  margin: 0;
-}
-
-.review-loading-spinner {
-  width: 31px;
-  height: 31px;
-
-  border: 3px solid #e9e5fa;
-  border-top-color: #6842ee;
-
-  border-radius: 50%;
-
-  animation: reviewSpin 0.8s linear infinite;
-}
-
-@keyframes reviewSpin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 
 /* =========================================
    SMALL MOBILE
@@ -578,7 +424,6 @@
       95px minmax(0, 1fr);
 
     gap: 12px;
-
     padding: 12px;
   }
 
@@ -599,7 +444,6 @@
   .review-star {
     width: 40px;
     height: 40px;
-
     font-size: 34px;
   }
 }
