@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useSocket } from "../src/context/SocketContext";
 import AlertModal from "../components/AlertModal";
 import "../styles/Notifications.css";
+import Loading from "../components/Loading";
 
 function Notifications() {
   const [notifications, setNotifications] = useState([]);
@@ -70,56 +71,56 @@ function Notifications() {
   };
 
   const handleDelete = async (id) => {
-  try {
-    const token = sessionStorage.getItem("token");
+    try {
+      const token = sessionStorage.getItem("token");
 
-    const res = await fetch(
-      `${API_URL}/api/notifications/${id}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    if (!res.ok) {
-      throw new Error("ลบการแจ้งเตือนไม่สำเร็จ");
-    }
-
-    setSwipedId(null);
-    await fetchNotifications();
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-const handleDeleteAll = () => {
-  setAlertConfig({
-    type: "delete",
-    title: "ลบการแจ้งเตือนทั้งหมด?",
-    message: "ต้องการลบการแจ้งเตือนทั้งหมดหรือไม่?",
-    confirmText: "ลบทั้งหมด",
-    cancelText: "ยกเลิก",
-    onConfirm: async () => {
-      setAlertConfig(null);
-      try {
-        const token = sessionStorage.getItem("token");
-        const res = await fetch(`${API_URL}/api/notifications/delete-all`, {
+      const res = await fetch(
+        `${API_URL}/api/notifications/${id}`,
+        {
           method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("ลบการแจ้งเตือนทั้งหมดไม่สำเร็จ");
-        setMenuOpen(false);
-        setSwipedId(null);
-        await fetchNotifications();
-      } catch (err) {
-        console.log(err);
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("ลบการแจ้งเตือนไม่สำเร็จ");
       }
-    },
-    onCancel: () => setAlertConfig(null),
-  });
-};
+
+      setSwipedId(null);
+      await fetchNotifications();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleDeleteAll = () => {
+    setAlertConfig({
+      type: "delete",
+      title: "ลบการแจ้งเตือนทั้งหมด?",
+      message: "ต้องการลบการแจ้งเตือนทั้งหมดหรือไม่?",
+      confirmText: "ลบทั้งหมด",
+      cancelText: "ยกเลิก",
+      onConfirm: async () => {
+        setAlertConfig(null);
+        try {
+          const token = sessionStorage.getItem("token");
+          const res = await fetch(`${API_URL}/api/notifications/delete-all`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!res.ok) throw new Error("ลบการแจ้งเตือนทั้งหมดไม่สำเร็จ");
+          setMenuOpen(false);
+          setSwipedId(null);
+          await fetchNotifications();
+        } catch (err) {
+          console.log(err);
+        }
+      },
+      onCancel: () => setAlertConfig(null),
+    });
+  };
 
   const getNotificationCategory = (type) => {
     if (["reminder"].includes(type)) {
@@ -277,27 +278,27 @@ const handleDeleteAll = () => {
 
   const renderMessage = (n) => {
     if (n.type === "join_request")
-      return <><span className="bold">{n.fromUsername}</span> ส่งคำขอเข้าร่วมกิจกรรม <br/><span className="bold">{n.activityName}</span></>;
+      return <><span className="bold">{n.fromUsername}</span> ส่งคำขอเข้าร่วมกิจกรรม <br /><span className="bold">{n.activityName}</span></>;
     if (n.type === "join_confirmed")
-      return <><span className="bold">{n.fromUsername}</span> {" "}อนุมัติให้คุณเข้าร่วมกิจกรรม<br/> <span className="bold">{n.activityName}</span> {" "}แล้ว </>;
+      return <><span className="bold">{n.fromUsername}</span> {" "}อนุมัติให้คุณเข้าร่วมกิจกรรม<br /> <span className="bold">{n.activityName}</span> {" "}แล้ว </>;
     if (n.type === "join_rejected")
-      return <><span className="bold">{n.fromUsername}</span>{" "} ปฏิเสธคำขอเข้าร่วมกิจกรรม<br/> <span className="bold">{n.activityName}</span> </>;
+      return <><span className="bold">{n.fromUsername}</span>{" "} ปฏิเสธคำขอเข้าร่วมกิจกรรม<br /> <span className="bold">{n.activityName}</span> </>;
     if (n.type === "member_joined")
-      return <><span className="bold">{n.fromUsername}</span>{" "} เข้าร่วมกิจกรรม<br/><span className="bold">{n.activityName}</span>{" "} แล้ว </>;
+      return <><span className="bold">{n.fromUsername}</span>{" "} เข้าร่วมกิจกรรม<br /><span className="bold">{n.activityName}</span>{" "} แล้ว </>;
     if (n.type === "reminder")
-      return <>กิจกรรม <span className="bold">{n.activityName}</span><br/> จะเริ่มในอีก <span className="bold">1 ชั่วโมง</span></>;
+      return <>กิจกรรม <span className="bold">{n.activityName}</span><br /> จะเริ่มในอีก <span className="bold">1 ชั่วโมง</span></>;
     if (n.type === "report")
       return <><span className="bold">{n.fromUsername}</span> รายงานกิจกรรม <span className="bold">{n.activityName}</span></>;
     if (n.type === "review_request")
-      return <>คุณสามารถรีวิวกิจกรรม<br/> <span className="bold">{n.activityName}</span> {" "}ได้แล้ว </>;
+      return <>คุณสามารถรีวิวกิจกรรม<br /> <span className="bold">{n.activityName}</span> {" "}ได้แล้ว </>;
     if (n.type === "checkin")
-      return <><span className="bold">{n.fromUsername}</span> {" "}ยืนยันการเข้าร่วมกิจกรรม<br/> <span className="bold">{n.activityName}</span> {" "}แล้ว </>;
+      return <><span className="bold">{n.fromUsername}</span> {" "}ยืนยันการเข้าร่วมกิจกรรม<br /> <span className="bold">{n.activityName}</span> {" "}แล้ว </>;
     if (n.type === "review")
-      return <><span className="bold">{n.fromUsername}</span> {" "}รีวิวกิจกรรม<br/> <span className="bold">{n.activityName}</span> {" "}แล้ว </>;
+      return <><span className="bold">{n.fromUsername}</span> {" "}รีวิวกิจกรรม<br /> <span className="bold">{n.activityName}</span> {" "}แล้ว </>;
     if (n.type === "activity_warning")
-      return (<>กิจกรรม{" "}<span className="bold">{n.activityName}</span><br/>ได้รับคำเตือนจากผู้ดูแลระบบ</>);
+      return (<>กิจกรรม{" "}<span className="bold">{n.activityName}</span><br />ได้รับคำเตือนจากผู้ดูแลระบบ</>);
     if (n.type === "activity_suspended")
-      return (<>กิจกรรม{" "}<span className="bold">{n.activityName}</span><br/>ถูกระงับโดยผู้ดูแลระบบ</>);
+      return (<>กิจกรรม{" "}<span className="bold">{n.activityName}</span><br />ถูกระงับโดยผู้ดูแลระบบ</>);
   };
 
   const formatTime = (dateStr) => {
@@ -554,7 +555,7 @@ const handleDeleteAll = () => {
 
       <div className="notif-list">
         {loading ? (
-          <p className="empty-text">กำลังโหลด...</p>
+          <Loading />
         ) : filteredNotifications.length === 0 ? (
           <p className="empty-text">ไม่มีการแจ้งเตือน</p>
         ) : (

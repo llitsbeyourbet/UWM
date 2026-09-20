@@ -5,6 +5,7 @@ import API_URL from "../config";
 import { formatDate, formatTime } from "../utils/formatDate";
 import { getCategoryIcon } from "../utils/categoryIcons";
 import { optimizeImageUrl } from "../utils/imageUrl";
+import Loading from "../components/Loading";
 
 function Home() {
   const navigate = useNavigate();
@@ -245,9 +246,8 @@ function Home() {
         {categories.map((cat) => (
           <div
             key={cat}
-            className={`category-pill ${
-              activeCategory === cat ? "active" : ""
-            }`}
+            className={`category-pill ${activeCategory === cat ? "active" : ""
+              }`}
             onClick={() => setActiveCategory(cat)}
           >
             {cat === "ทั้งหมด" ? "🌟" : getCategoryIcon(cat)} {cat}
@@ -257,7 +257,7 @@ function Home() {
 
       <div className="home-cards">
         {loading ? (
-          <p className="loading-text">กำลังโหลด...</p>
+          <Loading />
         ) : activities.length === 0 ? (
           <p className="empty-text">ไม่พบกิจกรรม</p>
         ) : (
@@ -284,11 +284,10 @@ function Home() {
                   )}
 
                   <span
-                    className={`card-tag ${
-                      item.activityType === "public"
+                    className={`card-tag ${item.activityType === "public"
                         ? "tag-public"
                         : "tag-private"
-                    }`}
+                      }`}
                   >
                     {item.activityType === "public"
                       ? "สาธารณะ"
@@ -314,9 +313,9 @@ function Home() {
                     {(Array.isArray(item.category)
                       ? item.category
                       : String(item.category || "")
-                          .split(",")
-                          .map((c) => c.trim())
-                          .filter(Boolean)
+                        .split(",")
+                        .map((c) => c.trim())
+                        .filter(Boolean)
                     ).map((cat) => (
                       <span className="card-tag-chip" key={cat}>
                         {getCategoryIcon(cat)} {cat}

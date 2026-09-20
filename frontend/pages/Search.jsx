@@ -5,6 +5,7 @@ import "../styles/Search.css"
 import { formatDate, formatTime } from "../utils/formatDate";
 import { getCategoryIcon } from "../utils/categoryIcons";
 import { optimizeImageUrl } from "../utils/imageUrl";
+import Loading from "../components/Loading";
 
 function Search() {
   const navigate = useNavigate();
@@ -304,7 +305,7 @@ function Search() {
       {/* Activities List */}
       <div className="activity-list">
         {loading ? (
-          <p className="empty-text">กำลังโหลด...</p>
+          <Loading />
         ) : filteredActivities.length === 0 ? renderEmptyState() : (
           filteredActivities.map((item) => (
             <div key={item.id} className="activity-card" onClick={() => handleViewDetail(item)}>
