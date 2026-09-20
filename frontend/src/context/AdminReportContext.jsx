@@ -14,7 +14,14 @@ export function AdminReportProvider({ children }) {
     try {
       const token = sessionStorage.getItem("token");
 
-      if (!token) {
+      let user = {};
+      try {
+        user = JSON.parse(sessionStorage.getItem("user")) || {};
+      } catch {
+        user = {};
+      }
+
+      if (!token || user.role !== "admin") {
         setPendingReportCount(0);
         return;
       }
