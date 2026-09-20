@@ -7,6 +7,7 @@ import { formatDate, formatTime } from "../utils/formatDate";
 import { getCategoryIcon } from "../utils/categoryIcons";
 import { optimizeImageUrl } from "../utils/imageUrl";
 import { useAlert } from "../hooks/useAlert";
+import Loading from "../components/Loading";
 
 const getPaginationNumbers = (page, totalPages) => {
   if (totalPages <= 5) {
@@ -452,7 +453,7 @@ function ActivityDetail() {
 
   if (!activityId) return <div className="loading">ไม่พบ ID กิจกรรม</div>;
   if (notFound) return <div className="loading">ไม่พบกิจกรรมที่คุณต้องการดู</div>;
-  if (!activity) return <div className="loading">กำลังโหลด...</div>;
+  if (!activity) return <Loading />;
 
   const getDayName = (dateStr) => {
     if (!dateStr) return "-";

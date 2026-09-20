@@ -2,6 +2,7 @@ import API_URL from "../config";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../styles/UserProfile.css";
+import Loading from "../components/Loading";
 
 function UserProfile() {
   const { id } = useParams();
@@ -61,8 +62,7 @@ function UserProfile() {
     fetchData();
     }, [id]);
 
-  if (!user) return <div className="detail-loading">กำลังโหลดข้อมูล...</div>;
-
+    if (!user) return <Loading />;
 
   const ActivityCard = ({ item }) => (
     <div

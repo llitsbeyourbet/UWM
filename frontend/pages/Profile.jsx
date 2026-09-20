@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../styles/Profile.css";
 import API_URL from "../config";
 import { logoutUser } from "../utils/logout";
+import Loading from "../components/Loading";
 
 function Profile() {
   const navigate = useNavigate();
@@ -74,7 +75,7 @@ function Profile() {
     </div>
   );
 
-  if (!user) return <div className="profile-loading">กำลังโหลด...</div>;
+ if (!user) return <Loading />;
 
   return (
     <div className="profile-page" onClick={() => setShowMenu(false)}>
