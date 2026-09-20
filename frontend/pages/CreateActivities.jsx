@@ -20,6 +20,10 @@ function CreateActivities() {
     now.getMonth() + 1
   ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
+  const maxDateObj = new Date(now);
+  maxDateObj.setMonth(maxDateObj.getMonth() + 1);
+  const maxDate = `${maxDateObj.getFullYear()}-${String(maxDateObj.getMonth() + 1).padStart(2, "0")}-${String(maxDateObj.getDate()).padStart(2, "0")}`;
+
   const formatTime = (date) =>
     `${String(date.getHours()).padStart(2, "0")}:${String(
       date.getMinutes()
@@ -510,14 +514,14 @@ function CreateActivities() {
             วันที่จัดกิจกรรม <span>*</span>
           </label>
 
-          <div className="input-icon-wrap">
-            <input
-              type="date"
-              className="form-input"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
-          </div>
+          <input
+            type="date"
+            className="form-input"
+            value={date}
+            min={today}
+            max={maxDate}
+            onChange={(e) => setDate(e.target.value)}
+          />
         </section>
 
         {/* เวลา */}

@@ -552,7 +552,54 @@ input.form-input[type="date"] {
 .submit-btn span {
   margin-right: 5px;
 }
+.next-day-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0;
+  padding: 12px 14px;
+  background: #ffffff;
+  border: 1px solid #e5e0ff;
+  border-radius: 12px;
+  font-size: 15px;
+  color: #333;
+  cursor: pointer;
+}
 
+.next-day-option input {
+  appearance: none;
+  width: 19px;
+  height: 19px;
+  margin: 0;
+  flex-shrink: 0;
+  background: #fff;
+  border: 1.5px solid #c9c9d4;
+  border-radius: 5px;
+  cursor: pointer;
+  position: relative;
+  transition: background-color .2s ease, border-color .2s ease, transform .15s ease;
+}
+
+.next-day-option input:checked {
+  background: #7d5fff;
+  border-color: #7d5fff;
+}
+
+.next-day-option input:checked::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 5px;
+  height: 9px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.next-day-option input:active {
+  transform: scale(.88);
+}
 /* =========================
    iPad
 ========================= */

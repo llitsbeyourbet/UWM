@@ -169,17 +169,20 @@ router.get("/home", async (req, res) => {
     });
 
     const conditions = [
-      {status: "active",},
-      {[Op.or]: [
+      { status: "active", },
+      {
+        [Op.or]: [
           where(fn("DATE", col("date")), {
             [Op.gt]: today,
           }),
-          {[Op.and]: [
+          {
+            [Op.and]: [
               where(fn("DATE", col("date")), today),
               { endsNextDay: true },
             ],
           },
-          {[Op.and]: [
+          {
+            [Op.and]: [
               where(fn("DATE", col("date")), today),
               { endsNextDay: false },
               {
@@ -488,6 +491,15 @@ router.post("/", auth, async (req, res) => {
         message:
           "กรุณากรอกข้อมูลให้ครบทุกช่องและอัปโหลดรูปกิจกรรม",
       });
+    }
+    const nowBangkok = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Bangkok" }));
+    const todayBangkok = new Date(nowBangkok.getFullYear(), nowBangkok.getMonth(), nowBangkok.getDate());
+    const maxActivityDate = new Date(todayBangkok);
+    maxActivityDate.setMonth(maxActivityDate.getMonth() + 1);
+    const selectedDate = new Date(`${date}T00:00:00`);
+
+    if (selectedDate < todayBangkok || selectedDate > maxActivityDate) {
+      return res.status(400).json({ message: "วันที่จัดกิจกรรมต้องอยู่ภายใน 1 เดือนนับจากวันที่สร้างกิจกรรม" });
     }
 
     const participantCount =

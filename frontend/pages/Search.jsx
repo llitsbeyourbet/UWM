@@ -330,8 +330,9 @@ function Search() {
               </div>
               <div className="card-body">
                 <p className="card-title">{item.activityName}</p>
-                <p className="card-info">📍 {item.location || "-"} &nbsp;·&nbsp; 👥 {item.joinedCount ?? 0}/{item.participantCount} คน</p>
-                <p className="card-date">📅 {formatDate(item.date)} · ⏰ {formatTime(item.time)} - {formatTime(item.endTime)}</p>
+                <p className="card-info">📍 {item.location || "-"} &nbsp;&nbsp; 👥 {item.joinedCount ?? 0}/{item.participantCount} คน</p>
+                <p className="card-date">📅 {formatDate(item.date)}</p>
+                <p className="card-time">⏰ {new Date(`2000-01-01T${item.time}`).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true })} - {new Date(`2000-01-01T${item.endTime}`).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true })}</p>
               </div>
             </div>
           ))

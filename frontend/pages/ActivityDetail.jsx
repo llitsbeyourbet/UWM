@@ -659,7 +659,9 @@ function ActivityDetail() {
           </div>
           <div className="date-detail">
             <p className="day-name">{getDayName(activity.date)}</p>
-            <p className="time-range"> {formatTime(activity.time)} - {formatTime(activity.endTime)}</p>
+            <p className="time-range">
+              {new Date(`2000-01-01T${activity.time}`).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true })} - {new Date(`2000-01-01T${activity.endTime}`).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true })}
+            </p>
           </div>
         </div>
 

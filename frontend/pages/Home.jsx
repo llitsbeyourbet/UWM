@@ -307,7 +307,7 @@ function Home() {
                   <p className="card-meta">📍 {item.location || "-"}</p>
                   <p className="card-meta">📅 {formatDate(item.date)}</p>
                   <p className="card-meta">
-                    ⏰ {formatTime(item.time)} - {formatTime(item.endTime)}
+                    ⏰ {new Date(`2000-01-01T${item.time}`).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true })} - {new Date(`2000-01-01T${item.endTime}`).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true })}
                   </p>
                   <p className="card-meta">
                     👥 {item.joinedCount ?? 0} / {item.participantCount} คน
