@@ -272,8 +272,12 @@ router.put("/:activityId/respond/:userId", auth, async (req, res) => {
         throw error;
       }
 
-      if (isActivityEnded(activity)) {
-        const error = new Error("กิจกรรมนี้สิ้นสุดแล้ว");
+      const activityStart = new Date(`${activity.date}T${activity.time}+07:00`);
+
+      if (new Date() >= activityStart) {
+        const error = new Error(
+          "กิจกรรมเริ่มดำเนินการแล้ว ไม่สามารถจัดการคำขอเข้าร่วมได้"
+        );
         error.statusCode = 400;
         throw error;
       }

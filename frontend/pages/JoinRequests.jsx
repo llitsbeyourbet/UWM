@@ -38,6 +38,35 @@ function JoinRequests() {
 
     const handleRespond = async (request, status) => {
         if (processingId) return;
+
+        const activityStart = new Date(
+            `${activity.date}T${activity.time}+07:00`
+        );
+
+        const activityEnd = new Date(
+            `${activity.date}T${activity.endTime || activity.time}+07:00`
+        );
+
+        const now = new Date();
+
+        if (now >= activityEnd) {
+            await showAlert({
+                type: "warning",
+                title: "ไม่สามารถจัดการคำขอได้",
+                message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถอนุมัติหรือปฏิเสธคำขอเข้าร่วมได้",
+            });
+            return;
+        }
+
+        if (now >= activityStart) {
+            await showAlert({
+                type: "warning",
+                title: "ไม่สามารถจัดการคำขอได้",
+                message: "กิจกรรมกำลังดำเนินการ ไม่สามารถอนุมัติหรือปฏิเสธคำขอเข้าร่วมได้",
+            });
+            return;
+        }
+
         setProcessingId(request.id);
         try {
             const token = sessionStorage.getItem("token");
@@ -72,6 +101,9 @@ function JoinRequests() {
     const pending = requests.filter(r => r.status === "pending");
     const approved = requests.filter(r => ["approved", "checked_in"].includes(r.status));
     const rejected = requests.filter(r => r.status === "rejected");
+    const activityStarted = activity
+        ? new Date() >= new Date(`${activity.date}T${activity.time}+07:00`)
+        : false;
 
     const Row = ({ request, type }) => {
         const img = imageUrl(request.user?.profileImage);
@@ -89,8 +121,21 @@ function JoinRequests() {
                 </div>
                 {type === "pending" ? (
                     <div className="jr-actions">
-                        <button className="jr-reject" disabled={processingId === request.id} onClick={() => handleRespond(request, "rejected")}>ปฏิเสธ</button>
-                        <button className="jr-approve" disabled={processingId === request.id} onClick={() => handleRespond(request, "approved")}>อนุมัติ</button>
+                        <button
+                            className="jr-reject"
+                            disabled={processingId === request.id || activityStarted}
+                            onClick={() => handleRespond(request, "rejected")}
+                        >
+                            ปฏิเสธ
+                        </button>
+
+                        <button
+                            className="jr-approve"
+                            disabled={processingId === request.id || activityStarted}
+                            onClick={() => handleRespond(request, "approved")}
+                        >
+                            อนุมัติ
+                        </button>
                     </div>
                 ) : (
                     <span className={`jr-status ${type}`}>{type === "approved" ? "✓ อนุมัติแล้ว" : "✕ ปฏิเสธแล้ว"}</span>
