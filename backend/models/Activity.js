@@ -1,10 +1,16 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../database");
+const { getActivityDateString } = require("../utils/activityTime");
 
 const Activity = sequelize.define("Activity", {
   activityName: { type: DataTypes.STRING, allowNull: false },
   detail: { type: DataTypes.TEXT },
-  date: { type: DataTypes.DATE },
+  date: {
+    type: DataTypes.DATE,
+    get() {
+      return getActivityDateString(this.getDataValue("date"));
+    },
+  },
   time: { type: DataTypes.TIME },
   endTime: { type: DataTypes.TIME },
   endsNextDay: { type: DataTypes.BOOLEAN, defaultValue: false },

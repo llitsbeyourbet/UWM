@@ -7,6 +7,8 @@ const sequelize = require("../database");
 const jwt = require("jsonwebtoken");
 
 const {
+  getActivityDateString,
+  buildBangkokDateTime,
   isActivityEnded,
   isActivityOverlap,
 } = require("../utils/activityTime");
@@ -25,11 +27,9 @@ const {
 const isActivityStarted = (activity) => {
   if (!activity?.date || !activity?.time) return false;
 
-  const startDateTime = new Date(
-    `${activity.date}T${activity.time}+07:00`
-  );
+  const startDateTime = buildBangkokDateTime(activity.date, activity.time);
 
-  return new Date() >= startDateTime;
+  return !startDateTime || new Date() >= startDateTime;
 };
 
 
@@ -492,11 +492,16 @@ router.post("/", auth, async (req, res) => {
           "กรุณากรอกข้อมูลให้ครบทุกช่องและอัปโหลดรูปกิจกรรม",
       });
     }
+    const activityDate = getActivityDateString(date);
+    if (!activityDate) {
+      return res.status(400).json({ message: "วันที่กิจกรรมไม่ถูกต้อง" });
+    }
+
     const nowBangkok = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Bangkok" }));
     const todayBangkok = new Date(nowBangkok.getFullYear(), nowBangkok.getMonth(), nowBangkok.getDate());
     const maxActivityDate = new Date(todayBangkok);
     maxActivityDate.setMonth(maxActivityDate.getMonth() + 1);
-    const selectedDate = new Date(`${date}T00:00:00`);
+    const selectedDate = new Date(`${activityDate}T00:00:00`);
 
     if (selectedDate < todayBangkok || selectedDate > maxActivityDate) {
       return res.status(400).json({ message: "วันที่จัดกิจกรรมต้องอยู่ภายใน 1 เดือนนับจากวันที่สร้างกิจกรรม" });
@@ -580,7 +585,7 @@ router.post("/", auth, async (req, res) => {
         } else {
           console.log(`[Conflict Check] Checking conflicts for UserId: ${req.userId}, Date: ${date}`);
 
-          const targetDate = new Date(`${date}T00:00:00+07:00`);
+          const targetDate = buildBangkokDateTime(activityDate, "00:00:00");
 
           const previousDate = new Date(
             targetDate.getTime() - 24 * 60 * 60 * 1000
@@ -601,15 +606,15 @@ router.post("/", auth, async (req, res) => {
               status: "active",
               date: {
                 [Op.between]: [
-                  `${formatDate(previousDate)} 00:00:00`,
-                  `${formatDate(nextDate)} 23:59:59`,
+                  new Date(`${formatDate(previousDate)}T00:00:00.000Z`),
+                  new Date(`${formatDate(nextDate)}T23:59:59.000Z`),
                 ],
               },
             },
           });
 
           const newActivity = {
-            date,
+            date: activityDate,
             time,
             endTime,
             endsNextDay: Boolean(endsNextDay),
@@ -641,7 +646,7 @@ router.post("/", auth, async (req, res) => {
       detail: detail.trim(),
       activityType,
       category: categories,
-      date,
+      date: activityDate,
       time,
       endTime,
       endsNextDay: Boolean(endsNextDay),
@@ -736,6 +741,14 @@ router.put("/:id", auth, async (req, res) => {
       ) {
         updates[field] = req.body[field];
       }
+    }
+
+    if (Object.prototype.hasOwnProperty.call(updates, "date")) {
+      const activityDate = getActivityDateString(updates.date);
+      if (!activityDate) {
+        return res.status(400).json({ message: "วันที่กิจกรรมไม่ถูกต้อง" });
+      }
+      updates.date = activityDate;
     }
 
     if (updates.activityName !== undefined) {
@@ -945,18 +958,14 @@ router.put("/:id", auth, async (req, res) => {
           console.error("[Conflict Check Edit] Missing req.userId");
         } else {
           const rawDate = updates.date ?? activity.date;
-          const targetDate = rawDate instanceof Date
-            ? rawDate.toISOString().split('T')[0]
-            : (typeof rawDate === 'string' ? rawDate.split('T')[0] : rawDate);
+          const targetDate = getActivityDateString(rawDate);
 
           const targetTime = updates.time ?? activity.time;
           const targetEndTime = updates.endTime ?? activity.endTime;
           const targetEndsNextDay =
             updates.endsNextDay ?? activity.endsNextDay;
 
-          const baseDate = new Date(
-            `${targetDate}T00:00:00+07:00`
-          );
+          const baseDate = buildBangkokDateTime(targetDate, "00:00:00");
 
           const previousDate = new Date(
             baseDate.getTime() - 24 * 60 * 60 * 1000
@@ -980,8 +989,8 @@ router.put("/:id", auth, async (req, res) => {
               id: { [Op.ne]: activity.id },
               date: {
                 [Op.between]: [
-                  `${formatDate(previousDate)} 00:00:00`,
-                  `${formatDate(nextDate)} 23:59:59`,
+                  new Date(`${formatDate(previousDate)}T00:00:00.000Z`),
+                  new Date(`${formatDate(nextDate)}T23:59:59.000Z`),
                 ],
               },
             },

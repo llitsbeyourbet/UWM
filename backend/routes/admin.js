@@ -13,6 +13,7 @@ const Comment = require("../models/Comment");
 const notificationService = require("../services/notificationService");
 const InappropriateWord = require("../models/InappropriateWord");
 const { setCustomWords } = require("../services/moderationService");
+const { getActivityStartDateTime, getActivityEndDateTime } = require("../utils/activityTime");
 
 const validDays = (value) => {
   const days = Number(value || 7);
@@ -852,17 +853,9 @@ router.get("/chart-status", auth, isAdmin, async (req, res) => {
         return;
       }
 
-      const date =
-        activity.date instanceof Date
-          ? activity.date.toISOString().split("T")[0]
-          : String(activity.date).split("T")[0];
-
-      const startDateTime = new Date(
-        `${date}T${activity.time}`
-      );
-
-      const endDateTime = new Date(`${date}T${activity.endTime || activity.time}`);
-      if (activity.endsNextDay) endDateTime.setDate(endDateTime.getDate() + 1);
+      const startDateTime = getActivityStartDateTime(activity);
+      const endDateTime = getActivityEndDateTime(activity);
+      if (!startDateTime || !endDateTime) return;
 
       if (now < startDateTime) {
         counts.upcoming += 1;

@@ -123,7 +123,7 @@ function ScanQR() {
               if (
                 !url.pathname.startsWith("/checkin/")
               ) {
-                await howAlert({
+                await showAlert({
                   type: 'warning',
                   title: 'QR ไม่ถูกต้อง',
                   message: 'QR นี้ไม่ใช่ QR สำหรับเช็คอิน',

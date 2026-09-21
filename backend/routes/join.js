@@ -273,7 +273,13 @@ router.put("/:activityId/respond/:userId", auth, async (req, res) => {
         throw error;
       }
 
-      const activityStart = new Date(`${activity.date}T${activity.time}+07:00`);
+      const activityStart = buildBangkokDateTime(activity.date, activity.time);
+
+      if (!activityStart) {
+        const error = new Error("วันหรือเวลากิจกรรมไม่ถูกต้อง");
+        error.statusCode = 500;
+        throw error;
+      }
 
       if (new Date() >= activityStart) {
         const error = new Error(
@@ -538,7 +544,7 @@ router.post("/:activityId/checkin", auth, async (req, res) => {
       );
 
       if (activity.endsNextDay) {
-        activityDateEnd.setDate(activityDateEnd.getDate() + 1);
+        activityDateEnd.setUTCDate(activityDateEnd.getUTCDate() + 1);
       }
 
       if (now < activityDateStart || now > activityDateEnd) {
@@ -557,6 +563,11 @@ router.post("/:activityId/checkin", auth, async (req, res) => {
           activity.date,
           activity.checkinStart
         );
+        if (!checkinStartDateTime) {
+          const error = new Error("เวลาเช็คอินไม่ถูกต้อง");
+          error.statusCode = 500;
+          throw error;
+        }
       }
 
       if (activity.checkinEnd) {
@@ -564,14 +575,19 @@ router.post("/:activityId/checkin", auth, async (req, res) => {
           activity.date,
           activity.checkinEnd
         );
+        if (!checkinEndDateTime) {
+          const error = new Error("เวลาเช็คอินไม่ถูกต้อง");
+          error.statusCode = 500;
+          throw error;
+        }
 
         if (
           activity.endsNextDay &&
           activity.checkinStart &&
           activity.checkinEnd < activity.checkinStart
         ) {
-          checkinEndDateTime.setDate(
-            checkinEndDateTime.getDate() + 1
+          checkinEndDateTime.setUTCDate(
+            checkinEndDateTime.getUTCDate() + 1
           );
         }
       }
@@ -720,7 +736,7 @@ router.get("/checkin-history", auth, async (req, res) => {
             activity.cover || null,
 
           date:
-            activity.date,
+            getActivityDateString(activity.date),
 
           time:
             activity.time,

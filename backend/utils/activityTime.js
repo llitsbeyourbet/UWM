@@ -14,32 +14,43 @@ function normalizeTime(t) {
 }
 
 function getActivityDateString(value) {
-  if (!value) return null;
-
-  if (typeof value === "string") {
-    const match = value.match(/^(\d{4}-\d{2}-\d{2})/);
-    if (match) return match[1];
+  // DATE is stored with Sequelize's existing +00:00 convention. Preserve
+  // that calendar date; the activity's separate clock time is Bangkok time.
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime())
+      ? null
+      : getActivityDateString(value.toISOString());
   }
 
-  const date = value instanceof Date ? value : new Date(value);
-  if (Number.isNaN(date.getTime())) return null;
+  if (typeof value !== "string") return null;
 
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Bangkok",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(date);
+  const match = value.match(
+    /^(\d{4}-\d{2}-\d{2})(?:[T ]((?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d{1,3})?)(Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)?)?$/
+  );
+  if (!match || match[1].startsWith("0000-")) return null;
 
-  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
-  return `${values.year}-${values.month}-${values.day}`;
+  const date = new Date(`${match[1]}T00:00:00.000Z`);
+  if (
+    Number.isNaN(date.getTime()) ||
+    date.toISOString().slice(0, 10) !== match[1]
+  ) return null;
+
+  if (!match[2]) return match[1];
+
+  const timestamp = new Date(`${match[1]}T${match[2]}${match[3] || "Z"}`);
+  return Number.isNaN(timestamp.getTime())
+    ? null
+    : timestamp.toISOString().slice(0, 10);
 }
 
 function buildBangkokDateTime(dateValue, timeValue) {
   const date = getActivityDateString(dateValue);
   if (!date || !timeValue) return null;
 
-  const time = String(timeValue).slice(0, 8);
+  const time = normalizeTime(timeValue);
+  if (!/^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d{1,3})?$/.test(time)) {
+    return null;
+  }
   const result = new Date(`${date}T${time}${BANGKOK_OFFSET}`);
   return Number.isNaN(result.getTime()) ? null : result;
 }
@@ -53,7 +64,7 @@ function getActivityEndDateTime(activity) {
   if (!end) return null;
 
   if (activity?.endsNextDay) {
-    end.setDate(end.getDate() + 1);
+    end.setUTCDate(end.getUTCDate() + 1);
   }
 
   return end;

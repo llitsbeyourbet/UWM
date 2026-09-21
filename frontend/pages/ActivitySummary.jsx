@@ -63,7 +63,7 @@ function ActivitySummary() {
                 review: ratingData.avgRating || "0.0",
                 totalReview: ratingData.totalReviews || 0,
                 checkedIn: summaryData.checkedIn.length || 0,
-                totalJoin: detailData.participantCount || 0,
+                totalJoin: summaryData.totalJoined ?? detailData.joinedCount ?? 0,
               };
             } catch (err) {
               console.error(`Error fetching stats for activity ${act.id}:`, err);
