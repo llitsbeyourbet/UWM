@@ -137,6 +137,7 @@ function ForgotPassword() {
     if (loading || timer > 0) return;
 
     setOtp(["", "", "", "", "", ""]);
+    setRegistrationToken("");
     setResetToken("");
     setError("");
     setLoading(true);

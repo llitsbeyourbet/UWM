@@ -19,14 +19,18 @@ function Notifications() {
   useEffect(() => {
     fetchNotifications();
 
+    const handleNotification = () => {
+      fetchNotifications();
+    };
+
     if (socket) {
-      socket.on("notification", () => {
-        fetchNotifications();
-      });
+      socket.on("notification", handleNotification);
     }
 
     return () => {
-      if (socket) socket.off("notification");
+      if (socket) {
+        socket.off("notification", handleNotification);
+      }
     };
   }, [socket]);
 
@@ -40,7 +44,16 @@ function Notifications() {
         },
       });
 
+      if (!res.ok) {
+        throw new Error(`Failed to fetch notifications: ${res.status}`);
+      }
+
       const data = await res.json();
+
+      if (!Array.isArray(data)) {
+        throw new Error("Invalid notifications response");
+      }
+
       setNotifications(data);
 
     } catch (err) {

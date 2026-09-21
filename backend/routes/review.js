@@ -395,12 +395,6 @@ router.get("/activity/:activityId/comments", auth, async (req, res) => {
       return res.status(404).json({ message: "ไม่พบกิจกรรม" });
     }
 
-    if (isActivityEnded(activity)) {
-      return res.status(400).json({
-        message: "กิจกรรมสิ้นสุดแล้ว ไม่สามารถยกเลิกการเข้าร่วมได้",
-      });
-    }
-
     if (Number(activity.createdBy) !== Number(req.userId)) {
       return res.status(403).json({ message: "ไม่มีสิทธิ์ดู comment" });
     }

@@ -73,6 +73,7 @@ function ScanQR() {
     isMountedRef.current = true;
 
     let scanner;
+    let cancelled = false;
 
     const startScanner = async () => {
       try {
@@ -107,11 +108,11 @@ function ScanQR() {
             ) {
               try {
                 await scannerRef.current.stop();
-              } catch {}
+              } catch { }
 
               try {
                 await scannerRef.current.clear();
-              } catch {}
+              } catch { }
 
               isStartedRef.current = false;
               scannerRef.current = null;
@@ -184,6 +185,18 @@ function ScanQR() {
             }
           }
         );
+        if (cancelled) {
+          try {
+            await scanner.stop();
+          } catch { }
+
+          try {
+            await scanner.clear();
+          } catch { }
+
+          scannerRef.current = null;
+          return;
+        }
 
         isStartedRef.current = true;
       } catch (err) {
@@ -198,6 +211,7 @@ function ScanQR() {
     startScanner();
 
     return () => {
+      cancelled = true;
       if (
         scannerRef.current &&
         isStartedRef.current
@@ -207,7 +221,7 @@ function ScanQR() {
           .then(() =>
             scannerRef.current?.clear()
           )
-          .catch(() => {})
+          .catch(() => { })
           .finally(() => {
             scannerRef.current = null;
             isStartedRef.current = false;
@@ -232,11 +246,11 @@ function ScanQR() {
     ) {
       try {
         await scannerRef.current.stop();
-      } catch {}
+      } catch { }
 
       try {
         await scannerRef.current.clear();
-      } catch {}
+      } catch { }
 
       scannerRef.current = null;
       isStartedRef.current = false;
@@ -337,9 +351,8 @@ function ScanQR() {
 
         <button
           type="button"
-          className={`scan-header-btn help ${
-            showHelp ? "active" : ""
-          }`}
+          className={`scan-header-btn help ${showHelp ? "active" : ""
+            }`}
           onClick={() =>
             setShowHelp((prev) => !prev)
           }
@@ -405,9 +418,8 @@ function ScanQR() {
 
         <button
           type="button"
-          className={`scan-torch-btn ${
-            torchOn ? "active" : ""
-          }`}
+          className={`scan-torch-btn ${torchOn ? "active" : ""
+            }`}
           onClick={toggleTorch}
         >
           <span className="material-icons">

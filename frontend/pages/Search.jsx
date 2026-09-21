@@ -32,7 +32,14 @@ function Search() {
     const fetchActivities = async () => {
       try {
         const res = await fetch(`${API_URL}/api/activities`);
+        if (!res.ok) {
+          throw new Error(`Failed to fetch activities: ${res.status}`);
+        }
         const data = await res.json();
+        if (!Array.isArray(data)) {
+          throw new Error("Invalid activities response");
+        }
+
         setActivities(data);
       } catch (err) {
         console.log(err);

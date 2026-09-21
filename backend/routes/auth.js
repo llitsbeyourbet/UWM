@@ -553,7 +553,7 @@ router.put("/update",auth, async (req, res) => {
       });
     }
 
-    const usernameRegex = /^[A-Za-z0-9]+$/;
+    const usernameRegex = /^[A-Za-z0-9_]{3,20}$/;
     const phoneRegex = /^0\d{9}$/;
 
     if (!phoneRegex.test(cleanPhone)) {
@@ -571,7 +571,7 @@ router.put("/update",auth, async (req, res) => {
     if (!usernameRegex.test(cleanUsername)) {
       return res.status(400).json({
         message:
-          "ชื่อผู้ใช้ต้องเป็นภาษาอังกฤษหรือตัวเลขเท่านั้น",
+          "ชื่อผู้ใช้ต้องมี 3-20 ตัว และใช้ได้เฉพาะตัวอักษร ตัวเลข หรือ _",
       });
     }
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API_URL from "../config";
 import { useAlert } from "../hooks/useAlert";
@@ -15,23 +15,37 @@ function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-  const [loading, setLoading] = useState(false);
+  const [registrationToken, setRegistrationToken] = useState("");
   const [error, setError] = useState("");
   const [timer, setTimer] = useState(600);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [showPrivacy, setShowPrivacy] = useState(false);
+  const timerRef = useRef(null);
 
   const startTimer = () => {
-    const interval = setInterval(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+
+    timerRef.current = setInterval(() => {
       setTimer((prev) => {
         if (prev <= 1) {
-          clearInterval(interval);
+          clearInterval(timerRef.current);
+          timerRef.current = null;
           return 0;
         }
+
         return prev - 1;
       });
     }, 1000);
   };
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, []);
 
   const formatTime = (sec) => {
     const m = Math.floor(sec / 60).toString().padStart(2, "0");
@@ -231,6 +245,7 @@ function Register() {
 
   const handleVerifyAndRegister = async () => {
     const otpValue = otp.join("");
+    let token = registrationToken;
 
     if (otpValue.length < 6) {
       setError("กรุณากรอก OTP ให้ครบ");
@@ -242,32 +257,37 @@ function Register() {
 
     try {
       // ยืนยัน OTP ก่อน
-      const verifyRes = await fetch(
-        `${API_URL}/api/forgot/verify-otp-register`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            otp: otpValue,
-          }),
+      if (!token) {
+        const verifyRes = await fetch(
+          `${API_URL}/api/forgot/verify-otp-register`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email,
+              otp: otpValue,
+            }),
+          }
+        );
+
+        const verifyData = await verifyRes.json();
+
+        if (!verifyRes.ok) {
+          setError(verifyData.message);
+          setOtp(["", "", "", "", "", ""]);
+          document.getElementById("reg-otp-0")?.focus();
+          return;
         }
-      );
 
-      const verifyData = await verifyRes.json();
+        if (!verifyData.registrationToken) {
+          setError("ไม่สามารถยืนยันตัวตนได้ กรุณาขอ OTP ใหม่");
+          return;
+        }
 
-      if (!verifyRes.ok) {
-        setError(verifyData.message);
-        setOtp(["", "", "", "", "", ""]);
-        document.getElementById("reg-otp-0")?.focus();
-        return;
-      }
-
-      if (!verifyData.registrationToken) {
-        setError("ไม่สามารถยืนยันตัวตนได้ กรุณาขอ OTP ใหม่");
-        return;
+        token = verifyData.registrationToken;
+        setRegistrationToken(token);
       }
 
       // สมัครสมาชิก
@@ -282,7 +302,7 @@ function Register() {
           email,
           password,
           phone,
-          registrationToken: verifyData.registrationToken,
+          registrationToken: token,
         }),
       });
 
@@ -735,6 +755,7 @@ function Register() {
                     onClick={() => {
                       setStep(1);
                       setError("");
+                      setRegistrationToken("");
                       setOtp([
                         "",
                         "",
@@ -814,7 +835,7 @@ function Register() {
                   <p>
                     ในการสมัครสมาชิกและใช้งานระบบ
                     อาจมีการเก็บรวบรวมข้อมูล เช่น ชื่อ-นามสกุล
-                    ชื่อผู้ใช้ อีเมล เบอร์โทรศัพท์ 
+                    ชื่อผู้ใช้ อีเมล เบอร์โทรศัพท์
                     รูปโปรไฟล์ และข้อมูลที่ผู้ใช้งานสร้างขึ้นภายในระบบ
                     เช่น กิจกรรม การเข้าร่วมกิจกรรม และรีวิว
                   </p>

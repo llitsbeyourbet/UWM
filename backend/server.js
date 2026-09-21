@@ -11,6 +11,29 @@ const { setCustomWords } = require("./services/moderationService");
 const InappropriateWord = require("./models/InappropriateWord");
 
 dotenv.config();
+const requiredEnv = [
+  "PORT",
+  "JWT_SECRET",
+  "DB_NAME",
+  "DB_USER",
+  "DB_PASSWORD",
+  "DB_HOST",
+  "MJ_APIKEY_PUBLIC",
+  "MJ_APIKEY_PRIVATE",
+  "MJ_SENDER_EMAIL",
+  "CLOUDINARY_CLOUD_NAME",
+  "CLOUDINARY_API_KEY",
+  "CLOUDINARY_API_SECRET",
+];
+
+const missingEnv = requiredEnv.filter((key) => !process.env[key]);
+
+if (missingEnv.length > 0) {
+  console.error(
+    `Missing required environment variables: ${missingEnv.join(", ")}`
+  );
+  process.exit(1);
+}
 
 const app = express();
 const server = http.createServer(app);

@@ -31,19 +31,23 @@ function BottomNavbar() {
 
     fetchCount();
 
+    const handleNotification = () => {
+      fetchCount();
+    };
+
+    const handleUnreadCountUpdated = () => {
+      fetchCount();
+    };
+
     if (socket) {
-      socket.on("notification", () => {
-        fetchCount();
-      });
-      socket.on("unreadCountUpdated", () => {
-        fetchCount();
-      });
+      socket.on("notification", handleNotification);
+      socket.on("unreadCountUpdated", handleUnreadCountUpdated);
     }
 
     return () => {
       if (socket) {
-        socket.off("notification");
-        socket.off("unreadCountUpdated");
+        socket.off("notification", handleNotification);
+        socket.off("unreadCountUpdated", handleUnreadCountUpdated);
       }
     };
   }, [socket]);
