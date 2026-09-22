@@ -3,18 +3,23 @@ import { useNavigate } from "react-router-dom";
 import API_URL from "../config";
 import { useAlert } from "../hooks/useAlert";
 
-const HEARTBEAT_INTERVAL = 60 * 1000; // ทุก 1 นาที
+const HEARTBEAT_INTERVAL = 5 * 60 * 1000; // ทุก 5 นาที
 
 export default function SessionManager() {
   const navigate = useNavigate();
   const { showAlert } = useAlert();
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
-
-    if (!token) return;
+    let requestInProgress = false;
 
     const sendHeartbeat = async () => {
+      if (requestInProgress) return;
+
+      const token = sessionStorage.getItem("token");
+      if (!token) return;
+
+      requestInProgress = true;
+
       try {
         const response = await fetch(
           `${API_URL}/api/auth/heartbeat`,
@@ -45,19 +50,18 @@ export default function SessionManager() {
             await showAlert({
               type: "info",
               title: "เซสชันหมดอายุ",
-              message: "เซสชันของคุณหมดอายุ กรุณาเข้าสู่ระบบอีกครั้ง",
+              message:
+                "เซสชันของคุณหมดอายุ กรุณาเข้าสู่ระบบอีกครั้ง",
             });
           }
         }
       } catch (error) {
         console.error("Heartbeat error:", error);
+      } finally {
+        requestInProgress = false;
       }
     };
 
-    // เช็ก session ทันทีตอนเปิด/refresh หน้า
-    sendHeartbeat();
-
-    // หลังจากนั้นเช็กทุก 1 นาที
     const interval = setInterval(
       sendHeartbeat,
       HEARTBEAT_INTERVAL
@@ -66,7 +70,7 @@ export default function SessionManager() {
     return () => {
       clearInterval(interval);
     };
-  }, [navigate]);
+  }, [navigate, showAlert]);
 
   return null;
 }
