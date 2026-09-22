@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSocket } from "../src/context/SocketContext";
 import API_URL from "../config";
 import "./BottomNavbar.css";
@@ -11,77 +11,71 @@ function BottomNavbar() {
   const [unreadCount, setUnreadCount] = useState(0);
   const user = JSON.parse(sessionStorage.getItem("user"));
 
-  useEffect(() => {
-    let active = true;
-    let requestInProgress = false;
-    let pendingRefresh = false;
-    let debounceTimer = null;
+  const requestInProgress = useRef(false);
+const pendingRefresh = useRef(false);
+const debounceTimer = useRef(null);
 
-    const fetchCount = async () => {
-      if (requestInProgress) {
-        pendingRefresh = true;
-        return;
+const fetchCount = useCallback(async () => {
+  if (requestInProgress.current) {
+    pendingRefresh.current = true;
+    return;
+  }
+
+  const token = sessionStorage.getItem("token");
+  if (!token) return;
+
+  requestInProgress.current = true;
+
+  try {
+    const res = await fetch(
+      `${API_URL}/api/notifications/unread-count`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
+    );
 
-      const token = sessionStorage.getItem("token");
-      if (!token) return;
+    if (!res.ok) return;
 
-      requestInProgress = true;
+    const data = await res.json();
+    setUnreadCount(data.unreadCount);
+  } catch (err) {
+    console.log(err);
+  } finally {
+    requestInProgress.current = false;
 
-      try {
-        const res = await fetch(
-          `${API_URL}/api/notifications/unread-count`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!res.ok) return;
-
-        const data = await res.json();
-
-        if (active) {
-          setUnreadCount(data.unreadCount);
-        }
-      } catch (err) {
-        console.log(err);
-      } finally {
-        requestInProgress = false;
-
-        if (pendingRefresh && active) {
-          pendingRefresh = false;
-          fetchCount();
-        }
-      }
-    };
-
-    const scheduleRefresh = () => {
-      clearTimeout(debounceTimer);
-
-      debounceTimer = setTimeout(() => {
-        fetchCount();
-      }, 300);
-    };
-
-    fetchCount();
-
-    if (socket) {
-      socket.on("notification", scheduleRefresh);
-      socket.on("unreadCountUpdated", scheduleRefresh);
+    if (pendingRefresh.current) {
+      pendingRefresh.current = false;
+      fetchCount();
     }
+  }
+}, []);
 
-    return () => {
-      active = false;
-      clearTimeout(debounceTimer);
+useEffect(() => {
+  fetchCount();
+}, [fetchCount]);
 
-      if (socket) {
-        socket.off("notification", scheduleRefresh);
-        socket.off("unreadCountUpdated", scheduleRefresh);
-      }
-    };
-  }, [socket]);
+useEffect(() => {
+  if (!socket) return;
+
+  const scheduleRefresh = () => {
+    clearTimeout(debounceTimer.current);
+
+    debounceTimer.current = setTimeout(() => {
+      fetchCount();
+    }, 300);
+  };
+
+  socket.on("notification", scheduleRefresh);
+  socket.on("unreadCountUpdated", scheduleRefresh);
+
+  return () => {
+    clearTimeout(debounceTimer.current);
+    socket.off("notification", scheduleRefresh);
+    socket.off("unreadCountUpdated", scheduleRefresh);
+  };
+}, [socket, fetchCount]);
 
   const isActive = (path) => location.pathname === path;
 
