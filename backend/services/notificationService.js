@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 const Notification = require("../models/Notification");
-const User = require("../models/User");
 const UserSession = require("../models/UserSession");
 
 let io = null;
@@ -49,17 +48,14 @@ const authenticateSocket = async (socket, next) => {
       return next(new Error("INVALID_SESSION"));
     }
 
-    const [user, session] = await Promise.all([
-      User.findByPk(decoded.id),
-      UserSession.findOne({
-        where: {
-          userId: decoded.id,
-          sessionId: decoded.sessionId,
-        },
-      }),
-    ]);
+    const session = await UserSession.findOne({
+      where: {
+        userId: decoded.id,
+        sessionId: decoded.sessionId,
+      },
+    });
 
-    if (!user || !session || session.revokedAt) {
+    if (!session || session.revokedAt) {
       return next(new Error("INVALID_SESSION"));
     }
 
@@ -75,7 +71,7 @@ const authenticateSocket = async (socket, next) => {
       return next(new Error("SESSION_IDLE_TIMEOUT"));
     }
 
-    socket.userId = user.id;
+    socket.userId = decoded.id;
     socket.sessionId = session.sessionId;
     return next();
   } catch (error) {
@@ -92,7 +88,7 @@ const init = (socketio) => {
     console.log(`User ${socket.userId} connected socket ${socket.id}`);
 
     // ไม่รับ userId จาก client เพื่อป้องกันการปลอมตัวเป็นผู้ใช้อื่น
-    socket.on("join", () => {});
+    socket.on("join", () => { });
 
     socket.on("disconnect", () => {
       removeSocket(socket.userId, socket.id);
