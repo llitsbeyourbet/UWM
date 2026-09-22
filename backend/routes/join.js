@@ -658,18 +658,31 @@ router.post("/:activityId/checkin", auth, async (req, res) => {
 router.get("/checked-in", auth, async (req, res) => {
   try {
     const requests = await JoinRequest.findAll({
-      where: { userId: req.userId, status: "checked_in" },
+      where: {
+        userId: req.userId,
+        status: "checked_in",
+      },
+      attributes: ["activityId"],
+      raw: true,
     });
 
-    const activityIds = requests.map((r) => r.activityId);
+    if (requests.length === 0) {
+      return res.json([]);
+    }
+
+    const activityIds = [...new Set(requests.map((r) => r.activityId))];
+
     const activities = await Activity.findAll({
-      where: { id: activityIds },
+      where: {
+        id: { [Op.in]: activityIds },
+      },
+      raw: true,
     });
 
-    res.json(activities);
+    return res.json(activities);
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+    console.error("GET CHECKED-IN ACTIVITIES ERROR:", err);
+    return res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
 });
 
