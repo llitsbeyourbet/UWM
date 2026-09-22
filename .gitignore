@@ -30,3 +30,4 @@ backend/.env
 ai/*
 !ai/moderation_api.py
 !ai/requirements.txt
+!ai/tokenizer.json
