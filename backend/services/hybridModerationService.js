@@ -75,6 +75,11 @@ const hybridAnalyzeFields = async (fields = {}) => {
 
         if (!text) continue;
 
+        // location ตรวจด้วย Rule ด้านบนแล้ว แต่ไม่ส่งเข้า AI
+        if (field === "location") {
+            continue;
+        }
+
         const aiResult = await moderateWithAI(text);
 
         console.log(
