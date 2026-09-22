@@ -1,6 +1,9 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+
 Flask
 gunicorn
 torch
 transformers
 sentencepiece
 protobuf
+huggingface_hub
