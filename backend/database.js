@@ -10,10 +10,7 @@ const sequelize = new Sequelize(
     port: process.env.DB_PORT || 3306,
     dialect: "mysql",
 
-    logging: (sql, timing) => {
-      console.log(`[DB ${timing}ms] ${sql}`);
-    },
-    benchmark: true,
+    logging: false,
 
     pool: {
       max: 10,
