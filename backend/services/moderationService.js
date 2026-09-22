@@ -24,6 +24,7 @@ const CATEGORY_LABELS = {
   sexual: "เนื้อหาทางเพศที่ไม่เหมาะสม",
   spam: "สแปมหรือเนื้อหาเสี่ยง",
   alcohol: "เนื้อหาที่เกี่ยวข้องกับเครื่องดื่มมึนเมา",
+  smoking: "เนื้อหาเกี่ยวกับการสูบบุหรี่หรือผลิตภัณฑ์ยาสูบ",
 };
 
 const normalizeText = (value) => {
@@ -81,10 +82,24 @@ const calculateRiskScore = (matches) => {
   return Math.min(100, Math.round(strongest + additional));
 };
 
-const getStatus = (riskScore) => {
+const BLOCK_CATEGORIES = new Set([
+  "profanity",
+  "insult",
+  "threat",
+  "sexual",
+  "spam",
+  "smoking",
+]);
+
+const getStatus = (riskScore, categories = []) => {
+  const hasBlockedCategory = categories.some((category) =>
+    BLOCK_CATEGORIES.has(category)
+  );
+
+  if (!hasBlockedCategory) return "safe";
   if (riskScore >= 70) return "danger";
-  if (riskScore >= 30) return "warning";
-  return "safe";
+
+  return "warning";
 };
 
 const analyzeText = (text) => {
@@ -120,8 +135,8 @@ const analyzeText = (text) => {
 
   const matches = [...found.values()];
   const riskScore = calculateRiskScore(matches);
-  const status = getStatus(riskScore);
   const categories = [...new Set(matches.map((item) => item.category))];
+  const status = getStatus(riskScore, categories);
 
   return {
     status,
@@ -167,8 +182,8 @@ const analyzeFields = (fields = {}) => {
 
   const matches = [...unique.values()];
   const riskScore = calculateRiskScore(matches);
-  const status = getStatus(riskScore);
   const categories = [...new Set(matches.map((item) => item.category))];
+  const status = getStatus(riskScore, categories);
 
   return {
     status,

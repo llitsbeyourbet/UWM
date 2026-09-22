@@ -11,7 +11,8 @@ const Activity = require("../models/Activity");
 const User = require("../models/User");
 const notificationService = require("../services/notificationService");
 const { isActivityEnded } = require("../utils/activityTime");
-const { analyzeFields, getModerationMessage, buildModerationResponse } = require("../services/moderationService");
+const { getModerationMessage, buildModerationResponse, } = require("../services/moderationService");
+const { hybridAnalyzeFields, } = require("../services/hybridModerationService");
 
 const isValidRating = (value) => {
   const rating = Number(value);
@@ -175,12 +176,12 @@ router.post("/:activityId", auth, async (req, res) => {
       });
     }
 
-    const moderation = analyzeFields({
+    const moderation = await hybridAnalyzeFields({
       activityComment: comment,
       hostComment,
     });
 
-    if (moderation.status !== "safe") {
+    if (moderation.decision === "block") {
       await transaction.rollback();
 
       return res.status(422).json({
@@ -264,6 +265,13 @@ router.post("/:activityId", auth, async (req, res) => {
     if (!transaction.finished) {
       await transaction.rollback();
     }
+
+    if (err.code === "AI_MODERATION_UNAVAILABLE") {
+      return res.status(503).json({
+        message: "ระบบตรวจสอบข้อความไม่พร้อมใช้งาน กรุณาลองใหม่อีกครั้ง",
+      });
+    }
+
     console.error("Create review error:", err);
     return res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }

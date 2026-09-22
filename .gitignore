@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# UWM private/local files
+backend/.env
+
+# AI - ignore everything except production files
+ai/*
+!ai/moderation_api.py
+!ai/requirements.txt

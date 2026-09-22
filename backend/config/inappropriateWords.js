@@ -10,6 +10,7 @@ module.exports = [
   { word: "เหี้ย", category: "profanity", weight: 45, match: "contains" },
   { word: "ควย", category: "profanity", weight: 55, match: "contains" },
   { word: "เย็ด", category: "profanity", weight: 55, match: "contains" },
+  { word: "ชิบหาย", category: "profanity", weight: 55, match: "contains" },
 
   // ดูหมิ่น / ด่าทอ
   { word: "โง่", category: "insult", weight: 35, match: "contains" },
@@ -29,7 +30,11 @@ module.exports = [
   // เนื้อหาทางเพศที่ไม่เหมาะสม
   { word: "เอากัน", category: "sexual", weight: 55, match: "contains" },
   { word: "ข่มขืน", category: "sexual", weight: 95, match: "contains" },
-
+  { word: "มีเซ็กซ์", category: "sexual", weight: 55, match: "contains" },
+  { word: "บนเตียง", category: "sexual", weight: 55, match: "contains" },
+  { word: "มีอะไรด้วย", category: "sexual", weight: 55, match: "contains" },
+  { word: "เรื่องอย่างว่า", category: "sexual", weight: 55, match: "contains" },
+  
   // สแปม / พนัน / หลอกให้คลิก
   { word: "เครดิตฟรี", category: "spam", weight: 40, match: "contains" },
   { word: "เว็บพนัน", category: "spam", weight: 55, match: "contains" },
@@ -46,9 +51,11 @@ module.exports = [
   { word: "casino", category: "spam", weight: 35, match: "word" },
 
   //ของมึนเมา
-  { word: "เหล้า", category: "alcohol", weight: 30, match: "contains" },
-  { word: "เบียร์", category: "alcohol", weight: 30, match: "contains" },
-  { word: "ไวน์", category: "alcohol", weight: 30, match: "contains" },
-  { word: "บุหรี่", category: "alcohol", weight: 30, match: "contains" },
-  { word: "บุหรี่ไฟฟ้า", category: "alcohol", weight: 30, match: "contains" },
+  // การสูบบุหรี่และผลิตภัณฑ์ยาสูบ
+  { word: "บุหรี่", category: "smoking", weight: 55, match: "contains" },
+  { word: "บุหรี่ไฟฟ้า", category: "smoking", weight: 55, match: "contains" },
+  { word: "พอต", category: "smoking", weight: 55, match: "contains" },
+  { word: "ยาเส้น", category: "smoking", weight: 55, match: "contains" },
+  { word: "ซิการ์", category: "smoking", weight: 55, match: "contains" },
+  { word: "บารากู่", category: "smoking", weight: 55, match: "contains" },
 ];

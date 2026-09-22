@@ -17,11 +17,13 @@ const JoinRequest = require("../models/JoinRequest");
 const User = require("../models/User");
 
 const {
-  analyzeFields,
   getModerationMessage,
   buildModerationResponse,
 } = require("../services/moderationService");
 
+const {
+  hybridAnalyzeFields,
+} = require("../services/hybridModerationService");
 
 // ตรวจว่ากิจกรรมถึงเวลาเริ่มแล้วหรือยัง
 const isActivityStarted = (activity) => {
@@ -563,16 +565,15 @@ router.post("/", auth, async (req, res) => {
       });
     }
 
-    const moderation = analyzeFields({
+    const moderation = await hybridAnalyzeFields({
       activityName,
       detail,
       location,
     });
 
-    if (moderation.status !== "safe") {
+    if (moderation.decision === "block") {
       return res.status(422).json({
-        message:
-          getModerationMessage(moderation),
+        message: getModerationMessage(moderation),
         ...buildModerationResponse(moderation),
       });
     }
@@ -662,6 +663,12 @@ router.post("/", auth, async (req, res) => {
       .status(201)
       .json(activity);
   } catch (error) {
+    if (error.code === "AI_MODERATION_UNAVAILABLE") {
+      return res.status(503).json({
+        message: "ระบบตรวจสอบข้อความไม่พร้อมใช้งาน กรุณาลองใหม่อีกครั้ง",
+      });
+    }
+
     console.error(
       "CREATE ACTIVITY ERROR:",
       error
@@ -899,13 +906,12 @@ router.put("/:id", auth, async (req, res) => {
           "เวลาเริ่มและสิ้นสุดการเช็คอินต้องไม่ตรงกัน",
       });
     }
-
     if (
       updates.activityName !== undefined ||
       updates.detail !== undefined ||
       updates.location !== undefined
     ) {
-      const moderation = analyzeFields({
+      const moderation = await hybridAnalyzeFields({
         activityName:
           updates.activityName !== undefined
             ? updates.activityName
@@ -921,32 +927,11 @@ router.put("/:id", auth, async (req, res) => {
             ? updates.location
             : activity.location,
       });
-      if (moderation.status === "danger") {
+
+      if (moderation.decision === "block") {
         return res.status(422).json({
-          message:
-            getModerationMessage(moderation),
-
-          requiresConfirmation: false,
-
-          ...buildModerationResponse(
-            moderation
-          ),
-        });
-      }
-
-      if (
-        moderation.status === "warning" &&
-        req.body.moderationConfirmed !== true
-      ) {
-        return res.status(422).json({
-          message:
-            getModerationMessage(moderation),
-
-          requiresConfirmation: true,
-
-          ...buildModerationResponse(
-            moderation
-          ),
+          message: getModerationMessage(moderation),
+          ...buildModerationResponse(moderation),
         });
       }
     }
@@ -1030,6 +1015,12 @@ router.put("/:id", auth, async (req, res) => {
 
     return res.json(activity);
   } catch (err) {
+    if (err.code === "AI_MODERATION_UNAVAILABLE") {
+      return res.status(503).json({
+        message: "ระบบตรวจสอบข้อความไม่พร้อมใช้งาน กรุณาลองใหม่อีกครั้ง",
+      });
+    }
+
     console.error(
       "UPDATE ACTIVITY ERROR:",
       err
