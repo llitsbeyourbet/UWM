@@ -5,6 +5,36 @@ const AI_MODERATION_URL =
 
 const ALLOW_LABELS = new Set(["safe", "alcohol"]);
 
+const MAX_RETRIES = 2;
+const REQUEST_TIMEOUT = 65000;
+const RETRY_DELAY = 3000;
+
+const sleep = (ms) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
+const fetchModeration = async (value) => {
+  const controller = new AbortController();
+  const timeout = setTimeout(
+    () => controller.abort(),
+    REQUEST_TIMEOUT
+  );
+
+  try {
+    return await fetch(`${AI_MODERATION_URL}/moderate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+      },
+      body: JSON.stringify({
+        text: value,
+      }),
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
+};
+
 const moderateWithAI = async (text) => {
   const value = String(text || "").trim();
 
@@ -17,36 +47,63 @@ const moderateWithAI = async (text) => {
   }
 
   let response;
+  let lastError;
+
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      response = await fetchModeration(value);
+
+      if (response.ok) {
+        break;
+      }
+
+      lastError = new Error(
+        `AI moderation returned status ${response.status}`
+      );
+    } catch (error) {
+      lastError = error;
+    }
+
+    if (attempt < MAX_RETRIES) {
+      console.warn(
+        `[AI MODERATION] Request failed. Retrying ${attempt + 1}/${MAX_RETRIES}...`
+      );
+      await sleep(RETRY_DELAY);
+    }
+  }
+
+  if (!response || !response.ok) {
+    console.error(
+      "[AI MODERATION] Service unavailable:",
+      lastError?.message
+    );
+
+    const serviceError = new Error(
+      "AI moderation service unavailable"
+    );
+    serviceError.code = "AI_MODERATION_UNAVAILABLE";
+    throw serviceError;
+  }
+
+  let result;
 
   try {
-    response = await fetch(`${AI_MODERATION_URL}/moderate`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-      },
-      body: JSON.stringify({
-        text: value,
-      }),
-    });
+    result = await response.json();
   } catch (error) {
-    const serviceError = new Error("AI moderation service unavailable");
+    const serviceError = new Error(
+      "Invalid AI moderation response"
+    );
     serviceError.code = "AI_MODERATION_UNAVAILABLE";
     throw serviceError;
   }
-
-  if (!response.ok) {
-    const serviceError = new Error("AI moderation service returned an error");
-    serviceError.code = "AI_MODERATION_UNAVAILABLE";
-    throw serviceError;
-  }
-
-  const result = await response.json();
 
   const label = String(result.label || "").toLowerCase();
   const confidence = Number(result.confidence) || 0;
 
   if (!label) {
-    const serviceError = new Error("Invalid AI moderation response");
+    const serviceError = new Error(
+      "Invalid AI moderation response"
+    );
     serviceError.code = "AI_MODERATION_UNAVAILABLE";
     throw serviceError;
   }
@@ -58,6 +115,31 @@ const moderateWithAI = async (text) => {
   };
 };
 
+const wakeUpAI = async () => {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 65000);
+
+    try {
+      const response = await fetch(`${AI_MODERATION_URL}/health`, {
+        signal: controller.signal,
+      });
+
+      if (response.ok) {
+        console.log("[AI MODERATION] AI service is awake");
+      }
+    } finally {
+      clearTimeout(timeout);
+    }
+  } catch (error) {
+    console.warn(
+      "[AI MODERATION] AI wake-up failed:",
+      error.message
+    );
+  }
+};
+
 module.exports = {
   moderateWithAI,
+  wakeUpAI
 };

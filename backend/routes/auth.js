@@ -11,6 +11,7 @@ const crypto = require("crypto");
 const loginLimiter = require("../middleware/loginRateLimiter");
 const Mailjet = require("node-mailjet");
 const REGISTER_TOKEN_PREFIX = "register-token:";
+const { wakeUpAI } = require("../services/aiModerationService");
 
 const normalizeEmail = (email) =>
   String(email || "")
@@ -441,6 +442,7 @@ router.post("/login", loginLimiter, async (req, res) => {
         expiresIn: "8h",
       }
     );
+    wakeUpAI();
 
     res.json({
       token,
