@@ -1,6 +1,4 @@
 const jwt = require("jsonwebtoken");
-
-const User = require("../models/User");
 const UserSession = require("../models/UserSession");
 
 const SESSION_IDLE_TIMEOUT = 60 * 60 * 1000;
@@ -21,18 +19,6 @@ const auth = async (req, res, next) => {
       process.env.JWT_SECRET
     );
 
-    const authStart = Date.now();
-
-    const userStart = Date.now();
-    const user = await User.findByPk(decoded.id);
-    console.log(`[PERF] auth User.findByPk: ${Date.now() - userStart}ms`);
-
-    if (!user) {
-      return res.status(401).json({
-        message: "ไม่พบผู้ใช้งาน",
-      });
-    }
-
     if (!decoded.sessionId) {
       return res.status(401).json({
         message: "เซสชันไม่ถูกต้อง กรุณาเข้าสู่ระบบใหม่",
@@ -41,7 +27,7 @@ const auth = async (req, res, next) => {
 
     const session = await UserSession.findOne({
       where: {
-        userId: user.id,
+        userId: decoded.id,
         sessionId: decoded.sessionId,
       },
     });
@@ -83,15 +69,15 @@ const auth = async (req, res, next) => {
       });
 
       return res.status(401).json({
-        message: "ไม่มีการใช้งานเป็นเวลานาน กรุณาเข้าสู่ระบบใหม่",
+        message:
+          "ไม่มีการใช้งานเป็นเวลานาน กรุณาเข้าสู่ระบบใหม่",
       });
     }
 
-    req.userId = user.id;
-    req.role = user.role;
+    req.userId = decoded.id;
+    req.role = decoded.role;
     req.sessionId = session.sessionId;
     req.session = session;
-    console.log(`[PERF] auth TOTAL: ${Date.now() - authStart}ms`);
 
     next();
   } catch (error) {
@@ -111,4 +97,7 @@ const isAdmin = (req, res, next) => {
   next();
 };
 
-module.exports = { auth, isAdmin, };
+module.exports = {
+  auth,
+  isAdmin,
+};
