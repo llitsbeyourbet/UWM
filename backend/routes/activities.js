@@ -35,12 +35,30 @@ const isActivityStarted = (activity) => {
   return !startDateTime || new Date() >= startDateTime;
 };
 
-
-// ดึงกิจกรรมทั้งหมด
-// ส่ง joinedCount มาพร้อมกัน เพื่อลด N+1 requests จากหน้า Search
+// ดึงกิจกรรมทั้งหมดสำหรับหน้า Search
 router.get("/", async (req, res) => {
   try {
-    const activities = await Activity.findAll();
+    const activities = await Activity.findAll({
+      where: {
+        status: "active",
+      },
+      attributes: [
+        "id",
+        "activityName",
+        "date",
+        "time",
+        "endTime",
+        "endsNextDay",
+        "location",
+        "participantCount",
+        "activityType",
+        "cover",
+        "category",
+        "createdAt",
+      ],
+      order: [["createdAt", "DESC"]],
+      raw: true,
+    });
 
     if (activities.length === 0) {
       return res.json([]);
@@ -57,19 +75,28 @@ router.get("/", async (req, res) => {
       raw: true,
     });
 
+    if (requests.length === 0) {
+      return res.json(
+        activities.map((activity) => ({
+          ...activity,
+          joinedCount: 0,
+        }))
+      );
+    }
+
     const userIds = [
-      ...new Set(requests.map((request) => request.userId)),
+      ...new Set(
+        requests.map((request) => Number(request.userId))
+      ),
     ];
 
-    const existingUsers = userIds.length
-      ? await User.findAll({
-        where: {
-          id: { [Op.in]: userIds },
-        },
-        attributes: ["id"],
-        raw: true,
-      })
-      : [];
+    const existingUsers = await User.findAll({
+      where: {
+        id: { [Op.in]: userIds },
+      },
+      attributes: ["id"],
+      raw: true,
+    });
 
     const existingUserIds = new Set(
       existingUsers.map((user) => Number(user.id))
@@ -78,7 +105,7 @@ router.get("/", async (req, res) => {
     const joinedCountMap = new Map();
     const countedPairs = new Set();
 
-    requests.forEach((request) => {
+    for (const request of requests) {
       const activityId = Number(request.activityId);
       const userId = Number(request.userId);
       const pairKey = `${activityId}:${userId}`;
@@ -87,7 +114,7 @@ router.get("/", async (req, res) => {
         !existingUserIds.has(userId) ||
         countedPairs.has(pairKey)
       ) {
-        return;
+        continue;
       }
 
       countedPairs.add(pairKey);
@@ -96,11 +123,11 @@ router.get("/", async (req, res) => {
         activityId,
         (joinedCountMap.get(activityId) || 0) + 1
       );
-    });
+    }
 
     return res.json(
       activities.map((activity) => ({
-        ...activity.toJSON(),
+        ...activity,
         joinedCount:
           joinedCountMap.get(Number(activity.id)) || 0,
       }))
@@ -113,6 +140,7 @@ router.get("/", async (req, res) => {
     });
   }
 });
+
 
 
 // ดึงกิจกรรมสำหรับหน้า Home
