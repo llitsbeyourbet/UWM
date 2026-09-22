@@ -21,7 +21,11 @@ const auth = async (req, res, next) => {
       process.env.JWT_SECRET
     );
 
+    const authStart = Date.now();
+
+    const userStart = Date.now();
     const user = await User.findByPk(decoded.id);
+    console.log(`[PERF] auth User.findByPk: ${Date.now() - userStart}ms`);
 
     if (!user) {
       return res.status(401).json({
@@ -87,6 +91,7 @@ const auth = async (req, res, next) => {
     req.role = user.role;
     req.sessionId = session.sessionId;
     req.session = session;
+    console.log(`[PERF] auth TOTAL: ${Date.now() - authStart}ms`);
 
     next();
   } catch (error) {
