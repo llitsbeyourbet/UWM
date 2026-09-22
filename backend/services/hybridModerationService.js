@@ -18,6 +18,9 @@ const AI_CATEGORY_LABELS = {
     alcohol: "เนื้อหาที่เกี่ยวข้องกับเครื่องดื่มมึนเมา",
     smoking: "เนื้อหาเกี่ยวกับการสูบบุหรี่หรือผลิตภัณฑ์ยาสูบ",
 };
+const hasMeaningfulText = (text) => {
+    return /[\p{L}\p{N}]/u.test(String(text || ""));
+};
 
 const hybridAnalyzeText = async (text) => {
     const ruleResult = analyzeText(text);
@@ -30,8 +33,17 @@ const hybridAnalyzeText = async (text) => {
             ai: null,
         };
     }
+    if (!hasMeaningfulText(text)) {
+        return {
+            ...ruleResult,
+            decision: "allow",
+            source: "rule",
+            ai: null,
+        };
+    }
 
     const aiResult = await moderateWithAI(text);
+
 
     if (aiResult.decision === "allow") {
         return {
@@ -77,6 +89,11 @@ const hybridAnalyzeFields = async (fields = {}) => {
 
         // location ตรวจด้วย Rule ด้านบนแล้ว แต่ไม่ส่งเข้า AI
         if (field === "location") {
+            continue;
+        }
+
+        // ไม่มีตัวอักษรหรือตัวเลข ไม่ต้องส่งเข้า AI
+        if (!hasMeaningfulText(text)) {
             continue;
         }
 
