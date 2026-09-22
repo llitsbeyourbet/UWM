@@ -17,33 +17,54 @@ function Profile() {
   useEffect(() => {
     const fetchAll = async () => {
       const token = sessionStorage.getItem("token");
-      if (!token) { navigate("/login"); return; }
+
+      if (!token) {
+        navigate("/login");
+        return;
+      }
 
       try {
         const userRes = await fetch(`${API_URL}/api/auth/me`, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
-        if (!userRes.ok) { navigate("/login"); return; }
+
+        if (!userRes.ok) {
+          navigate("/login");
+          return;
+        }
+
         const userData = await userRes.json();
         setUser(userData);
 
-        const actRes = await fetch(`${API_URL}/api/activities/user/${userData.id}`);
-        const actData = await actRes.json();
+        const [actRes, joinRes, ratingRes] = await Promise.all([
+          fetch(`${API_URL}/api/activities/user/${userData.id}`),
+
+          fetch(`${API_URL}/api/join/checked-in`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+
+          fetch(`${API_URL}/api/review/host/${userData.id}`),
+        ]);
+
+        const [actData, joinData, ratingData] = await Promise.all([
+          actRes.json(),
+          joinRes.json(),
+          ratingRes.json(),
+        ]);
+
         setCreatedActivities(actData);
-
-        const joinRes = await fetch(`${API_URL}/api/join/checked-in`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setJoinedActivities(await joinRes.json());
-
-        const ratingRes = await fetch(`${API_URL}/api/review/host/${userData.id}`);
-        const ratingData = await ratingRes.json();
+        setJoinedActivities(joinData);
         setHostRating(ratingData.avgRating);
       } catch (err) {
         console.log(err);
         navigate("/login");
       }
     };
+
     fetchAll();
   }, []);
 
@@ -75,7 +96,7 @@ function Profile() {
     </div>
   );
 
- if (!user) return <Loading />;
+  if (!user) return <Loading />;
 
   return (
     <div className="profile-page" onClick={() => setShowMenu(false)}>

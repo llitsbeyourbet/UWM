@@ -19,78 +19,43 @@ function ActivitySummary() {
     const fetchSummary = async () => {
       try {
         const token = sessionStorage.getItem("token");
+
         if (!token) {
           navigate("/login");
           return;
         }
 
-        // 1. ดึงข้อมูลผู้ใช้ปัจจุบัน
-        const userRes = await fetch(`${API_URL}/api/auth/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!userRes.ok) {
+        const response = await fetch(
+          `${API_URL}/api/activities/summary/my`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.status === 401) {
           navigate("/login");
           return;
         }
-        const userData = await userRes.json();
 
-        // 2. ดึงกิจกรรมทั้งหมดที่ผู้ใช้คนนี้สร้าง
-        const actRes = await fetch(`${API_URL}/api/activities/user/${userData.id}`);
-        if (!actRes.ok) throw new Error("ไม่สามารถดึงข้อมูลกิจกรรมได้");
-        const userActivities = await actRes.json();
+        if (!response.ok) {
+          throw new Error("ไม่สามารถดึงข้อมูลสรุปผลได้");
+        }
 
-        // 3. สำหรับแต่ละกิจกรรม ดึงคะแนนและจำนวนผู้เข้าร่วม
-        const activitiesWithStats = await Promise.all(
-          userActivities.map(async (act) => {
-            try {
-              const [ratingRes, detailRes, summaryRes] = await Promise.all([
-                fetch(`${API_URL}/api/review/activity/${act.id}/rating`),
-                fetch(`${API_URL}/api/activities/${act.id}`),
-                fetch(`${API_URL}/api/activities/${act.id}/summary-participants`, {
-                  headers: { Authorization: `Bearer ${token}` },
-                }),
-              ]);
+        const data = await response.json();
 
-              const ratingData = ratingRes.ok ? await ratingRes.json() : { avgRating: 0, totalReviews: 0 };
-              const detailData = detailRes.ok ? await detailRes.json() : { joinedCount: 0, participantCount: 0 };
-              const summaryData = summaryRes.ok ? await summaryRes.json() : { checkedIn: [] };
-
-              return {
-                id: act.id,
-                activityName: act.activityName,
-                cover: act.cover,
-                date: act.date || "ไม่ระบุวันที่", // สมมติว่าใน act มีฟิลด์ date หรือสร้างไว้รองรับ UI
-                review: ratingData.avgRating || "0.0",
-                totalReview: ratingData.totalReviews || 0,
-                checkedIn: summaryData.checkedIn.length || 0,
-                totalJoin: summaryData.totalJoined ?? detailData.joinedCount ?? 0,
-              };
-            } catch (err) {
-              console.error(`Error fetching stats for activity ${act.id}:`, err);
-              return {
-                id: act.id,
-                activityName: act.activityName,
-                cover: act.cover,
-                date: act.date || "ไม่ระบุวันที่",
-                review: "0.0",
-                totalReview: 0,
-                checkedIn: 0,
-                totalJoin: 0,
-              };
-            }
-          })
-        );
-
-        setActivities(activitiesWithStats);
+        setActivities(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error(err);
+
         await showAlert({
-          type: 'error',
-          title: 'เกิดข้อผิดพลาด',
-          message: 'เกิดข้อผิดพลาดในการดึงข้อมูลสรุปผล',
+          type: "error",
+          title: "เกิดข้อผิดพลาด",
+          message: "เกิดข้อผิดพลาดในการดึงข้อมูลสรุปผล",
         });
       } finally {
-        loading && setLoading(false);
+        setLoading(false);
       }
     };
 

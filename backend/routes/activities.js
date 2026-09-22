@@ -15,6 +15,7 @@ const {
 const Activity = require("../models/Activity");
 const JoinRequest = require("../models/JoinRequest");
 const User = require("../models/User");
+const ActivityReview = require("../models/ActivityReview");
 
 const {
   getModerationMessage,
@@ -360,6 +361,120 @@ router.get("/user/:id", async (req, res) => {
 
     return res.status(500).json({
       message: "เกิดข้อผิดพลาด",
+    });
+  }
+});
+
+// ดึงข้อมูลสรุปกิจกรรมทั้งหมดของผู้ใช้ปัจจุบัน
+router.get("/summary/my", auth, async (req, res) => {
+  try {
+    const activities = await Activity.findAll({
+      where: {
+        createdBy: req.userId,
+      },
+      order: [["createdAt", "DESC"]],
+    });
+
+    if (activities.length === 0) {
+      return res.json([]);
+    }
+
+    const activityIds = activities.map((activity) => activity.id);
+
+    const [requests, reviews] = await Promise.all([
+      JoinRequest.findAll({
+        where: {
+          activityId: {
+            [Op.in]: activityIds,
+          },
+          status: {
+            [Op.in]: ["approved", "checked_in"],
+          },
+        },
+        attributes: ["activityId", "userId", "status"],
+        raw: true,
+      }),
+
+      ActivityReview.findAll({
+        where: {
+          activityId: {
+            [Op.in]: activityIds,
+          },
+        },
+        attributes: ["activityId", "reviewerId", "rating"],
+        raw: true,
+      }),
+    ]);
+
+    const userIds = [
+      ...new Set([
+        ...requests.map((request) => request.userId),
+        ...reviews.map((review) => review.reviewerId),
+      ]),
+    ];
+
+    const existingUsers = userIds.length
+      ? await User.findAll({
+          where: {
+            id: {
+              [Op.in]: userIds,
+            },
+          },
+          attributes: ["id"],
+          raw: true,
+        })
+      : [];
+
+    const existingUserIds = new Set(
+      existingUsers.map((user) => Number(user.id))
+    );
+
+    const result = activities.map((activity) => {
+      const activityRequests = requests.filter(
+        (request) =>
+          Number(request.activityId) === Number(activity.id) &&
+          existingUserIds.has(Number(request.userId))
+      );
+
+      const activityReviews = reviews.filter(
+        (review) =>
+          Number(review.activityId) === Number(activity.id) &&
+          existingUserIds.has(Number(review.reviewerId))
+      );
+
+      const checkedIn = activityRequests.filter(
+        (request) => request.status === "checked_in"
+      ).length;
+
+      const totalJoined = activityRequests.length;
+
+      const avgRating = activityReviews.length
+        ? (
+            activityReviews.reduce(
+              (sum, review) => sum + Number(review.rating),
+              0
+            ) / activityReviews.length
+          ).toFixed(1)
+        : null;
+
+      return {
+        id: activity.id,
+        activityName: activity.activityName,
+        cover: activity.cover,
+        date: activity.date,
+        review: avgRating || "0.0",
+        totalReview: activityReviews.length,
+        checkedIn,
+        totalJoin: totalJoined,
+      };
+    });
+
+    return res.json(result);
+  } catch (err) {
+    console.error("GET ACTIVITY SUMMARY ERROR:", err);
+
+    return res.status(500).json({
+      message: "เกิดข้อผิดพลาดในการดึงข้อมูลสรุปกิจกรรม",
     });
   }
 });
