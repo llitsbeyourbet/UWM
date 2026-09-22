@@ -87,40 +87,50 @@ router.get("/", auth, async (req, res) => {
     const notifications = await Notification.findAll({
       where: { toUserId: req.userId },
       order: [["createdAt", "DESC"]],
+      raw: true,
     });
 
-    const result = await Promise.all(
-      notifications.map(async (notification) => {
-        const n = notification.toJSON();
+    if (notifications.length === 0) {
+      return res.json([]);
+    }
 
-        let fromUser = null;
+    const userIds = [
+      ...new Set(
+        notifications
+          .map((notification) => notification.fromUserId)
+          .filter(Boolean)
+          .map(Number)
+      ),
+    ];
 
-        if (n.fromUserId) {
-          fromUser = await User.findByPk(n.fromUserId, {
-            attributes: ["id", "username", "name", "profileImage"],
-          });
-        }
+    const users = userIds.length
+      ? await User.findAll({
+          where: {
+            id: userIds,
+          },
+          attributes: ["id", "username", "name", "profileImage"],
+          raw: true,
+        })
+      : [];
 
-        return {
-          ...n,
-          fromUser: fromUser
-            ? {
-                id: fromUser.id,
-                username: fromUser.username,
-                name: fromUser.name,
-                profileImage: fromUser.profileImage,
-              }
-            : null,
-        };
-      })
+    const userMap = new Map(
+      users.map((user) => [Number(user.id), user])
     );
 
-    res.json(result);
+    const result = notifications.map((notification) => ({
+      ...notification,
+      fromUser: notification.fromUserId
+        ? userMap.get(Number(notification.fromUserId)) || null
+        : null,
+    }));
+
+    return res.json(result);
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+    console.error("GET NOTIFICATIONS ERROR:", err);
+    return res.status(500).json({ message: "เกิดข้อผิดพลาด" });
   }
 });
+
 
 // การสร้าง/เปลี่ยนประเภท notification ต้องเกิดจาก business flow ฝั่ง server เท่านั้น
 // เช่น join.js, report.js, review.js ผ่าน notificationService.createNotification()
