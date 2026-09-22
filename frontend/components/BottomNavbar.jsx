@@ -12,42 +12,73 @@ function BottomNavbar() {
   const user = JSON.parse(sessionStorage.getItem("user"));
 
   useEffect(() => {
-    const fetchCount = async () => {
-      try {
-        const token = sessionStorage.getItem("token");
-        if (!token) return;
+    let active = true;
+    let requestInProgress = false;
+    let pendingRefresh = false;
+    let debounceTimer = null;
 
-        const res = await fetch(`${API_URL}/api/notifications/unread-count`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+    const fetchCount = async () => {
+      if (requestInProgress) {
+        pendingRefresh = true;
+        return;
+      }
+
+      const token = sessionStorage.getItem("token");
+      if (!token) return;
+
+      requestInProgress = true;
+
+      try {
+        const res = await fetch(
+          `${API_URL}/api/notifications/unread-count`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (!res.ok) return;
+
         const data = await res.json();
-        setUnreadCount(data.unreadCount);
+
+        if (active) {
+          setUnreadCount(data.unreadCount);
+        }
       } catch (err) {
         console.log(err);
+      } finally {
+        requestInProgress = false;
+
+        if (pendingRefresh && active) {
+          pendingRefresh = false;
+          fetchCount();
+        }
       }
+    };
+
+    const scheduleRefresh = () => {
+      clearTimeout(debounceTimer);
+
+      debounceTimer = setTimeout(() => {
+        fetchCount();
+      }, 300);
     };
 
     fetchCount();
 
-    const handleNotification = () => {
-      fetchCount();
-    };
-
-    const handleUnreadCountUpdated = () => {
-      fetchCount();
-    };
-
     if (socket) {
-      socket.on("notification", handleNotification);
-      socket.on("unreadCountUpdated", handleUnreadCountUpdated);
+      socket.on("notification", scheduleRefresh);
+      socket.on("unreadCountUpdated", scheduleRefresh);
     }
 
     return () => {
+      active = false;
+      clearTimeout(debounceTimer);
+
       if (socket) {
-        socket.off("notification", handleNotification);
-        socket.off("unreadCountUpdated", handleUnreadCountUpdated);
+        socket.off("notification", scheduleRefresh);
+        socket.off("unreadCountUpdated", scheduleRefresh);
       }
     };
   }, [socket]);
