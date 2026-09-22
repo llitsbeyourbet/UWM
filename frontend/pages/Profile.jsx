@@ -15,7 +15,7 @@ function Profile() {
   const [showMenu, setShowMenu] = useState(false);
 
   useEffect(() => {
-    const fetchAll = async () => {
+    const fetchProfile = async () => {
       const token = sessionStorage.getItem("token");
 
       if (!token) {
@@ -24,49 +24,31 @@ function Profile() {
       }
 
       try {
-        const userRes = await fetch(`${API_URL}/api/auth/me`, {
+        const res = await fetch(`${API_URL}/api/auth/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        if (!userRes.ok) {
+        if (!res.ok) {
           navigate("/login");
           return;
         }
 
-        const userData = await userRes.json();
-        setUser(userData);
+        const data = await res.json();
 
-        const [actRes, joinRes, ratingRes] = await Promise.all([
-          fetch(`${API_URL}/api/activities/user/${userData.id}`),
-
-          fetch(`${API_URL}/api/join/checked-in`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-
-          fetch(`${API_URL}/api/review/host/${userData.id}`),
-        ]);
-
-        const [actData, joinData, ratingData] = await Promise.all([
-          actRes.json(),
-          joinRes.json(),
-          ratingRes.json(),
-        ]);
-
-        setCreatedActivities(actData);
-        setJoinedActivities(joinData);
-        setHostRating(ratingData.avgRating);
+        setUser(data.user);
+        setCreatedActivities(data.createdActivities);
+        setJoinedActivities(data.joinedActivities);
+        setHostRating(data.hostRating);
       } catch (err) {
         console.log(err);
         navigate("/login");
       }
     };
 
-    fetchAll();
-  }, []);
+    fetchProfile();
+  }, [navigate]);
 
   const handleLogout = async () => {
     await logoutUser();

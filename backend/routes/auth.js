@@ -7,6 +7,9 @@ const sequelize = require("../database");
 const User = require("../models/User");
 const OTP = require("../models/OTP");
 const UserSession = require("../models/UserSession");
+const Activity = require("../models/Activity");
+const JoinRequest = require("../models/JoinRequest");
+const HostReview = require("../models/HostReview");
 const crypto = require("crypto");
 const loginLimiter = require("../middleware/loginRateLimiter");
 const Mailjet = require("node-mailjet");
@@ -504,6 +507,110 @@ router.post("/logout", auth, async (req, res) => {
   }
 }
 );
+// ดึงข้อมูลหน้าโปรไฟล์ทั้งหมดใน request เดียว
+router.get("/profile", auth, async (req, res) => {
+  try {
+    const userId = Number(req.userId);
+
+    const [user, createdActivities, checkedInRequests, hostReviews] =
+      await Promise.all([
+        User.findByPk(userId, {
+          attributes: { exclude: ["password"] },
+          raw: true,
+        }),
+
+        Activity.findAll({
+          where: { createdBy: userId },
+          order: [["createdAt", "DESC"]],
+          raw: true,
+        }),
+
+        JoinRequest.findAll({
+          where: {
+            userId,
+            status: "checked_in",
+          },
+          attributes: ["activityId"],
+          raw: true,
+        }),
+
+        HostReview.findAll({
+          where: { hostId: userId },
+          attributes: ["reviewerId", "rating"],
+          raw: true,
+        }),
+      ]);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "ไม่พบผู้ใช้งาน",
+      });
+    }
+
+    const activityIds = [
+      ...new Set(
+        checkedInRequests.map((request) => Number(request.activityId))
+      ),
+    ];
+
+    const reviewerIds = [
+      ...new Set(
+        hostReviews.map((review) => Number(review.reviewerId))
+      ),
+    ];
+
+    const [joinedActivities, existingReviewers] = await Promise.all([
+      activityIds.length
+        ? Activity.findAll({
+            where: {
+              id: { [Op.in]: activityIds },
+            },
+            raw: true,
+          })
+        : [],
+
+      reviewerIds.length
+        ? User.findAll({
+            where: {
+              id: { [Op.in]: reviewerIds },
+            },
+            attributes: ["id"],
+            raw: true,
+          })
+        : [],
+    ]);
+
+    const existingReviewerIds = new Set(
+      existingReviewers.map((reviewer) => Number(reviewer.id))
+    );
+
+    const validHostReviews = hostReviews.filter((review) =>
+      existingReviewerIds.has(Number(review.reviewerId))
+    );
+
+    const hostRating = validHostReviews.length
+      ? (
+          validHostReviews.reduce(
+            (sum, review) => sum + Number(review.rating),
+            0
+          ) / validHostReviews.length
+        ).toFixed(1)
+      : null;
+
+    return res.json({
+      user,
+      createdActivities,
+      joinedActivities,
+      hostRating,
+    });
+  } catch (err) {
+    console.error("GET PROFILE ERROR:", err);
+
+    return res.status(500).json({
+      message: "เกิดข้อผิดพลาดในการดึงข้อมูลโปรไฟล์",
+    });
+  }
+});
 
 router.get("/me", auth, async (req, res) => {
   try {
