@@ -29,6 +29,7 @@ function EditActivity() {
   const [checkinEnd, setCheckinEnd] = useState("");
   const categoryOptions = ["กีฬา", "ดนตรี", "ท่องเที่ยว", "อาหาร", "ศิลปะ", "เกม", "คาเฟ่", "ภาพยนตร์", "เรียน", "สุขภาพ", "จิตอาสา"];
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [cropSource, setCropSource] = useState(null);
   const [cropFileName, setCropFileName] = useState("image.jpg");
 
@@ -178,6 +179,7 @@ function EditActivity() {
   };
 
   const handleSubmit = async () => {
+    if (submitting) return;
     if (uploadingImage) {
       await showAlert({
         type: "info",
@@ -228,6 +230,7 @@ function EditActivity() {
       navigate("/login");
       return;
     }
+    setSubmitting(true);
 
     try {
       let payload = {
@@ -323,6 +326,8 @@ function EditActivity() {
         title: "เกิดข้อผิดพลาด",
         message: "ไม่สามารถเชื่อมต่อ server ได้ กรุณาลองใหม่อีกครั้ง",
       });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -679,11 +684,13 @@ function EditActivity() {
             type="button"
             className="submit-btn"
             onClick={handleSubmit}
-            disabled={uploadingImage}
+            disabled={uploadingImage || submitting}
           >
             {uploadingImage
               ? "กำลังอัปโหลดรูป..."
-              : "บันทึกการแก้ไข"}
+              : submitting
+                ? "กำลังบันทึก..."
+                : "บันทึกการแก้ไข"}
           </button>
         </div>
 

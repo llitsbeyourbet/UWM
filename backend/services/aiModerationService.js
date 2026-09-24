@@ -59,20 +59,45 @@ const checkAIHealth = async () => {
   );
 
   try {
+    console.log(
+      `[AI MODERATION] Checking health: ${AI_MODERATION_URL}/health`
+    );
+
     const response = await fetch(
       `${AI_MODERATION_URL}/health`,
       {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "User-Agent": "UWM-Backend",
+        },
         signal: controller.signal,
       }
     );
 
+    console.log(
+      `[AI MODERATION] Health response: ${response.status} ${response.statusText}`
+    );
+
     return response.ok;
   } catch (error) {
+    if (error.name === "AbortError") {
+      console.warn(
+        `[AI MODERATION] Health check timed out after ${HEALTH_TIMEOUT}ms`
+      );
+    } else {
+      console.warn(
+        "[AI MODERATION] Health check failed:",
+        error.message
+      );
+    }
+
     return false;
   } finally {
     clearTimeout(timeout);
   }
 };
+
 
 const performWakeUp = async () => {
   console.log(
