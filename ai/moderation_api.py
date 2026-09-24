@@ -9,12 +9,13 @@ app = Flask(__name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-MODEL_PATH = os.path.join(BASE_DIR, "model.onnx")
+MODEL_PATH = os.path.join(BASE_DIR, "model_int8_v2.onnx")
+
 TOKENIZER_PATH = os.path.join(BASE_DIR, "tokenizer.json")
 
 HF_MODEL_URL = (
     "https://huggingface.co/bettyboops/"
-    "uwm-moderation-model/resolve/main/model.onnx"
+    "uwm-moderation-model/resolve/main/model_int8_v2.onnx"
 )
 
 HF_TOKEN = os.getenv("HF_TOKEN")
@@ -124,7 +125,7 @@ def predict(text):
 def health():
     return jsonify({
         "status": "ok",
-        "model": "model_v5_onnx_fp32",
+        "model": "model_v5_int8_v2",
         "runtime": "onnxruntime",
     })
 

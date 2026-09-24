@@ -12,9 +12,15 @@ module.exports = [
   { word: "ชิบหาย", category: "profanity", weight: 55, match: "contains" },
 
   // ดูหมิ่น / ด่าทอที่มีความชัดเจนสูง
+  // ดูหมิ่น / ด่าทอที่มีความชัดเจนสูง
+
   { word: "ปัญญาอ่อน", category: "insult", weight: 55, match: "contains" },
   { word: "ไอ้เหี้ย", category: "insult", weight: 65, match: "contains" },
   { word: "อีเหี้ย", category: "insult", weight: 65, match: "contains" },
+
+  { word: "มึงโง่", category: "insult", weight: 55, match: "contains" },
+  { word: "แกโง่", category: "insult", weight: 55, match: "contains" },
+  { word: "ไอ้โง่", category: "insult", weight: 55, match: "contains" },
 
   // ข่มขู่ / คุกคาม
   // V5 ไม่มี threat class จึงให้ Rule ป้องกันวลีรุนแรงที่ชัดเจน
@@ -23,10 +29,17 @@ module.exports = [
   { word: "ยิงมึง", category: "threat", weight: 95, match: "contains" },
   { word: "แทงมึง", category: "threat", weight: 95, match: "contains" },
   { word: "เผาบ้าน", category: "threat", weight: 90, match: "contains" },
+  { word: "กระทืบ", category: "threat", weight: 90, match: "contains" },
 
   // เนื้อหาทางเพศที่มีความชัดเจนสูง
+  // เนื้อหาทางเพศที่มีความชัดเจนสูง
+
   { word: "ข่มขืน", category: "sexual", weight: 95, match: "contains" },
   { word: "มีเซ็กซ์", category: "sexual", weight: 55, match: "contains" },
+
+  { word: "มาเอากัน", category: "sexual", weight: 65, match: "contains" },
+  { word: "เอากันไหม", category: "sexual", weight: 65, match: "contains" },
+  { word: "เอากันมั้ย", category: "sexual", weight: 65, match: "contains" },
 
   // สแปม / พนัน
   { word: "เครดิตฟรี", category: "spam", weight: 40, match: "contains" },
