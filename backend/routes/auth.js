@@ -377,6 +377,9 @@ router.post("/login", loginLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    const MAX_LOGIN_ATTEMPTS = 5;
+    const LOGIN_LOCK_MS = 30 * 1000;
+
     const user = await User.findOne({
       where: {
         [Op.or]: [
@@ -387,21 +390,77 @@ router.post("/login", loginLimiter, async (req, res) => {
       }
     });
 
-    if (!user)
-      return res.status(400).json({ message: "ไม่พบผู้ใช้งาน" });
+    if (!user) {
+      return res.status(400).json({
+        message: "ไม่พบผู้ใช้งาน",
+      });
+    }
+
+    const now = new Date();
+
+    // ถ้าบัญชียังถูกล็อกอยู่
+    if (user.lockUntil && new Date(user.lockUntil) > now) {
+      const remainingSeconds = Math.ceil(
+        (new Date(user.lockUntil).getTime() - now.getTime()) / 1000
+      );
+
+      return res.status(429).json({
+        message: `บัญชีถูกล็อกชั่วคราว กรุณาลองใหม่อีกครั้งใน ${remainingSeconds} วินาที`,
+        locked: true,
+        retryAfter: remainingSeconds,
+      });
+    }
+
+    // ถ้าครบเวลาล็อกแล้ว ให้เริ่มนับใหม่
+    if (user.lockUntil && new Date(user.lockUntil) <= now) {
+      user.failedLoginAttempts = 0;
+      user.lockUntil = null;
+      await user.save();
+    }
 
     const isMatch = await bcrypt.compare(
       password,
       user.password
     );
 
+    // กรอกรหัสผ่านผิด
     if (!isMatch) {
+      const failedAttempts =
+        (user.failedLoginAttempts || 0) + 1;
+
+      // ผิดครบ 5 ครั้ง ล็อกบัญชี 30 วินาที
+      if (failedAttempts >= MAX_LOGIN_ATTEMPTS) {
+        user.failedLoginAttempts = 0;
+        user.lockUntil = new Date(
+          Date.now() + LOGIN_LOCK_MS
+        );
+
+        await user.save();
+
+        return res.status(429).json({
+          message:
+            "กรอกรหัสผ่านผิดครบ 5 ครั้ง บัญชีถูกล็อกเป็นเวลา 30 วินาที",
+          locked: true,
+          retryAfter: 30,
+        });
+      }
+
+      user.failedLoginAttempts = failedAttempts;
+      await user.save();
+
       return res.status(400).json({
-        message: "รหัสผ่านไม่ถูกต้อง",
+        message: `รหัสผ่านไม่ถูกต้อง เหลืออีก ${
+          MAX_LOGIN_ATTEMPTS - failedAttempts
+        } ครั้ง`,
       });
     }
 
-    const now = new Date();
+    // ถ้า Login สำเร็จ รีเซ็ตจำนวนครั้งที่เคยกรอกรหัสผิด
+    if (user.failedLoginAttempts > 0 || user.lockUntil) {
+      user.failedLoginAttempts = 0;
+      user.lockUntil = null;
+      await user.save();
+    }
 
     // ถ้ามี session เดิม ให้เปลี่ยน sessionId ใหม่
     // เพื่อให้เครื่องเก่าหมดสิทธิ์ทันที
@@ -445,6 +504,7 @@ router.post("/login", loginLimiter, async (req, res) => {
         expiresIn: "8h",
       }
     );
+
     wakeUpAI();
 
     res.json({

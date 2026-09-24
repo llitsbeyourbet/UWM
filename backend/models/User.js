@@ -9,7 +9,9 @@ const User = sequelize.define("User", {
   profileImage: { type: DataTypes.STRING, defaultValue: null },
   phone: { type: DataTypes.STRING, allowNull: false, unique: true },
   bio: { type: DataTypes.TEXT },
-  role: { type: DataTypes.ENUM("user", "admin"), defaultValue: "user"}
+  role: { type: DataTypes.ENUM("user", "admin"), defaultValue: "user" },
+  failedLoginAttempts: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+  lockUntil: { type: DataTypes.DATE, allowNull: true, defaultValue: null },
 });
 
 module.exports = User;
