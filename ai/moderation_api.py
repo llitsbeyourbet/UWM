@@ -40,7 +40,7 @@ def download_model():
     if not HF_TOKEN:
         raise RuntimeError("HF_TOKEN is not configured")
 
-    print("Downloading UWM V5 ONNX FP32 model from Hugging Face...")
+    print("Downloading UWM V5 ONNX INT8 V2 model from Hugging Face...")
 
     model_request = urllib.request.Request(
         HF_MODEL_URL,
@@ -57,12 +57,12 @@ def download_model():
 
                 file.write(chunk)
 
-    print("UWM V5 ONNX FP32 model downloaded!")
+    print("UWM V5 ONNX INT8 V2 model downloaded!")
 
 
 download_model()
 
-print("Loading UWM V5 ONNX FP32 moderation model...")
+print("Loading UWM V5 ONNX INT8 V2 moderation model...")
 
 tokenizer = Tokenizer.from_file(TOKENIZER_PATH)
 
@@ -73,7 +73,7 @@ session = ort.InferenceSession(
 
 input_names = [item.name for item in session.get_inputs()]
 
-print("UWM V5 ONNX FP32 moderation model loaded!")
+print("UWM V5 ONNX INT8 V2 moderation model loaded!")
 
 
 def predict(text):

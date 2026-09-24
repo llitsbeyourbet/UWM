@@ -22,6 +22,10 @@ const MAX_WAKE_UP_ATTEMPTS = 12;
 const sleep = (ms) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
+// เก็บ Promise ของการ wake-up ที่กำลังทำงานอยู่
+// เพื่อไม่ให้หลาย request สร้าง wake-up loop ซ้อนกัน
+let wakeUpPromise = null;
+
 const fetchModeration = async (value) => {
   const controller = new AbortController();
 
@@ -70,7 +74,7 @@ const checkAIHealth = async () => {
   }
 };
 
-const wakeUpAI = async () => {
+const performWakeUp = async () => {
   console.log(
     "[AI MODERATION] Waiting for AI service to become ready..."
   );
@@ -104,6 +108,28 @@ const wakeUpAI = async () => {
   );
 
   return false;
+};
+
+const wakeUpAI = async () => {
+  // ถ้ามี request อื่นกำลังปลุก AI อยู่
+  // ให้รอ Promise เดิมแทนการสร้าง loop ใหม่
+  if (wakeUpPromise) {
+    console.log(
+      "[AI MODERATION] AI wake-up already in progress. Waiting..."
+    );
+
+    return wakeUpPromise;
+  }
+
+  wakeUpPromise = performWakeUp();
+
+  try {
+    return await wakeUpPromise;
+  } finally {
+    // ไม่ว่าจะสำเร็จหรือไม่ ต้องเคลียร์
+    // เพื่อให้ครั้งถัดไปสามารถ wake-up ใหม่ได้
+    wakeUpPromise = null;
+  }
 };
 
 const moderateWithAI = async (text) => {
