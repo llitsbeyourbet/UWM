@@ -41,9 +41,15 @@ export default function Login() {
           return;
         }
 
-        if (data.message === "รหัสผ่านไม่ถูกต้อง") {
+        if (data.message?.includes("รหัสผ่านไม่ถูกต้อง")) {
           setPassword("");
-          setError("รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง");
+          setError(data.message);
+          return;
+        }
+
+        if (data.locked) {
+          setPassword("");
+          setError(data.message);
           return;
         }
 
