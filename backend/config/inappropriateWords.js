@@ -40,6 +40,7 @@ module.exports = [
   { word: "มาเอากัน", category: "sexual", weight: 65, match: "contains" },
   { word: "เอากันไหม", category: "sexual", weight: 65, match: "contains" },
   { word: "เอากันมั้ย", category: "sexual", weight: 65, match: "contains" },
+  { word: "อยากโดนเอา", category: "sexual", weight: 70, match: "contains" },
 
   // สแปม / พนัน
   { word: "เครดิตฟรี", category: "spam", weight: 40, match: "contains" },
