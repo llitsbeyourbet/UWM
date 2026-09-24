@@ -38,10 +38,6 @@ async function checkReminder() {
         (activityStart.getTime() - now.getTime()) / 1000 / 60
       );
 
-      console.log(
-        `[Reminder] ${activity.activityName} | เหลือ ${diffMinutes} นาที`
-      );
-
       // แจ้งเตือนเมื่อเหลือไม่เกิน 60 นาที
       if (diffMinutes >= 0 && diffMinutes <= 60) {
 
@@ -78,7 +74,7 @@ async function checkReminder() {
     }
 
   } catch (error) {
-    console.log("Reminder Job Error:", error.message);
+    console.error("Reminder Job Error:", error);
   }
 }
 
