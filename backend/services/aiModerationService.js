@@ -7,8 +7,17 @@ const AI_MODERATION_URL =
 const ALLOW_LABELS = new Set(["safe"]);
 
 const MAX_RETRIES = 2;
+
+// request ปกติ
 const REQUEST_TIMEOUT = 65000;
+
+// รอระหว่าง retry ของ /moderate
 const RETRY_DELAY = 3000;
+
+// สำหรับรอ Render cold start
+const HEALTH_TIMEOUT = 10000;
+const WAKE_UP_INTERVAL = 5000;
+const MAX_WAKE_UP_ATTEMPTS = 12;
 
 const sleep = (ms) =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -37,12 +46,12 @@ const fetchModeration = async (value) => {
   }
 };
 
-const wakeUpAI = async () => {
+const checkAIHealth = async () => {
   const controller = new AbortController();
 
   const timeout = setTimeout(
     () => controller.abort(),
-    REQUEST_TIMEOUT
+    HEALTH_TIMEOUT
   );
 
   try {
@@ -53,25 +62,48 @@ const wakeUpAI = async () => {
       }
     );
 
-    if (!response.ok) {
-      throw new Error(
-        `AI health returned status ${response.status}`
-      );
-    }
-
-    console.log("[AI MODERATION] AI service is awake");
-
-    return true;
+    return response.ok;
   } catch (error) {
-    console.warn(
-      "[AI MODERATION] AI wake-up failed:",
-      error.message
-    );
-
     return false;
   } finally {
     clearTimeout(timeout);
   }
+};
+
+const wakeUpAI = async () => {
+  console.log(
+    "[AI MODERATION] Waiting for AI service to become ready..."
+  );
+
+  for (
+    let attempt = 1;
+    attempt <= MAX_WAKE_UP_ATTEMPTS;
+    attempt++
+  ) {
+    const ready = await checkAIHealth();
+
+    if (ready) {
+      console.log(
+        "[AI MODERATION] AI service is ready"
+      );
+
+      return true;
+    }
+
+    console.log(
+      `[AI MODERATION] AI not ready (${attempt}/${MAX_WAKE_UP_ATTEMPTS})`
+    );
+
+    if (attempt < MAX_WAKE_UP_ATTEMPTS) {
+      await sleep(WAKE_UP_INTERVAL);
+    }
+  }
+
+  console.error(
+    "[AI MODERATION] AI service did not become ready in time"
+  );
+
+  return false;
 };
 
 const moderateWithAI = async (text) => {
@@ -110,10 +142,14 @@ const moderateWithAI = async (text) => {
         attempt < MAX_RETRIES
       ) {
         console.warn(
-          "[AI MODERATION] AI service is starting. Waking it up..."
+          "[AI MODERATION] AI service is starting..."
         );
 
-        await wakeUpAI();
+        const ready = await wakeUpAI();
+
+        if (!ready) {
+          break;
+        }
       }
     } catch (error) {
       lastError = error;
@@ -121,7 +157,7 @@ const moderateWithAI = async (text) => {
 
     if (attempt < MAX_RETRIES) {
       console.warn(
-        `[AI MODERATION] Request failed. Retrying ${attempt + 1}/${MAX_RETRIES}...`
+        `[AI MODERATION] Retrying request ${attempt + 1}/${MAX_RETRIES}...`
       );
 
       await sleep(RETRY_DELAY);
@@ -138,7 +174,8 @@ const moderateWithAI = async (text) => {
       "AI moderation service unavailable"
     );
 
-    serviceError.code = "AI_MODERATION_UNAVAILABLE";
+    serviceError.code =
+      "AI_MODERATION_UNAVAILABLE";
 
     throw serviceError;
   }
@@ -152,7 +189,8 @@ const moderateWithAI = async (text) => {
       "Invalid AI moderation response"
     );
 
-    serviceError.code = "AI_MODERATION_UNAVAILABLE";
+    serviceError.code =
+      "AI_MODERATION_UNAVAILABLE";
 
     throw serviceError;
   }
@@ -168,7 +206,8 @@ const moderateWithAI = async (text) => {
       "Invalid AI moderation response"
     );
 
-    serviceError.code = "AI_MODERATION_UNAVAILABLE";
+    serviceError.code =
+      "AI_MODERATION_UNAVAILABLE";
 
     throw serviceError;
   }
