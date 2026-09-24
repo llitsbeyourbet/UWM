@@ -8,27 +8,29 @@ import os
 app = Flask(__name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "model_int8.onnx")
+
+MODEL_PATH = os.path.join(BASE_DIR, "model.onnx")
 TOKENIZER_PATH = os.path.join(BASE_DIR, "tokenizer.json")
 
 HF_MODEL_URL = (
     "https://huggingface.co/bettyboops/"
-    "uwm-moderation-model/resolve/main/model_int8.onnx"
+    "uwm-moderation-model/resolve/main/model.onnx"
 )
+
 HF_TOKEN = os.getenv("HF_TOKEN")
 
-ALLOW_LABELS = {"safe", "alcohol"}
+# V5: อนุญาตเฉพาะ safe
+ALLOW_LABELS = {"safe"}
 
+# ต้องตรงกับลำดับ label ตอน train V5
 ID2LABEL = {
     0: "safe",
     1: "profanity",
     2: "insult",
-    3: "threat",
-    4: "sexual",
-    5: "spam",
-    6: "alcohol",
-    7: "smoking",
+    3: "sexual",
+    4: "spam",
 }
+
 
 def download_model():
     if os.path.exists(MODEL_PATH):
@@ -37,14 +39,14 @@ def download_model():
     if not HF_TOKEN:
         raise RuntimeError("HF_TOKEN is not configured")
 
-    print("Downloading UWM ONNX INT8 model from Hugging Face...")
+    print("Downloading UWM V5 ONNX FP32 model from Hugging Face...")
 
-    request = urllib.request.Request(
+    model_request = urllib.request.Request(
         HF_MODEL_URL,
         headers={"Authorization": f"Bearer {HF_TOKEN}"}
     )
 
-    with urllib.request.urlopen(request) as response:
+    with urllib.request.urlopen(model_request) as response:
         with open(MODEL_PATH, "wb") as file:
             while True:
                 chunk = response.read(1024 * 1024)
@@ -54,11 +56,12 @@ def download_model():
 
                 file.write(chunk)
 
-    print("UWM ONNX INT8 model downloaded!")
+    print("UWM V5 ONNX FP32 model downloaded!")
+
 
 download_model()
 
-print("Loading UWM ONNX INT8 moderation model...")
+print("Loading UWM V5 ONNX FP32 moderation model...")
 
 tokenizer = Tokenizer.from_file(TOKENIZER_PATH)
 
@@ -69,7 +72,8 @@ session = ort.InferenceSession(
 
 input_names = [item.name for item in session.get_inputs()]
 
-print("UWM ONNX INT8 moderation model loaded!")
+print("UWM V5 ONNX FP32 moderation model loaded!")
+
 
 def predict(text):
     text = str(text or "").strip()
@@ -115,18 +119,21 @@ def predict(text):
         "decision": "allow" if label in ALLOW_LABELS else "block",
     }
 
+
 @app.route("/health", methods=["GET"])
 def health():
     return jsonify({
         "status": "ok",
-        "model": "model_v3_1_int8",
+        "model": "model_v5_onnx_fp32",
         "runtime": "onnxruntime",
     })
+
 
 @app.route("/moderate", methods=["POST"])
 def moderate():
     data = request.get_json(silent=True) or {}
     return jsonify(predict(data.get("text", "")))
+
 
 if __name__ == "__main__":
     app.run(

@@ -23,8 +23,6 @@ const CATEGORY_LABELS = {
   threat: "คำข่มขู่หรือคุกคาม",
   sexual: "เนื้อหาทางเพศที่ไม่เหมาะสม",
   spam: "สแปมหรือเนื้อหาเสี่ยง",
-  alcohol: "เนื้อหาที่เกี่ยวข้องกับเครื่องดื่มมึนเมา",
-  smoking: "เนื้อหาเกี่ยวกับการสูบบุหรี่หรือผลิตภัณฑ์ยาสูบ",
 };
 
 const normalizeText = (value) => {
@@ -88,7 +86,6 @@ const BLOCK_CATEGORIES = new Set([
   "threat",
   "sexual",
   "spam",
-  "smoking",
 ]);
 
 const getStatus = (riskScore, categories = []) => {

@@ -12,12 +12,10 @@ const {
 const AI_CATEGORY_LABELS = {
     profanity: "คำหยาบ",
     insult: "คำดูหมิ่นหรือด่าทอ",
-    threat: "คำข่มขู่หรือคุกคาม",
     sexual: "เนื้อหาทางเพศที่ไม่เหมาะสม",
     spam: "สแปมหรือเนื้อหาเสี่ยง",
-    alcohol: "เนื้อหาที่เกี่ยวข้องกับเครื่องดื่มมึนเมา",
-    smoking: "เนื้อหาเกี่ยวกับการสูบบุหรี่หรือผลิตภัณฑ์ยาสูบ",
 };
+
 const hasMeaningfulText = (text) => {
     return /[\p{L}\p{N}]/u.test(String(text || ""));
 };

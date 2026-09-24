@@ -3,7 +3,8 @@
 const AI_MODERATION_URL =
   process.env.AI_MODERATION_URL || "http://127.0.0.1:5001";
 
-const ALLOW_LABELS = new Set(["safe", "alcohol"]);
+// V5 อนุญาตเฉพาะ safe
+const ALLOW_LABELS = new Set(["safe"]);
 
 const MAX_RETRIES = 2;
 const REQUEST_TIMEOUT = 65000;
@@ -14,6 +15,7 @@ const sleep = (ms) =>
 
 const fetchModeration = async (value) => {
   const controller = new AbortController();
+
   const timeout = setTimeout(
     () => controller.abort(),
     REQUEST_TIMEOUT
@@ -35,6 +37,43 @@ const fetchModeration = async (value) => {
   }
 };
 
+const wakeUpAI = async () => {
+  const controller = new AbortController();
+
+  const timeout = setTimeout(
+    () => controller.abort(),
+    REQUEST_TIMEOUT
+  );
+
+  try {
+    const response = await fetch(
+      `${AI_MODERATION_URL}/health`,
+      {
+        signal: controller.signal,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `AI health returned status ${response.status}`
+      );
+    }
+
+    console.log("[AI MODERATION] AI service is awake");
+
+    return true;
+  } catch (error) {
+    console.warn(
+      "[AI MODERATION] AI wake-up failed:",
+      error.message
+    );
+
+    return false;
+  } finally {
+    clearTimeout(timeout);
+  }
+};
+
 const moderateWithAI = async (text) => {
   const value = String(text || "").trim();
 
@@ -49,7 +88,11 @@ const moderateWithAI = async (text) => {
   let response;
   let lastError;
 
-  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+  for (
+    let attempt = 0;
+    attempt <= MAX_RETRIES;
+    attempt++
+  ) {
     try {
       response = await fetchModeration(value);
 
@@ -60,6 +103,18 @@ const moderateWithAI = async (text) => {
       lastError = new Error(
         `AI moderation returned status ${response.status}`
       );
+
+      if (
+        (response.status === 502 ||
+          response.status === 503) &&
+        attempt < MAX_RETRIES
+      ) {
+        console.warn(
+          "[AI MODERATION] AI service is starting. Waking it up..."
+        );
+
+        await wakeUpAI();
+      }
     } catch (error) {
       lastError = error;
     }
@@ -68,6 +123,7 @@ const moderateWithAI = async (text) => {
       console.warn(
         `[AI MODERATION] Request failed. Retrying ${attempt + 1}/${MAX_RETRIES}...`
       );
+
       await sleep(RETRY_DELAY);
     }
   }
@@ -81,7 +137,9 @@ const moderateWithAI = async (text) => {
     const serviceError = new Error(
       "AI moderation service unavailable"
     );
+
     serviceError.code = "AI_MODERATION_UNAVAILABLE";
+
     throw serviceError;
   }
 
@@ -93,53 +151,38 @@ const moderateWithAI = async (text) => {
     const serviceError = new Error(
       "Invalid AI moderation response"
     );
+
     serviceError.code = "AI_MODERATION_UNAVAILABLE";
+
     throw serviceError;
   }
 
-  const label = String(result.label || "").toLowerCase();
-  const confidence = Number(result.confidence) || 0;
+  const label =
+    String(result.label || "").toLowerCase();
+
+  const confidence =
+    Number(result.confidence) || 0;
 
   if (!label) {
     const serviceError = new Error(
       "Invalid AI moderation response"
     );
+
     serviceError.code = "AI_MODERATION_UNAVAILABLE";
+
     throw serviceError;
   }
 
   return {
     label,
     confidence,
-    decision: ALLOW_LABELS.has(label) ? "allow" : "block",
+    decision: ALLOW_LABELS.has(label)
+      ? "allow"
+      : "block",
   };
-};
-
-const wakeUpAI = async () => {
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 65000);
-
-    try {
-      const response = await fetch(`${AI_MODERATION_URL}/health`, {
-        signal: controller.signal,
-      });
-
-      if (response.ok) {
-        console.log("[AI MODERATION] AI service is awake");
-      }
-    } finally {
-      clearTimeout(timeout);
-    }
-  } catch (error) {
-    console.warn(
-      "[AI MODERATION] AI wake-up failed:",
-      error.message
-    );
-  }
 };
 
 module.exports = {
   moderateWithAI,
-  wakeUpAI
+  wakeUpAI,
 };
