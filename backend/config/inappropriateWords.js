@@ -36,11 +36,22 @@ module.exports = [
 
   { word: "ข่มขืน", category: "sexual", weight: 95, match: "contains" },
   { word: "มีเซ็กซ์", category: "sexual", weight: 55, match: "contains" },
+  // Sexual - contextual high-confidence patterns
+  { word: "อยากมีอะไรกับ", category: "sexual", weight: 70, match: "contains" },
+  { word: "มีอะไรกันไหม", category: "sexual", weight: 70, match: "contains" },
+  { word: "มีอะไรกันมั้ย", category: "sexual", weight: 70, match: "contains" },
 
+  { word: "อยากโดนเอา", category: "sexual", weight: 70, match: "contains" },
   { word: "มาเอากัน", category: "sexual", weight: 65, match: "contains" },
   { word: "เอากันไหม", category: "sexual", weight: 65, match: "contains" },
   { word: "เอากันมั้ย", category: "sexual", weight: 65, match: "contains" },
-  { word: "อยากโดนเอา", category: "sexual", weight: 70, match: "contains" },
+  { word: "อยากเอาเธอ", category: "sexual", weight: 70, match: "contains" },
+
+  { word: "จับหน้าอก", category: "sexual", weight: 75, match: "contains" },
+  { word: "ดูหน้าอก", category: "sexual", weight: 75, match: "contains" },
+  { word: "เห็นหน้าอก", category: "sexual", weight: 75, match: "contains" },
+
+
 
   // สแปม / พนัน
   { word: "เครดิตฟรี", category: "spam", weight: 40, match: "contains" },
