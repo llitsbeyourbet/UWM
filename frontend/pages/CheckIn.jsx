@@ -320,7 +320,7 @@ if (loading) return <Loading />;
           {/* ORGANIZER */}
           <section className="checkin-section">
             <p className="checkin-section-label">
-              ผู้จัดกิจกรรม
+              ผู้สร้างกิจกรรม
             </p>
 
             <div className="checkin-person-card">

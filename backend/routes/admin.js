@@ -941,13 +941,9 @@ router.get("/reviews", auth, isAdmin, async (req, res) => {
       ),
     ];
 
-    const userIds = [
-      ...new Set([...reviewerIds, ...hostIds]),
-    ];
-
-    const [activities, users, comments] = await Promise.all([
-      activityIds.length
-        ? Activity.findAll({
+    // โหลดข้อมูลกิจกรรมก่อน
+    const activities = activityIds.length
+      ? await Activity.findAll({
           where: {
             id: {
               [Op.in]: activityIds,
@@ -961,38 +957,57 @@ router.get("/reviews", auth, isAdmin, async (req, res) => {
           ],
           raw: true,
         })
-        : [],
+      : [];
 
+    // ดึง id ผู้สร้างกิจกรรม
+    const creatorIds = [
+      ...new Set(
+        activities
+          .map((activity) => Number(activity.createdBy))
+          .filter(Boolean)
+      ),
+    ];
+
+    // รวม user ทุกคนที่จำเป็นต้องใช้
+    const userIds = [
+      ...new Set([
+        ...reviewerIds,
+        ...hostIds,
+        ...creatorIds,
+      ]),
+    ];
+
+    const [users, comments] = await Promise.all([
       userIds.length
         ? User.findAll({
-          where: {
-            id: {
-              [Op.in]: userIds,
+            where: {
+              id: {
+                [Op.in]: userIds,
+              },
             },
-          },
-          attributes: [
-            "id",
-            "name",
-            "username",
-            "profileImage",
-          ],
-          raw: true,
-        })
+            attributes: [
+              "id",
+              "name",
+              "username",
+              "profileImage",
+            ],
+            raw: true,
+          })
         : [],
 
       activityIds.length && reviewerIds.length
         ? Comment.findAll({
-          where: {
-            activityId: {
-              [Op.in]: activityIds,
+            where: {
+              activityId: {
+                [Op.in]: activityIds,
+              },
+              userId: {
+                [Op.in]: reviewerIds,
+              },
             },
-            userId: {
-              [Op.in]: reviewerIds,
-            },
-          },
-          order: [["createdAt", "DESC"]],
-          raw: true,
-        })
+            order: [["createdAt", "DESC"]],
+            raw: true,
+          })
         : [],
     ]);
 
@@ -1029,6 +1044,11 @@ router.get("/reviews", auth, isAdmin, async (req, res) => {
       const activity = activityMap.get(activityId);
       const reviewer = userMap.get(reviewerId);
 
+      // ผู้สร้างกิจกรรม
+      const creator = activity
+        ? userMap.get(Number(activity.createdBy))
+        : null;
+
       const comment = commentMap.get(
         `${activityId}:${reviewerId}`
       );
@@ -1050,12 +1070,25 @@ router.get("/reviews", auth, isAdmin, async (req, res) => {
 
         targetImage: activity?.cover || null,
 
+        // เพิ่มข้อมูลผู้จัดกิจกรรม
+        creatorName:
+          creator?.name ||
+          creator?.username ||
+          "ไม่ระบุผู้จัดกิจกรรม",
+
+        creatorUsername:
+          creator?.username || "",
+
+        creatorProfileImage:
+          creator?.profileImage || null,
+
         reviewerName:
           reviewer?.name ||
           reviewer?.username ||
           "ไม่ระบุชื่อ",
 
-        reviewerUsername: reviewer?.username || "",
+        reviewerUsername:
+          reviewer?.username || "",
 
         reviewerProfileImage:
           reviewer?.profileImage || null,
@@ -1072,6 +1105,10 @@ router.get("/reviews", auth, isAdmin, async (req, res) => {
       const activity = activityMap.get(activityId);
       const reviewer = userMap.get(reviewerId);
       const host = userMap.get(hostId);
+
+      const creator = activity
+        ? userMap.get(Number(activity.createdBy))
+        : null;
 
       const comment = commentMap.get(
         `${activityId}:${reviewerId}`
@@ -1102,12 +1139,25 @@ router.get("/reviews", auth, isAdmin, async (req, res) => {
         activityName:
           activity?.activityName || "ไม่ระบุชื่อกิจกรรม",
 
+        // เพิ่มข้อมูลผู้จัดกิจกรรม
+        creatorName:
+          creator?.name ||
+          creator?.username ||
+          "ไม่ระบุผู้จัดกิจกรรม",
+
+        creatorUsername:
+          creator?.username || "",
+
+        creatorProfileImage:
+          creator?.profileImage || null,
+
         reviewerName:
           reviewer?.name ||
           reviewer?.username ||
           "ไม่ระบุชื่อ",
 
-        reviewerUsername: reviewer?.username || "",
+        reviewerUsername:
+          reviewer?.username || "",
 
         reviewerProfileImage:
           reviewer?.profileImage || null,
@@ -1140,6 +1190,7 @@ router.get("/reviews", auth, isAdmin, async (req, res) => {
     });
   }
 });
+
 router.put("/reports/:id/view", auth, isAdmin, async (req, res) => {
   try {
     const report = await Report.findByPk(req.params.id);

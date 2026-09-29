@@ -28,6 +28,7 @@ module.exports = [
   { word: "เสือก", category: "insult", weight: 60, match: "contains" },
   { word: "หน้าส้นตรีน", category: "insult", weight: 75, match: "contains" },
   { word: "รุมด่า", category: "insult", weight: 65, match: "contains" },
+  { word: "ไอ้ควาย", category: "insult", weight: 55, match: "contains" },
 
   // ข่มขู่ / คุกคาม
   // V5 ไม่มี threat class จึงให้ Rule ป้องกันวลีรุนแรงที่ชัดเจน

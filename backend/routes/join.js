@@ -74,7 +74,7 @@ router.post("/:activityId", auth, async (req, res) => {
         let message = "คุณเคยส่งคำขอเข้าร่วมกิจกรรมนี้แล้ว";
 
         if (existing.status === "pending") {
-          message = "คุณส่งคำขอเข้าร่วมกิจกรรมนี้แล้ว กรุณารอการอนุมัติจากผู้จัดกิจกรรม";
+          message = "คุณส่งคำขอเข้าร่วมกิจกรรมนี้แล้ว กรุณารอการอนุมัติจากผู้สร้างกิจกรรม";
         } else if (existing.status === "approved") {
           message = "คุณเข้าร่วมกิจกรรมนี้แล้ว";
         } else if (existing.status === "checked_in") {

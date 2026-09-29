@@ -1,20 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-    FiBell,
     FiCalendar,
     FiChevronLeft,
     FiChevronRight,
-    FiDownload,
-    FiFlag,
-    FiGrid,
-    FiLogOut,
+    FiEye,
     FiSearch,
-    FiSettings,
     FiStar,
-    FiUsers,
+    FiUser,
+    FiX,
 } from "react-icons/fi";
-import { MdGroups } from "react-icons/md";
 
 import API_URL from "../config";
 import "../styles/AdminDashboard.css";
@@ -40,20 +35,9 @@ const getReviewerAvatar = (review) => {
     return review.reviewerProfileImage || "";
 };
 
-const getTargetTitle = (review) => {
-    return review.targetName || "ไม่ระบุชื่อ";
-};
-
-const getTargetImage = (review) => {
-    return review.targetImage || "";
-};
-
 const getReviewMessage = (review) => {
     if (review.comment) return review.comment;
-
-    return review.type === "host"
-        ? `ให้คะแนนผู้จัดกิจกรรมจาก ${review.activityName || "กิจกรรม"}`
-        : "ไม่มีข้อความรีวิว";
+    return "ไม่มีข้อความรีวิว";
 };
 
 const getRating = (review) => {
@@ -62,6 +46,15 @@ const getRating = (review) => {
     return Number.isNaN(rating)
         ? 0
         : Math.min(5, Math.max(0, rating));
+};
+
+const getReviewDateValue = (review) => {
+    return (
+        review.createdAt ||
+        review.reviewedAt ||
+        review.date ||
+        null
+    );
 };
 
 const formatDate = (dateValue) => {
@@ -114,17 +107,75 @@ function RatingStars({ rating }) {
         </div>
     );
 }
+
+function ReviewCard({ review }) {
+    const reviewerName = getReviewerName(review);
+    const reviewerUsername = getReviewerUsername(review);
+    const reviewerAvatar = getReviewerAvatar(review);
+    const rating = getRating(review);
+    const reviewDate = formatDate(
+        getReviewDateValue(review)
+    );
+
+    return (
+        <article className="admin-review-panel-card">
+            <div className="admin-review-panel-card-top">
+                <div className="admin-review-panel-user">
+                    <div className="admin-review-panel-avatar">
+                        {reviewerAvatar ? (
+                            <img
+                                src={reviewerAvatar}
+                                alt={reviewerName}
+                                onError={(event) => {
+                                    event.currentTarget.style.display =
+                                        "none";
+                                }}
+                            />
+                        ) : (
+                            <span>
+                                {reviewerName
+                                    .charAt(0)
+                                    .toUpperCase()}
+                            </span>
+                        )}
+                    </div>
+
+                    <div>
+                        <strong>{reviewerName}</strong>
+
+                        <span>
+                            {reviewerUsername
+                                ? `@${reviewerUsername}`
+                                : "ผู้ใช้งาน"}
+                        </span>
+                    </div>
+                </div>
+
+                <div className="admin-review-panel-date">
+                    <strong>{reviewDate.date}</strong>
+                    <span>{reviewDate.time}</span>
+                </div>
+            </div>
+
+            <RatingStars rating={rating} />
+
+            <p className="admin-review-panel-comment">
+                {getReviewMessage(review)}
+            </p>
+        </article>
+    );
+}
+
 export default function AdminReviews() {
     const navigate = useNavigate();
+
     const [reviews, setReviews] = useState([]);
-    const [activeTab, setActiveTab] = useState("all");
     const [search, setSearch] = useState("");
-    const [typeFilter, setTypeFilter] = useState("all");
-    const [ratingFilter, setRatingFilter] = useState("all");
-    const [sortOrder, setSortOrder] = useState("latest");
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [selectedActivity, setSelectedActivity] =
+        useState(null);
 
     useEffect(() => {
         loadReviews();
@@ -132,20 +183,45 @@ export default function AdminReviews() {
 
     useEffect(() => {
         setPage(1);
-    }, [
-        activeTab,
-        search,
-        typeFilter,
-        ratingFilter,
-        sortOrder,
-    ]);
+    }, [search]);
+
+    useEffect(() => {
+        if (!selectedActivity) return undefined;
+
+        const handleKeyDown = (event) => {
+            if (event.key === "Escape") {
+                setSelectedActivity(null);
+            }
+        };
+
+        document.addEventListener(
+            "keydown",
+            handleKeyDown
+        );
+
+        document.body.classList.add(
+            "admin-review-panel-open"
+        );
+
+        return () => {
+            document.removeEventListener(
+                "keydown",
+                handleKeyDown
+            );
+
+            document.body.classList.remove(
+                "admin-review-panel-open"
+            );
+        };
+    }, [selectedActivity]);
 
     const loadReviews = async () => {
         try {
             setLoading(true);
             setError("");
 
-            const token = sessionStorage.getItem("token");
+            const token =
+                sessionStorage.getItem("token");
 
             const response = await fetch(
                 `${API_URL}/api/admin/reviews`,
@@ -160,7 +236,8 @@ export default function AdminReviews() {
 
             if (!response.ok) {
                 throw new Error(
-                    data.message || "โหลดข้อมูลรีวิวไม่สำเร็จ"
+                    data.message ||
+                        "โหลดข้อมูลรีวิวไม่สำเร็จ"
                 );
             }
 
@@ -171,117 +248,294 @@ export default function AdminReviews() {
             );
         } catch (err) {
             console.error(err);
+
             setError(
-                err.message || "ไม่สามารถโหลดข้อมูลรีวิวได้"
+                err.message ||
+                    "ไม่สามารถโหลดข้อมูลรีวิวได้"
             );
         } finally {
             setLoading(false);
         }
     };
 
-    const reviewCounts = useMemo(() => {
-        return reviews.reduce(
-            (result, review) => {
-                const type = getReviewType(review);
+    /*
+     * จัดกลุ่ม ActivityReview และ HostReview
+     * ด้วย activityId เดียวกัน
+     */
+    const activities = useMemo(() => {
+        const activityMap = new Map();
 
-                result.all += 1;
-                result[type] += 1;
+        reviews.forEach((review) => {
+            const activityId = Number(
+                review.activityId
+            );
 
-                return result;
-            },
-            {
-                all: 0,
-                activity: 0,
-                host: 0,
+            if (!activityId) return;
+
+            const type = getReviewType(review);
+
+            let activity = activityMap.get(
+                activityId
+            );
+
+            if (!activity) {
+                activity = {
+                    key: `activity-${activityId}`,
+                    activityId,
+
+                    name:
+                        type === "activity"
+                            ? review.targetName
+                            : review.activityName,
+
+                    image:
+                        type === "activity"
+                            ? review.targetImage
+                            : null,
+
+                    hostName:
+                        review.creatorName ||
+                        (type === "host"
+                            ? review.targetName
+                            : null) ||
+                        "ไม่ระบุผู้จัดกิจกรรม",
+
+                    hostUsername:
+                        review.creatorUsername ||
+                        (type === "host"
+                            ? review.targetUsername
+                            : "") ||
+                        "",
+
+                    hostImage:
+                        review.creatorProfileImage ||
+                        (type === "host"
+                            ? review.targetImage
+                            : null),
+
+                    activityReviews: [],
+                    hostReviews: [],
+                    latestDate: 0,
+                };
+
+                activityMap.set(
+                    activityId,
+                    activity
+                );
             }
-        );
+
+            /*
+             * เติมข้อมูลที่อาจยังไม่มี
+             */
+            if (
+                type === "activity" &&
+                review.targetName
+            ) {
+                activity.name = review.targetName;
+            }
+
+            if (
+                type === "activity" &&
+                review.targetImage
+            ) {
+                activity.image =
+                    review.targetImage;
+            }
+
+            if (
+                review.creatorName &&
+                review.creatorName !==
+                    "ไม่ระบุผู้จัดกิจกรรม"
+            ) {
+                activity.hostName =
+                    review.creatorName;
+            }
+
+            if (review.creatorUsername) {
+                activity.hostUsername =
+                    review.creatorUsername;
+            }
+
+            if (review.creatorProfileImage) {
+                activity.hostImage =
+                    review.creatorProfileImage;
+            }
+
+            /*
+             * fallback จาก HostReview
+             */
+            if (
+                type === "host" &&
+                activity.hostName ===
+                    "ไม่ระบุผู้จัดกิจกรรม" &&
+                review.targetName
+            ) {
+                activity.hostName =
+                    review.targetName;
+            }
+
+            if (
+                type === "host" &&
+                !activity.hostImage &&
+                review.targetImage
+            ) {
+                activity.hostImage =
+                    review.targetImage;
+            }
+
+            if (type === "activity") {
+                activity.activityReviews.push(
+                    review
+                );
+            } else {
+                activity.hostReviews.push(review);
+            }
+
+            const timestamp = new Date(
+                getReviewDateValue(review) || 0
+            ).getTime();
+
+            if (!Number.isNaN(timestamp)) {
+                activity.latestDate = Math.max(
+                    activity.latestDate,
+                    timestamp
+                );
+            }
+        });
+
+        return Array.from(activityMap.values())
+            .filter(
+                (activity) =>
+                    activity.activityReviews.length >
+                        0 ||
+                    activity.hostReviews.length > 0
+            )
+            .map((activity) => {
+                const activityReviewCount =
+                    activity.activityReviews.length;
+
+                const hostReviewCount =
+                    activity.hostReviews.length;
+
+                const totalReviewerCount =
+                    Math.max(
+                        activityReviewCount,
+                        hostReviewCount
+                    );
+
+                const averageRating =
+                    activityReviewCount > 0
+                        ? activity.activityReviews.reduce(
+                              (sum, review) =>
+                                  sum +
+                                  getRating(review),
+                              0
+                          ) /
+                          activityReviewCount
+                        : 0;
+
+                return {
+                    ...activity,
+
+                    activityReviews: [
+                        ...activity.activityReviews,
+                    ].sort(
+                        (a, b) =>
+                            new Date(
+                                getReviewDateValue(b) ||
+                                    0
+                            ).getTime() -
+                            new Date(
+                                getReviewDateValue(a) ||
+                                    0
+                            ).getTime()
+                    ),
+
+                    hostReviews: [
+                        ...activity.hostReviews,
+                    ].sort(
+                        (a, b) =>
+                            new Date(
+                                getReviewDateValue(b) ||
+                                    0
+                            ).getTime() -
+                            new Date(
+                                getReviewDateValue(a) ||
+                                    0
+                            ).getTime()
+                    ),
+
+                    reviewCount:
+                        totalReviewerCount,
+
+                    averageRating,
+                };
+            })
+            .sort(
+                (a, b) =>
+                    b.latestDate -
+                    a.latestDate
+            );
     }, [reviews]);
 
-    const filteredReviews = useMemo(() => {
-        const keyword = search.trim().toLowerCase();
+    const filteredActivities = useMemo(() => {
+        const keyword = search
+            .trim()
+            .toLowerCase();
 
-        const result = reviews.filter((review) => {
-            const type = getReviewType(review);
-            const rating = getRating(review);
+        if (!keyword) {
+            return activities;
+        }
 
-            const matchesTab =
-                activeTab === "all" || type === activeTab;
-
-            const matchesType =
-                typeFilter === "all" || type === typeFilter;
-
-            const matchesRating =
-                ratingFilter === "all" ||
-                Math.floor(rating) === Number(ratingFilter);
+        return activities.filter((activity) => {
+            const reviewText = [
+                ...activity.activityReviews,
+                ...activity.hostReviews,
+            ]
+                .map((review) =>
+                    [
+                        getReviewMessage(review),
+                        getReviewerName(review),
+                        getReviewerUsername(review),
+                    ]
+                        .filter(Boolean)
+                        .join(" ")
+                )
+                .join(" ");
 
             const searchableText = [
-                getTargetTitle(review),
-                getReviewMessage(review),
-                getReviewerName(review),
-                getReviewerUsername(review),
+                activity.name,
+                activity.hostName,
+                activity.hostUsername,
+                reviewText,
             ]
                 .filter(Boolean)
                 .join(" ")
                 .toLowerCase();
 
-            const matchesSearch =
-                !keyword || searchableText.includes(keyword);
-
-            return (
-                matchesTab &&
-                matchesType &&
-                matchesRating &&
-                matchesSearch
-            );
+            return searchableText.includes(keyword);
         });
-
-        return [...result].sort((a, b) => {
-            const dateA = new Date(
-                a.createdAt ||
-                a.reviewedAt ||
-                a.date ||
-                0
-            ).getTime();
-
-            const dateB = new Date(
-                b.createdAt ||
-                b.reviewedAt ||
-                b.date ||
-                0
-            ).getTime();
-
-            if (sortOrder === "oldest") {
-                return dateA - dateB;
-            }
-
-            if (sortOrder === "rating-high") {
-                return getRating(b) - getRating(a);
-            }
-
-            if (sortOrder === "rating-low") {
-                return getRating(a) - getRating(b);
-            }
-
-            return dateB - dateA;
-        });
-    }, [
-        reviews,
-        activeTab,
-        search,
-        typeFilter,
-        ratingFilter,
-        sortOrder,
-    ]);
+    }, [activities, search]);
 
     const totalPages = Math.max(
         1,
-        Math.ceil(filteredReviews.length / ITEMS_PER_PAGE)
+        Math.ceil(
+            filteredActivities.length /
+                ITEMS_PER_PAGE
+        )
     );
 
-    const visibleReviews = filteredReviews.slice(
-        (page - 1) * ITEMS_PER_PAGE,
-        page * ITEMS_PER_PAGE
-    );
+    useEffect(() => {
+        if (page > totalPages) {
+            setPage(totalPages);
+        }
+    }, [page, totalPages]);
+
+    const visibleActivities =
+        filteredActivities.slice(
+            (page - 1) * ITEMS_PER_PAGE,
+            page * ITEMS_PER_PAGE
+        );
 
     const getPaginationNumbers = () => {
         if (totalPages <= 5) {
@@ -292,7 +546,13 @@ export default function AdminReviews() {
         }
 
         if (page <= 3) {
-            return [1, 2, 3, "...", totalPages];
+            return [
+                1,
+                2,
+                3,
+                "...",
+                totalPages,
+            ];
         }
 
         if (page >= totalPages - 2) {
@@ -309,27 +569,37 @@ export default function AdminReviews() {
             1,
             "...",
             page,
-            "... ",
+            "...",
             totalPages,
         ];
+    };
+
+    const closePanel = () => {
+        setSelectedActivity(null);
     };
 
     return (
         <div className="admin-shell">
             <AdminSidebar />
+
             <main className="admin-main">
                 <div className="admin-reviews-page">
                     <div className="admin-reviews-topbar">
                         <div className="admin-reviews-breadcrumb">
                             <button
                                 type="button"
-                                onClick={() => navigate("/admin")}
+                                onClick={() =>
+                                    navigate("/admin")
+                                }
                             >
                                 หน้าหลัก
                             </button>
 
                             <span>/</span>
-                            <strong>รีวิว</strong>
+
+                            <strong>
+                                ตรวจสอบรีวิว
+                            </strong>
                         </div>
 
                         <AdminProfile />
@@ -342,70 +612,47 @@ export default function AdminReviews() {
                             </span>
 
                             <div>
-                                <h1>ตรวจสอบรีวิว</h1>
+                                <h1>
+                                    ตรวจสอบรีวิวกิจกรรม
+                                </h1>
+
                                 <p>
-                                    ตรวจสอบรีวิวกิจกรรมและผู้จัดกิจกรรมทั้งหมดในระบบ
+                                    ตรวจสอบรีวิวกิจกรรมและรีวิวผู้จัดกิจกรรมจากผู้ใช้งาน
                                 </p>
                             </div>
-
                         </div>
 
                         <div className="admin-reviews-total">
                             <span>
-                                <FiStar />
+                                <FiCalendar />
                             </span>
 
                             <div>
-                                <small>รีวิวทั้งหมด</small>
+                                <small>
+                                    กิจกรรมที่มีรีวิว
+                                </small>
 
                                 <strong>
-                                    {reviewCounts.all.toLocaleString("th-TH")}
+                                    {activities.length.toLocaleString(
+                                        "th-TH"
+                                    )}
                                 </strong>
                             </div>
                         </div>
                     </section>
 
                     <section className="admin-reviews-content">
-                        <div className="admin-reviews-tabs">
-                            <button
-                                type="button"
-                                className={
-                                    activeTab === "all" ? "active" : ""
-                                }
-                                onClick={() => setActiveTab("all")}
-                            >
-                                ทั้งหมด
-                                <span>{reviewCounts.all}</span>
-                            </button>
+                        <div className="admin-reviews-section-head">
+                            <div>
+                                <h2>
+                                    รายการกิจกรรม
+                                </h2>
 
-                            <button
-                                type="button"
-                                className={
-                                    activeTab === "activity"
-                                        ? "active"
-                                        : ""
-                                }
-                                onClick={() =>
-                                    setActiveTab("activity")
-                                }
-                            >
-                                รีวิวกิจกรรม
-                                <span>{reviewCounts.activity}</span>
-                            </button>
+                                <p>
+                                    เลือกกิจกรรมเพื่อตรวจสอบรายละเอียดรีวิว
+                                </p>
+                            </div>
 
-                            <button
-                                type="button"
-                                className={
-                                    activeTab === "host" ? "active" : ""
-                                }
-                                onClick={() => setActiveTab("host")}
-                            >
-                                รีวิวผู้สร้างกิจกรรม
-                                <span>{reviewCounts.host}</span>
-                            </button>
-                        </div>
-
-                        <div className="admin-reviews-toolbar">
                             <label className="admin-reviews-search">
                                 <FiSearch />
 
@@ -413,99 +660,53 @@ export default function AdminReviews() {
                                     type="search"
                                     value={search}
                                     onChange={(event) =>
-                                        setSearch(event.target.value)
+                                        setSearch(
+                                            event.target.value
+                                        )
                                     }
-                                    placeholder="ค้นหากิจกรรม ผู้ใช้ หรือข้อความรีวิว..."
+                                    placeholder="ค้นหาชื่อกิจกรรมหรือผู้จัดกิจกรรม..."
                                 />
                             </label>
-
-                            <label className="admin-review-filter">
-                                <span>ประเภทรีวิว</span>
-
-                                <select
-                                    value={typeFilter}
-                                    onChange={(event) =>
-                                        setTypeFilter(event.target.value)
-                                    }
-                                >
-                                    <option value="all">ทั้งหมด</option>
-                                    <option value="activity">
-                                        รีวิวกิจกรรม
-                                    </option>
-                                    <option value="host">
-                                        รีวิวผู้สร้างกิจกรรม
-                                    </option>
-                                </select>
-                            </label>
-
-                            <label className="admin-review-filter">
-                                <span>คะแนน</span>
-
-                                <select
-                                    value={ratingFilter}
-                                    onChange={(event) =>
-                                        setRatingFilter(event.target.value)
-                                    }
-                                >
-                                    <option value="all">ทั้งหมด</option>
-                                    <option value="5">5 ดาว</option>
-                                    <option value="4">4 ดาว</option>
-                                    <option value="3">3 ดาว</option>
-                                    <option value="2">2 ดาว</option>
-                                    <option value="1">1 ดาว</option>
-                                </select>
-                            </label>
-
-                            <label className="admin-review-filter">
-                                <span>เรียงลำดับ</span>
-
-                                <select
-                                    value={sortOrder}
-                                    onChange={(event) =>
-                                        setSortOrder(event.target.value)
-                                    }
-                                >
-                                    <option value="latest">
-                                        ล่าสุดก่อน
-                                    </option>
-                                    <option value="oldest">
-                                        เก่าสุดก่อน
-                                    </option>
-                                    <option value="rating-high">
-                                        คะแนนมากไปน้อย
-                                    </option>
-                                    <option value="rating-low">
-                                        คะแนนน้อยไปมาก
-                                    </option>
-                                </select>
-                            </label>
-
                         </div>
 
                         {loading ? (
                             <div className="admin-reviews-state">
                                 <span className="admin-reviews-loader" />
-                                <strong>กำลังโหลดข้อมูลรีวิว</strong>
+
+                                <strong>
+                                    กำลังโหลดข้อมูลรีวิว
+                                </strong>
                             </div>
                         ) : error ? (
                             <div className="admin-reviews-state">
                                 <FiStar />
-                                <strong>โหลดข้อมูลไม่สำเร็จ</strong>
+
+                                <strong>
+                                    โหลดข้อมูลไม่สำเร็จ
+                                </strong>
+
                                 <p>{error}</p>
 
                                 <button
                                     type="button"
-                                    onClick={loadReviews}
+                                    onClick={
+                                        loadReviews
+                                    }
                                 >
                                     ลองอีกครั้ง
                                 </button>
                             </div>
-                        ) : visibleReviews.length === 0 ? (
+                        ) : visibleActivities.length ===
+                          0 ? (
                             <div className="admin-reviews-state">
                                 <FiStar />
-                                <strong>ไม่พบข้อมูลรีวิว</strong>
+
+                                <strong>
+                                    ไม่พบกิจกรรม
+                                </strong>
+
                                 <p>
-                                    ไม่มีรีวิวที่ตรงกับตัวกรองหรือคำค้นหา
+                                    ไม่มีกิจกรรมที่มีรีวิวตรงกับคำค้นหา
                                 </p>
                             </div>
                         ) : (
@@ -513,159 +714,142 @@ export default function AdminReviews() {
                                 <table className="admin-reviews-table">
                                     <thead>
                                         <tr>
-                                            <th>รีวิว</th>
-                                            <th>ประเภท</th>
-                                            <th>คะแนน</th>
-                                            <th>รีวิวโดย</th>
-                                            <th>วันที่</th>
+                                            <th>
+                                                กิจกรรม
+                                            </th>
+
+                                            <th>
+                                                ผู้สร้างกิจกรรม
+                                            </th>
+
+                                            <th>
+                                                จำนวนรีวิว
+                                            </th>
+
+                                            <th>
+                                                ตรวจสอบรีวิว
+                                            </th>
                                         </tr>
                                     </thead>
 
                                     <tbody>
-                                        {visibleReviews.map(
-                                            (review, index) => {
-                                                const reviewId =
-                                                    review.id ||
-                                                    review._id ||
-                                                    `${page}-${index}`;
-
-                                                const type =
-                                                    getReviewType(review);
-
-                                                const rating =
-                                                    getRating(review);
-
-                                                const reviewerName =
-                                                    getReviewerName(review);
-
-                                                const reviewerUsername =
-                                                    getReviewerUsername(review);
-
-                                                const reviewerAvatar =
-                                                    getReviewerAvatar(review);
-
-                                                const targetTitle =
-                                                    getTargetTitle(review);
-
-                                                const targetImage =
-                                                    getTargetImage(review);
-
-                                                const message =
-                                                    getReviewMessage(review);
-
-                                                const reviewDate = formatDate(
-                                                    review.createdAt ||
-                                                    review.reviewedAt ||
-                                                    review.date
-                                                );
-
-                                                return (
-                                                    <tr key={reviewId}>
-                                                        <td>
-                                                            <div className="admin-review-main-cell">
-                                                                <div
-                                                                    className={`admin-review-target-image ${type === "host"
-                                                                        ? "person"
-                                                                        : ""
-                                                                        }`}
-                                                                >
-                                                                    {targetImage ? (
-                                                                        <img
-                                                                            src={targetImage}
-                                                                            alt={targetTitle}
-                                                                            onError={(event) => {
-                                                                                event.currentTarget.style.display =
-                                                                                    "none";
-                                                                            }}
-                                                                        />
-                                                                    ) : (
-                                                                        <span>
-                                                                            {type ===
-                                                                                "activity" ? (
-                                                                                <FiCalendar />
-                                                                            ) : (
-                                                                                <FiUsers />
-                                                                            )}
-                                                                        </span>
-                                                                    )}
-                                                                </div>
-
-                                                                <div className="admin-review-text">
-                                                                    <strong>
-                                                                        {targetTitle}
-                                                                    </strong>
-
-                                                                    <p>{message}</p>
-                                                                </div>
+                                        {visibleActivities.map(
+                                            (activity) => (
+                                                <tr
+                                                    key={
+                                                        activity.key
+                                                    }
+                                                >
+                                                    <td>
+                                                        <div className="admin-review-activity-cell">
+                                                            <div className="admin-review-activity-image">
+                                                                {activity.image ? (
+                                                                    <img
+                                                                        src={
+                                                                            activity.image
+                                                                        }
+                                                                        alt={
+                                                                            activity.name
+                                                                        }
+                                                                        onError={(
+                                                                            event
+                                                                        ) => {
+                                                                            event.currentTarget.style.display =
+                                                                                "none";
+                                                                        }}
+                                                                    />
+                                                                ) : (
+                                                                    <FiCalendar />
+                                                                )}
                                                             </div>
-                                                        </td>
 
-                                                        <td>
-                                                            <span
-                                                                className={`admin-review-type admin-review-type-${type}`}
-                                                            >
-                                                                {type === "activity"
-                                                                    ? "กิจกรรม"
-                                                                    : "ผู้จัดกิจกรรม"}
-                                                            </span>
-                                                        </td>
-
-                                                        <td>
-                                                            <RatingStars
-                                                                rating={rating}
-                                                            />
-                                                        </td>
-
-                                                        <td>
-                                                            <div className="admin-review-user">
-                                                                <div className="admin-review-user-avatar">
-                                                                    {reviewerAvatar ? (
-                                                                        <img
-                                                                            src={reviewerAvatar}
-                                                                            alt={reviewerName}
-                                                                            onError={(
-                                                                                event
-                                                                            ) => {
-                                                                                event.currentTarget.style.display =
-                                                                                    "none";
-                                                                            }}
-                                                                        />
-                                                                    ) : (
-                                                                        <span>
-                                                                            {reviewerName
-                                                                                .charAt(0)
-                                                                                .toUpperCase()}
-                                                                        </span>
-                                                                    )}
-                                                                </div>
-
-                                                                <div>
-                                                                    <strong>
-                                                                        {reviewerName}
-                                                                    </strong>
-
-                                                                    <small>
-                                                                        {reviewerUsername
-                                                                            ? `@${reviewerUsername}`
-                                                                            : "ไม่ระบุชื่อผู้ใช้"}
-                                                                    </small>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-
-                                                        <td>
-                                                            <div className="admin-review-date">
+                                                            <div>
                                                                 <strong>
-                                                                    {reviewDate.date}
+                                                                    {
+                                                                        activity.name
+                                                                    }
                                                                 </strong>
-                                                                <span>
-                                                                    {reviewDate.time}
+
+                                                                <span className="admin-review-average">
+                                                                    {activity.averageRating.toFixed(
+                                                                        1
+                                                                    )}{" "}
+                                                                    <span>
+                                                                        ⭐
+                                                                    </span>
                                                                 </span>
                                                             </div>
-                                                        </td>
-                                                    </tr>
-                                                );
-                                            }
+                                                        </div>
+                                                    </td>
+
+                                                    <td>
+                                                        <div className="admin-review-host">
+                                                            <div className="admin-review-host-avatar">
+                                                                {activity.hostImage ? (
+                                                                    <img
+                                                                        src={
+                                                                            activity.hostImage
+                                                                        }
+                                                                        alt={
+                                                                            activity.hostName
+                                                                        }
+                                                                        onError={(
+                                                                            event
+                                                                        ) => {
+                                                                            event.currentTarget.style.display =
+                                                                                "none";
+                                                                        }}
+                                                                    />
+                                                                ) : (
+                                                                    <FiUser />
+                                                                )}
+                                                            </div>
+
+                                                            <div className="admin-review-host-info">
+                                                                <strong>
+                                                                    {
+                                                                        activity.hostName
+                                                                    }
+                                                                </strong>
+
+                                                                {activity.hostUsername && (
+                                                                    <span>
+                                                                        @
+                                                                        {
+                                                                            activity.hostUsername
+                                                                        }
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </td>
+
+                                                    <td>
+                                                        <span className="admin-review-count">
+                                                            {
+                                                                activity.reviewCount
+                                                            }{" "}
+                                                            รีวิว
+                                                        </span>
+                                                    </td>
+
+                                                    <td>
+                                                        <button
+                                                            type="button"
+                                                            className="admin-review-eye-button"
+                                                            onClick={() =>
+                                                                setSelectedActivity(
+                                                                    activity
+                                                                )
+                                                            }
+                                                            aria-label={`ตรวจสอบรีวิว ${activity.name}`}
+                                                            title="ตรวจสอบรีวิว"
+                                                        >
+                                                            <FiEye />
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            )
                                         )}
                                     </tbody>
                                 </table>
@@ -674,29 +858,43 @@ export default function AdminReviews() {
 
                         {!loading &&
                             !error &&
-                            filteredReviews.length > 0 && (
+                            filteredActivities.length >
+                                0 && (
                                 <footer className="admin-reviews-pagination">
                                     <span>
                                         แสดง{" "}
-                                        {(page - 1) * ITEMS_PER_PAGE + 1}–
+                                        {(page - 1) *
+                                            ITEMS_PER_PAGE +
+                                            1}
+                                        –
                                         {Math.min(
-                                            page * ITEMS_PER_PAGE,
-                                            filteredReviews.length
+                                            page *
+                                                ITEMS_PER_PAGE,
+                                            filteredActivities.length
                                         )}{" "}
                                         จาก{" "}
-                                        {filteredReviews.length.toLocaleString(
+                                        {filteredActivities.length.toLocaleString(
                                             "th-TH"
                                         )}{" "}
-                                        รายการ
+                                        กิจกรรม
                                     </span>
 
                                     <div>
                                         <button
                                             type="button"
-                                            disabled={page === 1}
+                                            disabled={
+                                                page === 1
+                                            }
                                             onClick={() =>
-                                                setPage((current) =>
-                                                    Math.max(1, current - 1)
+                                                setPage(
+                                                    (
+                                                        current
+                                                    ) =>
+                                                        Math.max(
+                                                            1,
+                                                            current -
+                                                                1
+                                                        )
                                                 )
                                             }
                                         >
@@ -704,9 +902,13 @@ export default function AdminReviews() {
                                         </button>
 
                                         {getPaginationNumbers().map(
-                                            (pageNumber, index) => {
+                                            (
+                                                pageNumber,
+                                                index
+                                            ) => {
                                                 if (
-                                                    typeof pageNumber !== "number"
+                                                    typeof pageNumber !==
+                                                    "number"
                                                 ) {
                                                     return (
                                                         <span
@@ -721,17 +923,24 @@ export default function AdminReviews() {
                                                 return (
                                                     <button
                                                         type="button"
-                                                        key={pageNumber}
+                                                        key={
+                                                            pageNumber
+                                                        }
                                                         className={
-                                                            page === pageNumber
+                                                            page ===
+                                                            pageNumber
                                                                 ? "active"
                                                                 : ""
                                                         }
                                                         onClick={() =>
-                                                            setPage(pageNumber)
+                                                            setPage(
+                                                                pageNumber
+                                                            )
                                                         }
                                                     >
-                                                        {pageNumber}
+                                                        {
+                                                            pageNumber
+                                                        }
                                                     </button>
                                                 );
                                             }
@@ -739,13 +948,20 @@ export default function AdminReviews() {
 
                                         <button
                                             type="button"
-                                            disabled={page === totalPages}
+                                            disabled={
+                                                page ===
+                                                totalPages
+                                            }
                                             onClick={() =>
-                                                setPage((current) =>
-                                                    Math.min(
-                                                        totalPages,
-                                                        current + 1
-                                                    )
+                                                setPage(
+                                                    (
+                                                        current
+                                                    ) =>
+                                                        Math.min(
+                                                            totalPages,
+                                                            current +
+                                                                1
+                                                        )
                                                 )
                                             }
                                         >
@@ -757,6 +973,200 @@ export default function AdminReviews() {
                     </section>
                 </div>
             </main>
+
+            {selectedActivity && (
+                <>
+                    <button
+                        type="button"
+                        className="admin-review-panel-backdrop"
+                        aria-label="ปิดรายละเอียดรีวิว"
+                        onClick={closePanel}
+                    />
+
+                    <aside className="admin-review-panel">
+                        <div className="admin-review-panel-header">
+                            <div>
+                                <span>
+                                    ตรวจสอบรีวิว
+                                </span>
+
+                                <h2>
+                                    {
+                                        selectedActivity.name
+                                    }
+                                </h2>
+                            </div>
+
+                            <button
+                                type="button"
+                                className="admin-review-panel-close"
+                                onClick={closePanel}
+                                aria-label="ปิด"
+                            >
+                                <FiX />
+                            </button>
+                        </div>
+
+                        <div className="admin-review-panel-body">
+                            <section className="admin-review-panel-activity">
+                                <div className="admin-review-panel-cover">
+                                    {selectedActivity.image ? (
+                                        <img
+                                            src={
+                                                selectedActivity.image
+                                            }
+                                            alt={
+                                                selectedActivity.name
+                                            }
+                                        />
+                                    ) : (
+                                        <FiCalendar />
+                                    )}
+                                </div>
+
+                                <div className="admin-review-panel-activity-info">
+                                    <h3>
+                                        {
+                                            selectedActivity.name
+                                        }
+                                    </h3>
+
+                                    <div>
+                                        <FiUser />
+
+                                        <span>
+                                            ผู้สร้างกิจกรรม{" "}
+                                            <strong>
+                                                {
+                                                    selectedActivity.hostName
+                                                }
+                                            </strong>
+                                        </span>
+                                    </div>
+
+                                    <div>
+                                        <FiStar />
+
+                                        <span>
+                                            คะแนนกิจกรรม{" "}
+                                            <strong>
+                                                {selectedActivity.averageRating.toFixed(
+                                                    1
+                                                )}{" "}
+                                                ⭐
+                                            </strong>
+                                        </span>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <div className="admin-review-panel-divider" />
+
+                            <section className="admin-review-panel-reviews">
+                                <div className="admin-review-panel-reviews-head">
+                                    <div>
+                                        <h3>
+                                            รีวิวกิจกรรม
+                                        </h3>
+
+                                        <p>
+                                            ความคิดเห็นและคะแนนที่ผู้เข้าร่วมมอบให้กิจกรรม
+                                        </p>
+                                    </div>
+
+                                    <span>
+                                        {
+                                            selectedActivity
+                                                .activityReviews
+                                                .length
+                                        }{" "}
+                                        รีวิว
+                                    </span>
+                                </div>
+
+                                {selectedActivity
+                                    .activityReviews
+                                    .length > 0 ? (
+                                    <div className="admin-review-panel-list">
+                                        {selectedActivity.activityReviews.map(
+                                            (
+                                                review,
+                                                index
+                                            ) => (
+                                                <ReviewCard
+                                                    key={
+                                                        review.id ||
+                                                        `activity-review-${index}`
+                                                    }
+                                                    review={
+                                                        review
+                                                    }
+                                                />
+                                            )
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="admin-review-panel-empty">
+                                        ยังไม่มีรีวิวกิจกรรม
+                                    </div>
+                                )}
+                            </section>
+
+                            <div className="admin-review-panel-divider" />
+
+                            <section className="admin-review-panel-reviews">
+                                <div className="admin-review-panel-reviews-head">
+                                    <div>
+                                        <h3>
+                                            รีวิวผู้สร้างกิจกรรม
+                                        </h3>
+
+                                        <p>
+                                            คะแนนและความคิดเห็นที่ผู้เข้าร่วมมอบให้ผู้สร้างกิจกรรม
+                                        </p>
+                                    </div>
+
+                                    <span>
+                                        {
+                                            selectedActivity
+                                                .hostReviews
+                                                .length
+                                        }{" "}
+                                        รีวิว
+                                    </span>
+                                </div>
+
+                                {selectedActivity
+                                    .hostReviews.length >
+                                0 ? (
+                                    <div className="admin-review-panel-list">
+                                        {selectedActivity.hostReviews.map(
+                                            (
+                                                review,
+                                                index
+                                            ) => (
+                                                <ReviewCard
+                                                    key={
+                                                        review.id ||
+                                                        `host-review-${index}`
+                                                    }
+                                                    review={
+                                                        review
+                                                    }
+                                                />
+                                            )
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="admin-review-panel-empty">
+                                        ยังไม่มีรีวิวผู้จัดกิจกรรม
+                                    </div>
+                                )}
+                            </section>
+                        </div>
+                    </aside>
+                </>
+            )}
         </div>
     );
 }
