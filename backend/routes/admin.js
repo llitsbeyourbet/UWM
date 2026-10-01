@@ -44,6 +44,8 @@ router.get("/dashboard", auth, isAdmin, async (req, res) => {
       totalCheckins,
       totalParticipants,
       totalReviews,
+      pendingActivityModerations,
+      pendingReviewModerations,
     ] = await Promise.all([
       User.count(),
       Activity.count(),
@@ -65,6 +67,39 @@ router.get("/dashboard", auth, isAdmin, async (req, res) => {
       ]).then(([activityReviews, hostReviews]) => {
         return activityReviews + hostReviews;
       }),
+
+      // จำนวน "กิจกรรม" ที่ AI ตรวจพบและยังรอตรวจสอบ
+      // 1 กิจกรรมอาจมีหลาย flag แต่ให้นับเป็น 1 รายการ
+      ModerationFlag.findAll({
+        where: {
+          contentType: "activity",
+          status: "pending",
+        },
+        attributes: ["activityId"],
+        raw: true,
+      }).then((rows) => {
+        return new Set(
+          rows.map((row) => Number(row.activityId))
+        ).size;
+      }),
+
+      // จำนวน "รีวิว" ที่ AI ตรวจพบและยังรอตรวจสอบ
+      // รีวิวเดียวอาจมีหลาย flag แต่ให้นับเป็น 1 รายการ
+      ModerationFlag.findAll({
+        where: {
+          contentType: "review",
+          status: "pending",
+        },
+        attributes: ["activityId", "userId"],
+        raw: true,
+      }).then((rows) => {
+        return new Set(
+          rows.map(
+            (row) =>
+              `${Number(row.activityId)}:${Number(row.userId)}`
+          )
+        ).size;
+      }),
     ]);
 
     return res.json({
@@ -77,10 +112,15 @@ router.get("/dashboard", auth, isAdmin, async (req, res) => {
       totalCheckins,
       totalParticipants,
       totalReviews,
+      pendingActivityModerations,
+      pendingReviewModerations,
     });
   } catch (error) {
     console.error("Admin dashboard error:", error);
-    return res.status(500).json({ message: "ไม่สามารถโหลด Dashboard ได้" });
+
+    return res.status(500).json({
+      message: "ไม่สามารถโหลด Dashboard ได้",
+    });
   }
 });
 
@@ -945,19 +985,19 @@ router.get("/reviews", auth, isAdmin, async (req, res) => {
     // โหลดข้อมูลกิจกรรมก่อน
     const activities = activityIds.length
       ? await Activity.findAll({
-          where: {
-            id: {
-              [Op.in]: activityIds,
-            },
+        where: {
+          id: {
+            [Op.in]: activityIds,
           },
-          attributes: [
-            "id",
-            "activityName",
-            "cover",
-            "createdBy",
-          ],
-          raw: true,
-        })
+        },
+        attributes: [
+          "id",
+          "activityName",
+          "cover",
+          "createdBy",
+        ],
+        raw: true,
+      })
       : [];
 
     // ดึง id ผู้สร้างกิจกรรม
@@ -981,34 +1021,34 @@ router.get("/reviews", auth, isAdmin, async (req, res) => {
     const [users, comments] = await Promise.all([
       userIds.length
         ? User.findAll({
-            where: {
-              id: {
-                [Op.in]: userIds,
-              },
+          where: {
+            id: {
+              [Op.in]: userIds,
             },
-            attributes: [
-              "id",
-              "name",
-              "username",
-              "profileImage",
-            ],
-            raw: true,
-          })
+          },
+          attributes: [
+            "id",
+            "name",
+            "username",
+            "profileImage",
+          ],
+          raw: true,
+        })
         : [],
 
       activityIds.length && reviewerIds.length
         ? Comment.findAll({
-            where: {
-              activityId: {
-                [Op.in]: activityIds,
-              },
-              userId: {
-                [Op.in]: reviewerIds,
-              },
+          where: {
+            activityId: {
+              [Op.in]: activityIds,
             },
-            order: [["createdAt", "DESC"]],
-            raw: true,
-          })
+            userId: {
+              [Op.in]: reviewerIds,
+            },
+          },
+          order: [["createdAt", "DESC"]],
+          raw: true,
+        })
         : [],
     ]);
 
@@ -1634,6 +1674,9 @@ const formatFlag = (flag, comment = null) => ({
   label: flag.label,
   categoryLabel: AI_CATEGORY_LABELS[flag.label] || flag.label,
   confidence: Number(flag.confidence || 0),
+  status: flag.status,
+  reviewedBy: flag.reviewedBy || null,
+  reviewedAt: flag.reviewedAt || null,
   comment: comment?.comment || "",
   commentType: comment?.commentType || null,
   isPublic: comment?.isPublic ?? null,
@@ -1645,7 +1688,7 @@ const formatFlag = (flag, comment = null) => ({
 router.get("/moderation/activities", auth, isAdmin, async (req, res) => {
   try {
     const flags = await ModerationFlag.findAll({
-      where: { contentType: "activity", status: "pending" },
+      where: { contentType: "activity" },
       order: [["createdAt", "DESC"]],
       raw: true,
     });
@@ -1664,10 +1707,10 @@ router.get("/moderation/activities", auth, isAdmin, async (req, res) => {
 
     const creators = creatorIds.length
       ? await User.findAll({
-          where: { id: { [Op.in]: creatorIds } },
-          attributes: ["id", "username", "name", "profileImage"],
-          raw: true,
-        })
+        where: { id: { [Op.in]: creatorIds } },
+        attributes: ["id", "username", "name", "profileImage"],
+        raw: true,
+      })
       : [];
 
     const creatorMap = new Map(creators.map(u => [Number(u.id), u]));
@@ -1706,12 +1749,16 @@ router.get("/moderation/activities/:activityId", auth, isAdmin, async (req, res)
     if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
 
     const flags = await ModerationFlag.findAll({
-      where: { contentType: "activity", activityId: activity.id, status: "pending" },
+      where: { contentType: "activity", activityId: activity.id, },
       order: [["createdAt", "DESC"]],
       raw: true,
     });
 
-    if (!flags.length) return res.status(404).json({ message: "ไม่พบรายการที่รอตรวจสอบ" });
+    if (!flags.length) {
+      return res.status(404).json({
+        message: "ไม่พบข้อมูลการตรวจสอบกิจกรรมนี้",
+      });
+    }
 
     const creator = await User.findByPk(activity.createdBy, {
       attributes: ["id", "username", "name", "profileImage"],
@@ -1794,7 +1841,7 @@ router.put("/moderation/activities/:activityId/suspend", auth, isAdmin, async (r
 router.get("/moderation/reviews", auth, isAdmin, async (req, res) => {
   try {
     const flags = await ModerationFlag.findAll({
-      where: { contentType: "review", status: "pending" },
+      where: { contentType: "review" },
       order: [["createdAt", "DESC"]],
       raw: true,
     });
@@ -1869,12 +1916,20 @@ router.get("/moderation/reviews/:activityId/:userId", auth, isAdmin, async (req,
     const userId = Number(req.params.userId);
 
     const flags = await ModerationFlag.findAll({
-      where: { contentType: "review", activityId, userId, status: "pending" },
+      where: {
+        contentType: "review",
+        activityId,
+        userId,
+      },
       order: [["createdAt", "DESC"]],
       raw: true,
     });
 
-    if (!flags.length) return res.status(404).json({ message: "ไม่พบรายการที่รอตรวจสอบ" });
+    if (!flags.length) {
+      return res.status(404).json({
+        message: "ไม่พบข้อมูลการตรวจสอบรีวิวนี้",
+      });
+    }
 
     const commentIds = [...new Set(flags.map(f => Number(f.commentId)).filter(Boolean))];
 

@@ -241,8 +241,10 @@ export default function AdminDashboard() {
     }
   }
 
-  const totalReviews = Number(stats.totalReviews) || 0;
-  const pending = Number(stats.pendingReports) || 0;
+  const pendingReviewModerations =
+    Number(stats.pendingReviewModerations) || 0;
+  const pendingActivityModerations =
+    Number(stats.pendingActivityModerations) || 0;
 
   const publishedActivities =
     Number(stats.publishedActivities) || 0;
@@ -330,15 +332,15 @@ export default function AdminDashboard() {
           <Stat
             color="orange"
             icon={<FiStar />}
-            title="รีวิวทั้งหมด"
-            value={totalReviews}
+            title="รีวิวที่รอตรวจสอบ"
+            value={pendingReviewModerations}
           />
 
           <Stat
             color="red"
             icon={<FiFlag />}
-            title="รายงานรอตรวจสอบ"
-            value={pending}
+            title="กิจกรรมที่รอตรวจสอบ"
+            value={pendingActivityModerations}
             danger
           />
         </section>

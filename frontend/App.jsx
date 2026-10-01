@@ -27,13 +27,14 @@ import ActivitySummaryDetail from "./pages/ActivitySummaryDetail";
 import AdminReports from "./pages/AdminReports";
 import AdminActivities from "./pages/AdminActivities";
 import AdminUsers from "./pages/AdminUsers";
-import AdminReviews from "./pages/AdminReviews";
 import AdminReportDetail from "./pages/AdminReportDetail";
 import CheckinHistory from "./pages/CheckinHistory";
 import JoinRequests from "./pages/JoinRequests";
 import AutoLogout from "./components/AutoLogout";
 import SessionManager from "./components/SessionManager";
 import AdminInappropriateWords from "./pages/AdminInappropriateWords";
+import AdminModerationActivities from "./pages/AdminModerationActivities";
+import AdminModerationReviews from "./pages/AdminModerationReviews";
 
 function HomeRedirect() {
   let user = null;
@@ -116,9 +117,11 @@ function App() {
                 <Route path="/admin/reports" element={<ProtectedRoute><AdminReports /></ProtectedRoute>} />
                 <Route path="/admin/activities" element={<ProtectedRoute><AdminActivities /></ProtectedRoute>} />
                 <Route path="/admin/users" element={<ProtectedRoute><AdminUsers /></ProtectedRoute>} />
-                <Route path="/admin/reviews" element={<ProtectedRoute><AdminReviews /></ProtectedRoute>} />
                 <Route path="/admin/reports/:id" element={<ProtectedRoute><AdminReportDetail /></ProtectedRoute>} />
+                <Route path="/admin/moderation/activities" element={<ProtectedRoute><AdminModerationActivities /></ProtectedRoute>} />
+                <Route path="/admin/moderation/reviews" element={<ProtectedRoute><AdminModerationReviews /></ProtectedRoute>} />
                 <Route path="/admin/inappropriate-words"element={<ProtectedRoute><AdminInappropriateWords /></ProtectedRoute>}/>
+                
                 <Route path="/checkin-history" element={<ProtectedRoute><CheckinHistory /></ProtectedRoute>} />
               </Routes>
             </div>
