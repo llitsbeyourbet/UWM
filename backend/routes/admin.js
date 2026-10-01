@@ -10,6 +10,7 @@ const JoinRequest = require("../models/JoinRequest");
 const ActivityReview = require("../models/ActivityReview");
 const HostReview = require("../models/HostReview");
 const Comment = require("../models/Comment");
+const ModerationFlag = require("../models/ModerationFlag");
 const notificationService = require("../services/notificationService");
 const InappropriateWord = require("../models/InappropriateWord");
 const { setCustomWords } = require("../services/moderationService");
@@ -1606,6 +1607,360 @@ router.get("/reports/:id", auth, isAdmin, async (req, res) => {
       message: "ไม่สามารถโหลดรายละเอียดรายงานได้",
       error: error.message,
     });
+  }
+});
+
+/* ========================= AI MODERATION ========================= */
+
+const AI_CATEGORY_LABELS = {
+  profanity: "คำหยาบ",
+  insult: "คำดูหมิ่นหรือด่าทอ",
+  sexual: "เนื้อหาทางเพศที่ไม่เหมาะสม",
+  spam: "สแปมหรือเนื้อหาเสี่ยง",
+};
+
+const AI_FIELD_LABELS = {
+  activityName: "ชื่อกิจกรรม",
+  detail: "รายละเอียดกิจกรรม",
+  activityComment: "ความคิดเห็นต่อกิจกรรม",
+  hostComment: "ความคิดเห็นต่อผู้จัดกิจกรรม",
+};
+
+const formatFlag = (flag, comment = null) => ({
+  id: flag.id,
+  commentId: flag.commentId,
+  field: flag.field,
+  fieldLabel: AI_FIELD_LABELS[flag.field] || flag.field,
+  label: flag.label,
+  categoryLabel: AI_CATEGORY_LABELS[flag.label] || flag.label,
+  confidence: Number(flag.confidence || 0),
+  comment: comment?.comment || "",
+  commentType: comment?.commentType || null,
+  isPublic: comment?.isPublic ?? null,
+  createdAt: flag.createdAt,
+});
+
+/* ---------- ACTIVITIES ---------- */
+
+router.get("/moderation/activities", auth, isAdmin, async (req, res) => {
+  try {
+    const flags = await ModerationFlag.findAll({
+      where: { contentType: "activity", status: "pending" },
+      order: [["createdAt", "DESC"]],
+      raw: true,
+    });
+
+    if (!flags.length) return res.json([]);
+
+    const activityIds = [...new Set(flags.map(f => Number(f.activityId)).filter(Boolean))];
+
+    const activities = await Activity.findAll({
+      where: { id: { [Op.in]: activityIds } },
+      paranoid: false,
+      raw: true,
+    });
+
+    const creatorIds = [...new Set(activities.map(a => Number(a.createdBy)).filter(Boolean))];
+
+    const creators = creatorIds.length
+      ? await User.findAll({
+          where: { id: { [Op.in]: creatorIds } },
+          attributes: ["id", "username", "name", "profileImage"],
+          raw: true,
+        })
+      : [];
+
+    const creatorMap = new Map(creators.map(u => [Number(u.id), u]));
+    const flagMap = new Map();
+
+    flags.forEach(flag => {
+      const id = Number(flag.activityId);
+      if (!flagMap.has(id)) flagMap.set(id, []);
+      flagMap.get(id).push(formatFlag(flag));
+    });
+
+    const result = activities.map(activity => {
+      const creator = creatorMap.get(Number(activity.createdBy));
+      const moderationFlags = flagMap.get(Number(activity.id)) || [];
+
+      return {
+        ...activity,
+        creatorName: creator?.name || creator?.username || "ไม่ระบุผู้สร้าง",
+        creatorUsername: creator?.username || null,
+        creatorProfileImage: creator?.profileImage || null,
+        moderationFlags,
+        flagCount: moderationFlags.length,
+      };
+    });
+
+    return res.json(result);
+  } catch (error) {
+    console.error("Get activity moderation error:", error);
+    return res.status(500).json({ message: "ไม่สามารถโหลดกิจกรรมที่ต้องตรวจสอบได้" });
+  }
+});
+
+router.get("/moderation/activities/:activityId", auth, isAdmin, async (req, res) => {
+  try {
+    const activity = await Activity.findByPk(req.params.activityId, { paranoid: false });
+    if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
+
+    const flags = await ModerationFlag.findAll({
+      where: { contentType: "activity", activityId: activity.id, status: "pending" },
+      order: [["createdAt", "DESC"]],
+      raw: true,
+    });
+
+    if (!flags.length) return res.status(404).json({ message: "ไม่พบรายการที่รอตรวจสอบ" });
+
+    const creator = await User.findByPk(activity.createdBy, {
+      attributes: ["id", "username", "name", "profileImage"],
+      raw: true,
+    });
+
+    return res.json({
+      ...activity.toJSON(),
+      creatorName: creator?.name || creator?.username || "ไม่ระบุผู้สร้าง",
+      creatorUsername: creator?.username || null,
+      creatorProfileImage: creator?.profileImage || null,
+      moderationFlags: flags.map(flag => formatFlag(flag)),
+    });
+  } catch (error) {
+    console.error("Get activity moderation detail error:", error);
+    return res.status(500).json({ message: "ไม่สามารถโหลดรายละเอียดกิจกรรมได้" });
+  }
+});
+
+router.put("/moderation/activities/:activityId/reviewed", auth, isAdmin, async (req, res) => {
+  try {
+    const [updated] = await ModerationFlag.update(
+      { status: "reviewed", reviewedBy: req.userId, reviewedAt: new Date() },
+      { where: { contentType: "activity", activityId: req.params.activityId, status: "pending" } }
+    );
+
+    if (!updated) return res.status(404).json({ message: "ไม่พบรายการที่รอตรวจสอบ" });
+    return res.json({ message: "ตรวจสอบกิจกรรมเรียบร้อยแล้ว" });
+  } catch (error) {
+    console.error("Review activity moderation error:", error);
+    return res.status(500).json({ message: "ไม่สามารถบันทึกผลการตรวจสอบได้" });
+  }
+});
+
+router.put("/moderation/activities/:activityId/suspend", auth, isAdmin, async (req, res) => {
+  try {
+    const activity = await Activity.findByPk(req.params.activityId, { paranoid: false });
+    if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
+
+    const pending = await ModerationFlag.count({
+      where: { contentType: "activity", activityId: activity.id, status: "pending" },
+    });
+
+    if (!pending) return res.status(404).json({ message: "ไม่พบรายการที่รอตรวจสอบ" });
+
+    const reviewedAt = new Date();
+
+    await activity.update({ status: "suspended" });
+    await ModerationFlag.update(
+      { status: "actioned", reviewedBy: req.userId, reviewedAt },
+      { where: { contentType: "activity", activityId: activity.id, status: "pending" } }
+    );
+
+    try {
+      await notificationService.createNotification(
+        activity.createdBy,
+        "activity_suspended",
+        activity.id,
+        activity.activityName,
+        req.userId,
+        "ผู้ดูแลระบบ",
+        {
+          deduplicate: true,
+          adminNote: "กิจกรรมถูกระงับหลังจากผู้ดูแลระบบตรวจสอบข้อความที่ AI ตรวจพบ",
+        }
+      );
+    } catch (error) {
+      console.error("Moderation suspension notification error:", error);
+    }
+
+    return res.json({ message: "ระงับกิจกรรมเรียบร้อยแล้ว" });
+  } catch (error) {
+    console.error("Suspend moderated activity error:", error);
+    return res.status(500).json({ message: "ไม่สามารถระงับกิจกรรมได้" });
+  }
+});
+
+/* ---------- REVIEWS ---------- */
+
+router.get("/moderation/reviews", auth, isAdmin, async (req, res) => {
+  try {
+    const flags = await ModerationFlag.findAll({
+      where: { contentType: "review", status: "pending" },
+      order: [["createdAt", "DESC"]],
+      raw: true,
+    });
+
+    if (!flags.length) return res.json([]);
+
+    const activityIds = [...new Set(flags.map(f => Number(f.activityId)).filter(Boolean))];
+    const userIds = [...new Set(flags.map(f => Number(f.userId)).filter(Boolean))];
+    const commentIds = [...new Set(flags.map(f => Number(f.commentId)).filter(Boolean))];
+
+    const [activities, users, comments] = await Promise.all([
+      Activity.findAll({
+        where: { id: { [Op.in]: activityIds } },
+        paranoid: false,
+        attributes: ["id", "activityName", "cover"],
+        raw: true,
+      }),
+      User.findAll({
+        where: { id: { [Op.in]: userIds } },
+        attributes: ["id", "username", "name", "profileImage"],
+        raw: true,
+      }),
+      Comment.findAll({ where: { id: { [Op.in]: commentIds } }, raw: true }),
+    ]);
+
+    const activityMap = new Map(activities.map(a => [Number(a.id), a]));
+    const userMap = new Map(users.map(u => [Number(u.id), u]));
+    const commentMap = new Map(comments.map(c => [Number(c.id), c]));
+    const grouped = new Map();
+
+    flags.forEach(flag => {
+      const key = `${flag.activityId}:${flag.userId}`;
+
+      if (!grouped.has(key)) {
+        grouped.set(key, {
+          activityId: Number(flag.activityId),
+          userId: Number(flag.userId),
+          moderationFlags: [],
+        });
+      }
+
+      grouped.get(key).moderationFlags.push(
+        formatFlag(flag, commentMap.get(Number(flag.commentId)))
+      );
+    });
+
+    const result = [...grouped.values()].map(item => {
+      const activity = activityMap.get(item.activityId);
+      const reviewer = userMap.get(item.userId);
+
+      return {
+        ...item,
+        activityName: activity?.activityName || "ไม่ระบุชื่อกิจกรรม",
+        activityCover: activity?.cover || null,
+        reviewerName: reviewer?.name || reviewer?.username || "ผู้ใช้งาน",
+        reviewerUsername: reviewer?.username || null,
+        reviewerProfileImage: reviewer?.profileImage || null,
+        flagCount: item.moderationFlags.length,
+      };
+    });
+
+    return res.json(result);
+  } catch (error) {
+    console.error("Get review moderation error:", error);
+    return res.status(500).json({ message: "ไม่สามารถโหลดรีวิวที่ต้องตรวจสอบได้" });
+  }
+});
+
+router.get("/moderation/reviews/:activityId/:userId", auth, isAdmin, async (req, res) => {
+  try {
+    const activityId = Number(req.params.activityId);
+    const userId = Number(req.params.userId);
+
+    const flags = await ModerationFlag.findAll({
+      where: { contentType: "review", activityId, userId, status: "pending" },
+      order: [["createdAt", "DESC"]],
+      raw: true,
+    });
+
+    if (!flags.length) return res.status(404).json({ message: "ไม่พบรายการที่รอตรวจสอบ" });
+
+    const commentIds = [...new Set(flags.map(f => Number(f.commentId)).filter(Boolean))];
+
+    const [activity, reviewer, comments, activityReview, hostReview] = await Promise.all([
+      Activity.findByPk(activityId, {
+        paranoid: false,
+        attributes: ["id", "activityName", "cover"],
+        raw: true,
+      }),
+      User.findByPk(userId, {
+        attributes: ["id", "username", "name", "profileImage"],
+        raw: true,
+      }),
+      Comment.findAll({ where: { id: { [Op.in]: commentIds } }, raw: true }),
+      ActivityReview.findOne({ where: { activityId, reviewerId: userId }, raw: true }),
+      HostReview.findOne({ where: { activityId, reviewerId: userId }, raw: true }),
+    ]);
+
+    const commentMap = new Map(comments.map(c => [Number(c.id), c]));
+
+    return res.json({
+      activityId,
+      activityName: activity?.activityName || "ไม่ระบุชื่อกิจกรรม",
+      activityCover: activity?.cover || null,
+      reviewerId: userId,
+      reviewerName: reviewer?.name || reviewer?.username || "ผู้ใช้งาน",
+      reviewerUsername: reviewer?.username || null,
+      reviewerProfileImage: reviewer?.profileImage || null,
+      activityRating: activityReview?.rating != null ? Number(activityReview.rating) : null,
+      hostRating: hostReview?.rating != null ? Number(hostReview.rating) : null,
+      moderationFlags: flags.map(flag =>
+        formatFlag(flag, commentMap.get(Number(flag.commentId)))
+      ),
+    });
+  } catch (error) {
+    console.error("Get review moderation detail error:", error);
+    return res.status(500).json({ message: "ไม่สามารถโหลดรายละเอียดรีวิวได้" });
+  }
+});
+
+router.put("/moderation/reviews/:activityId/:userId/reviewed", auth, isAdmin, async (req, res) => {
+  try {
+    const { activityId, userId } = req.params;
+
+    const [updated] = await ModerationFlag.update(
+      { status: "reviewed", reviewedBy: req.userId, reviewedAt: new Date() },
+      { where: { contentType: "review", activityId, userId, status: "pending" } }
+    );
+
+    if (!updated) return res.status(404).json({ message: "ไม่พบรายการที่รอตรวจสอบ" });
+    return res.json({ message: "ตรวจสอบรีวิวเรียบร้อยแล้ว" });
+  } catch (error) {
+    console.error("Review moderation error:", error);
+    return res.status(500).json({ message: "ไม่สามารถบันทึกผลการตรวจสอบได้" });
+  }
+});
+
+router.put("/moderation/reviews/:activityId/:userId/hide", auth, isAdmin, async (req, res) => {
+  try {
+    const { activityId, userId } = req.params;
+
+    const flags = await ModerationFlag.findAll({
+      where: { contentType: "review", activityId, userId, status: "pending" },
+      raw: true,
+    });
+
+    if (!flags.length) return res.status(404).json({ message: "ไม่พบรายการที่รอตรวจสอบ" });
+
+    const commentIds = [...new Set(flags.map(f => Number(f.commentId)).filter(Boolean))];
+
+    if (commentIds.length) {
+      await Comment.update(
+        { isPublic: false },
+        { where: { id: { [Op.in]: commentIds } } }
+      );
+    }
+
+    await ModerationFlag.update(
+      { status: "actioned", reviewedBy: req.userId, reviewedAt: new Date() },
+      { where: { contentType: "review", activityId, userId, status: "pending" } }
+    );
+
+    return res.json({ message: "ซ่อนข้อความรีวิวที่ AI ตรวจพบเรียบร้อยแล้ว" });
+  } catch (error) {
+    console.error("Hide moderated review error:", error);
+    return res.status(500).json({ message: "ไม่สามารถซ่อนข้อความรีวิวได้" });
   }
 });
 

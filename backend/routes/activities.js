@@ -16,6 +16,8 @@ const Activity = require("../models/Activity");
 const JoinRequest = require("../models/JoinRequest");
 const User = require("../models/User");
 const ActivityReview = require("../models/ActivityReview");
+const ModerationFlag = require("../models/ModerationFlag");
+const notificationService = require("../services/notificationService");
 
 const {
   getModerationMessage,
@@ -443,14 +445,14 @@ router.get("/summary/my", auth, async (req, res) => {
 
     const existingUsers = userIds.length
       ? await User.findAll({
-          where: {
-            id: {
-              [Op.in]: userIds,
-            },
+        where: {
+          id: {
+            [Op.in]: userIds,
           },
-          attributes: ["id"],
-          raw: true,
-        })
+        },
+        attributes: ["id"],
+        raw: true,
+      })
       : [];
 
     const existingUserIds = new Set(
@@ -478,11 +480,11 @@ router.get("/summary/my", auth, async (req, res) => {
 
       const avgRating = activityReviews.length
         ? (
-            activityReviews.reduce(
-              (sum, review) => sum + Number(review.rating),
-              0
-            ) / activityReviews.length
-          ).toFixed(1)
+          activityReviews.reduce(
+            (sum, review) => sum + Number(review.rating),
+            0
+          ) / activityReviews.length
+        ).toFixed(1)
         : null;
 
       return {
@@ -714,12 +716,23 @@ router.post("/", auth, async (req, res) => {
       location,
     });
 
-    if (moderation.decision === "block") {
+    // Rule-based ตรวจพบ → ไม่อนุญาตให้สร้างกิจกรรมเหมือนเดิม
+    if (
+      moderation.decision === "block" &&
+      moderation.source === "rule"
+    ) {
       return res.status(422).json({
         message: getModerationMessage(moderation),
         ...buildModerationResponse(moderation),
       });
     }
+
+    // AI ตรวจพบ → อนุญาตให้สร้าง แต่เก็บไว้ Flag ให้ Admin ตรวจภายหลัง
+    const aiModerationFlags =
+      moderation.decision === "block" &&
+        moderation.source === "ai"
+        ? moderation.aiFlags || []
+        : [];
 
     // ตรวจสอบเวลาคาบเกี่ยว (Conflict Check)
     if (!req.body.confirmConflict) {
@@ -801,6 +814,48 @@ router.post("/", auth, async (req, res) => {
       checkinEnd: checkinEnd || null,
       createdBy: req.userId,
     });
+
+    for (const flag of aiModerationFlags) {
+      await ModerationFlag.create({
+        contentType: "activity",
+        activityId: activity.id,
+        commentId: null,
+        userId: req.userId,
+        field: flag.field,
+        label: flag.label,
+        confidence: flag.confidence,
+        status: "pending",
+      });
+    }
+    if (aiModerationFlags.length > 0) {
+      try {
+        const admins = await User.findAll({
+          where: { role: "admin" },
+          attributes: ["id"],
+        });
+
+        await Promise.all(
+          admins.map((admin) =>
+            notificationService.createNotification(
+              admin.id,
+              "moderation_activity",
+              activity.id,
+              activity.activityName,
+              req.userId,
+              null,
+              {
+                adminNote: `AI ตรวจพบข้อความที่อาจไม่เหมาะสม ${aiModerationFlags.length} จุด`,
+              }
+            )
+          )
+        );
+      } catch (notificationError) {
+        console.error(
+          "Activity moderation notification error:",
+          notificationError
+        );
+      }
+    }
 
     return res
       .status(201)
@@ -1049,6 +1104,9 @@ router.put("/:id", auth, async (req, res) => {
           "เวลาเริ่มและสิ้นสุดการเช็คอินต้องไม่ตรงกัน",
       });
     }
+    let moderationWasChecked = false;
+    let aiModerationFlags = [];
+
     if (
       updates.activityName !== undefined ||
       updates.detail !== undefined ||
@@ -1070,14 +1128,29 @@ router.put("/:id", auth, async (req, res) => {
             ? updates.location
             : activity.location,
       });
+      moderationWasChecked = true;
 
-      if (moderation.decision === "block") {
+      // Rule-based ตรวจพบ → ไม่อนุญาตให้แก้ไข
+      if (
+        moderation.decision === "block" &&
+        moderation.source === "rule"
+      ) {
         return res.status(422).json({
           message: getModerationMessage(moderation),
           ...buildModerationResponse(moderation),
         });
       }
+
+      // AI ตรวจพบ → อนุญาตให้แก้ไข แต่ Flag ให้ Admin ตรวจ
+      if (
+        moderation.decision === "block" &&
+        moderation.source === "ai"
+      ) {
+        aiModerationFlags = moderation.aiFlags || [];
+      }
     }
+
+
 
     // ตรวจสอบเวลาคาบเกี่ยว (Conflict Check)
     if (!req.body.confirmConflict) {
@@ -1155,6 +1228,59 @@ router.put("/:id", auth, async (req, res) => {
     }
 
     await activity.update(updates);
+    if (moderationWasChecked) {
+      // ล้าง pending flags เดิม เพราะข้อมูลกิจกรรมถูกแก้แล้ว
+      await ModerationFlag.destroy({
+        where: {
+          contentType: "activity",
+          activityId: activity.id,
+          status: "pending",
+        },
+      });
+
+      // สร้าง flags ใหม่จากผล AI ล่าสุดทุก field ที่ตรวจพบ
+      for (const flag of aiModerationFlags) {
+        await ModerationFlag.create({
+          contentType: "activity",
+          activityId: activity.id,
+          commentId: null,
+          userId: req.userId,
+          field: flag.field,
+          label: flag.label,
+          confidence: flag.confidence,
+          status: "pending",
+        });
+      }
+    }
+    if (aiModerationFlags.length > 0) {
+      try {
+        const admins = await User.findAll({
+          where: { role: "admin" },
+          attributes: ["id"],
+        });
+
+        await Promise.all(
+          admins.map((admin) =>
+            notificationService.createNotification(
+              admin.id,
+              "moderation_activity",
+              activity.id,
+              activity.activityName,
+              req.userId,
+              null,
+              {
+                adminNote: `AI ตรวจพบข้อความที่อาจไม่เหมาะสม ${aiModerationFlags.length} จุด`,
+              }
+            )
+          )
+        );
+      } catch (notificationError) {
+        console.error(
+          "Activity moderation notification error:",
+          notificationError
+        );
+      }
+    }
 
     return res.json(activity);
   } catch (err) {

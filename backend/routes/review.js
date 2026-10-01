@@ -9,6 +9,7 @@ const Comment = require("../models/Comment");
 const JoinRequest = require("../models/JoinRequest");
 const Activity = require("../models/Activity");
 const User = require("../models/User");
+const ModerationFlag = require("../models/ModerationFlag");
 const notificationService = require("../services/notificationService");
 const { isActivityEnded } = require("../utils/activityTime");
 const { getModerationMessage, buildModerationResponse, } = require("../services/moderationService");
@@ -181,7 +182,11 @@ router.post("/:activityId", auth, async (req, res) => {
       hostComment,
     });
 
-    if (moderation.decision === "block") {
+    // Rule-based ตรวจพบ → ไม่อนุญาตให้ส่งรีวิวเหมือนเดิม
+    if (
+      moderation.decision === "block" &&
+      moderation.source === "rule"
+    ) {
       await transaction.rollback();
 
       return res.status(422).json({
@@ -189,6 +194,13 @@ router.post("/:activityId", auth, async (req, res) => {
         ...buildModerationResponse(moderation),
       });
     }
+
+    // AI ตรวจพบ → อนุญาตให้ส่งรีวิว แต่เก็บไว้ Flag ให้ Admin ตรวจ
+    const aiModerationFlags =
+      moderation.decision === "block" &&
+        moderation.source === "ai"
+        ? moderation.aiFlags || []
+        : [];
 
     const existingReview = await ActivityReview.findOne({
       where: { activityId, reviewerId: req.userId },
@@ -220,7 +232,7 @@ router.post("/:activityId", auth, async (req, res) => {
       { transaction }
     );
 
-    await Comment.create(
+    const activityCommentRecord = await Comment.create(
       {
         activityId,
         userId: req.userId,
@@ -230,7 +242,7 @@ router.post("/:activityId", auth, async (req, res) => {
       { transaction }
     );
 
-    await Comment.create(
+    const hostCommentRecord = await Comment.create(
       {
         activityId,
         userId: req.userId,
@@ -240,7 +252,58 @@ router.post("/:activityId", auth, async (req, res) => {
       { transaction }
     );
 
+    for (const flag of aiModerationFlags) {
+      const flaggedCommentId =
+        flag.field === "activityComment"
+          ? activityCommentRecord.id
+          : hostCommentRecord.id;
+
+      await ModerationFlag.create(
+        {
+          contentType: "review",
+          activityId,
+          commentId: flaggedCommentId,
+          userId: req.userId,
+          field: flag.field,
+          label: flag.label,
+          confidence: flag.confidence,
+          status: "pending",
+        },
+        { transaction }
+      );
+    }
+
     await transaction.commit();
+    if (aiModerationFlags.length > 0) {
+      try {
+        const admins = await User.findAll({
+          where: { role: "admin" },
+          attributes: ["id"],
+        });
+
+        await Promise.all(
+          admins.map((admin) =>
+            notificationService.createNotification(
+              admin.id,
+              "moderation_review",
+              activity.id,
+              activity.activityName,
+              req.userId,
+              null,
+              {
+                adminNote: `AI ตรวจพบข้อความรีวิวที่อาจไม่เหมาะสม ${aiModerationFlags.length} จุด`,
+                deduplicate: true,
+              }
+            )
+          )
+        );
+      } catch (notificationError) {
+        console.error(
+          "Review moderation notification error:",
+          notificationError
+        );
+      }
+    }
 
     // notification ไม่ควรทำให้ข้อมูลรีวิวหลัก rollback หาก realtime/email ส่วนนี้ล้ม
     try {

@@ -16,12 +16,9 @@ module.exports = [
 
 
   // ดูหมิ่น / ด่าทอที่มีความชัดเจนสูง
-  // ดูหมิ่น / ด่าทอที่มีความชัดเจนสูง
-
   { word: "ปัญญาอ่อน", category: "insult", weight: 55, match: "contains" },
   { word: "ไอ้เหี้ย", category: "insult", weight: 65, match: "contains" },
   { word: "อีเหี้ย", category: "insult", weight: 65, match: "contains" },
-
   { word: "มึงโง่", category: "insult", weight: 55, match: "contains" },
   { word: "แกโง่", category: "insult", weight: 55, match: "contains" },
   { word: "ไอ้โง่", category: "insult", weight: 55, match: "contains" },
@@ -53,13 +50,11 @@ module.exports = [
   { word: "อยากมีอะไรกับ", category: "sexual", weight: 70, match: "contains" },
   { word: "มีอะไรกันไหม", category: "sexual", weight: 70, match: "contains" },
   { word: "มีอะไรกันมั้ย", category: "sexual", weight: 70, match: "contains" },
-
   { word: "อยากโดนเอา", category: "sexual", weight: 70, match: "contains" },
   { word: "มาเอากัน", category: "sexual", weight: 65, match: "contains" },
   { word: "เอากันไหม", category: "sexual", weight: 65, match: "contains" },
   { word: "เอากันมั้ย", category: "sexual", weight: 65, match: "contains" },
   { word: "อยากเอาเธอ", category: "sexual", weight: 70, match: "contains" },
-
   { word: "จับหน้าอก", category: "sexual", weight: 75, match: "contains" },
   { word: "ดูหน้าอก", category: "sexual", weight: 75, match: "contains" },
   { word: "เห็นหน้าอก", category: "sexual", weight: 75, match: "contains" },

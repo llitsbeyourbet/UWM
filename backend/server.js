@@ -65,6 +65,7 @@ require("./models/HostReview");
 require("./models/Comment");
 require("./models/OTP");
 require("./models/Checkin")
+require("./models/ModerationFlag");
 require("./jobs/reminderJob");
 
 app.use("/api/auth", require("./routes/auth"));
