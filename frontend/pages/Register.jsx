@@ -17,6 +17,7 @@ function Register() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [registrationToken, setRegistrationToken] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const [timer, setTimer] = useState(600);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [showPrivacy, setShowPrivacy] = useState(false);
