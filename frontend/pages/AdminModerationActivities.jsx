@@ -18,6 +18,7 @@ import "../styles/AdminDashboard.css";
 import "../styles/AdminModeration.css";
 import AdminSidebar from "../components/AdminSidebar";
 import AdminProfile from "../components/AdminProfile";
+import AlertModal from "../components/AlertModal";
 
 const ITEMS_PER_PAGE = 8;
 
@@ -74,6 +75,17 @@ export default function AdminModerationActivities() {
     const [selectedActivity, setSelectedActivity] = useState(null);
     const [detailLoading, setDetailLoading] = useState(false);
     const [actionLoading, setActionLoading] = useState(false);
+    const [alertConfig, setAlertConfig] = useState(null);
+
+    const showAlert = (type, title, message) => {
+        setAlertConfig({
+            type,
+            title,
+            message,
+            confirmText: "ตกลง",
+            onConfirm: () => setAlertConfig(null),
+        });
+    };
 
     const getToken = () => sessionStorage.getItem("token");
 
@@ -240,7 +252,9 @@ export default function AdminModerationActivities() {
             setSelectedActivity(data);
         } catch (err) {
             console.error(err);
-            window.alert(
+            showAlert(
+                "error",
+                "โหลดข้อมูลไม่สำเร็จ",
                 err.message || "ไม่สามารถโหลดรายละเอียดกิจกรรมได้"
             );
         } finally {
@@ -248,14 +262,25 @@ export default function AdminModerationActivities() {
         }
     };
 
-    const handleReviewed = async () => {
+    const confirmReviewed = () => {
         if (!selectedActivity || actionLoading) return;
 
-        const confirmed = window.confirm(
-            "ยืนยันว่าตรวจสอบกิจกรรมนี้แล้วและไม่ต้องดำเนินการเพิ่มเติม?"
-        );
+        setAlertConfig({
+            type: "confirm",
+            title: "ยืนยันการตรวจสอบ",
+            message: "ยืนยันว่าตรวจสอบกิจกรรมนี้แล้วและไม่ต้องดำเนินการเพิ่มเติม?",
+            confirmText: "ยืนยัน",
+            cancelText: "ยกเลิก",
+            onCancel: () => setAlertConfig(null),
+            onConfirm: () => {
+                setAlertConfig(null);
+                handleReviewed();
+            },
+        });
+    };
 
-        if (!confirmed) return;
+    const handleReviewed = async () => {
+        if (!selectedActivity || actionLoading) return;
 
         try {
             setActionLoading(true);
@@ -281,9 +306,17 @@ export default function AdminModerationActivities() {
 
             setSelectedActivity(null);
             await loadActivities();
+
+            showAlert(
+                "success",
+                "ตรวจสอบเรียบร้อยแล้ว",
+                "บันทึกผลการตรวจสอบกิจกรรมเรียบร้อยแล้ว"
+            );
         } catch (err) {
             console.error(err);
-            window.alert(
+            showAlert(
+                "error",
+                "ดำเนินการไม่สำเร็จ",
                 err.message || "ไม่สามารถบันทึกผลการตรวจสอบได้"
             );
         } finally {
@@ -291,14 +324,25 @@ export default function AdminModerationActivities() {
         }
     };
 
-    const handleSuspend = async () => {
+    const confirmSuspend = () => {
         if (!selectedActivity || actionLoading) return;
 
-        const confirmed = window.confirm(
-            `ยืนยันการระงับกิจกรรม "${selectedActivity.activityName}" ?`
-        );
+        setAlertConfig({
+            type: "confirm",
+            title: "ยืนยันการระงับกิจกรรม",
+            message: `ต้องการระงับกิจกรรม "${selectedActivity.activityName}" หรือไม่?`,
+            confirmText: "ระงับกิจกรรม",
+            cancelText: "ยกเลิก",
+            onCancel: () => setAlertConfig(null),
+            onConfirm: () => {
+                setAlertConfig(null);
+                handleSuspend();
+            },
+        });
+    };
 
-        if (!confirmed) return;
+    const handleSuspend = async () => {
+        if (!selectedActivity || actionLoading) return;
 
         try {
             setActionLoading(true);
@@ -324,9 +368,17 @@ export default function AdminModerationActivities() {
 
             setSelectedActivity(null);
             await loadActivities();
+
+            showAlert(
+                "success",
+                "ระงับกิจกรรมเรียบร้อยแล้ว",
+                "กิจกรรมถูกระงับเรียบร้อยแล้ว"
+            );
         } catch (err) {
             console.error(err);
-            window.alert(
+            showAlert(
+                "error",
+                "ระงับกิจกรรมไม่สำเร็จ",
                 err.message || "ไม่สามารถระงับกิจกรรมได้"
             );
         } finally {
@@ -709,7 +761,7 @@ export default function AdminModerationActivities() {
                                     <div>
                                         <h3>ผลการตรวจสอบจาก AI</h3>
                                         <p>
-                                            พบข้อความที่ AI เคยตรวจพบ{" "}
+                                            AI ตรวจพบเนื้อหาที่อาจไม่เหมาะสม{" "}
                                             {selectedActivity.moderationFlags
                                                 ?.length || 0}{" "}
                                             รายการ
@@ -774,7 +826,7 @@ export default function AdminModerationActivities() {
                                     <button
                                         type="button"
                                         className="admin-moderation-action reviewed"
-                                        onClick={handleReviewed}
+                                        onClick={confirmReviewed}
                                         disabled={actionLoading}
                                     >
                                         <FiCheck />
@@ -784,7 +836,7 @@ export default function AdminModerationActivities() {
                                     <button
                                         type="button"
                                         className="admin-moderation-action danger"
-                                        onClick={handleSuspend}
+                                        onClick={confirmSuspend}
                                         disabled={actionLoading}
                                     >
                                         <FiXCircle />
@@ -808,6 +860,12 @@ export default function AdminModerationActivities() {
                         </div>
                     </aside>
                 </>
+            )}
+            {alertConfig && (
+                <AlertModal
+                    config={alertConfig}
+                    onClose={() => setAlertConfig(null)}
+                />
             )}
         </div>
     );

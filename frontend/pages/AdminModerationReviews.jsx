@@ -18,6 +18,7 @@ import "../styles/AdminDashboard.css";
 import "../styles/AdminModeration.css";
 import AdminSidebar from "../components/AdminSidebar";
 import AdminProfile from "../components/AdminProfile";
+import AlertModal from "../components/AlertModal";
 
 const ITEMS_PER_PAGE = 8;
 
@@ -71,6 +72,17 @@ export default function AdminModerationReviews() {
     const [selectedReview, setSelectedReview] = useState(null);
     const [detailLoading, setDetailLoading] = useState(false);
     const [actionLoading, setActionLoading] = useState(false);
+    const [alertConfig, setAlertConfig] = useState(null);
+
+    const showAlert = (type, title, message) => {
+        setAlertConfig({
+            type,
+            title,
+            message,
+            confirmText: "ตกลง",
+            onConfirm: () => setAlertConfig(null),
+        });
+    };
 
     const getToken = () => sessionStorage.getItem("token");
 
@@ -202,33 +214,52 @@ export default function AdminModerationReviews() {
             const response = await fetch(
                 `${API_URL}/api/admin/moderation/reviews/${activityId}/${userId}`,
                 {
-                    headers: { Authorization: `Bearer ${getToken()}` },
+                    headers: {
+                        Authorization: `Bearer ${getToken()}`,
+                    },
                 }
             );
 
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.message || "โหลดรายละเอียดรีวิวไม่สำเร็จ");
+                throw new Error(
+                    data.message || "โหลดรายละเอียดรีวิวไม่สำเร็จ"
+                );
             }
 
             setSelectedReview(data);
         } catch (err) {
             console.error(err);
-            window.alert(err.message || "ไม่สามารถโหลดรายละเอียดรีวิวได้");
+            showAlert(
+                "error",
+                "โหลดข้อมูลไม่สำเร็จ",
+                err.message || "ไม่สามารถโหลดรายละเอียดรีวิวได้"
+            );
         } finally {
             setDetailLoading(false);
         }
     };
 
-    const handleReviewed = async () => {
+    const confirmReviewed = () => {
         if (!selectedReview || actionLoading) return;
 
-        const confirmed = window.confirm(
-            "ยืนยันว่าตรวจสอบรีวิวนี้แล้วและไม่ต้องดำเนินการเพิ่มเติม?"
-        );
+        setAlertConfig({
+            type: "confirm",
+            title: "ยืนยันการตรวจสอบ",
+            message: "ยืนยันว่าตรวจสอบรีวิวนี้แล้วและไม่ต้องดำเนินการเพิ่มเติม?",
+            confirmText: "ยืนยัน",
+            cancelText: "ยกเลิก",
+            onCancel: () => setAlertConfig(null),
+            onConfirm: () => {
+                setAlertConfig(null);
+                handleReviewed();
+            },
+        });
+    };
 
-        if (!confirmed) return;
+    const handleReviewed = async () => {
+        if (!selectedReview || actionLoading) return;
 
         try {
             setActionLoading(true);
@@ -247,27 +278,50 @@ export default function AdminModerationReviews() {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.message || "บันทึกผลการตรวจสอบไม่สำเร็จ");
+                throw new Error(
+                    data.message || "บันทึกผลการตรวจสอบไม่สำเร็จ"
+                );
             }
 
             setSelectedReview(null);
             await loadReviews();
+
+            showAlert(
+                "success",
+                "ตรวจสอบเรียบร้อยแล้ว",
+                "บันทึกผลการตรวจสอบรีวิวเรียบร้อยแล้ว"
+            );
         } catch (err) {
             console.error(err);
-            window.alert(err.message || "ไม่สามารถบันทึกผลการตรวจสอบได้");
+            showAlert(
+                "error",
+                "ดำเนินการไม่สำเร็จ",
+                err.message || "ไม่สามารถบันทึกผลการตรวจสอบได้"
+            );
         } finally {
             setActionLoading(false);
         }
     };
 
-    const handleHide = async () => {
+    const confirmHide = () => {
         if (!selectedReview || actionLoading) return;
 
-        const confirmed = window.confirm(
-            "ยืนยันการซ่อนเฉพาะข้อความรีวิวที่ AI ตรวจพบ? คะแนนรีวิวจะยังคงอยู่"
-        );
+        setAlertConfig({
+            type: "confirm",
+            title: "ยืนยันการซ่อนข้อความ",
+            message: "ต้องการซ่อนเฉพาะข้อความรีวิวที่ AI ตรวจพบหรือไม่? คะแนนรีวิวจะยังคงอยู่",
+            confirmText: "ซ่อนข้อความ",
+            cancelText: "ยกเลิก",
+            onCancel: () => setAlertConfig(null),
+            onConfirm: () => {
+                setAlertConfig(null);
+                handleHide();
+            },
+        });
+    };
 
-        if (!confirmed) return;
+    const handleHide = async () => {
+        if (!selectedReview || actionLoading) return;
 
         try {
             setActionLoading(true);
@@ -286,14 +340,26 @@ export default function AdminModerationReviews() {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.message || "ซ่อนข้อความรีวิวไม่สำเร็จ");
+                throw new Error(
+                    data.message || "ซ่อนข้อความรีวิวไม่สำเร็จ"
+                );
             }
 
             setSelectedReview(null);
             await loadReviews();
+
+            showAlert(
+                "success",
+                "ซ่อนข้อความเรียบร้อยแล้ว",
+                "ข้อความรีวิวที่ AI ตรวจพบถูกซ่อนเรียบร้อยแล้ว โดยคะแนนรีวิวยังคงอยู่"
+            );
         } catch (err) {
             console.error(err);
-            window.alert(err.message || "ไม่สามารถซ่อนข้อความรีวิวได้");
+            showAlert(
+                "error",
+                "ซ่อนข้อความไม่สำเร็จ",
+                err.message || "ไม่สามารถซ่อนข้อความรีวิวได้"
+            );
         } finally {
             setActionLoading(false);
         }
@@ -698,7 +764,7 @@ export default function AdminModerationReviews() {
                                     <button
                                         type="button"
                                         className="admin-moderation-action reviewed"
-                                        onClick={handleReviewed}
+                                        onClick={confirmReviewed}
                                         disabled={actionLoading}
                                     >
                                         <FiCheck />
@@ -731,6 +797,12 @@ export default function AdminModerationReviews() {
                         </div>
                     </aside>
                 </>
+            )}
+            {alertConfig && (
+                <AlertModal
+                    config={alertConfig}
+                    onClose={() => setAlertConfig(null)}
+                />
             )}
         </div>
     );
