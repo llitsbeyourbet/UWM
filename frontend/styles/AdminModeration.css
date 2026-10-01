@@ -952,6 +952,32 @@ body.admin-moderation-panel-open {
   font-size: 11px;
   line-height: 1.55;
 }
+.admin-moderation-flag-text {
+  margin: 12px 0;
+}
+
+.admin-moderation-flag-text span {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 12px;
+  color: #8b8fa3;
+}
+
+.admin-moderation-flag-text p {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.6;
+  color: #3f4254;
+  word-break: break-word;
+}
+
+.admin-moderation-flag-category span {
+  font-weight: 600;
+}
 
 /* RESPONSIVE */
 @media (max-width: 1200px) {
