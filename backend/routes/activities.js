@@ -1350,7 +1350,9 @@ router.put("/:id", auth, async (req, res) => {
       aiModerationFlags = newFlags;
     }
 
-
+    const creatorWarningFlags = aiModerationFlags.filter(
+      (flag) => Number(flag.confidence) > 0.5
+    );
 
     if (creatorWarningFlags.length > 0) {
       try {
