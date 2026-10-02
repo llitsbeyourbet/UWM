@@ -816,6 +816,13 @@ router.post("/", auth, async (req, res) => {
     });
 
     for (const flag of aiModerationFlags) {
+      const flaggedText =
+        flag.field === "activityName"
+          ? activityName.trim()
+          : flag.field === "detail"
+            ? detail.trim()
+            : null;
+
       await ModerationFlag.create({
         contentType: "activity",
         activityId: activity.id,
@@ -824,8 +831,49 @@ router.post("/", auth, async (req, res) => {
         field: flag.field,
         label: flag.label,
         confidence: flag.confidence,
+        flaggedText,
         status: "pending",
       });
+    }
+    const creatorWarningFlags = aiModerationFlags.filter(
+      (flag) => Number(flag.confidence) > 0.5
+    );
+
+    if (creatorWarningFlags.length > 0) {
+      try {
+        const warningFields = [
+          ...new Set(
+            creatorWarningFlags.map((flag) =>
+              flag.field === "activityName"
+                ? "ชื่อกิจกรรม"
+                : flag.field === "detail"
+                  ? "รายละเอียดกิจกรรม"
+                  : "เนื้อหากิจกรรม"
+            )
+          ),
+        ];
+
+        await notificationService.createNotification(
+          req.userId,
+          "activity_content_warning",
+          activity.id,
+          activity.activityName,
+          null,
+          null,
+          {
+            adminNote:
+              `AI ตรวจพบเนื้อหาที่อาจไม่เหมาะสมใน${warningFields.join(
+                " และ"
+              )} กรุณาตรวจสอบและแก้ไขกิจกรรม`,
+            deduplicate: true,
+          }
+        );
+      } catch (notificationError) {
+        console.error(
+          "Creator moderation warning error:",
+          notificationError
+        );
+      }
     }
     if (aiModerationFlags.length > 0) {
       try {
@@ -1227,19 +1275,58 @@ router.put("/:id", auth, async (req, res) => {
       }
     }
 
-    await activity.update(updates);
-    if (moderationWasChecked) {
-      // ล้าง pending flags เดิม เพราะข้อมูลกิจกรรมถูกแก้แล้ว
-      await ModerationFlag.destroy({
-        where: {
-          contentType: "activity",
-          activityId: activity.id,
-          status: "pending",
-        },
-      });
+    // จำว่า field ไหนถูกแก้จริง
+    const changedModerationFields = [];
 
-      // สร้าง flags ใหม่จากผล AI ล่าสุดทุก field ที่ตรวจพบ
-      for (const flag of aiModerationFlags) {
+    if (
+      updates.activityName !== undefined &&
+      updates.activityName !== activity.activityName
+    ) {
+      changedModerationFields.push("activityName");
+    }
+
+    if (
+      updates.detail !== undefined &&
+      updates.detail !== activity.detail
+    ) {
+      changedModerationFields.push("detail");
+    }
+
+    await activity.update(updates);
+
+    if (moderationWasChecked && changedModerationFields.length > 0) {
+      // ไม่ลบประวัติเก่า
+      // เปลี่ยนเฉพาะ pending ของ field ที่ผู้ใช้แก้ เป็น resolved
+      await ModerationFlag.update(
+        {
+          status: "resolved",
+          reviewedAt: new Date(),
+        },
+        {
+          where: {
+            contentType: "activity",
+            activityId: activity.id,
+            field: {
+              [Op.in]: changedModerationFields,
+            },
+            status: "pending",
+          },
+        }
+      );
+
+      // สร้างประวัติรอบใหม่เฉพาะ field ที่ถูกแก้จริงและ AI ยังตรวจพบ
+      const newFlags = aiModerationFlags.filter((flag) =>
+        changedModerationFields.includes(flag.field)
+      );
+
+      for (const flag of newFlags) {
+        const flaggedText =
+          flag.field === "activityName"
+            ? activity.activityName
+            : flag.field === "detail"
+              ? activity.detail
+              : null;
+
         await ModerationFlag.create({
           contentType: "activity",
           activityId: activity.id,
@@ -1248,8 +1335,51 @@ router.put("/:id", auth, async (req, res) => {
           field: flag.field,
           label: flag.label,
           confidence: flag.confidence,
+          flaggedText,
           status: "pending",
         });
+      }
+
+      aiModerationFlags = newFlags;
+    }
+    const creatorWarningFlags = aiModerationFlags.filter(
+      (flag) => Number(flag.confidence) > 0.5
+    );
+
+    if (creatorWarningFlags.length > 0) {
+      try {
+        const warningFields = [
+          ...new Set(
+            creatorWarningFlags.map((flag) =>
+              flag.field === "activityName"
+                ? "ชื่อกิจกรรม"
+                : flag.field === "detail"
+                  ? "รายละเอียดกิจกรรม"
+                  : "เนื้อหากิจกรรม"
+            )
+          ),
+        ];
+
+        await notificationService.createNotification(
+          req.userId,
+          "activity_content_warning",
+          activity.id,
+          activity.activityName,
+          null,
+          null,
+          {
+            adminNote:
+              `AI ยังตรวจพบเนื้อหาที่อาจไม่เหมาะสมใน${warningFields.join(
+                " และ"
+              )} กรุณาตรวจสอบและแก้ไขกิจกรรมอีกครั้ง`,
+            deduplicate: true,
+          }
+        );
+      } catch (notificationError) {
+        console.error(
+          "Creator moderation warning error:",
+          notificationError
+        );
       }
     }
     if (aiModerationFlags.length > 0) {

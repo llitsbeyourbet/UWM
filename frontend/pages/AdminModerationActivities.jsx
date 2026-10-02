@@ -43,6 +43,8 @@ const formatConfidence = (value) => {
 const getItemStatus = (flags = []) => {
     if (flags.some((flag) => flag.status === "pending")) return "pending";
     if (flags.some((flag) => flag.status === "actioned")) return "actioned";
+    if (flags.some((flag) => flag.status === "reviewed")) return "reviewed";
+    if (flags.some((flag) => flag.status === "resolved")) return "resolved";
     return "reviewed";
 };
 
@@ -50,18 +52,24 @@ const STATUS_LABELS = {
     pending: "รอตรวจสอบ",
     reviewed: "ตรวจสอบแล้ว",
     actioned: "ดำเนินการแล้ว",
+    resolved: "ผู้สร้างแก้ไขแล้ว",
 };
 
 const FILTERS = [
     ["all", "ทั้งหมด"],
     ["pending", "รอตรวจสอบ"],
+    ["resolved", "ผู้สร้างแก้ไขแล้ว"],
     ["reviewed", "ตรวจสอบแล้ว"],
     ["actioned", "ดำเนินการแล้ว"],
 ];
-const getFlaggedText = (activity, field) => {
-    if (field === "activityName") return activity.activityName || "-";
-    if (field === "detail") return activity.detail || "-";
-    if (field === "location") return activity.location || "-";
+
+const getFlaggedText = (activity, flag) => {
+    if (flag.flaggedText) return flag.flaggedText;
+
+    // รองรับข้อมูลเก่าที่สร้างก่อนมี flaggedText
+    if (flag.field === "activityName") return activity.activityName || "-";
+    if (flag.field === "detail") return activity.detail || "-";
+
     return "-";
 };
 
@@ -794,8 +802,20 @@ export default function AdminModerationActivities() {
 
                                                 <div className="admin-moderation-flag-text">
                                                     <span>ข้อความที่ตรวจพบ</span>
-                                                    <p>“{getFlaggedText(selectedActivity, flag.field)}”</p>
+                                                    <p>“{getFlaggedText(selectedActivity, flag)}”</p>
                                                 </div>
+                                                {flag.status === "resolved" && (
+                                                    <div className="admin-moderation-flag-text">
+                                                        <span>ข้อความปัจจุบันหลังแก้ไข</span>
+                                                        <p>
+                                                            “{flag.field === "activityName"
+                                                                ? selectedActivity.activityName || "-"
+                                                                : flag.field === "detail"
+                                                                    ? selectedActivity.detail || "-"
+                                                                    : "-"}”
+                                                        </p>
+                                                    </div>
+                                                )}
 
                                                 <div className="admin-moderation-flag-category">
                                                     <span>ประเภท:</span>{" "}
@@ -850,11 +870,11 @@ export default function AdminModerationActivities() {
                                     )}`}
                                 >
                                     <FiCheck />
-                                    {getItemStatus(
-                                        selectedActivity.moderationFlags
-                                    ) === "actioned"
+                                    {getItemStatus(selectedActivity.moderationFlags) === "actioned"
                                         ? "ดำเนินการกับกิจกรรมนี้แล้ว"
-                                        : "ตรวจสอบกิจกรรมนี้แล้ว"}
+                                        : getItemStatus(selectedActivity.moderationFlags) === "resolved"
+                                            ? "ผู้สร้างแก้ไขเนื้อหาที่ตรวจพบแล้ว"
+                                            : "ตรวจสอบกิจกรรมนี้แล้ว"}
                                 </div>
                             )}
                         </div>

@@ -16,7 +16,8 @@ const Notification = sequelize.define("Notification", {
       "activity_warning",
       "activity_suspended",
       "moderation_activity",
-      "moderation_review"
+      "moderation_review",
+      "activity_content_warning",
     ),
     allowNull: false,
   },
