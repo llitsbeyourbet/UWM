@@ -112,14 +112,6 @@ export default function AdminActivities() {
     }
   }, []);
 
-  const navItems = [
-    ["ภาพรวม", <FiGrid />, "/admin"],
-    ["กิจกรรม", <FiCalendar />, "/admin/activities", true],
-    ["ผู้ใช้งาน", <FiUsers />, "/admin/users"],
-    ["รายงานกิจกรรม", <FiFlag />, "/admin/reports"],
-    ["รีวิว", <FiStar />, "/admin/reviews"],
-  ];
-
   useEffect(() => {
     if (admin.role !== "admin") {
       navigate("/");

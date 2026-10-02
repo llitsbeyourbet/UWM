@@ -41,6 +41,11 @@ const ModerationFlag = sequelize.define("ModerationFlag", {
     type: DataTypes.TEXT,
     allowNull: true,
   },
+  // ข้อความจากผู้ใช้แก้ไขแล้ว
+  resolvedText: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
 
   status: {
     type: DataTypes.ENUM(

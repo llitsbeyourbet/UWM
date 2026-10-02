@@ -979,6 +979,210 @@ body.admin-moderation-panel-open {
   font-weight: 600;
 }
 
+/* ===== NEW ACTIVITY MODERATION FLAG CARD ===== */
+
+.admin-moderation-flag-card-new {
+  padding: 16px;
+  border: 1px solid #f1dadd;
+  border-radius: 14px;
+  background: #fffafb;
+}
+
+.admin-moderation-flag-card-header {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 12px;
+}
+
+.admin-moderation-flag-number {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: #ef566b;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  box-shadow: 0 5px 12px rgba(239, 86, 107, 0.18);
+}
+
+.admin-moderation-flag-heading {
+  min-width: 0;
+}
+
+.admin-moderation-flag-heading > strong {
+  display: block;
+  overflow: hidden;
+  color: #343748;
+  font-size: 14px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-moderation-detected-field {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 7px;
+  padding: 5px 8px;
+  border-radius: 7px;
+  background: #fff0f2;
+  color: #d84e63;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.admin-moderation-detected-field svg {
+  flex-shrink: 0;
+}
+
+.admin-moderation-confidence {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #ffecef;
+  color: #e14f64;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.admin-moderation-flag-info {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 165px;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.admin-moderation-detected-text > span,
+.admin-moderation-category-box > span {
+  display: block;
+  margin-bottom: 6px;
+  color: #9297a9;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.admin-moderation-detected-text > p {
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 11px 13px;
+  border-radius: 9px;
+  background: #fff;
+  color: #3f4254;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.55;
+  word-break: break-word;
+}
+
+.admin-moderation-category-box {
+  padding-left: 13px;
+  border-left: 1px solid #ecdfe2;
+}
+
+.admin-moderation-category-box > span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.admin-moderation-category-box > strong {
+  display: inline-flex;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: #fff0f2;
+  color: #d64e62;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.admin-moderation-change-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr);
+  align-items: stretch;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.admin-moderation-before,
+.admin-moderation-after {
+  padding: 11px 12px;
+  border-radius: 10px;
+}
+
+.admin-moderation-before {
+  background: #fff1f3;
+}
+
+.admin-moderation-after {
+  background: #effaf4;
+}
+
+.admin-moderation-before span,
+.admin-moderation-after span,
+.admin-moderation-current-value span {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.admin-moderation-before span {
+  color: #d45164;
+}
+
+.admin-moderation-after span,
+.admin-moderation-current-value span {
+  color: #27875b;
+}
+
+.admin-moderation-before p,
+.admin-moderation-after p,
+.admin-moderation-current-value p {
+  margin: 0;
+  color: #4b4f61;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.55;
+  word-break: break-word;
+}
+
+.admin-moderation-change-arrow {
+  display: grid;
+  place-items: center;
+  color: #9498a8;
+  font-size: 19px;
+}
+
+.admin-moderation-current-value {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: 14px;
+  padding: 11px 12px;
+  border-radius: 10px;
+  background: #effaf4;
+}
+
+.admin-moderation-current-value > svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #27a66d;
+}
+
+.admin-moderation-flag-card-new
+  .admin-moderation-flag-status-row {
+  margin-top: 13px;
+  padding-top: 12px;
+  border-top: 1px solid #f1e4e6;
+}
+
 /* RESPONSIVE */
 @media (max-width: 1200px) {
   .admin-moderation-section-head,
@@ -1054,5 +1258,32 @@ body.admin-moderation-panel-open {
 
   .admin-moderation-panel-actions {
     padding: 14px 19px;
+  }
+    .admin-moderation-flag-card-header {
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+    gap: 9px;
+  }
+
+  .admin-moderation-flag-number {
+    width: 34px;
+    height: 34px;
+    font-size: 14px;
+  }
+
+  .admin-moderation-flag-info {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-moderation-category-box {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .admin-moderation-change-row {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-moderation-change-arrow {
+    transform: rotate(90deg);
   }
 }

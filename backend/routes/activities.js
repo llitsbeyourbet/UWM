@@ -1293,28 +1293,35 @@ router.put("/:id", auth, async (req, res) => {
     }
 
     await activity.update(updates);
-
     if (moderationWasChecked && changedModerationFields.length > 0) {
-      // ไม่ลบประวัติเก่า
-      // เปลี่ยนเฉพาะ pending ของ field ที่ผู้ใช้แก้ เป็น resolved
-      await ModerationFlag.update(
-        {
-          status: "resolved",
-          reviewedAt: new Date(),
-        },
-        {
-          where: {
-            contentType: "activity",
-            activityId: activity.id,
-            field: {
-              [Op.in]: changedModerationFields,
-            },
-            status: "pending",
-          },
-        }
-      );
 
-      // สร้างประวัติรอบใหม่เฉพาะ field ที่ถูกแก้จริงและ AI ยังตรวจพบ
+      // ปิด Flag เก่าทีละ field พร้อมเก็บข้อความหลังแก้
+      for (const field of changedModerationFields) {
+        const resolvedText =
+          field === "activityName"
+            ? activity.activityName
+            : field === "detail"
+              ? activity.detail
+              : null;
+
+        await ModerationFlag.update(
+          {
+            status: "resolved",
+            resolvedText,
+            reviewedAt: new Date(),
+          },
+          {
+            where: {
+              contentType: "activity",
+              activityId: activity.id,
+              field,
+              status: "pending",
+            },
+          }
+        );
+      }
+
+      // สร้าง Flag รอบใหม่เฉพาะ field ที่แก้แล้ว AI ยังตรวจพบ
       const newFlags = aiModerationFlags.filter((flag) =>
         changedModerationFields.includes(flag.field)
       );
@@ -1342,9 +1349,8 @@ router.put("/:id", auth, async (req, res) => {
 
       aiModerationFlags = newFlags;
     }
-    const creatorWarningFlags = aiModerationFlags.filter(
-      (flag) => Number(flag.confidence) > 0.5
-    );
+
+
 
     if (creatorWarningFlags.length > 0) {
       try {

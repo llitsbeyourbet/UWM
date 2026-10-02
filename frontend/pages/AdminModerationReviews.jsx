@@ -11,11 +11,13 @@ import {
     FiUser,
     FiX,
     FiEyeOff,
+    
 } from "react-icons/fi";
 
 import API_URL from "../config";
 import "../styles/AdminDashboard.css";
 import "../styles/AdminModeration.css";
+import { useAdminReport } from "../src/context/AdminReportContext";
 import AdminSidebar from "../components/AdminSidebar";
 import AdminProfile from "../components/AdminProfile";
 import AlertModal from "../components/AlertModal";
@@ -73,6 +75,7 @@ export default function AdminModerationReviews() {
     const [detailLoading, setDetailLoading] = useState(false);
     const [actionLoading, setActionLoading] = useState(false);
     const [alertConfig, setAlertConfig] = useState(null);
+    const { refreshModerationCounts } = useAdminReport();
 
     const showAlert = (type, title, message) => {
         setAlertConfig({
@@ -285,6 +288,7 @@ export default function AdminModerationReviews() {
 
             setSelectedReview(null);
             await loadReviews();
+            await refreshModerationCounts();
 
             showAlert(
                 "success",
@@ -493,7 +497,6 @@ export default function AdminModerationReviews() {
 
                                                             <div>
                                                                 <strong>{review.activityName}</strong>
-                                                                <span>กิจกรรม #{review.activityId}</span>
                                                             </div>
                                                         </div>
                                                     </td>

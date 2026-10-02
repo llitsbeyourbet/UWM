@@ -11,11 +11,14 @@ import {
     FiUser,
     FiX,
     FiXCircle,
+    FiTag,
+    FiEdit3,
 } from "react-icons/fi";
 
 import API_URL from "../config";
 import "../styles/AdminDashboard.css";
 import "../styles/AdminModeration.css";
+import { useAdminReport } from "../src/context/AdminReportContext";
 import AdminSidebar from "../components/AdminSidebar";
 import AdminProfile from "../components/AdminProfile";
 import AlertModal from "../components/AlertModal";
@@ -84,6 +87,7 @@ export default function AdminModerationActivities() {
     const [detailLoading, setDetailLoading] = useState(false);
     const [actionLoading, setActionLoading] = useState(false);
     const [alertConfig, setAlertConfig] = useState(null);
+    const { refreshModerationCounts } = useAdminReport();
 
     const showAlert = (type, title, message) => {
         setAlertConfig({
@@ -314,6 +318,7 @@ export default function AdminModerationActivities() {
 
             setSelectedActivity(null);
             await loadActivities();
+            await refreshModerationCounts();
 
             showAlert(
                 "success",
@@ -376,6 +381,7 @@ export default function AdminModerationActivities() {
 
             setSelectedActivity(null);
             await loadActivities();
+            await refreshModerationCounts();
 
             showAlert(
                 "success",
@@ -764,6 +770,7 @@ export default function AdminModerationActivities() {
                                 </div>
                             </section>
 
+
                             <section className="admin-moderation-flags">
                                 <div className="admin-moderation-flags-head">
                                     <div>
@@ -782,58 +789,124 @@ export default function AdminModerationActivities() {
                                 </div>
 
                                 <div className="admin-moderation-flag-list">
-                                    {(selectedActivity.moderationFlags || []).map(
-                                        (flag) => (
-                                            <article
-                                                key={flag.id}
-                                                className="admin-moderation-flag-card"
-                                            >
-                                                <div className="admin-moderation-flag-top">
-                                                    <strong>
-                                                        {flag.fieldLabel || flag.field}
-                                                    </strong>
-
-                                                    <span>
-                                                        {formatConfidence(
-                                                            flag.confidence
-                                                        )}
-                                                    </span>
-                                                </div>
-
-                                                <div className="admin-moderation-flag-text">
-                                                    <span>ข้อความที่ตรวจพบ</span>
-                                                    <p>“{getFlaggedText(selectedActivity, flag)}”</p>
-                                                </div>
-                                                {flag.status === "resolved" && (
-                                                    <div className="admin-moderation-flag-text">
-                                                        <span>ข้อความปัจจุบันหลังแก้ไข</span>
-                                                        <p>
-                                                            “{flag.field === "activityName"
-                                                                ? selectedActivity.activityName || "-"
-                                                                : flag.field === "detail"
-                                                                    ? selectedActivity.detail || "-"
-                                                                    : "-"}”
-                                                        </p>
-                                                    </div>
-                                                )}
-
-                                                <div className="admin-moderation-flag-category">
-                                                    <span>ประเภท:</span>{" "}
-                                                    {flag.labelText ||
-                                                        flag.categoryLabel ||
-                                                        flag.label}
-                                                </div>
-                                                <div className="admin-moderation-flag-status-row">
-                                                    <span
-                                                        className={`admin-moderation-status ${flag.status}`}
-                                                    >
-                                                        {STATUS_LABELS[flag.status] ||
-                                                            flag.status}
-                                                    </span>
-                                                </div>
-                                            </article>
+                                    {[...(selectedActivity.moderationFlags || [])]
+                                        .sort(
+                                            (a, b) =>
+                                                new Date(a.createdAt) - new Date(b.createdAt)
                                         )
-                                    )}
+                                        .map((flag, index) => {
+                                            const fieldName =
+                                                flag.field === "activityName"
+                                                    ? "ชื่อกิจกรรม"
+                                                    : flag.field === "detail"
+                                                        ? "รายละเอียดกิจกรรม"
+                                                        : flag.fieldLabel || flag.field;
+
+                                            const originalValue = getFlaggedText(
+                                                selectedActivity,
+                                                flag
+                                            );
+
+                                            const resolvedValue = flag.resolvedText || null;
+
+                                            const hasChanged =
+                                                flag.status === "resolved" &&
+                                                resolvedValue &&
+                                                originalValue !== resolvedValue;
+
+                                            return (
+                                                <article
+                                                    key={flag.id}
+                                                    className="admin-moderation-flag-card admin-moderation-flag-card-new"
+                                                >
+                                                    <div className="admin-moderation-flag-card-header">
+                                                        <div className="admin-moderation-flag-number">
+                                                            {index + 1}
+                                                        </div>
+
+                                                        <div className="admin-moderation-flag-heading">
+                                                            <strong>
+                                                                การตรวจพบครั้งที่ {index + 1}
+                                                            </strong>
+
+                                                            <span className="admin-moderation-detected-field">
+                                                                <FiEdit3 />
+                                                                ตรวจพบใน: {fieldName}
+                                                            </span>
+                                                        </div>
+
+                                                        <span className="admin-moderation-confidence">
+                                                            {formatConfidence(flag.confidence)}
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="admin-moderation-flag-info">
+                                                        <div className="admin-moderation-detected-text">
+                                                            <span>ข้อความที่ตรวจพบ</span>
+                                                            <p>“{originalValue}”</p>
+                                                        </div>
+
+                                                        <div className="admin-moderation-category-box">
+                                                            <span>
+                                                                <FiTag />
+                                                                ประเภท
+                                                            </span>
+
+                                                            <strong>
+                                                                {flag.labelText ||
+                                                                    flag.categoryLabel ||
+                                                                    flag.label}
+                                                            </strong>
+                                                        </div>
+                                                    </div>
+
+                                                    {flag.status === "resolved" && (
+                                                        <>
+                                                            {hasChanged ? (
+                                                                <div className="admin-moderation-change-row">
+                                                                    <div className="admin-moderation-before">
+                                                                        <span>{fieldName}ก่อนแก้ไข</span>
+                                                                        <p>“{originalValue}”</p>
+                                                                    </div>
+
+                                                                    <div className="admin-moderation-change-arrow">
+                                                                        →
+                                                                    </div>
+
+                                                                    <div className="admin-moderation-after">
+                                                                        <span>{fieldName}หลังแก้ไข</span>
+                                                                        <p>“{resolvedValue}”</p>
+                                                                    </div>
+                                                                </div>
+                                                            ) : (
+                                                                <div className="admin-moderation-current-value">
+                                                                    <FiCheck />
+
+                                                                    <div>
+                                                                        <span>
+                                                                            {fieldName}หลังแก้ไข
+                                                                        </span>
+                                                                        <p>
+                                                                            “{resolvedValue || "ไม่มีข้อมูลการแก้ไข"}”
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </>
+                                                    )}
+
+                                                    <div className="admin-moderation-flag-status-row">
+                                                        <span
+                                                            className={`admin-moderation-status ${flag.status}`}
+                                                        >
+                                                            {STATUS_LABELS[flag.status] ||
+                                                                flag.status}
+                                                        </span>
+                                                    </div>
+                                                </article>
+                                            );
+                                        }
+                                        )}
                                 </div>
                             </section>
                         </div>

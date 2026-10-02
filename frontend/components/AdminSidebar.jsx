@@ -1,5 +1,14 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { FiCalendar, FiFlag, FiGrid, FiLogOut, FiStar, FiUsers, FiShield, FiAlertTriangle, FiMessageSquare, } from "react-icons/fi";
+import {
+  FiCalendar,
+  FiFlag,
+  FiGrid,
+  FiLogOut,
+  FiUsers,
+  FiShield,
+  FiAlertTriangle,
+  FiMessageSquare,
+} from "react-icons/fi";
 import { MdGroups } from "react-icons/md";
 import { useAdminReport } from "../src/context/AdminReportContext";
 import { logoutUser } from "../utils/logout";
@@ -8,16 +17,30 @@ export default function AdminSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { pendingReportCount } = useAdminReport();
+  const {
+    pendingReportCount,
+    pendingActivityModerations,
+    pendingReviewModerations,
+  } = useAdminReport();
 
   const navItems = [
-    ["ภาพรวม", <FiGrid />, "/admin"],
-    ["กิจกรรม", <FiCalendar />, "/admin/activities"],
-    ["ผู้ใช้งาน", <FiUsers />, "/admin/users"],
-    ["รายงานกิจกรรม", <FiFlag />, "/admin/reports"],
-    ["กิจกรรมที่ต้องตรวจสอบ", <FiAlertTriangle />, "/admin/moderation/activities"],
-    ["รีวิวที่ต้องตรวจสอบ", <FiMessageSquare />, "/admin/moderation/reviews"],
-    ["เพิ่มคำไม่เหมาะสม", <FiShield />, "/admin/inappropriate-words"],
+    ["ภาพรวม", <FiGrid />, "/admin", 0],
+    ["กิจกรรม", <FiCalendar />, "/admin/activities", 0],
+    ["ผู้ใช้งาน", <FiUsers />, "/admin/users", 0],
+    ["รายงานกิจกรรม", <FiFlag />, "/admin/reports", pendingReportCount],
+    [
+      "กิจกรรมที่ต้องตรวจสอบ",
+      <FiAlertTriangle />,
+      "/admin/moderation/activities",
+      pendingActivityModerations,
+    ],
+    [
+      "รีวิวที่ต้องตรวจสอบ",
+      <FiMessageSquare />,
+      "/admin/moderation/reviews",
+      pendingReviewModerations,
+    ],
+    ["เพิ่มคำไม่เหมาะสม", <FiShield />, "/admin/inappropriate-words", 0],
   ];
 
   const logout = async () => {
@@ -51,24 +74,20 @@ export default function AdminSidebar() {
       </button>
 
       <nav className="admin-nav">
-        {navItems.map(([label, icon, path]) => (
+        {navItems.map(([label, icon, path, count]) => (
           <button
             type="button"
             key={label}
-            className={`admin-nav-item ${isActive(path) ? "active" : ""
-              }`}
+            className={`admin-nav-item ${isActive(path) ? "active" : ""}`}
             onClick={() => navigate(path)}
           >
-            <span>{icon}</span>
+            <span className="admin-nav-icon">{icon}</span>
 
             <b>{label}</b>
 
-            {label === "รายงานกิจกรรม" &&
-              pendingReportCount > 0 && (
-                <em className="admin-nav-badge">
-                  {pendingReportCount}
-                </em>
-              )}
+            {Number(count) > 0 && (
+              <em className="admin-nav-badge">{count}</em>
+            )}
           </button>
         ))}
       </nav>
