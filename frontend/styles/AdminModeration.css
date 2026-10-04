@@ -86,7 +86,7 @@
   background: #fbfaff;
 }
 
-.admin-moderation-total > span {
+.admin-moderation-total>span {
   width: 49px;
   height: 49px;
   display: grid;
@@ -240,12 +240,29 @@
   text-align: left;
 }
 
-.admin-moderation-table th:nth-child(1) { width: 27%; }
-.admin-moderation-table th:nth-child(2) { width: 19%; }
-.admin-moderation-table th:nth-child(3) { width: 18%; }
-.admin-moderation-table th:nth-child(4) { width: 14%; }
-.admin-moderation-table th:nth-child(5) { width: 12%; }
-.admin-moderation-table th:nth-child(6) { width: 10%; }
+.admin-moderation-table th:nth-child(1) {
+  width: 27%;
+}
+
+.admin-moderation-table th:nth-child(2) {
+  width: 19%;
+}
+
+.admin-moderation-table th:nth-child(3) {
+  width: 18%;
+}
+
+.admin-moderation-table th:nth-child(4) {
+  width: 14%;
+}
+
+.admin-moderation-table th:nth-child(5) {
+  width: 12%;
+}
+
+.admin-moderation-table th:nth-child(6) {
+  width: 10%;
+}
 
 .admin-moderation-table th:nth-child(4),
 .admin-moderation-table th:nth-child(5),
@@ -299,7 +316,7 @@
   object-fit: cover;
 }
 
-.admin-moderation-activity > div:last-child {
+.admin-moderation-activity>div:last-child {
   min-width: 0;
 }
 
@@ -337,7 +354,7 @@
   min-width: 0;
 }
 
-.admin-moderation-user > svg {
+.admin-moderation-user>svg {
   width: 37px;
   height: 37px;
   flex-shrink: 0;
@@ -459,7 +476,7 @@
   text-align: center;
 }
 
-.admin-moderation-state > svg {
+.admin-moderation-state>svg {
   width: 62px;
   height: 62px;
   margin-bottom: 15px;
@@ -502,7 +519,9 @@
 }
 
 @keyframes admin-moderation-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* PAGINATION */
@@ -516,7 +535,7 @@
   font-size: 13px;
 }
 
-.admin-moderation-pagination > div {
+.admin-moderation-pagination>div {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -583,8 +602,13 @@ body.admin-moderation-panel-open {
 }
 
 @keyframes admin-moderation-panel-in {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
 }
 
 .admin-moderation-panel-header {
@@ -597,7 +621,7 @@ body.admin-moderation-panel-open {
   border-bottom: 1px solid #eeeef3;
 }
 
-.admin-moderation-panel-header > div {
+.admin-moderation-panel-header>div {
   min-width: 0;
 }
 
@@ -618,7 +642,7 @@ body.admin-moderation-panel-open {
   white-space: nowrap;
 }
 
-.admin-moderation-panel-header > button {
+.admin-moderation-panel-header>button {
   width: 41px;
   height: 41px;
   display: grid;
@@ -842,7 +866,7 @@ body.admin-moderation-panel-open {
   border-bottom: 1px solid #eeeef3;
 }
 
-.admin-moderation-reviewer > span {
+.admin-moderation-reviewer>span {
   width: 43px;
   height: 43px;
   display: grid;
@@ -883,13 +907,13 @@ body.admin-moderation-panel-open {
   margin-top: 17px;
 }
 
-.admin-moderation-ratings > div {
+.admin-moderation-ratings>div {
   padding: 13px 14px;
   border-radius: 11px;
   background: #fafafe;
 }
 
-.admin-moderation-ratings > div > span {
+.admin-moderation-ratings>div>span {
   display: block;
   margin-bottom: 8px;
   color: #858a9c;
@@ -902,7 +926,7 @@ body.admin-moderation-panel-open {
   gap: 9px;
 }
 
-.admin-moderation-rating > div {
+.admin-moderation-rating>div {
   display: flex;
   gap: 2px;
 }
@@ -934,7 +958,7 @@ body.admin-moderation-panel-open {
   background: #faf9ff;
 }
 
-.admin-moderation-review-note > svg {
+.admin-moderation-review-note>svg {
   flex-shrink: 0;
   margin-top: 2px;
   color: #704cf6;
@@ -952,6 +976,7 @@ body.admin-moderation-panel-open {
   font-size: 11px;
   line-height: 1.55;
 }
+
 .admin-moderation-flag-text {
   margin: 12px 0;
 }
@@ -1012,7 +1037,7 @@ body.admin-moderation-panel-open {
   min-width: 0;
 }
 
-.admin-moderation-flag-heading > strong {
+.admin-moderation-flag-heading>strong {
   display: block;
   overflow: hidden;
   color: #343748;
@@ -1057,8 +1082,8 @@ body.admin-moderation-panel-open {
   margin-top: 15px;
 }
 
-.admin-moderation-detected-text > span,
-.admin-moderation-category-box > span {
+.admin-moderation-detected-text>span,
+.admin-moderation-category-box>span {
   display: block;
   margin-bottom: 6px;
   color: #9297a9;
@@ -1066,7 +1091,7 @@ body.admin-moderation-panel-open {
   font-weight: 500;
 }
 
-.admin-moderation-detected-text > p {
+.admin-moderation-detected-text>p {
   min-height: 46px;
   display: flex;
   align-items: center;
@@ -1086,13 +1111,13 @@ body.admin-moderation-panel-open {
   border-left: 1px solid #ecdfe2;
 }
 
-.admin-moderation-category-box > span {
+.admin-moderation-category-box>span {
   display: flex;
   align-items: center;
   gap: 5px;
 }
 
-.admin-moderation-category-box > strong {
+.admin-moderation-category-box>strong {
   display: inline-flex;
   padding: 7px 10px;
   border-radius: 999px;
@@ -1170,21 +1195,37 @@ body.admin-moderation-panel-open {
   background: #effaf4;
 }
 
-.admin-moderation-current-value > svg {
+.admin-moderation-current-value>svg {
   flex-shrink: 0;
   margin-top: 2px;
   color: #27a66d;
 }
 
-.admin-moderation-flag-card-new
-  .admin-moderation-flag-status-row {
+.admin-moderation-flag-card-new .admin-moderation-flag-status-row {
   margin-top: 13px;
   padding-top: 12px;
   border-top: 1px solid #f1e4e6;
 }
+.admin-moderation-ai-metrics {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+}
+
+.admin-moderation-processing-time {
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #f0edff;
+  color: #704cf6;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
 
 /* RESPONSIVE */
 @media (max-width: 1200px) {
+
   .admin-moderation-section-head,
   .admin-moderation-toolbar {
     align-items: stretch;
@@ -1200,6 +1241,18 @@ body.admin-moderation-panel-open {
     width: fit-content;
     max-width: 100%;
     overflow-x: auto;
+  }
+
+  .admin-moderation-filters {
+    display: flex;
+    width: 100%;
+  }
+
+  .admin-moderation-filters button {
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+    white-space: nowrap;
   }
 }
 
@@ -1259,7 +1312,8 @@ body.admin-moderation-panel-open {
   .admin-moderation-panel-actions {
     padding: 14px 19px;
   }
-    .admin-moderation-flag-card-header {
+
+  .admin-moderation-flag-card-header {
     grid-template-columns: 34px minmax(0, 1fr) auto;
     gap: 9px;
   }
@@ -1285,5 +1339,11 @@ body.admin-moderation-panel-open {
 
   .admin-moderation-change-arrow {
     transform: rotate(90deg);
+  }
+
+  .admin-moderation-filters button {
+    padding-left: 8px;
+    padding-right: 8px;
+    font-size: 12px;
   }
 }

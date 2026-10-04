@@ -716,6 +716,8 @@ router.post("/", auth, async (req, res) => {
       location,
     });
 
+    moderationProcessingTimeMs = moderation.processingTimeMs ?? null;
+
     // Rule-based ตรวจพบ → ไม่อนุญาตให้สร้างกิจกรรมเหมือนเดิม
     if (
       moderation.decision === "block" &&
@@ -831,6 +833,7 @@ router.post("/", auth, async (req, res) => {
         field: flag.field,
         label: flag.label,
         confidence: flag.confidence,
+        processingTimeMs: moderation.processingTimeMs ?? null,
         flaggedText,
         status: "pending",
       });
@@ -1154,6 +1157,7 @@ router.put("/:id", auth, async (req, res) => {
     }
     let moderationWasChecked = false;
     let aiModerationFlags = [];
+    let moderationProcessingTimeMs = null;
 
     if (
       updates.activityName !== undefined ||
@@ -1342,6 +1346,7 @@ router.put("/:id", auth, async (req, res) => {
           field: flag.field,
           label: flag.label,
           confidence: flag.confidence,
+          processingTimeMs: moderationProcessingTimeMs,
           flaggedText,
           status: "pending",
         });

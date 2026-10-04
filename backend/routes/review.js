@@ -267,6 +267,7 @@ router.post("/:activityId", auth, async (req, res) => {
           field: flag.field,
           label: flag.label,
           confidence: flag.confidence,
+          processingTimeMs: moderation.processingTimeMs ?? null,
           status: "pending",
         },
         { transaction }

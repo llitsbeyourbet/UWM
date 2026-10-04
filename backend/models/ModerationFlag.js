@@ -46,7 +46,11 @@ const ModerationFlag = sequelize.define("ModerationFlag", {
     type: DataTypes.TEXT,
     allowNull: true,
   },
-
+  processingTimeMs: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+  },
+  
   status: {
     type: DataTypes.ENUM(
       "pending",

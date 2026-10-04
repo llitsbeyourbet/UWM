@@ -574,15 +574,24 @@ export default function AdminModerationActivities() {
 
                                                     <td>
                                                         <div className="admin-moderation-labels">
-                                                            {(activity.moderationFlags || [])
-                                                                .slice(0, 2)
-                                                                .map((flag) => (
-                                                                    <span key={flag.id}>
-                                                                        {flag.labelText ||
-                                                                            flag.categoryLabel ||
-                                                                            flag.label}
+                                                            {(() => {
+                                                                const flags = activity.moderationFlags || [];
+
+                                                                if (flags.length === 0) return "-";
+
+                                                                const latestFlag = [...flags].sort(
+                                                                    (a, b) =>
+                                                                        new Date(b.createdAt) - new Date(a.createdAt)
+                                                                )[0];
+
+                                                                return (
+                                                                    <span>
+                                                                        {latestFlag.labelText ||
+                                                                            latestFlag.categoryLabel ||
+                                                                            latestFlag.label}
                                                                     </span>
-                                                                ))}
+                                                                );
+                                                            })()}
                                                         </div>
                                                     </td>
 
@@ -835,9 +844,17 @@ export default function AdminModerationActivities() {
                                                             </span>
                                                         </div>
 
-                                                        <span className="admin-moderation-confidence">
-                                                            {formatConfidence(flag.confidence)}
-                                                        </span>
+                                                        <div className="admin-moderation-ai-metrics">
+                                                            <span className="admin-moderation-confidence">
+                                                                {formatConfidence(flag.confidence)}
+                                                            </span>
+
+                                                            {flag.processingTimeMs != null && (
+                                                                <span className="admin-moderation-processing-time">
+                                                                    {Number(flag.processingTimeMs).toFixed(0)} ms
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                     </div>
 
                                                     <div className="admin-moderation-flag-info">
