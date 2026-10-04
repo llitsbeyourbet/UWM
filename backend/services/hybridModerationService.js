@@ -16,6 +16,9 @@ const hasMeaningfulText = (text) =>
 const getCategoryLabel = (label) =>
   AI_CATEGORY_LABELS[label] || label;
 
+const getProcessingTime = (startTime) =>
+  Number((performance.now() - startTime).toFixed(2));
+
 // ตรวจข้อความเดียว
 const hybridAnalyzeText = async (text) => {
   const ruleResult = analyzeText(text);
@@ -27,6 +30,7 @@ const hybridAnalyzeText = async (text) => {
       source: "rule",
       ai: null,
       aiFlags: [],
+      processingTimeMs: null,
     };
   }
 
@@ -37,9 +41,11 @@ const hybridAnalyzeText = async (text) => {
       source: "rule",
       ai: null,
       aiFlags: [],
+      processingTimeMs: null,
     };
   }
 
+  const startTime = performance.now();
   const aiResult = await moderateWithAI(text);
 
   if (aiResult.decision === "allow") {
@@ -49,6 +55,7 @@ const hybridAnalyzeText = async (text) => {
       source: "ai",
       ai: aiResult,
       aiFlags: [],
+      processingTimeMs: getProcessingTime(startTime),
     };
   }
 
@@ -62,6 +69,7 @@ const hybridAnalyzeText = async (text) => {
     source: "ai",
     ai: aiResult,
     aiFlags: [aiResult],
+    processingTimeMs: getProcessingTime(startTime),
   };
 };
 
@@ -76,11 +84,13 @@ const hybridAnalyzeFields = async (fields = {}) => {
       source: "rule",
       ai: null,
       aiFlags: [],
+      processingTimeMs: null,
     };
   }
 
   const fieldResults = {};
   const aiFlags = [];
+  let aiProcessingTimeMs = 0;
 
   for (const [field, value] of Object.entries(fields)) {
     const text = String(value || "").trim();
@@ -94,7 +104,9 @@ const hybridAnalyzeFields = async (fields = {}) => {
       continue;
     }
 
+    const aiStartTime = performance.now();
     const aiResult = await moderateWithAI(text);
+    aiProcessingTimeMs += performance.now() - aiStartTime;
 
     console.log(
       `[AI MODERATION] field=${field} label=${aiResult.label} confidence=${aiResult.confidence} decision=${aiResult.decision}`
@@ -109,6 +121,11 @@ const hybridAnalyzeFields = async (fields = {}) => {
       });
     }
   }
+
+  const processingTimeMs =
+    Object.keys(fieldResults).length > 0
+      ? Number(aiProcessingTimeMs.toFixed(2))
+      : null;
 
   // AI ตรวจพบอย่างน้อย 1 field
   if (aiFlags.length > 0) {
@@ -127,6 +144,7 @@ const hybridAnalyzeFields = async (fields = {}) => {
       source: "ai",
       ai: fieldResults,
       aiFlags,
+      processingTimeMs,
     };
   }
 
@@ -136,6 +154,7 @@ const hybridAnalyzeFields = async (fields = {}) => {
     source: "ai",
     ai: fieldResults,
     aiFlags: [],
+    processingTimeMs,
   };
 };
 

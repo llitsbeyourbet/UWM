@@ -1674,6 +1674,10 @@ const formatFlag = (flag, comment = null) => ({
   label: flag.label,
   categoryLabel: AI_CATEGORY_LABELS[flag.label] || flag.label,
   confidence: Number(flag.confidence || 0),
+  processingTimeMs:
+  flag.processingTimeMs != null
+    ? Number(flag.processingTimeMs)
+    : null,
   flaggedText: flag.flaggedText || null,
   resolvedText: flag.resolvedText || null,
   status: flag.status,
