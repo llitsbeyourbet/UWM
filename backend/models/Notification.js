@@ -18,6 +18,7 @@ const Notification = sequelize.define("Notification", {
       "moderation_activity",
       "moderation_review",
       "activity_content_warning",
+      "review_hidden_by_admin",
     ),
     allowNull: false,
   },

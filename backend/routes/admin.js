@@ -1841,20 +1841,41 @@ router.put("/moderation/activities/:activityId/suspend", auth, isAdmin, async (r
     );
 
     try {
-      await notificationService.createNotification(
-        activity.createdBy,
-        "activity_suspended",
-        activity.id,
-        activity.activityName,
-        req.userId,
-        "ผู้ดูแลระบบ",
-        {
-          deduplicate: true,
-          adminNote: "กิจกรรมถูกระงับหลังจากผู้ดูแลระบบตรวจสอบข้อความที่ AI ตรวจพบ",
-        }
+      console.log("[ACTIVITY SUSPEND] start notification", {
+        activityId: activity.id,
+        createdBy: activity.createdBy,
+      });
+
+      const notification =
+        await notificationService.createNotification(
+          activity.createdBy,
+          "activity_suspended",
+          activity.id,
+          activity.activityName,
+          req.userId,
+          "ผู้ดูแลระบบ",
+          {
+            deduplicate: false,
+            adminNote:
+              "กิจกรรมถูกระงับหลังจากผู้ดูแลระบบตรวจสอบข้อความที่ AI ตรวจพบ",
+          }
+        );
+
+      console.log("[ACTIVITY SUSPEND] notification created", {
+        notificationId: notification?.id,
+        toUserId: activity.createdBy,
+      });
+
+      await Promise.resolve(
+        notificationService.emitCountUpdate(activity.createdBy)
       );
-    } catch (error) {
-      console.error("Moderation suspension notification error:", error);
+
+      console.log("[ACTIVITY SUSPEND] count emitted");
+    } catch (notificationError) {
+      console.error(
+        "[ACTIVITY SUSPEND] notification error:",
+        notificationError
+      );
     }
 
     return res.json({ message: "ระงับกิจกรรมเรียบร้อยแล้ว" });
@@ -2118,7 +2139,7 @@ router.put("/moderation/reviews/:activityId/:userId/hide", auth, isAdmin, async 
       );
     }
 
-        return res.json({
+    return res.json({
       message: "ซ่อนข้อความรีวิวที่ AI ตรวจพบเรียบร้อยแล้ว",
     });
   } catch (error) {
