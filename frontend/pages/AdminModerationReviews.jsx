@@ -269,7 +269,7 @@ export default function AdminModerationReviews() {
             setActionLoading(true);
 
             const response = await fetch(
-                `${API_URL}/api/admin/moderation/reviews/${selectedReview.activityId}/${selectedReview.userId}/reviewed`,
+                `${API_URL}/api/admin/moderation/reviews/${selectedReview.activityId}/${selectedReview.reviewerId}/reviewed`,
                 {
                     method: "PUT",
                     headers: {
@@ -332,7 +332,7 @@ export default function AdminModerationReviews() {
             setActionLoading(true);
 
             const response = await fetch(
-                `${API_URL}/api/admin/moderation/reviews/${selectedReview.activityId}/${selectedReview.userId}/hide`,
+                `${API_URL}/api/admin/moderation/reviews/${selectedReview.activityId}/${selectedReview.reviewerId}/hide`,
                 {
                     method: "PUT",
                     headers: {
@@ -576,7 +576,7 @@ export default function AdminModerationReviews() {
                                                             onClick={() =>
                                                                 openReview(
                                                                     review.activityId,
-                                                                    review.userId
+                                                                    review.reviewerId
                                                                 )
                                                             }
                                                             disabled={detailLoading}
