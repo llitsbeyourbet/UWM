@@ -158,7 +158,7 @@ function Notifications() {
       return "join";
     }
 
-    if (["review", "review_request"].includes(type)) {
+    if (["review", "review_request", "review_hidden_by_admin"].includes(type)) {
       return "review";
     }
 
@@ -210,6 +210,25 @@ function Notifications() {
       <div className="notif-icon amber">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cc8833" strokeWidth="2" strokeLinecap="round">
           <path d="M12 2l3 6 6 .9-4.5 4.3 1 6.1L12 16l-5.5 3.3 1-6.1L3 8.9 9 8z" />
+        </svg>
+      </div>
+    );
+    if (type === "review_hidden_by_admin") return (
+      <div className="notif-icon red">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#cc4444"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M3 3l18 18" />
+          <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" />
+          <path d="M9.9 4.2A10.5 10.5 0 0 1 12 4c5 0 9 4 10 8a11.8 11.8 0 0 1-2 3.8" />
+          <path d="M6.6 6.6A11.8 11.8 0 0 0 2 12c1 4 5 8 10 8a10.5 10.5 0 0 0 5.4-1.5" />
         </svg>
       </div>
     );
@@ -332,6 +351,9 @@ function Notifications() {
       return (<>กิจกรรม{" "}<span className="bold">{n.activityName}</span><br />ถูกระงับโดยผู้ดูแลระบบ</>);
     if (n.type === "activity_content_warning")
       return (<>AI ตรวจพบเนื้อหาที่อาจไม่เหมาะสมในกิจกรรม<br /><span className="bold">{n.activityName}</span><br />กรุณาตรวจสอบและแก้ไขกิจกรรม</>);
+    if (n.type === "review_hidden_by_admin")
+      return (<>ผู้ดูแลระบบได้ซ่อนข้อความรีวิวในกิจกรรม<br /><span className="bold">{n.activityName}</span><br />
+      เนื่องจากตรวจพบเนื้อหาที่ไม่เหมาะสม</>);
   };
 
   const formatTime = (dateStr) => {

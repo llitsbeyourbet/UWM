@@ -1856,6 +1856,35 @@ router.put("/moderation/activities/:activityId/suspend", auth, isAdmin, async (r
     } catch (error) {
       console.error("Moderation suspension notification error:", error);
     }
+    // แจ้งเตือนผู้สร้างกิจกรรมเมื่อผู้ดูแลระบบซ่อนข้อความรีวิว
+    try {
+      const activity = await Activity.findByPk(activityId, {
+        paranoid: false,
+      });
+
+      if (activity) {
+        await notificationService.createNotification(
+          activity.createdBy,
+          "review_hidden_by_admin",
+          activity.id,
+          activity.activityName,
+          req.userId,
+          "ผู้ดูแลระบบ",
+          {
+            deduplicate: true,
+          }
+        );
+
+        await Promise.resolve(
+          notificationService.emitCountUpdate(activity.createdBy)
+        );
+      }
+    } catch (notificationError) {
+      console.error(
+        "Create review hidden notification error:",
+        notificationError
+      );
+    }
 
     return res.json({ message: "ระงับกิจกรรมเรียบร้อยแล้ว" });
   } catch (error) {
