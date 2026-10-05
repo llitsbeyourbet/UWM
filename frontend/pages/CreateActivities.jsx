@@ -528,7 +528,7 @@ function CreateActivities() {
         <section className="form-section two-column">
           <div>
             <label className="form-label">
-              เวลาเริ่มต้น <span>*</span>
+              เวลาเริ่มต้นกิจกรรม <span>*</span>
             </label>
 
             <input
@@ -541,7 +541,7 @@ function CreateActivities() {
 
           <div>
             <label className="form-label">
-              เวลาสิ้นสุด <span>*</span>
+              เวลาสิ้นสุดกิจกรรม <span>*</span>
             </label>
 
             <input
@@ -567,7 +567,7 @@ function CreateActivities() {
           <div className="two-column">
             <div>
               <label className="form-label">
-                เวลาเช็คอินเริ่ม
+                เวลาเริ่มต้นการ Check-in
               </label>
 
               <input
@@ -582,7 +582,7 @@ function CreateActivities() {
 
             <div>
               <label className="form-label">
-                เวลาเช็คอินสิ้นสุด
+                เวลาสิ้นสุดการ Check-in
               </label>
 
               <input

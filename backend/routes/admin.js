@@ -1675,9 +1675,9 @@ const formatFlag = (flag, comment = null) => ({
   categoryLabel: AI_CATEGORY_LABELS[flag.label] || flag.label,
   confidence: Number(flag.confidence || 0),
   processingTimeMs:
-  flag.processingTimeMs != null
-    ? Number(flag.processingTimeMs)
-    : null,
+    flag.processingTimeMs != null
+      ? Number(flag.processingTimeMs)
+      : null,
   flaggedText: flag.flaggedText || null,
   resolvedText: flag.resolvedText || null,
   status: flag.status,
@@ -1804,18 +1804,40 @@ router.put("/moderation/activities/:activityId/suspend", auth, isAdmin, async (r
     const activity = await Activity.findByPk(req.params.activityId, { paranoid: false });
     if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
 
-    const pending = await ModerationFlag.count({
-      where: { contentType: "activity", activityId: activity.id, status: "pending" },
+    const actionableFlags = await ModerationFlag.count({
+      where: {
+        contentType: "activity",
+        activityId: activity.id,
+        status: {
+          [Op.in]: ["pending", "reviewed"],
+        },
+      },
     });
 
-    if (!pending) return res.status(404).json({ message: "ไม่พบรายการที่รอตรวจสอบ" });
+    if (!actionableFlags) {
+      return res.status(404).json({
+        message: "ไม่พบรายการที่สามารถดำเนินการได้",
+      });
+    }
 
     const reviewedAt = new Date();
 
     await activity.update({ status: "suspended" });
     await ModerationFlag.update(
-      { status: "actioned", reviewedBy: req.userId, reviewedAt },
-      { where: { contentType: "activity", activityId: activity.id, status: "pending" } }
+      {
+        status: "actioned",
+        reviewedBy: req.userId,
+        reviewedAt,
+      },
+      {
+        where: {
+          contentType: "activity",
+          activityId: activity.id,
+          status: {
+            [Op.in]: ["pending", "reviewed"],
+          },
+        },
+      }
     );
 
     try {
@@ -1998,30 +2020,71 @@ router.put("/moderation/reviews/:activityId/:userId/hide", auth, isAdmin, async 
     const { activityId, userId } = req.params;
 
     const flags = await ModerationFlag.findAll({
-      where: { contentType: "review", activityId, userId, status: "pending" },
+      where: {
+        contentType: "review",
+        activityId,
+        userId,
+        status: {
+          [Op.in]: ["pending", "reviewed"],
+        },
+      },
       raw: true,
     });
 
-    if (!flags.length) return res.status(404).json({ message: "ไม่พบรายการที่รอตรวจสอบ" });
+    if (!flags.length) {
+      return res.status(404).json({
+        message: "ไม่พบรายการที่สามารถดำเนินการได้",
+      });
+    }
 
-    const commentIds = [...new Set(flags.map(f => Number(f.commentId)).filter(Boolean))];
+    const commentIds = [
+      ...new Set(
+        flags
+          .map((flag) => Number(flag.commentId))
+          .filter(Boolean)
+      ),
+    ];
 
     if (commentIds.length) {
       await Comment.update(
         { isPublic: false },
-        { where: { id: { [Op.in]: commentIds } } }
+        {
+          where: {
+            id: {
+              [Op.in]: commentIds,
+            },
+          },
+        }
       );
     }
 
     await ModerationFlag.update(
-      { status: "actioned", reviewedBy: req.userId, reviewedAt: new Date() },
-      { where: { contentType: "review", activityId, userId, status: "pending" } }
+      {
+        status: "actioned",
+        reviewedBy: req.userId,
+        reviewedAt: new Date(),
+      },
+      {
+        where: {
+          contentType: "review",
+          activityId,
+          userId,
+          status: {
+            [Op.in]: ["pending", "reviewed"],
+          },
+        },
+      }
     );
 
-    return res.json({ message: "ซ่อนข้อความรีวิวที่ AI ตรวจพบเรียบร้อยแล้ว" });
+    return res.json({
+      message: "ซ่อนข้อความรีวิวที่ AI ตรวจพบเรียบร้อยแล้ว",
+    });
   } catch (error) {
     console.error("Hide moderated review error:", error);
-    return res.status(500).json({ message: "ไม่สามารถซ่อนข้อความรีวิวได้" });
+
+    return res.status(500).json({
+      message: "ไม่สามารถซ่อนข้อความรีวิวได้",
+    });
   }
 });
 

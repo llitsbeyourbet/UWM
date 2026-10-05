@@ -406,16 +406,30 @@
   font-weight: 700;
 }
 
-.admin-moderation-count {
+.admin-moderation-table-time {
   display: inline-flex;
+  align-items: center;
   justify-content: center;
-  min-width: 60px;
-  padding: 7px 10px;
+  gap: 7px;
+  min-width: 112px;
+  padding: 8px 12px;
+  border: 1px solid #e2dcff;
   border-radius: 999px;
-  background: #f0edff;
-  color: #704cf6;
+  background: #f5f2ff;
+  color: #6846f5;
   font-size: 12px;
   font-weight: 700;
+  white-space: nowrap;
+}
+
+.admin-moderation-table-time svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.admin-moderation-time-empty {
+  color: #a5a8b5;
 }
 
 /* STATUS */
@@ -1214,13 +1228,21 @@ body.admin-moderation-panel-open {
 }
 
 .admin-moderation-processing-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   padding: 6px 9px;
   border-radius: 999px;
   background: #f0edff;
   color: #704cf6;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
+}
+
+.admin-moderation-processing-time svg {
+  width: 15px;
+  height: 15px;
 }
 
 /* RESPONSIVE */

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
     FiAlertTriangle,
     FiCheck,
+    FiClock,
     FiChevronLeft,
     FiChevronRight,
     FiEye,
@@ -471,7 +472,7 @@ export default function AdminModerationReviews() {
                                             <th>ผู้รีวิว</th>
                                             <th>AI ตรวจพบ</th>
                                             <th>สถานะ</th>
-                                            <th>รายการที่ตรวจพบ</th>
+                                            <th>เวลาประมวลผลของ AI</th>
                                             <th>ตรวจสอบ</th>
                                         </tr>
                                     </thead>
@@ -549,12 +550,23 @@ export default function AdminModerationReviews() {
                                                     </td>
 
                                                     <td>
-                                                        <span className="admin-moderation-count">
-                                                            {review.flagCount ||
-                                                                review.moderationFlags?.length ||
-                                                                0}{" "}
-                                                            รายการ
-                                                        </span>
+                                                        {(() => {
+                                                            const latestFlag = [...(review.moderationFlags || [])]
+                                                                .filter((flag) => flag.processingTimeMs != null)
+                                                                .sort(
+                                                                    (a, b) =>
+                                                                        new Date(b.createdAt) - new Date(a.createdAt)
+                                                                )[0];
+
+                                                            return latestFlag ? (
+                                                                <span className="admin-moderation-table-time">
+                                                                    <FiClock />
+                                                                    {(Number(latestFlag.processingTimeMs) / 1000).toFixed(2)} วินาที
+                                                                </span>
+                                                            ) : (
+                                                                <span className="admin-moderation-time-empty">-</span>
+                                                            );
+                                                        })()}
                                                     </td>
 
                                                     <td>
@@ -733,7 +745,8 @@ export default function AdminModerationReviews() {
 
                                                     {flag.processingTimeMs != null && (
                                                         <span className="admin-moderation-processing-time">
-                                                            {Number(flag.processingTimeMs).toFixed(0)} ms
+                                                            <FiClock />
+                                                            {(Number(flag.processingTimeMs) / 1000).toFixed(2)} วินาที
                                                         </span>
                                                     )}
                                                 </div>
