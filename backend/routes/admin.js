@@ -2039,6 +2039,17 @@ router.put("/moderation/reviews/:activityId/:userId/reviewed", auth, isAdmin, as
 router.put("/moderation/reviews/:activityId/:userId/hide", auth, isAdmin, async (req, res) => {
   try {
     const { activityId, userId } = req.params;
+        console.log("[REVIEW HIDE ROUTE] entered", {
+      activityId,
+      userId,
+      adminId: req.userId,
+    });
+
+    console.log("[REVIEW HIDE ROUTE] entered", {
+      activityId,
+      userId,
+      adminId: req.userId,
+    });
 
     const flags = await ModerationFlag.findAll({
       where: {
@@ -2050,6 +2061,9 @@ router.put("/moderation/reviews/:activityId/:userId/hide", auth, isAdmin, async 
         },
       },
       raw: true,
+    });
+        console.log("[REVIEW HIDE ROUTE] flags found", {
+      count: flags.length,
     });
 
     if (!flags.length) {
