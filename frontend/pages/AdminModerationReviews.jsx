@@ -269,7 +269,7 @@ export default function AdminModerationReviews() {
             setActionLoading(true);
 
             const response = await fetch(
-                `${API_URL}/api/admin/moderation/reviews/${selectedReview.activityId}/${selectedReview.reviewerId}/reviewed`,
+                `${API_URL}/api/admin/moderation/reviews/${selectedReview.activityId}/${selectedReview.userId}/reviewed`,
                 {
                     method: "PUT",
                     headers: {
@@ -332,7 +332,7 @@ export default function AdminModerationReviews() {
             setActionLoading(true);
 
             const response = await fetch(
-                `${API_URL}/api/admin/moderation/reviews/${selectedReview.activityId}/${selectedReview.reviewerId}/hide`,
+                `${API_URL}/api/admin/moderation/reviews/${selectedReview.activityId}/${selectedReview.userId}/hide`,
                 {
                     method: "PUT",
                     headers: {
@@ -482,7 +482,7 @@ export default function AdminModerationReviews() {
                                             const status = getItemStatus(review.moderationFlags);
 
                                             return (
-                                                <tr key={`${review.activityId}-${review.reviewerId}`}>
+                                                <tr key={`${review.activityId}-${review.userId}`}>
                                                     <td>
                                                         <div className="admin-moderation-activity">
                                                             <div className="admin-moderation-cover">
@@ -576,7 +576,7 @@ export default function AdminModerationReviews() {
                                                             onClick={() =>
                                                                 openReview(
                                                                     review.activityId,
-                                                                    review.reviewerId
+                                                                    review.userId
                                                                 )
                                                             }
                                                             disabled={detailLoading}
