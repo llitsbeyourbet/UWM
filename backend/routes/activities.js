@@ -1180,6 +1180,8 @@ router.put("/:id", auth, async (req, res) => {
             ? updates.location
             : activity.location,
       });
+      moderationProcessingTimeMs =
+        moderation.processingTimeMs ?? null;
       moderationWasChecked = true;
 
       // Rule-based ตรวจพบ → ไม่อนุญาตให้แก้ไข
