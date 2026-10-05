@@ -1856,32 +1856,6 @@ router.put("/moderation/activities/:activityId/suspend", auth, isAdmin, async (r
     } catch (error) {
       console.error("Moderation suspension notification error:", error);
     }
-    // แจ้งเตือนผู้สร้างกิจกรรมเมื่อผู้ดูแลระบบซ่อนข้อความรีวิว
-    try {
-      const activity = await Activity.findByPk(activityId, {
-        paranoid: false,
-      });
-
-      if (activity) {
-        await notificationService.createNotification(
-          activity.createdBy,
-          "review_hidden_by_admin",
-          activity.id,
-          activity.activityName,
-          req.userId,
-          "ผู้ดูแลระบบ",
-        );
-
-        await Promise.resolve(
-          notificationService.emitCountUpdate(activity.createdBy)
-        );
-      }
-    } catch (notificationError) {
-      console.error(
-        "Create review hidden notification error:",
-        notificationError
-      );
-    }
 
     return res.json({ message: "ระงับกิจกรรมเรียบร้อยแล้ว" });
   } catch (error) {
@@ -2083,7 +2057,6 @@ router.put("/moderation/reviews/:activityId/:userId/hide", auth, isAdmin, async 
         }
       );
     }
-
     await ModerationFlag.update(
       {
         status: "actioned",
@@ -2102,7 +2075,50 @@ router.put("/moderation/reviews/:activityId/:userId/hide", auth, isAdmin, async 
       }
     );
 
-    return res.json({
+    // แจ้งเตือนผู้สร้างกิจกรรมเมื่อผู้ดูแลระบบซ่อนข้อความรีวิว
+    try {
+      console.log("[REVIEW HIDE] start notification", {
+        activityId,
+        userId,
+      });
+
+      const activity = await Activity.findByPk(activityId, {
+        paranoid: false,
+      });
+
+      console.log("[REVIEW HIDE] activity found", {
+        found: Boolean(activity),
+        createdBy: activity?.createdBy,
+      });
+
+      if (activity) {
+        const notification =
+          await notificationService.createNotification(
+            activity.createdBy,
+            "review_hidden_by_admin",
+            activity.id,
+            activity.activityName,
+            req.userId,
+            "ผู้ดูแลระบบ"
+          );
+
+        console.log("[REVIEW HIDE] notification created", {
+          notificationId: notification?.id,
+          toUserId: activity.createdBy,
+        });
+
+        await Promise.resolve(
+          notificationService.emitCountUpdate(activity.createdBy)
+        );
+      }
+    } catch (notificationError) {
+      console.error(
+        "[REVIEW HIDE] notification error:",
+        notificationError
+      );
+    }
+
+        return res.json({
       message: "ซ่อนข้อความรีวิวที่ AI ตรวจพบเรียบร้อยแล้ว",
     });
   } catch (error) {
