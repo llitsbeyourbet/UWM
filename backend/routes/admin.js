@@ -1870,9 +1870,6 @@ router.put("/moderation/activities/:activityId/suspend", auth, isAdmin, async (r
           activity.activityName,
           req.userId,
           "ผู้ดูแลระบบ",
-          {
-            deduplicate: true,
-          }
         );
 
         await Promise.resolve(
