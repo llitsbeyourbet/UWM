@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import {
+    FiAlertTriangle,
     FiEdit2,
+    FiHeart,
+    FiMessageSquare,
     FiPlus,
     FiSearch,
     FiShield,
+    FiSlash,
     FiTrash2,
-    FiX,
 } from "react-icons/fi";
 import AdminSidebar from "../components/AdminSidebar";
 import AdminProfile from "../components/AdminProfile";
@@ -31,14 +34,37 @@ const CATEGORY_LABELS = Object.fromEntries(
     CATEGORY_OPTIONS.map((item) => [item.value, item.label])
 );
 
-const ITEMS_PER_PAGE = 8;
+const DISPLAY_CATEGORY_OPTIONS = [
+    { value: "profanity", label: "คำหยาบ" },
+    { value: "insult", label: "คำดูหมิ่นหรือด่าทอ" },
+    { value: "sexual", label: "เนื้อหาทางเพศที่ไม่เหมาะสม" },
+    { value: "spam", label: "สแปมหรือเนื้อหาเสี่ยง" },
+];
+
+const PAGE_SIZE_OPTIONS = [5, 10, 25, 50, 75, 100];
+
+const getDisplayCategory = (category = "") => {
+    if (category === "threat") return "insult";
+    if (category === "alcohol") return "spam";
+    return category;
+};
+
+const getCategoryMeta = (category = "") => {
+    const value = getDisplayCategory(category);
+    if (value === "profanity") return { label: "คำหยาบ", className: "profanity", Icon: FiSlash };
+    if (value === "insult") return { label: "คำดูหมิ่นหรือด่าทอ", className: "insult", Icon: FiMessageSquare };
+    if (value === "sexual") return { label: "เนื้อหาทางเพศที่ไม่เหมาะสม", className: "sexual", Icon: FiHeart };
+    if (value === "spam") return { label: "สแปมหรือเนื้อหาเสี่ยง", className: "spam", Icon: FiAlertTriangle };
+    return { label: CATEGORY_LABELS[category] || category || "ไม่ระบุ", className: "default", Icon: FiAlertTriangle };
+};
 
 export default function AdminInappropriateWords() {
     const { showAlert, showConfirm } = useAlert();
     const [words, setWords] = useState([]);
     const [search, setSearch] = useState("");
+    const [categoryFilter, setCategoryFilter] = useState("all");
     const [levelFilter, setLevelFilter] = useState("all");
-    const [page, setPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(5);
 
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -95,44 +121,24 @@ export default function AdminInappropriateWords() {
         const keyword = search.trim().toLowerCase();
 
         return words.filter((item) => {
-            const level =
-                Number(item.weight) >= 70 ? "danger" : "warning";
-
+            const level = Number(item.weight) >= 70 ? "danger" : "warning";
+            const displayCategory = getDisplayCategory(item.category);
+            const categoryLabel = getCategoryMeta(item.category).label;
             const matchSearch =
                 !keyword ||
-                String(item.word || "")
-                    .toLowerCase()
-                    .includes(keyword) ||
-                String(CATEGORY_LABELS[item.category] || "")
-                    .toLowerCase()
-                    .includes(keyword);
-
+                String(item.word || "").toLowerCase().includes(keyword) ||
+                categoryLabel.toLowerCase().includes(keyword);
+            const matchCategory =
+                categoryFilter === "all" || displayCategory === categoryFilter;
             const matchLevel =
                 levelFilter === "all" || levelFilter === level;
 
-            return matchSearch && matchLevel;
+            return matchSearch && matchCategory && matchLevel;
         });
-    }, [words, search, levelFilter]);
+    }, [words, search, categoryFilter, levelFilter]);
 
-    const totalPages = Math.max(
-        1,
-        Math.ceil(filteredWords.length / ITEMS_PER_PAGE)
-    );
-
-    const currentWords = filteredWords.slice(
-        (page - 1) * ITEMS_PER_PAGE,
-        page * ITEMS_PER_PAGE
-    );
-
-    useEffect(() => {
-        setPage(1);
-    }, [search, levelFilter]);
-
-    useEffect(() => {
-        if (page > totalPages) {
-            setPage(totalPages);
-        }
-    }, [page, totalPages]);
+    const currentWords = filteredWords.slice(0, itemsPerPage);
+    const rangeEnd = Math.min(itemsPerPage, filteredWords.length);
 
     const openAddModal = () => {
         setEditingWord(null);
@@ -338,27 +344,47 @@ export default function AdminInappropriateWords() {
                     <div className="admin-word-toolbar">
                         <label className="admin-word-search">
                             <FiSearch />
-
                             <input
                                 type="text"
                                 placeholder="ค้นหาคำ..."
                                 value={search}
-                                onChange={(event) =>
-                                    setSearch(event.target.value)
-                                }
+                                onChange={(event) => setSearch(event.target.value)}
                             />
                         </label>
 
                         <select
+                            value={categoryFilter}
+                            onChange={(event) => setCategoryFilter(event.target.value)}
+                        >
+                            <option value="all">ประเภทข้อความ: ทั้งหมด</option>
+                            {DISPLAY_CATEGORY_OPTIONS.map((item) => (
+                                <option key={item.value} value={item.value}>
+                                    {item.label}
+                                </option>
+                            ))}
+                        </select>
+
+                        <select
                             value={levelFilter}
-                            onChange={(event) =>
-                                setLevelFilter(event.target.value)
-                            }
+                            onChange={(event) => setLevelFilter(event.target.value)}
                         >
                             <option value="all">ทุกระดับ</option>
                             <option value="warning">Warning</option>
                             <option value="danger">Danger</option>
                         </select>
+
+                        <label className="admin-word-page-size">
+                            <span>แสดง</span>
+                            <select
+                                value={itemsPerPage}
+                                onChange={(event) => setItemsPerPage(Number(event.target.value))}
+                            >
+                                {PAGE_SIZE_OPTIONS.map((size) => (
+                                    <option key={size} value={size}>{size}</option>
+                                ))}
+                            </select>
+                            <span>รายการ</span>
+                        </label>
                     </div>
 
                     <div className="admin-word-table-wrap">
@@ -366,7 +392,7 @@ export default function AdminInappropriateWords() {
                             <thead>
                                 <tr>
                                     <th>คำ</th>
-                                    <th>ประเภท</th>
+                                    <th>ประเภทข้อความ</th>
                                     <th>ระดับความรุนแรง</th>
                                     <th>วันที่เพิ่ม</th>
                                     <th>จัดการ</th>
@@ -389,7 +415,7 @@ export default function AdminInappropriateWords() {
                                             colSpan="5"
                                             className="admin-word-empty"
                                         >
-                                            ยังไม่มีคำที่ผู้ดูแลระบบเพิ่ม
+                                            ไม่พบรายการคำไม่เหมาะสม
                                         </td>
                                     </tr>
                                 ) : (
@@ -404,8 +430,21 @@ export default function AdminInappropriateWords() {
                                                 </td>
 
                                                 <td>
-                                                    {CATEGORY_LABELS[item.category] ||
-                                                        item.category}
+                                                    {(() => {
+                                                        const meta = getCategoryMeta(item.category);
+                                                        const Icon = meta.Icon;
+                                                        return (
+                                                            <span className={`admin-word-type-badge ${meta.className}`}>
+                                                                <span className="admin-word-type-icon">
+                                                                    <Icon />
+                                                                </span>
+
+                                                                <span className="admin-word-type-divider" />
+
+                                                                <span>{meta.label}</span>
+                                                            </span>
+                                                        );
+                                                    })()}
                                                 </td>
 
                                                 <td>
@@ -432,28 +471,18 @@ export default function AdminInappropriateWords() {
                                                 </td>
 
                                                 <td>
-                                                    <div className="admin-word-actions">
-                                                        <button
-                                                            type="button"
-                                                            title="แก้ไข"
-                                                            onClick={() =>
-                                                                openEditModal(item)
-                                                            }
-                                                        >
-                                                            <FiEdit2 />
-                                                        </button>
-
-                                                        <button
-                                                            type="button"
-                                                            className="delete"
-                                                            title="ลบ"
-                                                            onClick={() =>
-                                                                handleDelete(item)
-                                                            }
-                                                        >
-                                                            <FiTrash2 />
-                                                        </button>
-                                                    </div>
+                                                    {item.isSystem ? (
+                                                        <span className="admin-word-system-action">–</span>
+                                                    ) : (
+                                                        <div className="admin-word-actions">
+                                                            <button type="button" title="แก้ไข" onClick={() => openEditModal(item)}>
+                                                                <FiEdit2 />
+                                                            </button>
+                                                            <button type="button" className="delete" title="ลบ" onClick={() => handleDelete(item)}>
+                                                                <FiTrash2 />
+                                                            </button>
+                                                        </div>
+                                                    )}
                                                 </td>
                                             </tr>
                                         );
@@ -463,45 +492,9 @@ export default function AdminInappropriateWords() {
                         </table>
                     </div>
 
-                    {totalPages > 1 && (
-                        <div className="admin-word-pagination">
-                            <button
-                                type="button"
-                                disabled={page === 1}
-                                onClick={() =>
-                                    setPage((current) => current - 1)
-                                }
-                            >
-                                ‹
-                            </button>
-
-                            {Array.from(
-                                { length: totalPages },
-                                (_, index) => index + 1
-                            ).map((number) => (
-                                <button
-                                    type="button"
-                                    key={number}
-                                    className={
-                                        page === number ? "active" : ""
-                                    }
-                                    onClick={() => setPage(number)}
-                                >
-                                    {number}
-                                </button>
-                            ))}
-
-                            <button
-                                type="button"
-                                disabled={page === totalPages}
-                                onClick={() =>
-                                    setPage((current) => current + 1)
-                                }
-                            >
-                                ›
-                            </button>
-                        </div>
-                    )}
+                    <div className="admin-word-summary">
+                        แสดง {filteredWords.length ? 1 : 0}–{rangeEnd} จาก {filteredWords.length} รายการ
+                    </div>
                 </section>
             </main>
 

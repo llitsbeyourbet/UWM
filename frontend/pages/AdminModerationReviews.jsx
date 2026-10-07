@@ -3,16 +3,17 @@ import {
     FiAlertTriangle,
     FiCheck,
     FiClock,
-    FiChevronLeft,
-    FiChevronRight,
+    FiEdit3,
     FiEye,
     FiMessageSquare,
     FiSearch,
     FiStar,
+    FiTag,
     FiUser,
     FiX,
     FiEyeOff,
-
+    FiSlash,
+    FiHeart,
 } from "react-icons/fi";
 
 import API_URL from "../config";
@@ -23,12 +24,32 @@ import AdminSidebar from "../components/AdminSidebar";
 import AdminProfile from "../components/AdminProfile";
 import AlertModal from "../components/AlertModal";
 
-const ITEMS_PER_PAGE = 8;
+const PAGE_SIZE_OPTIONS = [5, 10, 25, 50, 75, 100];
 
 const formatConfidence = (value) => {
     const number = Number(value);
     if (Number.isNaN(number)) return "0%";
     return `${(number * 100).toFixed(1)}%`;
+};
+const getModerationTypeMeta = (label = "") => {
+    const value = String(label).toLowerCase();
+
+    if (value.includes("safe")) return { label: "ปลอดภัย", className: "safe", Icon: FiCheck };
+    if (value.includes("spam")) return { label: "สแปมหรือเนื้อหาเสี่ยง", className: "spam", Icon: FiAlertTriangle };
+    if (value.includes("insult")) return { label: "คำดูหมิ่นหรือด่าทอ", className: "insult", Icon: FiMessageSquare };
+    if (value.includes("profanity")) return { label: "คำหยาบ", className: "profanity", Icon: FiSlash };
+    if (value.includes("sexual")) return { label: "เนื้อหาทางเพศที่ไม่เหมาะสม", className: "sexual", Icon: FiHeart };
+
+    return { label: label || "ไม่ระบุ", className: "default", Icon: FiAlertTriangle };
+};
+const getConfidenceLevel = (value) => {
+    const percent = Number(value) * 100;
+
+    if (percent <= 30) return "low";
+    if (percent <= 60) return "medium";
+    if (percent <= 80) return "high";
+
+    return "very-high";
 };
 
 const getItemStatus = (flags = []) => {
@@ -70,6 +91,7 @@ export default function AdminModerationReviews() {
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
     const [page, setPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(5);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [selectedReview, setSelectedReview] = useState(null);
@@ -122,7 +144,7 @@ export default function AdminModerationReviews() {
 
     useEffect(() => {
         setPage(1);
-    }, [search, statusFilter]);
+    }, [search, statusFilter, itemsPerPage]);
 
     useEffect(() => {
         if (!selectedReview) return undefined;
@@ -185,7 +207,7 @@ export default function AdminModerationReviews() {
 
     const totalPages = Math.max(
         1,
-        Math.ceil(filteredReviews.length / ITEMS_PER_PAGE)
+        Math.ceil(filteredReviews.length / itemsPerPage)
     );
 
     useEffect(() => {
@@ -193,8 +215,8 @@ export default function AdminModerationReviews() {
     }, [page, totalPages]);
 
     const visibleReviews = filteredReviews.slice(
-        (page - 1) * ITEMS_PER_PAGE,
-        page * ITEMS_PER_PAGE
+        (page - 1) * itemsPerPage,
+        page * itemsPerPage
     );
 
     const getPaginationNumbers = () => {
@@ -418,17 +440,18 @@ export default function AdminModerationReviews() {
                             </div>
 
                             <div className="admin-moderation-toolbar">
-                                <div className="admin-moderation-filters">
-                                    {FILTERS.map(([value, label]) => (
-                                        <button
-                                            key={value}
-                                            type="button"
-                                            className={statusFilter === value ? "active" : ""}
-                                            onClick={() => setStatusFilter(value)}
-                                        >
-                                            {label}
-                                        </button>
-                                    ))}
+                                <div className="admin-moderation-status-filter">
+                                    <span>สถานะ</span>
+
+                                    <select
+                                        value={statusFilter}
+                                        onChange={(event) => setStatusFilter(event.target.value)}
+                                    >
+                                        <option value="all">ทั้งหมด</option>
+                                        <option value="pending">รอตรวจสอบ</option>
+                                        <option value="reviewed">ตรวจสอบแล้ว</option>
+                                        <option value="actioned">ดำเนินการแล้ว</option>
+                                    </select>
                                 </div>
 
                                 <label className="admin-moderation-search">
@@ -440,6 +463,25 @@ export default function AdminModerationReviews() {
                                         placeholder="ค้นหากิจกรรมหรือผู้รีวิว..."
                                     />
                                 </label>
+
+                                <div className="admin-moderation-page-size">
+                                    <span>แสดง</span>
+
+                                    <select
+                                        value={itemsPerPage}
+                                        onChange={(event) =>
+                                            setItemsPerPage(Number(event.target.value))
+                                        }
+                                    >
+                                        {PAGE_SIZE_OPTIONS.map((size) => (
+                                            <option key={size} value={size}>
+                                                {size}
+                                            </option>
+                                        ))}
+                                    </select>
+
+                                    <span>รายการ</span>
+                                </div>
                             </div>
                         </div>
 
@@ -470,7 +512,8 @@ export default function AdminModerationReviews() {
                                         <tr>
                                             <th>กิจกรรม</th>
                                             <th>ผู้รีวิว</th>
-                                            <th>AI ตรวจพบ</th>
+                                            <th>ประเภทข้อความที่ตรวจพบ</th>
+                                            <th>ค่าความไม่เหมาะสม</th>
                                             <th>สถานะ</th>
                                             <th>เวลาประมวลผลของ AI</th>
                                             <th>ตรวจสอบ</th>
@@ -480,6 +523,12 @@ export default function AdminModerationReviews() {
                                     <tbody>
                                         {visibleReviews.map((review) => {
                                             const status = getItemStatus(review.moderationFlags);
+
+                                            const latestFlag = [...(review.moderationFlags || [])].sort(
+                                                (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                                            )[0];
+                                            const typeMeta = getModerationTypeMeta(latestFlag?.label);
+                                            const TypeIcon = typeMeta.Icon;
 
                                             return (
                                                 <tr key={`${review.activityId}-${review.userId}`}>
@@ -519,26 +568,43 @@ export default function AdminModerationReviews() {
                                                     </td>
 
                                                     <td>
-                                                        <div className="admin-moderation-labels">
-                                                            {(() => {
-                                                                const flags = review.moderationFlags || [];
+                                                        {latestFlag ? (
+                                                            <span
+                                                                className={`admin-moderation-type-badge ${typeMeta.className}`}
+                                                            >
+                                                                <span className="admin-moderation-type-icon"><TypeIcon /></span>
+                                                                <span className="admin-moderation-type-divider" />
+                                                                <span>{typeMeta.label}</span>
+                                                            </span>
+                                                        ) : (
+                                                            "-"
+                                                        )}
+                                                    </td>
+                                                    <td>
+                                                        {latestFlag ? (
+                                                            <div
+                                                                className={`admin-moderation-confidence-bar ${getConfidenceLevel(
+                                                                    latestFlag.confidence
+                                                                )}`}
+                                                            >
+                                                                <strong>
+                                                                    {formatConfidence(latestFlag.confidence)}
+                                                                </strong>
 
-                                                                if (flags.length === 0) return "-";
-
-                                                                const latestFlag = [...flags].sort(
-                                                                    (a, b) =>
-                                                                        new Date(b.createdAt) - new Date(a.createdAt)
-                                                                )[0];
-
-                                                                return (
-                                                                    <span>
-                                                                        {latestFlag.labelText ||
-                                                                            latestFlag.categoryLabel ||
-                                                                            latestFlag.label}
-                                                                    </span>
-                                                                );
-                                                            })()}
-                                                        </div>
+                                                                <div className="admin-moderation-confidence-track">
+                                                                    <span
+                                                                        style={{
+                                                                            width: `${Math.min(
+                                                                                Number(latestFlag.confidence) * 100,
+                                                                                100
+                                                                            )}%`,
+                                                                        }}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            "-"
+                                                        )}
                                                     </td>
 
                                                     <td>
@@ -596,57 +662,10 @@ export default function AdminModerationReviews() {
                         {!loading && !error && filteredReviews.length > 0 && (
                             <footer className="admin-moderation-pagination">
                                 <span>
-                                    แสดง {(page - 1) * ITEMS_PER_PAGE + 1}–
-                                    {Math.min(
-                                        page * ITEMS_PER_PAGE,
-                                        filteredReviews.length
-                                    )}{" "}
-                                    จาก {filteredReviews.length} รีวิว
+                                    แสดง {(page - 1) * itemsPerPage + 1}–
+                                    {Math.min(page * itemsPerPage, filteredReviews.length)} จาก{" "}
+                                    {filteredReviews.length} รีวิว
                                 </span>
-
-                                <div>
-                                    <button
-                                        type="button"
-                                        disabled={page === 1}
-                                        onClick={() =>
-                                            setPage((current) => Math.max(1, current - 1))
-                                        }
-                                    >
-                                        <FiChevronLeft />
-                                    </button>
-
-                                    {getPaginationNumbers().map((pageNumber, index) =>
-                                        typeof pageNumber === "number" ? (
-                                            <button
-                                                type="button"
-                                                key={pageNumber}
-                                                className={page === pageNumber ? "active" : ""}
-                                                onClick={() => setPage(pageNumber)}
-                                            >
-                                                {pageNumber}
-                                            </button>
-                                        ) : (
-                                            <span
-                                                key={`${pageNumber}-${index}`}
-                                                className="admin-moderation-dots"
-                                            >
-                                                ...
-                                            </span>
-                                        )
-                                    )}
-
-                                    <button
-                                        type="button"
-                                        disabled={page === totalPages}
-                                        onClick={() =>
-                                            setPage((current) =>
-                                                Math.min(totalPages, current + 1)
-                                            )
-                                        }
-                                    >
-                                        <FiChevronRight />
-                                    </button>
-                                </div>
                             </footer>
                         )}
                     </section>
@@ -731,49 +750,65 @@ export default function AdminModerationReviews() {
                                 </div>
 
                                 <div className="admin-moderation-flag-list">
-                                    {(selectedReview.moderationFlags || []).map((flag) => (
-                                        <article
-                                            key={flag.id}
-                                            className="admin-moderation-flag-card"
-                                        >
-                                            <div className="admin-moderation-flag-top">
-                                                <strong>{flag.fieldLabel || flag.field}</strong>
-                                                <div className="admin-moderation-ai-metrics">
-                                                    <span className="admin-moderation-confidence">
-                                                        {formatConfidence(flag.confidence)}
-                                                    </span>
+                                    {(selectedReview.moderationFlags || []).map((flag, index) => {
+                                        const typeMeta = getModerationTypeMeta(flag.label);
+                                        const TypeIcon = typeMeta.Icon;
 
-                                                    {flag.processingTimeMs != null && (
-                                                        <span className="admin-moderation-processing-time">
-                                                            <FiClock />
-                                                            {(Number(flag.processingTimeMs) / 1000).toFixed(2)} วินาที
+                                        return (
+                                            <article key={flag.id} className="admin-moderation-flag-card admin-moderation-flag-card-new">
+                                                <div className="admin-moderation-flag-card-header">
+                                                    <div className="admin-moderation-flag-number">{index + 1}</div>
+
+                                                    <div className="admin-moderation-flag-heading">
+                                                        <strong>การตรวจพบครั้งที่ {index + 1}</strong>
+                                                        <span className="admin-moderation-detected-field">
+                                                            <FiEdit3 />
+                                                            ตรวจพบใน: {flag.fieldLabel || flag.field}
                                                         </span>
-                                                    )}
+                                                    </div>
+
+                                                    <div className="admin-moderation-ai-metrics">
+                                                        <span className="admin-moderation-confidence">
+                                                            {formatConfidence(flag.confidence)}
+                                                        </span>
+
+                                                        {flag.processingTimeMs != null && (
+                                                            <span className="admin-moderation-processing-time">
+                                                                <FiClock />
+                                                                {(Number(flag.processingTimeMs) / 1000).toFixed(2)} วินาที
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <div className="admin-moderation-flag-category">
-                                                ประเภท:{" "}
-                                                {flag.labelText ||
-                                                    flag.categoryLabel ||
-                                                    flag.label}
-                                            </div>
+                                                <div className="admin-moderation-flag-info admin-moderation-review-flag-info">
+                                                    <div className="admin-moderation-detected-text">
+                                                        <span>ข้อความที่ตรวจพบ</span>
+                                                        <p>“{flag.comment || flag.commentText || "-"}”</p>
+                                                    </div>
 
-                                            {(flag.comment || flag.commentText) && (
-                                                <p className="admin-moderation-flag-comment">
-                                                    “{flag.comment || flag.commentText}”
-                                                </p>
-                                            )}
+                                                    <div className="admin-moderation-category-box">
+                                                        <span>
+                                                            <FiTag />
+                                                            ประเภท
+                                                        </span>
 
-                                            <div className="admin-moderation-flag-status-row">
-                                                <span
-                                                    className={`admin-moderation-status ${flag.status}`}
-                                                >
-                                                    {STATUS_LABELS[flag.status] || flag.status}
-                                                </span>
-                                            </div>
-                                        </article>
-                                    ))}
+                                                        <span className={`admin-moderation-type-badge ${typeMeta.className}`}>
+                                                            <span className="admin-moderation-type-icon"><TypeIcon /></span>
+                                                            <span className="admin-moderation-type-divider" />
+                                                            <span>{typeMeta.label}</span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <div className="admin-moderation-flag-status-row">
+                                                    <span className={`admin-moderation-status ${flag.status}`}>
+                                                        {STATUS_LABELS[flag.status] || flag.status}
+                                                    </span>
+                                                </div>
+                                            </article>
+                                        );
+                                    })}
                                 </div>
                             </section>
 
@@ -807,7 +842,7 @@ export default function AdminModerationReviews() {
                                     <button
                                         type="button"
                                         className="admin-moderation-action danger"
-                                        onClick={handleHide}
+                                        onClick={confirmHide}
                                         disabled={actionLoading}
                                     >
                                         <FiEyeOff />

@@ -4,8 +4,6 @@ import {
     FiCalendar,
     FiCheck,
     FiClock,
-    FiChevronLeft,
-    FiChevronRight,
     FiEye,
     FiMapPin,
     FiSearch,
@@ -14,6 +12,12 @@ import {
     FiXCircle,
     FiTag,
     FiEdit3,
+    FiMessageSquare,
+    FiSlash,
+    FiHeart,
+    FiHash,
+    FiFrown,
+    FiVolume2,
 } from "react-icons/fi";
 
 import API_URL from "../config";
@@ -24,7 +28,7 @@ import AdminSidebar from "../components/AdminSidebar";
 import AdminProfile from "../components/AdminProfile";
 import AlertModal from "../components/AlertModal";
 
-const ITEMS_PER_PAGE = 8;
+const PAGE_SIZE_OPTIONS = [5, 10, 25, 50, 75, 100];
 
 const formatDate = (value) => {
     if (!value) return "-";
@@ -42,6 +46,26 @@ const formatConfidence = (value) => {
     const number = Number(value);
     if (Number.isNaN(number)) return "0%";
     return `${(number * 100).toFixed(1)}%`;
+};
+
+const getModerationTypeMeta = (label = "") => {
+    const value = String(label).toLowerCase();
+
+    if (value.includes("safe")) return { label: "ปลอดภัย", className: "safe", Icon: FiCheck };
+    if (value.includes("spam")) return { label: "สแปมหรือเนื้อหาเสี่ยง", className: "spam", Icon: FiAlertTriangle };
+    if (value.includes("insult")) return { label: "คำดูหมิ่นหรือด่าทอ", className: "insult", Icon: FiMessageSquare };
+    if (value.includes("profanity")) return { label: "คำหยาบ", className: "profanity", Icon: FiSlash };
+    if (value.includes("sexual")) return { label: "เนื้อหาทางเพศที่ไม่เหมาะสม", className: "sexual", Icon: FiHeart };
+
+    return { label: label || "ไม่ระบุ", className: "default", Icon: FiAlertTriangle };
+};
+
+const getConfidenceLevel = (value) => {
+    const percent = Number(value) * 100;
+    if (percent <= 30) return "low";
+    if (percent <= 60) return "medium";
+    if (percent <= 80) return "high";
+    return "very-high";
 };
 
 const getItemStatus = (flags = []) => {
@@ -82,6 +106,7 @@ export default function AdminModerationActivities() {
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
     const [page, setPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(5);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [selectedActivity, setSelectedActivity] = useState(null);
@@ -141,7 +166,7 @@ export default function AdminModerationActivities() {
 
     useEffect(() => {
         setPage(1);
-    }, [search, statusFilter]);
+    }, [search, statusFilter, itemsPerPage]);
 
     useEffect(() => {
         if (!selectedActivity) return undefined;
@@ -206,7 +231,7 @@ export default function AdminModerationActivities() {
 
     const totalPages = Math.max(
         1,
-        Math.ceil(filteredActivities.length / ITEMS_PER_PAGE)
+        Math.ceil(filteredActivities.length / itemsPerPage)
     );
 
     useEffect(() => {
@@ -214,32 +239,9 @@ export default function AdminModerationActivities() {
     }, [page, totalPages]);
 
     const visibleActivities = filteredActivities.slice(
-        (page - 1) * ITEMS_PER_PAGE,
-        page * ITEMS_PER_PAGE
+        (page - 1) * itemsPerPage,
+        page * itemsPerPage
     );
-
-    const getPaginationNumbers = () => {
-        if (totalPages <= 5) {
-            return Array.from(
-                { length: totalPages },
-                (_, index) => index + 1
-            );
-        }
-
-        if (page <= 3) return [1, 2, 3, "...", totalPages];
-
-        if (page >= totalPages - 2) {
-            return [
-                1,
-                "...",
-                totalPages - 2,
-                totalPages - 1,
-                totalPages,
-            ];
-        }
-
-        return [1, "...", page, "...", totalPages];
-    };
 
     const openActivity = async (activityId) => {
         try {
@@ -454,32 +456,23 @@ export default function AdminModerationActivities() {
                             </div>
 
                             <div className="admin-moderation-toolbar">
-                                <div className="admin-moderation-filters">
-                                    {FILTERS.map(([value, label]) => (
-                                        <button
-                                            key={value}
-                                            type="button"
-                                            className={
-                                                statusFilter === value ? "active" : ""
-                                            }
-                                            onClick={() => setStatusFilter(value)}
-                                        >
-                                            {label}
-                                        </button>
-                                    ))}
+                                <div className="admin-moderation-status-filter">
+                                    <span>สถานะ</span>
+                                    <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
+                                        {FILTERS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                                    </select>
                                 </div>
-
                                 <label className="admin-moderation-search">
                                     <FiSearch />
-                                    <input
-                                        type="search"
-                                        value={search}
-                                        onChange={(event) =>
-                                            setSearch(event.target.value)
-                                        }
-                                        placeholder="ค้นหากิจกรรมหรือผู้สร้าง..."
-                                    />
+                                    <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="ค้นหากิจกรรมหรือผู้สร้าง..." />
                                 </label>
+                                <div className="admin-moderation-page-size">
+                                    <span>แสดง</span>
+                                    <select value={itemsPerPage} onChange={(event) => setItemsPerPage(Number(event.target.value))}>
+                                        {PAGE_SIZE_OPTIONS.map((size) => <option key={size} value={size}>{size}</option>)}
+                                    </select>
+                                    <span>รายการ</span>
+                                </div>
                             </div>
                         </div>
 
@@ -512,7 +505,8 @@ export default function AdminModerationActivities() {
                                         <tr>
                                             <th>กิจกรรม</th>
                                             <th>ผู้สร้าง</th>
-                                            <th>AI ตรวจพบ</th>
+                                            <th>ประเภทข้อความที่ตรวจพบ</th>
+                                            <th>ค่าความไม่เหมาะสม</th>
                                             <th>สถานะ</th>
                                             <th>เวลาประมวลผลของ AI</th>
                                             <th>ตรวจสอบ</th>
@@ -521,9 +515,10 @@ export default function AdminModerationActivities() {
 
                                     <tbody>
                                         {visibleActivities.map((activity) => {
-                                            const status = getItemStatus(
-                                                activity.moderationFlags
-                                            );
+                                            const status = getItemStatus(activity.moderationFlags);
+                                            const latestFlag = [...(activity.moderationFlags || [])].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+                                            const typeMeta = getModerationTypeMeta(latestFlag?.label);
+                                            const TypeIcon = typeMeta.Icon;
 
                                             return (
                                                 <tr key={activity.id}>
@@ -574,26 +569,21 @@ export default function AdminModerationActivities() {
                                                     </td>
 
                                                     <td>
-                                                        <div className="admin-moderation-labels">
-                                                            {(() => {
-                                                                const flags = activity.moderationFlags || [];
-
-                                                                if (flags.length === 0) return "-";
-
-                                                                const latestFlag = [...flags].sort(
-                                                                    (a, b) =>
-                                                                        new Date(b.createdAt) - new Date(a.createdAt)
-                                                                )[0];
-
-                                                                return (
-                                                                    <span>
-                                                                        {latestFlag.labelText ||
-                                                                            latestFlag.categoryLabel ||
-                                                                            latestFlag.label}
-                                                                    </span>
-                                                                );
-                                                            })()}
-                                                        </div>
+                                                        {latestFlag ? (
+                                                            <span className={`admin-moderation-type-badge ${typeMeta.className}`}>
+                                                                <span className="admin-moderation-type-icon"><TypeIcon /></span>
+                                                                <span className="admin-moderation-type-divider" />
+                                                                <span>{typeMeta.label}</span>
+                                                            </span>
+                                                        ) : "-"}
+                                                    </td>
+                                                    <td>
+                                                        {latestFlag ? (
+                                                            <div className={`admin-moderation-confidence-bar ${getConfidenceLevel(latestFlag.confidence)}`}>
+                                                                <strong>{formatConfidence(latestFlag.confidence)}</strong>
+                                                                <div className="admin-moderation-confidence-track"><span style={{ width: `${Math.min(Number(latestFlag.confidence) * 100, 100)}%` }} /></div>
+                                                            </div>
+                                                        ) : "-"}
                                                     </td>
 
                                                     <td>
@@ -645,77 +635,11 @@ export default function AdminModerationActivities() {
                             </div>
                         )}
 
-                        {!loading &&
-                            !error &&
-                            filteredActivities.length > 0 && (
-                                <footer className="admin-moderation-pagination">
-                                    <span>
-                                        แสดง{" "}
-                                        {(page - 1) * ITEMS_PER_PAGE + 1}–
-                                        {Math.min(
-                                            page * ITEMS_PER_PAGE,
-                                            filteredActivities.length
-                                        )}{" "}
-                                        จาก {filteredActivities.length} กิจกรรม
-                                    </span>
-
-                                    <div>
-                                        <button
-                                            type="button"
-                                            disabled={page === 1}
-                                            onClick={() =>
-                                                setPage((current) =>
-                                                    Math.max(1, current - 1)
-                                                )
-                                            }
-                                        >
-                                            <FiChevronLeft />
-                                        </button>
-
-                                        {getPaginationNumbers().map(
-                                            (pageNumber, index) =>
-                                                typeof pageNumber === "number" ? (
-                                                    <button
-                                                        type="button"
-                                                        key={pageNumber}
-                                                        className={
-                                                            page === pageNumber
-                                                                ? "active"
-                                                                : ""
-                                                        }
-                                                        onClick={() =>
-                                                            setPage(pageNumber)
-                                                        }
-                                                    >
-                                                        {pageNumber}
-                                                    </button>
-                                                ) : (
-                                                    <span
-                                                        key={`${pageNumber}-${index}`}
-                                                        className="admin-moderation-dots"
-                                                    >
-                                                        ...
-                                                    </span>
-                                                )
-                                        )}
-
-                                        <button
-                                            type="button"
-                                            disabled={page === totalPages}
-                                            onClick={() =>
-                                                setPage((current) =>
-                                                    Math.min(
-                                                        totalPages,
-                                                        current + 1
-                                                    )
-                                                )
-                                            }
-                                        >
-                                            <FiChevronRight />
-                                        </button>
-                                    </div>
-                                </footer>
-                            )}
+                        {!loading && !error && filteredActivities.length > 0 && (
+                            <footer className="admin-moderation-pagination">
+                                <span>แสดง {(page - 1) * itemsPerPage + 1}–{Math.min(page * itemsPerPage, filteredActivities.length)} จาก {filteredActivities.length} กิจกรรม</span>
+                            </footer>
+                        )}
                     </section>
                 </div>
             </main>
@@ -816,6 +740,8 @@ export default function AdminModerationActivities() {
                                                 new Date(a.createdAt) - new Date(b.createdAt)
                                         )
                                         .map((flag, index) => {
+                                            const typeMeta = getModerationTypeMeta(flag.label);
+                                            const TypeIcon = typeMeta.Icon;
                                             const fieldName =
                                                 flag.field === "activityName"
                                                     ? "ชื่อกิจกรรม"
@@ -877,16 +803,12 @@ export default function AdminModerationActivities() {
                                                         </div>
 
                                                         <div className="admin-moderation-category-box">
-                                                            <span>
-                                                                <FiTag />
-                                                                ประเภท
+                                                            <span><FiTag />ประเภท</span>
+                                                            <span className={`admin-moderation-type-badge ${typeMeta.className}`}>
+                                                                <span className="admin-moderation-type-icon"><TypeIcon /></span>
+                                                                <span className="admin-moderation-type-divider" />
+                                                                <span>{typeMeta.label}</span>
                                                             </span>
-
-                                                            <strong>
-                                                                {flag.labelText ||
-                                                                    flag.categoryLabel ||
-                                                                    flag.label}
-                                                            </strong>
                                                         </div>
                                                     </div>
 

@@ -225,7 +225,7 @@
 
 .admin-moderation-table {
   width: 100%;
-  min-width: 1000px;
+  min-width: 1180px;
   border-collapse: collapse;
   table-layout: fixed;
 }
@@ -241,27 +241,71 @@
 }
 
 .admin-moderation-table th:nth-child(1) {
-  width: 27%;
+  width: 20%;
 }
 
 .admin-moderation-table th:nth-child(2) {
-  width: 19%;
-}
-
-.admin-moderation-table th:nth-child(3) {
-  width: 18%;
-}
-
-.admin-moderation-table th:nth-child(4) {
   width: 14%;
 }
 
+.admin-moderation-table th:nth-child(3) {
+  width: 16%;
+}
+
+.admin-moderation-table th:nth-child(4) {
+  width: 13%;
+}
+
 .admin-moderation-table th:nth-child(5) {
-  width: 12%;
+  width: 11%;
 }
 
 .admin-moderation-table th:nth-child(6) {
-  width: 10%;
+  width: 12%;
+}
+
+.admin-moderation-table th:nth-child(7) {
+  width: 8%;
+}
+
+.admin-moderation-table th:nth-child(n + 3),
+.admin-moderation-table td:nth-child(n + 3) {
+  text-align: start;
+}
+
+.admin-moderation-type-icon {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+.admin-moderation-type-badge {
+  gap: 5px;
+}
+.admin-moderation-status-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  color: #7d8193;
+  font-size: 13px;
+}
+
+.admin-moderation-status-filter select {
+  height: 38px;
+  min-width: 125px;
+  padding: 0 34px 0 12px;
+  border: 1px solid #dedfe7;
+  border-radius: 9px;
+  background: #fff;
+  color: #4f5366;
+  font: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+.admin-moderation-status-filter select:focus {
+  border-color: #967ef1;
 }
 
 .admin-moderation-table th:nth-child(4),
@@ -542,7 +586,7 @@
 .admin-moderation-pagination {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 20px;
   margin-top: 22px;
   color: #7f8496;
@@ -657,17 +701,27 @@ body.admin-moderation-panel-open {
 }
 
 .admin-moderation-panel-header>button {
-  width: 41px;
-  height: 41px;
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  border: 1px solid #e4e4eb;
-  border-radius: 10px;
-  background: #fff;
-  color: #777b8d;
-  font-size: 21px;
-  cursor: pointer;
+    width: 41px;
+    height: 41px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0;
+    border: 1px solid #e4e4eb;
+    border-radius: 10px;
+    background: #fff;
+    color: #777b8d;
+    font-size: 21px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.admin-moderation-panel-header>button svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+    margin: 0;
 }
 
 .admin-moderation-panel-body {
@@ -1090,10 +1144,10 @@ body.admin-moderation-panel-open {
 }
 
 .admin-moderation-flag-info {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 165px;
-  gap: 12px;
-  margin-top: 15px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 210px;
+    gap: 14px;
+    margin-top: 15px;
 }
 
 .admin-moderation-detected-text>span,
@@ -1121,8 +1175,10 @@ body.admin-moderation-panel-open {
 }
 
 .admin-moderation-category-box {
-  padding-left: 13px;
-  border-left: 1px solid #ecdfe2;
+    width: 210px;
+    min-width: 210px;
+    padding-left: 13px;
+    border-left: 1px solid #ecdfe2;
 }
 
 .admin-moderation-category-box>span {
@@ -1244,128 +1300,255 @@ body.admin-moderation-panel-open {
   width: 15px;
   height: 15px;
 }
+/* ===== MODERATION TABLE UPDATE ===== */
+
+.admin-moderation-page-size {
+  height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #7d8193;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.admin-moderation-page-size select {
+  height: 38px;
+  min-width: 68px;
+  padding: 0 10px;
+  border: 1px solid #dedfe7;
+  border-radius: 9px;
+  outline: none;
+  background: #fff;
+  color: #4f5366;
+  font: inherit;
+  cursor: pointer;
+}
+
+.admin-moderation-page-size select:focus {
+  border-color: #967ef1;
+}
+
+/* ประเภทที่ AI ตรวจพบ */
+.admin-moderation-type-badge {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 4px 13px 4px 5px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+.admin-moderation-type-badge .admin-moderation-type-icon {
+  width: 25px;
+  height: 25px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+.admin-moderation-type-badge .admin-moderation-type-icon svg { width: 14px; height: 14px; }
+.admin-moderation-type-divider { width: 1px; height: 19px; flex-shrink: 0; }
+.admin-moderation-type-badge.profanity { color: #956500; background: linear-gradient(90deg, #fff8dc 0%, #ffe8a3 100%); border-color: #f5c542; }
+.admin-moderation-type-badge.profanity .admin-moderation-type-icon { color: #fff; background: #d49a00; }
+.admin-moderation-type-badge.profanity .admin-moderation-type-divider { background: #e5b633; }
+.admin-moderation-type-badge.insult { color: #d85b00; background: linear-gradient(90deg, #fff3e7 0%, #ffd9b4 100%); border-color: #ffad61; }
+.admin-moderation-type-badge.insult .admin-moderation-type-icon { color: #fff; background: #e86f00; }
+.admin-moderation-type-badge.insult .admin-moderation-type-divider { background: #f3a45e; }
+.admin-moderation-type-badge.spam { color: #fff; background: linear-gradient(90deg, #f64b5f 0%, #ee3349 100%); border-color: #ee3349; }
+.admin-moderation-type-badge.spam .admin-moderation-type-icon { color: #fff; background: rgba(255, 255, 255, 0.16); }
+.admin-moderation-type-badge.spam .admin-moderation-type-divider { background: rgba(255, 255, 255, 0.65); }
+.admin-moderation-type-badge.sexual { color: #fff; background: linear-gradient(90deg, #c52e62 0%, #a91f50 100%); border-color: #ad2353; }
+.admin-moderation-type-badge.sexual .admin-moderation-type-icon { color: #fff; background: rgba(255, 255, 255, 0.16); }
+.admin-moderation-type-badge.sexual .admin-moderation-type-divider { background: rgba(255, 255, 255, 0.65); }
+.admin-moderation-type-badge.safe { color: #247a43; background: linear-gradient(90deg, #effbf3 0%, #d6f3df 100%); border-color: #8ed3a5; }
+.admin-moderation-type-badge.safe .admin-moderation-type-icon { color: #fff; background: #32a85c; }
+.admin-moderation-type-badge.safe .admin-moderation-type-divider { background: #78c792; }
+.admin-moderation-type-badge.default { color: #6f668c; background: #f2f0fb; border-color: #ddd8ee; }
+.admin-moderation-type-badge.default .admin-moderation-type-icon { color: #fff; background: #81779d; }
+.admin-moderation-type-badge.default .admin-moderation-type-divider { background: #cfc8df; }
+
+/* ค่าความไม่เหมาะสม */
+
+.admin-moderation-confidence-bar {
+  width: 110px;
+  margin: 0 auto;
+}
+
+.admin-moderation-confidence-bar strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.admin-moderation-confidence-track {
+  width: 100%;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #ececf1;
+}
+
+.admin-moderation-confidence-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+}
+
+/* 0-30% เขียว */
+.admin-moderation-confidence-bar.low strong {
+  color: #2f8a59;
+}
+
+.admin-moderation-confidence-bar.low
+  .admin-moderation-confidence-track span {
+  background: #43a86c;
+}
+
+/* >30-60% เหลือง */
+.admin-moderation-confidence-bar.medium strong {
+  color: #a87500;
+}
+
+.admin-moderation-confidence-bar.medium
+  .admin-moderation-confidence-track span {
+  background: #e0aa24;
+}
+
+/* >60-80% ส้ม */
+.admin-moderation-confidence-bar.high strong {
+  color: #d87316;
+}
+
+.admin-moderation-confidence-bar.high
+  .admin-moderation-confidence-track span {
+  background: #e98b32;
+}
+
+/* >80-100% แดง */
+.admin-moderation-confidence-bar.very-high strong {
+  color: #d94f63;
+}
+
+.admin-moderation-confidence-bar.very-high
+  .admin-moderation-confidence-track span {
+  background: #e45a6d;
+}
+
+/* ===== Review moderation detail layout ===== */
+.admin-moderation-review-flag-info {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 180px;
+    gap: 14px;
+    align-items: stretch;
+}
+
+.admin-moderation-review-flag-info .admin-moderation-detected-text {
+    min-width: 0;
+    padding-right: 14px;
+    border-right: 1px solid #eee8ed;
+}
+
+.admin-moderation-review-flag-info .admin-moderation-category-box {
+    width: 180px;
+    min-width: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 9px;
+}
+
+.admin-moderation-review-flag-info .admin-moderation-category-box > span:first-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #9b98a8;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.admin-moderation-review-flag-info .admin-moderation-type-badge {
+    max-width: 100%;
+}
+
+.admin-moderation-review-flag-info {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 210px;
+    gap: 14px;
+    align-items: stretch;
+}
+
+.admin-moderation-review-flag-info .admin-moderation-category-box {
+    width: 210px;
+    min-width: 210px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 9px;
+}
+
+.admin-moderation-review-flag-info .admin-moderation-type-badge {
+    width: max-content;
+    max-width: none;
+    white-space: nowrap;
+}
+
 
 /* RESPONSIVE */
 @media (max-width: 1200px) {
-
-  .admin-moderation-section-head,
-  .admin-moderation-toolbar {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .admin-moderation-toolbar,
-  .admin-moderation-search {
-    width: 100%;
-  }
-
-  .admin-moderation-filters {
-    width: fit-content;
-    max-width: 100%;
-    overflow-x: auto;
-  }
-
-  .admin-moderation-filters {
-    display: flex;
-    width: 100%;
-  }
-
-  .admin-moderation-filters button {
-    flex: 1;
-    min-width: 0;
-    text-align: center;
-    white-space: nowrap;
-  }
+  .admin-moderation-section-head { align-items: stretch; flex-direction: column; gap: 18px; }
+  .admin-moderation-toolbar { width: 100%; display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; }
+  .admin-moderation-status-filter { grid-column: 1; grid-row: 1; justify-self: start; }
+  .admin-moderation-page-size { grid-column: 2; grid-row: 1; justify-self: end; }
+  .admin-moderation-search { grid-column: 1 / -1; grid-row: 2; width: 100%; min-width: 0; }
+  .admin-moderation-search input { width: 100%; }
+  .admin-moderation-table-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .admin-moderation-table { min-width: 1180px; }
 }
-
 @media (max-width: 900px) {
-  .admin-moderation-heading {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .admin-moderation-total {
-    width: 100%;
-  }
+  .admin-moderation-heading { align-items: stretch; flex-direction: column; }
+  .admin-moderation-total { width: 100%; }
+}
+@media (max-width: 650px) {
+  .admin-moderation-heading { padding: 22px 18px; }
+  .admin-moderation-title { align-items: flex-start; }
+  .admin-moderation-title-icon { width: 58px; height: 58px; font-size: 24px; }
+  .admin-moderation-title h1 { font-size: 22px; }
+  .admin-moderation-content { padding-right: 16px; padding-left: 16px; }
+  .admin-moderation-toolbar { grid-template-columns: 1fr; gap: 10px; }
+  .admin-moderation-status-filter, .admin-moderation-page-size, .admin-moderation-search { grid-column: 1; width: 100%; justify-self: stretch; }
+  .admin-moderation-status-filter { grid-row: 1; }
+  .admin-moderation-status-filter select { flex: 1; min-width: 0; }
+  .admin-moderation-search { grid-row: 2; }
+  .admin-moderation-page-size { grid-row: 3; justify-content: flex-start; }
+  .admin-moderation-pagination { align-items: flex-start; flex-direction: column; }
+  .admin-moderation-panel { width: 100%; }
+  .admin-moderation-panel-body { padding: 19px; }
+  .admin-moderation-panel-actions, .admin-moderation-ratings { grid-template-columns: 1fr; }
+  .admin-moderation-panel-actions { padding: 14px 19px; }
+  .admin-moderation-flag-card-header { grid-template-columns: 34px minmax(0, 1fr) auto; gap: 9px; }
+  .admin-moderation-flag-number { width: 34px; height: 34px; font-size: 14px; }
+  .admin-moderation-flag-info { grid-template-columns: 1fr; }
+  .admin-moderation-category-box { padding-left: 0; border-left: 0; }
+  .admin-moderation-change-row { grid-template-columns: 1fr; }
+  .admin-moderation-change-arrow { transform: rotate(90deg); }
+   .admin-moderation-review-flag-info {
+    grid-template-columns: minmax(0, 1fr) 210px;
+    gap: 10px;
 }
 
-@media (max-width: 650px) {
-  .admin-moderation-heading {
-    padding: 22px 18px;
-  }
-
-  .admin-moderation-title {
-    align-items: flex-start;
-  }
-
-  .admin-moderation-title-icon {
-    width: 58px;
-    height: 58px;
-    font-size: 24px;
-  }
-
-  .admin-moderation-title h1 {
-    font-size: 22px;
-  }
-
-  .admin-moderation-content {
-    padding-right: 16px;
-    padding-left: 16px;
-  }
-
-  .admin-moderation-pagination {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .admin-moderation-panel {
-    width: 100%;
-  }
-
-  .admin-moderation-panel-body {
-    padding: 19px;
-  }
-
-  .admin-moderation-panel-actions,
-  .admin-moderation-ratings {
-    grid-template-columns: 1fr;
-  }
-
-  .admin-moderation-panel-actions {
-    padding: 14px 19px;
-  }
-
-  .admin-moderation-flag-card-header {
-    grid-template-columns: 34px minmax(0, 1fr) auto;
-    gap: 9px;
-  }
-
-  .admin-moderation-flag-number {
-    width: 34px;
-    height: 34px;
-    font-size: 14px;
-  }
-
-  .admin-moderation-flag-info {
-    grid-template-columns: 1fr;
-  }
-
-  .admin-moderation-category-box {
-    padding-left: 0;
-    border-left: 0;
-  }
-
-  .admin-moderation-change-row {
-    grid-template-columns: 1fr;
-  }
-
-  .admin-moderation-change-arrow {
-    transform: rotate(90deg);
-  }
-
-  .admin-moderation-filters button {
-    padding-left: 8px;
-    padding-right: 8px;
-    font-size: 12px;
-  }
+.admin-moderation-review-flag-info .admin-moderation-category-box {
+    width: 210px;
+    min-width: 210px;
+}
 }
