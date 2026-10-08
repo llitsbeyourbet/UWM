@@ -28,7 +28,7 @@ const ModerationFlag = sequelize.define("ModerationFlag", {
     allowNull: false,
   },
   label: {
-    type: DataTypes.ENUM("profanity", "insult", "sexual", "spam"),
+    type: DataTypes.ENUM("safe", "profanity", "insult", "sexual", "spam"),
     allowNull: false,
   },
   confidence: {

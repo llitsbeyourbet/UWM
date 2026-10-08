@@ -1358,15 +1358,37 @@ body.admin-moderation-panel-open {
 .admin-moderation-type-badge.profanity { color: #956500; background: linear-gradient(90deg, #fff8dc 0%, #ffe8a3 100%); border-color: #f5c542; }
 .admin-moderation-type-badge.profanity .admin-moderation-type-icon { color: #fff; background: #d49a00; }
 .admin-moderation-type-badge.profanity .admin-moderation-type-divider { background: #e5b633; }
-.admin-moderation-type-badge.insult { color: #d85b00; background: linear-gradient(90deg, #fff3e7 0%, #ffd9b4 100%); border-color: #ffad61; }
-.admin-moderation-type-badge.insult .admin-moderation-type-icon { color: #fff; background: #e86f00; }
-.admin-moderation-type-badge.insult .admin-moderation-type-divider { background: #f3a45e; }
+.admin-moderation-type-badge.insult {
+  color: #1d4ed8;
+  background: linear-gradient(90deg, #eff6ff 0%, #bfdbfe 100%);
+  border-color: #93c5fd;
+}
+
+.admin-moderation-type-badge.insult .admin-moderation-type-icon {
+  color: #fff;
+  background: #2563eb;
+}
+
+.admin-moderation-type-badge.insult .admin-moderation-type-divider {
+  background: #93c5fd;
+}
 .admin-moderation-type-badge.spam { color: #fff; background: linear-gradient(90deg, #f64b5f 0%, #ee3349 100%); border-color: #ee3349; }
 .admin-moderation-type-badge.spam .admin-moderation-type-icon { color: #fff; background: rgba(255, 255, 255, 0.16); }
 .admin-moderation-type-badge.spam .admin-moderation-type-divider { background: rgba(255, 255, 255, 0.65); }
-.admin-moderation-type-badge.sexual { color: #fff; background: linear-gradient(90deg, #c52e62 0%, #a91f50 100%); border-color: #ad2353; }
-.admin-moderation-type-badge.sexual .admin-moderation-type-icon { color: #fff; background: rgba(255, 255, 255, 0.16); }
-.admin-moderation-type-badge.sexual .admin-moderation-type-divider { background: rgba(255, 255, 255, 0.65); }
+.admin-moderation-type-badge.sexual {
+  color: #087F73;
+  background: linear-gradient(90deg, #E0F7F4 0%, #B2E8DF 100%);
+  border-color: #4DB6AC;
+}
+
+.admin-moderation-type-badge.sexual .admin-moderation-type-icon {
+  color: #fff;
+  background: #009688;
+}
+
+.admin-moderation-type-badge.sexual .admin-moderation-type-divider {
+  background: #4DB6AC;
+}
 .admin-moderation-type-badge.safe { color: #247a43; background: linear-gradient(90deg, #effbf3 0%, #d6f3df 100%); border-color: #8ed3a5; }
 .admin-moderation-type-badge.safe .admin-moderation-type-icon { color: #fff; background: #32a85c; }
 .admin-moderation-type-badge.safe .admin-moderation-type-divider { background: #78c792; }

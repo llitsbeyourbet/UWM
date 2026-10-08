@@ -1658,6 +1658,7 @@ const AI_CATEGORY_LABELS = {
   insult: "คำดูหมิ่นหรือด่าทอ",
   sexual: "เนื้อหาทางเพศที่ไม่เหมาะสม",
   spam: "สแปมหรือเนื้อหาเสี่ยง",
+  safe: "เนื้อหาปลอดภัย",
 };
 
 const AI_FIELD_LABELS = {

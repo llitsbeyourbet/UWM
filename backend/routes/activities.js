@@ -716,7 +716,7 @@ router.post("/", auth, async (req, res) => {
       location,
     });
 
-    moderationProcessingTimeMs = moderation.processingTimeMs ?? null;
+    const moderationProcessingTimeMs = moderation.processingTimeMs ?? null;
 
     // Rule-based ตรวจพบ → ไม่อนุญาตให้สร้างกิจกรรมเหมือนเดิม
     if (
@@ -817,7 +817,7 @@ router.post("/", auth, async (req, res) => {
       createdBy: req.userId,
     });
 
-    for (const flag of aiModerationFlags) {
+    for (const flag of (moderation.aiResults || [])) {
       const flaggedText =
         flag.field === "activityName"
           ? activityName.trim()
@@ -1157,6 +1157,7 @@ router.put("/:id", auth, async (req, res) => {
     }
     let moderationWasChecked = false;
     let aiModerationFlags = [];
+    let aiModerationResults = [];
     let moderationProcessingTimeMs = null;
 
     if (
@@ -1183,6 +1184,7 @@ router.put("/:id", auth, async (req, res) => {
       moderationProcessingTimeMs =
         moderation.processingTimeMs ?? null;
       moderationWasChecked = true;
+      aiModerationResults = moderation.aiResults || [];
 
       // Rule-based ตรวจพบ → ไม่อนุญาตให้แก้ไข
       if (
@@ -1328,7 +1330,7 @@ router.put("/:id", auth, async (req, res) => {
       }
 
       // สร้าง Flag รอบใหม่เฉพาะ field ที่แก้แล้ว AI ยังตรวจพบ
-      const newFlags = aiModerationFlags.filter((flag) =>
+      const newFlags = aiModerationResults.filter((flag) =>
         changedModerationFields.includes(flag.field)
       );
 
@@ -1354,7 +1356,7 @@ router.put("/:id", auth, async (req, res) => {
         });
       }
 
-      aiModerationFlags = newFlags;
+      aiModerationFlags = newFlags.filter((flag) => flag.decision === "block");
     }
 
     const creatorWarningFlags = aiModerationFlags.filter(

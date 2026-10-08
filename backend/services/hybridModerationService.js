@@ -8,6 +8,7 @@ const AI_CATEGORY_LABELS = {
   insult: "คำดูหมิ่นหรือด่าทอ",
   sexual: "เนื้อหาทางเพศที่ไม่เหมาะสม",
   spam: "สแปมหรือเนื้อหาเสี่ยง",
+  safe: "เนื้อหาปลอดภัย",
 };
 
 const hasMeaningfulText = (text) =>
@@ -90,6 +91,7 @@ const hybridAnalyzeFields = async (fields = {}) => {
 
   const fieldResults = {};
   const aiFlags = [];
+  const aiResults = [];
   let aiProcessingTimeMs = 0;
 
   for (const [field, value] of Object.entries(fields)) {
@@ -113,6 +115,7 @@ const hybridAnalyzeFields = async (fields = {}) => {
     );
 
     fieldResults[field] = aiResult;
+    aiResults.push({ field, ...aiResult });
 
     if (aiResult.decision === "block") {
       aiFlags.push({
@@ -144,6 +147,7 @@ const hybridAnalyzeFields = async (fields = {}) => {
       source: "ai",
       ai: fieldResults,
       aiFlags,
+      aiResults,
       processingTimeMs,
     };
   }
@@ -154,6 +158,7 @@ const hybridAnalyzeFields = async (fields = {}) => {
     source: "ai",
     ai: fieldResults,
     aiFlags: [],
+    aiResults,
     processingTimeMs,
   };
 };

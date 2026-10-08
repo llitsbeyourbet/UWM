@@ -252,7 +252,7 @@ router.post("/:activityId", auth, async (req, res) => {
       { transaction }
     );
 
-    for (const flag of aiModerationFlags) {
+    for (const flag of (moderation.aiResults || [])) {
       const flaggedCommentId =
         flag.field === "activityComment"
           ? activityCommentRecord.id
@@ -268,6 +268,7 @@ router.post("/:activityId", auth, async (req, res) => {
           label: flag.label,
           confidence: flag.confidence,
           processingTimeMs: moderation.processingTimeMs ?? null,
+          flaggedText: String(flag.field === "activityComment" ? comment || "" : hostComment || "").trim(),
           status: "pending",
         },
         { transaction }
