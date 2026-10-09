@@ -58,6 +58,9 @@ function ActivityDetail() {
   const [joinLoading, setJoinLoading] = useState(false);
   const [reviewed, setReviewed] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteReason, setDeleteReason] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [showReportMenu, setShowReportMenu] = useState(false);
   const [showAllParticipants, setShowAllParticipants] = useState(false);
   const [visibleReviews, setVisibleReviews] = useState(3);
@@ -360,7 +363,8 @@ function ActivityDetail() {
     }
 
     if (Number(activity.joinedCount || participants.length || 0) > 0) {
-      await showAlert({ type: 'warning', title: 'ไม่สามารถลบได้', message: 'ไม่สามารถลบกิจกรรมที่มีผู้เข้าร่วมแล้วได้' });
+      setDeleteReason("");
+      setShowDeleteModal(true);
       return;
     }
 
@@ -396,6 +400,36 @@ function ActivityDetail() {
       navigate("/");
     } catch {
       await showAlert({ type: 'error', title: 'เกิดข้อผิดพลาด', message: 'ไม่สามารถเชื่อมต่อ server ได้' });
+    }
+  };
+
+  const handleDeleteWithReason = async () => {
+    const reason = deleteReason.trim();
+    if (!reason || reason.length > 1000 || deleteLoading) return;
+    const confirmed = await showConfirm({
+      title: "ยืนยันการลบกิจกรรม?",
+      message: "ผู้เข้าร่วมทุกคนจะได้รับแจ้งเตือนพร้อมเหตุผลที่ระบุ และไม่สามารถย้อนกลับได้",
+      confirmText: "ลบกิจกรรม",
+      cancelText: "กลับ",
+    });
+    if (!confirmed) return;
+    setDeleteLoading(true);
+    try {
+      const token = sessionStorage.getItem("token");
+      const res = await fetch(`${API_URL}/api/activities/${activity.id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ reason }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "ไม่สามารถลบกิจกรรมได้");
+      setShowDeleteModal(false);
+      await showAlert({ type: "success", title: "ลบกิจกรรมสำเร็จ", message: "ระบบแจ้งผู้เข้าร่วมกิจกรรมแล้ว" });
+      navigate("/");
+    } catch (err) {
+      await showAlert({ type: "error", title: "เกิดข้อผิดพลาด", message: err.message });
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -507,8 +541,7 @@ function ActivityDetail() {
   const canDeleteActivity =
     isOwner &&
     !activityEnded &&
-    activity.status !== "suspended" &&
-    !hasParticipants;
+    activity.status !== "suspended";
 
   return (
     <div className="activity-detail-page">
@@ -1050,6 +1083,28 @@ function ActivityDetail() {
               </button>
             )}
 
+          </div>
+        )}
+
+        {showDeleteModal && (
+          <div className="modal-overlay" onClick={() => !deleteLoading && setShowDeleteModal(false)}>
+            <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+              <h3 className="modal-title">ลบกิจกรรม</h3>
+              <p className="modal-subtitle">กิจกรรมนี้มีผู้เข้าร่วมแล้ว กรุณาระบุเหตุผลในการลบเพื่อแจ้งให้ผู้เข้าร่วมทราบ</p>
+              <div className="other-reason-wrap">
+                <p className="other-reason-lbl">เหตุผลในการลบกิจกรรม *</p>
+                <textarea className="other-reason-input" value={deleteReason}
+                  onChange={(e) => setDeleteReason(e.target.value)} maxLength={1000}
+                  placeholder="เช่น ผู้สร้างกิจกรรมมีอาการป่วยกะทันหัน จึงไม่สามารถจัดกิจกรรมได้" />
+                <p className="modal-subtitle">{deleteReason.length}/1000 ตัวอักษร</p>
+              </div>
+              <div className="modal-actions">
+                <button className="modal-cancel-btn" disabled={deleteLoading} onClick={() => setShowDeleteModal(false)}>กลับ</button>
+                <button className="modal-report-btn" disabled={!deleteReason.trim() || deleteLoading} onClick={handleDeleteWithReason}>
+                  {deleteLoading ? "กำลังลบ..." : "ลบกิจกรรม"}
+                </button>
+              </div>
+            </div>
           </div>
         )}
 

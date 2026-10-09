@@ -233,10 +233,33 @@ export default function Login() {
               </span>
             </p>
 
+            {/* ADMIN CONTACT */}
+            <div className="login-support">
+              <div className="login-support-card">
+                <span className="material-icons login-support-headset">support_agent</span>
+                <div className="login-support-intro">
+                  <strong>ติดต่อผู้ดูแลระบบ</strong>
+                  <span>หากพบปัญหาการใช้งานหรือมีข้อสงสัย</span>
+                </div>
+                <div className="login-support-details">
+                  <a href="mailto:untilwemeet.admin@gmail.com">
+                    <span className="material-icons">mail_outline</span>
+                    untilwemeet.admin@gmail.com
+                  </a>
+                  <a href="mailto:untilwemeet.admin@gmail.com?subject=แจ้งปัญหาการใช้งาน">
+                    <span className="material-icons">chat_bubble_outline</span>
+                    แจ้งปัญหาการใช้งาน
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
       </div>
+      <footer className="login-copyright">
+        © 2026 Until We Meet. All rights reserved.
+      </footer>
     </div>
   );
 }

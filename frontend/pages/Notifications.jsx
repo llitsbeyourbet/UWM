@@ -136,7 +136,7 @@ function Notifications() {
   };
 
   const getNotificationCategory = (type) => {
-    if (["reminder", "activity_content_warning"].includes(type)) {
+    if (["reminder", "activity_content_warning", "activity_deleted"].includes(type)) {
       return "activity";
     }
 
@@ -173,6 +173,7 @@ function Notifications() {
       );
 
   const renderIcon = (type) => {
+    if (type === "activity_deleted") return <div className="notif-icon red">🗑️</div>;
     if (type === "join_request") return (
       <div className="notif-icon blue">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5577cc" strokeWidth="2" strokeLinecap="round">
@@ -327,6 +328,7 @@ function Notifications() {
   };
 
   const renderMessage = (n) => {
+    if (n.type === "activity_deleted") return <>กิจกรรม <span className="bold">{n.activityName}</span> ที่คุณเข้าร่วมถูกลบโดยผู้สร้างกิจกรรม</>;
     if (n.type === "join_request")
       return <><span className="bold">{n.fromUsername}</span> ส่งคำขอเข้าร่วมกิจกรรม <br /><span className="bold">{n.activityName}</span></>;
     if (n.type === "join_confirmed")
@@ -419,7 +421,9 @@ function Notifications() {
         console.log(err);
       }
 
-      if (n.type === "join_request" && n.activityId) {
+      if (n.type === "activity_deleted") {
+        return;
+      } else if (n.type === "join_request" && n.activityId) {
         navigate(`/join-requests/${n.activityId}`);
       } else if (n.type === "review_request") {
         navigate(`/review/${n.activityId}`);
@@ -520,11 +524,14 @@ function Notifications() {
 
             {(n.type === "activity_warning" ||
               n.type === "activity_suspended" ||
-              n.type === "activity_content_warning") &&
+              n.type === "activity_content_warning" ||
+               n.type === "activity_deleted") &&
               n.adminNote && (
                 <div className="notif-admin-note">
                   <span>
-                    {n.type === "activity_content_warning"
+                    {n.type === "activity_deleted"
+                      ? "เหตุผลในการลบกิจกรรม :"
+                      : n.type === "activity_content_warning"
                       ? "รายละเอียด :"
                       : "หมายเหตุจากผู้ดูแลระบบ :"}
                   </span>

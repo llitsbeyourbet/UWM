@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
     FiAlertTriangle,
     FiCalendar,
+    FiChevronDown,
     FiCheck,
     FiClock,
     FiEye,
@@ -51,7 +52,7 @@ const formatConfidence = (value) => {
 const getModerationTypeMeta = (label = "") => {
     const value = String(label).toLowerCase();
 
-    if (value.includes("safe")) return { label: "ปลอดภัย", className: "safe", Icon: FiCheck };
+    if (value.includes("safe")) return { label: "เหมาะสม", className: "safe", Icon: FiCheck };
     if (value.includes("spam")) return { label: "สแปมหรือเนื้อหาเสี่ยง", className: "spam", Icon: FiAlertTriangle };
     if (value.includes("insult")) return { label: "คำดูหมิ่นหรือด่าทอ", className: "insult", Icon: FiMessageSquare };
     if (value.includes("profanity")) return { label: "คำหยาบ", className: "profanity", Icon: FiSlash };
@@ -66,6 +67,15 @@ const getConfidenceLevel = (value) => {
     if (percent <= 60) return "medium";
     if (percent <= 80) return "high";
     return "very-high";
+};
+const getSafeConfidenceLevel = (value) => {
+    const percent = Number(value) * 100;
+
+    if (percent >= 80) return "safe-very-high";
+    if (percent >= 50) return "safe-high";
+    if (percent >= 30) return "safe-medium";
+    if (percent >= 15) return "safe-low";
+    return "safe-very-low";
 };
 
 const getItemStatus = (flags = []) => {
@@ -91,6 +101,15 @@ const FILTERS = [
     ["actioned", "ดำเนินการแล้ว"],
 ];
 
+const TYPE_FILTERS = [
+    ["all", "ทั้งหมด"],
+    ["safe", "ปลอดภัย"],
+    ["profanity", "คำหยาบ"],
+    ["insult", "คำดูหมิ่นหรือด่าทอ"],
+    ["sexual", "เนื้อหาทางเพศที่ไม่เหมาะสม"],
+    ["spam", "สแปมหรือเนื้อหาเสี่ยง"],
+];
+
 const getFlaggedText = (activity, flag) => {
     if (flag.flaggedText) return flag.flaggedText;
 
@@ -104,7 +123,8 @@ const getFlaggedText = (activity, flag) => {
 export default function AdminModerationActivities() {
     const [activities, setActivities] = useState([]);
     const [search, setSearch] = useState("");
-    const [statusFilter, setStatusFilter] = useState("all");
+    const [typeFilter, setTypeFilter] = useState("all");
+    const [typeDropdownOpen, setTypeDropdownOpen] = useState(false);
     const [page, setPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(5);
     const [loading, setLoading] = useState(true);
@@ -166,7 +186,7 @@ export default function AdminModerationActivities() {
 
     useEffect(() => {
         setPage(1);
-    }, [search, statusFilter, itemsPerPage]);
+    }, [search, typeFilter, itemsPerPage]);
 
     useEffect(() => {
         if (!selectedActivity) return undefined;
@@ -199,9 +219,12 @@ export default function AdminModerationActivities() {
         const keyword = search.trim().toLowerCase();
 
         return activities.filter((activity) => {
-            const itemStatus = getItemStatus(activity.moderationFlags);
-
-            if (statusFilter !== "all" && itemStatus !== statusFilter) {
+            if (
+                typeFilter !== "all" &&
+                !(activity.moderationFlags || []).some(
+                    (flag) => flag.label === typeFilter
+                )
+            ) {
                 return false;
             }
 
@@ -227,7 +250,7 @@ export default function AdminModerationActivities() {
                 .toLowerCase()
                 .includes(keyword);
         });
-    }, [activities, search, statusFilter]);
+    }, [activities, search, typeFilter]);
 
     const totalPages = Math.max(
         1,
@@ -428,8 +451,7 @@ export default function AdminModerationActivities() {
                             <div>
                                 <h1>กิจกรรมที่ต้องตรวจสอบ</h1>
                                 <p>
-                                    ตรวจสอบกิจกรรมที่ระบบ AI
-                                    ตรวจพบข้อความที่อาจไม่เหมาะสม
+                                    ตรวจสอบผลการจำแนกข้อความกิจกรรมด้วยระบบ AI
                                 </p>
                             </div>
                         </div>
@@ -451,16 +473,48 @@ export default function AdminModerationActivities() {
                             <div>
                                 <h2>รายการกิจกรรม</h2>
                                 <p>
-                                    แสดงกิจกรรมทั้งหมดที่ AI เคยตรวจพบข้อความที่อาจไม่เหมาะสม
+                                    แสดงกิจกรรมทั้งหมดที่ผ่านการตรวจสอบข้อความด้วย AI
                                 </p>
                             </div>
 
                             <div className="admin-moderation-toolbar">
                                 <div className="admin-moderation-status-filter">
-                                    <span>สถานะ</span>
-                                    <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
-                                        {FILTERS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                                    </select>
+                                    <span>ประเภท</span>
+
+                                    <div className="admin-moderation-type-dropdown">
+                                        <button
+                                            type="button"
+                                            className="admin-moderation-type-trigger"
+                                            onClick={() => setTypeDropdownOpen(!typeDropdownOpen)}
+                                            aria-expanded={typeDropdownOpen}
+                                        >
+                                            <span className="admin-moderation-type-option">
+                                                <i className={`type-dot ${typeFilter}`} />
+                                                {TYPE_FILTERS.find(([value]) => value === typeFilter)?.[1]}
+                                            </span>
+                                            <FiChevronDown />
+                                        </button>
+
+                                        {typeDropdownOpen && (
+                                            <div className="admin-moderation-type-menu">
+                                                {TYPE_FILTERS.map(([value, label]) => (
+                                                    <button
+                                                        key={value}
+                                                        type="button"
+                                                        className={`admin-moderation-type-item ${typeFilter === value ? "active" : ""
+                                                            }`}
+                                                        onClick={() => {
+                                                            setTypeFilter(value);
+                                                            setTypeDropdownOpen(false);
+                                                        }}
+                                                    >
+                                                        <i className={`type-dot ${value}`} />
+                                                        {label}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                                 <label className="admin-moderation-search">
                                     <FiSearch />
@@ -505,8 +559,8 @@ export default function AdminModerationActivities() {
                                         <tr>
                                             <th>กิจกรรม</th>
                                             <th>ผู้สร้าง</th>
-                                            <th>ประเภทข้อความที่ตรวจพบ</th>
-                                            <th>ค่าความไม่เหมาะสม</th>
+                                            <th>ผลการจำแนกข้อความ</th>
+                                            <th>ค่าความมั่นใจของ AI</th>
                                             <th>สถานะ</th>
                                             <th>เวลาประมวลผลของ AI</th>
                                             <th>ตรวจสอบ</th>
@@ -579,7 +633,10 @@ export default function AdminModerationActivities() {
                                                     </td>
                                                     <td>
                                                         {latestFlag ? (
-                                                            <div className={`admin-moderation-confidence-bar ${getConfidenceLevel(latestFlag.confidence)}`}>
+                                                            <div className={`admin-moderation-confidence-bar ${latestFlag.label === "safe"
+                                                                ? getSafeConfidenceLevel(latestFlag.confidence)
+                                                                : getConfidenceLevel(latestFlag.confidence)
+                                                                }`}>
                                                                 <strong>{formatConfidence(latestFlag.confidence)}</strong>
                                                                 <div className="admin-moderation-confidence-track"><span style={{ width: `${Math.min(Number(latestFlag.confidence) * 100, 100)}%` }} /></div>
                                                             </div>
@@ -661,7 +718,7 @@ export default function AdminModerationActivities() {
                         <div className="admin-moderation-panel-header">
                             <div>
                                 <span>
-                                    AI ตรวจพบข้อความที่อาจไม่เหมาะสม
+                                    ผลการตรวจสอบข้อความด้วย AI
                                 </span>
                                 <h2>{selectedActivity.activityName}</h2>
                             </div>
@@ -783,7 +840,7 @@ export default function AdminModerationActivities() {
                                                         </div>
 
                                                         <div className="admin-moderation-ai-metrics">
-                                                            <span className="admin-moderation-confidence">
+                                                            <span className={`admin-moderation-confidence ${typeMeta.className}`}>
                                                                 {formatConfidence(flag.confidence)}
                                                             </span>
 

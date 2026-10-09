@@ -1482,24 +1482,43 @@ router.delete("/:id", auth, async (req, res) => {
       });
     }
 
-    const joinedCount =
-      await JoinRequest.count({
-        where: {
-          activityId: activity.id,
-          status: {
-            [Op.in]: [
-              "approved",
-              "checked_in",
-            ],
-          },
-        },
-      });
+    const joinedRequests = await JoinRequest.findAll({
+      where: {
+        activityId: activity.id,
+        status: { [Op.in]: ["approved", "checked_in"] },
+      },
+      attributes: ["userId"],
+      raw: true,
+    });
 
-    if (joinedCount > 0) {
+    const participantIds = [...new Set(joinedRequests.map((r) => Number(r.userId)))];
+    const reason = typeof req.body?.reason === "string" ? req.body.reason.trim() : "";
+
+    if (participantIds.length > 0 && (!reason || reason.length > 1000)) {
       return res.status(400).json({
-        message:
-          "ไม่สามารถลบกิจกรรมที่มีผู้เข้าร่วมแล้วได้",
+        message: "กรุณาระบุเหตุผลในการลบกิจกรรม (ไม่เกิน 1,000 ตัวอักษร)",
       });
+    }
+
+    // เก็บการแจ้งเตือนก่อนลบ เพื่อให้ผู้เข้าร่วมอ่านเหตุผลย้อนหลังได้
+    // ไม่ใส่ foreign key ไปยังกิจกรรมที่ถูกลบใน notification ใหม่
+    if (participantIds.length > 0) {
+      const existingUsers = await User.findAll({
+        where: { id: { [Op.in]: participantIds } },
+        attributes: ["id"],
+        raw: true,
+      });
+      for (const user of existingUsers) {
+        await notificationService.createNotification(
+          user.id,
+          "activity_deleted",
+          null,
+          activity.activityName,
+          req.userId,
+          null,
+          { adminNote: reason }
+        );
+      }
     }
 
     await activity.destroy();

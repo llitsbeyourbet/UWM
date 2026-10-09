@@ -3,6 +3,7 @@ import {
     FiAlertTriangle,
     FiCheck,
     FiClock,
+    FiChevronDown,
     FiEdit3,
     FiEye,
     FiMessageSquare,
@@ -34,7 +35,7 @@ const formatConfidence = (value) => {
 const getModerationTypeMeta = (label = "") => {
     const value = String(label).toLowerCase();
 
-    if (value.includes("safe")) return { label: "ปลอดภัย", className: "safe", Icon: FiCheck };
+    if (value.includes("safe")) return { label: "เหมาะสม", className: "safe", Icon: FiCheck };
     if (value.includes("spam")) return { label: "สแปมหรือเนื้อหาเสี่ยง", className: "spam", Icon: FiAlertTriangle };
     if (value.includes("insult")) return { label: "คำดูหมิ่นหรือด่าทอ", className: "insult", Icon: FiMessageSquare };
     if (value.includes("profanity")) return { label: "คำหยาบ", className: "profanity", Icon: FiSlash };
@@ -50,6 +51,16 @@ const getConfidenceLevel = (value) => {
     if (percent <= 80) return "high";
 
     return "very-high";
+};
+
+const getSafeConfidenceLevel = (value) => {
+    const percent = Number(value) * 100;
+
+    if (percent >= 80) return "safe-very-high";
+    if (percent >= 50) return "safe-high";
+    if (percent >= 30) return "safe-medium";
+    if (percent >= 15) return "safe-low";
+    return "safe-very-low";
 };
 
 const getItemStatus = (flags = []) => {
@@ -70,6 +81,14 @@ const FILTERS = [
     ["reviewed", "ตรวจสอบแล้ว"],
     ["actioned", "ดำเนินการแล้ว"],
 ];
+const TYPE_FILTERS = [
+    ["all", "ทั้งหมด"],
+    ["safe", "เหมาะสม"],
+    ["profanity", "คำหยาบ"],
+    ["insult", "คำดูหมิ่นหรือด่าทอ"],
+    ["sexual", "เนื้อหาทางเพศที่ไม่เหมาะสม"],
+    ["spam", "สแปมหรือเนื้อหาเสี่ยง"],
+];
 
 const Rating = ({ value }) => {
     const rating = Number(value) || 0;
@@ -89,7 +108,8 @@ const Rating = ({ value }) => {
 export default function AdminModerationReviews() {
     const [reviews, setReviews] = useState([]);
     const [search, setSearch] = useState("");
-    const [statusFilter, setStatusFilter] = useState("all");
+    const [typeFilter, setTypeFilter] = useState("all");
+    const [typeDropdownOpen, setTypeDropdownOpen] = useState(false);
     const [page, setPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(5);
     const [loading, setLoading] = useState(true);
@@ -144,7 +164,7 @@ export default function AdminModerationReviews() {
 
     useEffect(() => {
         setPage(1);
-    }, [search, statusFilter, itemsPerPage]);
+    }, [search, typeFilter, itemsPerPage]);
 
     useEffect(() => {
         if (!selectedReview) return undefined;
@@ -176,9 +196,12 @@ export default function AdminModerationReviews() {
         const keyword = search.trim().toLowerCase();
 
         return reviews.filter((review) => {
-            const itemStatus = getItemStatus(review.moderationFlags);
-
-            if (statusFilter !== "all" && itemStatus !== statusFilter) {
+            if (
+                typeFilter !== "all" &&
+                !(review.moderationFlags || []).some(
+                    (flag) => flag.label === typeFilter
+                )
+            ) {
                 return false;
             }
 
@@ -203,7 +226,7 @@ export default function AdminModerationReviews() {
                 .toLowerCase()
                 .includes(keyword);
         });
-    }, [reviews, search, statusFilter]);
+    }, [reviews, search, typeFilter]);
 
     const totalPages = Math.max(
         1,
@@ -416,7 +439,7 @@ export default function AdminModerationReviews() {
 
                             <div>
                                 <h1>รีวิวที่ต้องตรวจสอบ</h1>
-                                <p>ตรวจสอบข้อความรีวิวที่ระบบ AI ตรวจพบว่าอาจไม่เหมาะสม</p>
+                                <p>ตรวจสอบผลการจำแนกข้อความรีวิวด้วยระบบ AI</p>
                             </div>
                         </div>
 
@@ -436,22 +459,47 @@ export default function AdminModerationReviews() {
                         <div className="admin-moderation-section-head">
                             <div>
                                 <h2>รายการรีวิว</h2>
-                                <p>แสดงรีวิวทั้งหมดที่ AI เคยตรวจพบข้อความที่อาจไม่เหมาะสม</p>
+                                <p>แสดงรีวิวทั้งหมดที่ผ่านการตรวจสอบข้อความด้วย AI</p>
                             </div>
 
                             <div className="admin-moderation-toolbar">
                                 <div className="admin-moderation-status-filter">
-                                    <span>สถานะ</span>
+                                    <span>ประเภท</span>
 
-                                    <select
-                                        value={statusFilter}
-                                        onChange={(event) => setStatusFilter(event.target.value)}
-                                    >
-                                        <option value="all">ทั้งหมด</option>
-                                        <option value="pending">รอตรวจสอบ</option>
-                                        <option value="reviewed">ตรวจสอบแล้ว</option>
-                                        <option value="actioned">ดำเนินการแล้ว</option>
-                                    </select>
+                                    <div className="admin-moderation-type-dropdown">
+                                        <button
+                                            type="button"
+                                            className="admin-moderation-type-trigger"
+                                            onClick={() => setTypeDropdownOpen(!typeDropdownOpen)}
+                                            aria-expanded={typeDropdownOpen}
+                                        >
+                                            <span className="admin-moderation-type-option">
+                                                <i className={`type-dot ${typeFilter}`} />
+                                                {TYPE_FILTERS.find(([value]) => value === typeFilter)?.[1]}
+                                            </span>
+                                            <FiChevronDown />
+                                        </button>
+
+                                        {typeDropdownOpen && (
+                                            <div className="admin-moderation-type-menu">
+                                                {TYPE_FILTERS.map(([value, label]) => (
+                                                    <button
+                                                        key={value}
+                                                        type="button"
+                                                        className={`admin-moderation-type-item ${typeFilter === value ? "active" : ""
+                                                            }`}
+                                                        onClick={() => {
+                                                            setTypeFilter(value);
+                                                            setTypeDropdownOpen(false);
+                                                        }}
+                                                    >
+                                                        <i className={`type-dot ${value}`} />
+                                                        {label}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
 
                                 <label className="admin-moderation-search">
@@ -512,8 +560,8 @@ export default function AdminModerationReviews() {
                                         <tr>
                                             <th>กิจกรรม</th>
                                             <th>ผู้รีวิว</th>
-                                            <th>ประเภทข้อความที่ตรวจพบ</th>
-                                            <th>ค่าความไม่เหมาะสม</th>
+                                            <th>ผลการจำแนกข้อความ</th>
+                                            <th>ค่าความมั่นใจของ AI</th>
                                             <th>สถานะ</th>
                                             <th>เวลาประมวลผลของ AI</th>
                                             <th>ตรวจสอบ</th>
@@ -582,11 +630,10 @@ export default function AdminModerationReviews() {
                                                     </td>
                                                     <td>
                                                         {latestFlag ? (
-                                                            <div
-                                                                className={`admin-moderation-confidence-bar ${getConfidenceLevel(
-                                                                    latestFlag.confidence
-                                                                )}`}
-                                                            >
+                                                            <div className={`admin-moderation-confidence-bar ${latestFlag.label === "safe"
+                                                                ? getSafeConfidenceLevel(latestFlag.confidence)
+                                                                : getConfidenceLevel(latestFlag.confidence)
+                                                                }`}>
                                                                 <strong>
                                                                     {formatConfidence(latestFlag.confidence)}
                                                                 </strong>
@@ -686,7 +733,7 @@ export default function AdminModerationReviews() {
                     <aside className="admin-moderation-panel">
                         <div className="admin-moderation-panel-header">
                             <div>
-                                <span>AI ตรวจพบข้อความรีวิวที่อาจไม่เหมาะสม</span>
+                                <span>ผลการตรวจสอบข้อความรีวิวด้วย AI</span>
                                 <h2>{selectedReview.activityName}</h2>
                             </div>
 
@@ -739,7 +786,7 @@ export default function AdminModerationReviews() {
                                     <div>
                                         <h3>ข้อความที่ AI ตรวจพบ</h3>
                                         <p>
-                                            AI ตรวจพบข้อความที่อาจไม่เหมาะสม{" "}
+                                            ผลการตรวจสอบข้อความด้วย AI {" "}
                                             {selectedReview.moderationFlags?.length || 0} รายการ
                                         </p>
                                     </div>
@@ -768,7 +815,7 @@ export default function AdminModerationReviews() {
                                                     </div>
 
                                                     <div className="admin-moderation-ai-metrics">
-                                                        <span className="admin-moderation-confidence">
+                                                        <span className={`admin-moderation-confidence ${typeMeta.className}`}>
                                                             {formatConfidence(flag.confidence)}
                                                         </span>
 

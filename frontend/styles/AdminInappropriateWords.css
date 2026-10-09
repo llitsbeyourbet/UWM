@@ -503,18 +503,18 @@
 }
 
 .admin-word-type-badge.insult {
-  color: #d85b00;
-  background: linear-gradient(90deg, #fff3e7 0%, #ffd9b4 100%);
-  border-color: #ffad61;
+  color: #1d4ed8;
+  background: linear-gradient(90deg, #eff6ff 0%, #bfdbfe 100%);
+  border-color: #93c5fd;
 }
 
 .admin-word-type-badge.insult .admin-word-type-icon {
   color: #fff;
-  background: #e86f00;
+  background: #2563eb;
 }
 
 .admin-word-type-badge.insult .admin-word-type-divider {
-  background: #f3a45e;
+  background: #93c5fd;
 }
 
 .admin-word-type-badge.spam {
@@ -533,18 +533,18 @@
 }
 
 .admin-word-type-badge.sexual {
-  color: #fff;
-  background: linear-gradient(90deg, #c52e62 0%, #a91f50 100%);
-  border-color: #ad2353;
+    color: #a64d6a;
+    background: linear-gradient(90deg, #fff5f8 0%, #fce8ee 100%);
+    border-color: #f4c7d3;
 }
 
 .admin-word-type-badge.sexual .admin-word-type-icon {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.16);
+    color: #a64d6a;
+    background: #f4c7d3;
 }
 
 .admin-word-type-badge.sexual .admin-word-type-divider {
-  background: rgba(255, 255, 255, 0.65);
+    background: #f4c7d3;
 }
 
 .admin-word-type-badge.default {
@@ -574,6 +574,8 @@
   color: #8b90a2;
   font-size: 12px;
 }
+
+
 
 @media (max-width: 1200px) {
   .admin-word-toolbar { flex-wrap: wrap; }

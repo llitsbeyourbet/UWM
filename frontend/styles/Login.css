@@ -402,6 +402,88 @@ input::-ms-reveal,
 input::-ms-clear {
   display: none;
 }
+/* =========================
+   ADMIN CONTACT & COPYRIGHT
+========================= */
+
+.login-page {
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-support {
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid #edf0f6;
+}
+
+.login-support-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: #f7f9ff;
+  border: 1px solid #eef2ff;
+  border-radius: 12px;
+}
+
+.login-support-headset {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e5eeff;
+  color: #2873ff;
+  font-size: 23px;
+}
+
+.login-support-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.login-support-intro strong {
+  font-size: 12px;
+  color: #17294c;
+}
+
+.login-support-intro > span {
+  font-size: 10px;
+  color: #8a95aa;
+}
+
+.login-support-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  margin-left: auto;
+  padding-left: 14px;
+  border-left: 1px solid #e1e8f5;
+}
+
+.login-support-details a {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #687792;
+  font-size: 10px;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.login-support-details a:hover { color: #2873ff; }
+.login-support-details .material-icons { font-size: 15px; flex-shrink: 0; }
+
+.login-copyright {
+  color: #8993a5;
+  font-size: 12px;
+  text-align: center;
+}
 
 /* =========================
    NOTEBOOK
@@ -448,7 +530,6 @@ input::-ms-clear {
     padding: 20px;
     min-height: 100dvh;
     box-sizing: border-box;
-    margin-bottom: -60px;
   }
 
   .login-container {
@@ -496,14 +577,14 @@ input::-ms-clear {
   .login-container {
     width: 100%;
     max-width: none;
-    min-height: 100dvh;
+    min-height: auto;
     border-radius: 0;
     box-shadow: none;
   }
 
   .login-right {
     width: 100%;
-    min-height: 100dvh;
+    min-height: auto;
     padding: 20px 20px;
     align-items: flex-start;
   }
@@ -564,4 +645,26 @@ input::-ms-clear {
   .register-text {
     margin-top: 22px;
   }
+}
+/* Responsive admin contact */
+@media (max-width: 1366px) {
+  .login-support-card { flex-wrap: wrap; }
+  .login-support-details {
+    flex-basis: 100%;
+    margin-left: 0;
+    padding: 10px 0 0;
+    border-left: 0;
+    border-top: 1px solid #e1e8f5;
+  }
+}
+
+@media (max-width: 900px) {
+  .login-page { margin-bottom: 0; }
+}
+
+@media (max-width: 600px) {
+  .login-page { padding: 0 0 20px; gap: 12px; }
+  .login-support { margin-top: 24px; }
+  .login-support-card { padding: 12px; }
+  .login-copyright { padding: 0 12px; font-size: 11px; }
 }
