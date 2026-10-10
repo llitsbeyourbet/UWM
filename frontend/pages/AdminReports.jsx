@@ -5,8 +5,6 @@ import {
     FiBell,
     FiCalendar,
     FiClock,
-    FiChevronLeft,
-    FiChevronRight,
     FiEye,
     FiFlag,
     FiGrid,
@@ -27,7 +25,7 @@ import { formatDate, formatTime, formatDateTime, formatDateTimeDate, formatDateT
 import { getCategoryIcon } from "../utils/categoryIcons";
 import AdminProfile from "../components/AdminProfile";
 
-const ITEMS_PER_PAGE = 5;
+const PAGE_SIZE_OPTIONS = [5, 10, 25, 50, 75, 100];
 
 const FALLBACK_IMAGE =
     "https://placehold.co/320x220/f2efff/6846f5?text=Activity";
@@ -86,7 +84,7 @@ function AdminReports() {
     const [activeStatus, setActiveStatus] = useState("all");
     const [search, setSearch] = useState("");
     const [sortOrder, setSortOrder] = useState("latest");
-    const [page, setPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(5);
 
     const token = sessionStorage.getItem("token");
 
@@ -210,25 +208,7 @@ function AdminReports() {
         });
     }, [reports, activeStatus, search, sortOrder]);
 
-    const totalPages = Math.max(
-        1,
-        Math.ceil(filteredReports.length / ITEMS_PER_PAGE)
-    );
-
-    const visibleReports = filteredReports.slice(
-        (page - 1) * ITEMS_PER_PAGE,
-        page * ITEMS_PER_PAGE
-    );
-
-    useEffect(() => {
-        setPage(1);
-    }, [activeStatus, search, sortOrder]);
-
-    useEffect(() => {
-        if (page > totalPages) {
-            setPage(totalPages);
-        }
-    }, [page, totalPages]);
+    const visibleReports = filteredReports.slice(0, itemsPerPage);
 
     const openActivity = async (report) => {
         const activityId =
@@ -369,6 +349,20 @@ function AdminReports() {
                                         <option value="latest">วันที่ล่าสุด</option>
                                         <option value="oldest">วันที่เก่าสุด</option>
                                     </select>
+                                </label>
+
+                                <label className="reports-page-size reports-toolbar-page-size">
+                                    <span>แสดง</span>
+                                    <select
+                                        value={itemsPerPage}
+                                        onChange={(event) => setItemsPerPage(Number(event.target.value))}
+                                        aria-label="จำนวนรายการที่แสดง"
+                                    >
+                                        {PAGE_SIZE_OPTIONS.map((size) => (
+                                            <option key={size} value={size}>{size}</option>
+                                        ))}
+                                    </select>
+                                    <span>รายการ</span>
                                 </label>
                             </div>
 
@@ -534,45 +528,6 @@ function AdminReports() {
                             </section>
                         )}
 
-                        {!loading && !error && filteredReports.length > 0 && (
-                            <footer className="reports-pagination">
-                                <button
-                                    type="button"
-                                    disabled={page === 1}
-                                    onClick={() => setPage((value) => value - 1)}
-                                    aria-label="หน้าก่อนหน้า"
-                                >
-                                    <FiChevronLeft />
-                                </button>
-
-                                {Array.from({ length: totalPages }, (_, index) => index + 1)
-                                    .filter(
-                                        (pageNumber) =>
-                                            pageNumber === 1 ||
-                                            pageNumber === totalPages ||
-                                            Math.abs(pageNumber - page) <= 1
-                                    )
-                                    .map((pageNumber) => (
-                                        <button
-                                            type="button"
-                                            key={pageNumber}
-                                            className={page === pageNumber ? "active" : ""}
-                                            onClick={() => setPage(pageNumber)}
-                                        >
-                                            {pageNumber}
-                                        </button>
-                                    ))}
-
-                                <button
-                                    type="button"
-                                    disabled={page === totalPages}
-                                    onClick={() => setPage((value) => value + 1)}
-                                    aria-label="หน้าถัดไป"
-                                >
-                                    <FiChevronRight />
-                                </button>
-                            </footer>
-                        )}
                     </main>
                 </div>
             </main >

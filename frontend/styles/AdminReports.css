@@ -852,3 +852,64 @@
     flex: 1;
   }
 }
+/* Pagination: page-size selector and navigation */
+.reports-pagination {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.reports-page-size,
+.reports-page-buttons {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.reports-page-size,
+.reports-page-summary {
+  color: #6b7280;
+  font-size: 13px;
+}
+.reports-page-size select {
+  min-width: 65px;
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid #e3e3ed;
+  border-radius: 8px;
+  background: #fff;
+  color: #555b70;
+  font: inherit;
+  cursor: pointer;
+}
+.reports-page-summary {
+  white-space: nowrap;
+}
+@media (max-width: 600px) {
+  .reports-pagination {
+    justify-content: center;
+  }
+}
+
+/* จำนวนรายการอยู่บนแถบตัวกรอง ถัดจากตัวเลือกวันที่ */
+.reports-toolbar-page-size {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+.reports-toolbar-page-size select {
+  height: 43px;
+  min-width: 65px;
+  border-radius: 10px;
+}
+@media (max-width: 760px) {
+  .reports-toolbar-left {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .reports-toolbar-page-size {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 480px) {
+  .reports-toolbar-left {
+    grid-template-columns: 1fr;
+  }
+}

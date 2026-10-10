@@ -185,6 +185,23 @@ export default function AdminInappropriateWords() {
             return;
         }
 
+        const normalizeWord = (value) =>
+            String(value || "").normalize("NFKC").trim().toLowerCase();
+
+        const duplicate = words.some((item) =>
+            normalizeWord(item.word) === normalizeWord(cleanWord) &&
+            (!editingWord || String(item.id) !== String(editingWord.id))
+        );
+
+        if (duplicate) {
+            await showAlert({
+                type: "warning",
+                title: "พบคำซ้ำในระบบ",
+                message: "มีคำนี้อยู่ในรายการแล้ว กรุณาใช้คำอื่น",
+            });
+            return;
+        }
+
         try {
             setSaving(true);
 
@@ -335,8 +352,8 @@ export default function AdminInappropriateWords() {
                             <strong>คำที่เพิ่มจะถูกนำไปใช้กับระบบวิเคราะห์ข้อความ</strong>
 
                             <span>
-                                ระบบจะนำคำที่ผู้ดูแลระบบเพิ่มไปตรวจสอบร่วมกับ
-                                คำพื้นฐานที่มีอยู่ในระบบ
+                                ระบบจะใช้คำที่ผู้ดูแลระบบเพิ่มไว้ในตารางนี้
+                                เพื่อตรวจสอบข้อความไม่เหมาะสม
                             </span>
                         </div>
                     </div>
@@ -471,18 +488,14 @@ export default function AdminInappropriateWords() {
                                                 </td>
 
                                                 <td>
-                                                    {item.isSystem ? (
-                                                        <span className="admin-word-system-action">–</span>
-                                                    ) : (
-                                                        <div className="admin-word-actions">
+                                                    <div className="admin-word-actions">
                                                             <button type="button" title="แก้ไข" onClick={() => openEditModal(item)}>
                                                                 <FiEdit2 />
                                                             </button>
                                                             <button type="button" className="delete" title="ลบ" onClick={() => handleDelete(item)}>
                                                                 <FiTrash2 />
                                                             </button>
-                                                        </div>
-                                                    )}
+                                                    </div>
                                                 </td>
                                             </tr>
                                         );

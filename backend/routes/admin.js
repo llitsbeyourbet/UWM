@@ -13,7 +13,6 @@ const Comment = require("../models/Comment");
 const ModerationFlag = require("../models/ModerationFlag");
 const notificationService = require("../services/notificationService");
 const InappropriateWord = require("../models/InappropriateWord");
-const baseInappropriateWords = require("../config/inappropriateWords");
 const { setCustomWords } = require("../services/moderationService");
 const { getActivityStartDateTime, getActivityEndDateTime } = require("../utils/activityTime");
 
@@ -2176,24 +2175,11 @@ router.get("/inappropriate-words", auth, isAdmin, async (req, res) => {
       raw: true,
     });
 
-    const baseWords = baseInappropriateWords.map((item, index) => ({
-      id: `base-${index}`,
-      word: item.word,
-      category: item.category,
-      weight: item.weight,
-      match: item.match,
-      createdAt: null,
-      isBase: true,
-      editable: false,
-    }));
-
-    const adminWords = customWords.map((item) => ({
+    return res.json(customWords.map((item) => ({
       ...item,
       isBase: false,
       editable: true,
-    }));
-
-    return res.json([...adminWords, ...baseWords]);
+    })));
   } catch (error) {
     console.error("Get inappropriate words error:", error);
 

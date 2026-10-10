@@ -1,5 +1,4 @@
 // backend/services/moderationService.js
-const inappropriateWords = require("../config/inappropriateWords");
 
 let customWords = [];
 
@@ -12,10 +11,7 @@ const setCustomWords = (words = []) => {
   }));
 };
 
-const getAllWords = () => [
-  ...inappropriateWords,
-  ...customWords,
-];
+const getAllWords = () => customWords;
 
 const CATEGORY_LABELS = {
   profanity: "คำหยาบ",

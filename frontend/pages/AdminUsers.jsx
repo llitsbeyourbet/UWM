@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  FiBell, FiCalendar, FiChevronLeft, FiChevronRight, FiEye,
+  FiBell, FiCalendar, FiEye,
   FiFlag, FiGrid, FiLogOut, FiMail, FiMoreVertical, FiSearch, FiSettings, FiStar,
   FiUserCheck, FiUserX, FiUsers,
 } from "react-icons/fi";
@@ -12,7 +12,7 @@ import "../styles/AdminUsers.css";
 import AdminSidebar from "../components/AdminSidebar";
 import AdminProfile from "../components/AdminProfile";
 
-const ITEMS_PER_PAGE = 10;
+const PAGE_SIZE_OPTIONS = [5, 10, 25, 50, 75, 100];
 
 const getUserStatus = (user) => {
   if (
@@ -49,7 +49,7 @@ export default function AdminUsers() {
   const [activeTab, setActiveTab] = useState("all");
   const [search, setSearch] = useState("");
   const [sortOrder, setSortOrder] = useState("latest");
-  const [page, setPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -146,20 +146,7 @@ export default function AdminUsers() {
     });
   }, [users, activeTab, search, sortOrder]);
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredUsers.length / ITEMS_PER_PAGE)
-  );
-
-  const visibleUsers = filteredUsers.slice(
-    (page - 1) * ITEMS_PER_PAGE,
-    page * ITEMS_PER_PAGE
-  );
-
-  useEffect(() => {
-    setPage(1);
-  }, [activeTab, search, sortOrder]);
-
+  const visibleUsers = filteredUsers.slice(0, itemsPerPage);
 
   return (
     <div className="admin-shell">
@@ -224,6 +211,7 @@ export default function AdminUsers() {
                 />
               </label>
 
+              <div className="users-toolbar-controls">
               <select
                 className="users-sort"
                 value={sortOrder}
@@ -234,6 +222,14 @@ export default function AdminUsers() {
                 <option value="latest">สมัครล่าสุด</option>
                 <option value="oldest">สมัครเก่าสุด</option>
               </select>
+                <label className="users-page-size">
+                  <span>แสดง</span>
+                  <select value={itemsPerPage} onChange={(event) => setItemsPerPage(Number(event.target.value))} aria-label="จำนวนผู้ใช้งานที่แสดง">
+                    {PAGE_SIZE_OPTIONS.map((size) => <option key={size} value={size}>{size}</option>)}
+                  </select>
+                  <span>รายการ</span>
+                </label>
+              </div>
             </div>
 
             {loading ? (
@@ -358,59 +354,6 @@ export default function AdminUsers() {
               </div>
             )}
 
-            {!loading &&
-              !error &&
-              filteredUsers.length > 0 && (
-                <footer className="users-pagination">
-                  <span>
-                    แสดง{" "}
-                    {(page - 1) * ITEMS_PER_PAGE + 1}–
-                    {Math.min(
-                      page * ITEMS_PER_PAGE,
-                      filteredUsers.length
-                    )}{" "}
-                    จาก {filteredUsers.length} รายการ
-                  </span>
-
-                  <div>
-                    <button
-                      type="button"
-                      disabled={page === 1}
-                      onClick={() =>
-                        setPage((current) => current - 1)
-                      }
-                    >
-                      <FiChevronLeft />
-                    </button>
-
-                    {Array.from(
-                      { length: totalPages },
-                      (_, index) => index + 1
-                    ).map((pageNumber) => (
-                      <button
-                        type="button"
-                        key={pageNumber}
-                        className={
-                          page === pageNumber ? "active" : ""
-                        }
-                        onClick={() => setPage(pageNumber)}
-                      >
-                        {pageNumber}
-                      </button>
-                    ))}
-
-                    <button
-                      type="button"
-                      disabled={page === totalPages}
-                      onClick={() =>
-                        setPage((current) => current + 1)
-                      }
-                    >
-                      <FiChevronRight />
-                    </button>
-                  </div>
-                </footer>
-              )}
           </section>
         </div>
       </main>

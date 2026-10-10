@@ -1,10 +1,8 @@
-import { act, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FiBell,
   FiCalendar,
-  FiChevronLeft,
-  FiChevronRight,
   FiEye,
   FiFlag,
   FiGrid,
@@ -23,7 +21,7 @@ import "../styles/AdminActivities.css";
 import AdminSidebar from "../components/AdminSidebar";
 import AdminProfile from "../components/AdminProfile";
 
-const ITEMS_PER_PAGE = 6;
+const DEFAULT_ITEMS_PER_PAGE = 6;
 
 const FALLBACK_IMAGE =
   "https://placehold.co/320x220/f0edff/6846f5?text=Activity";
@@ -102,7 +100,7 @@ export default function AdminActivities() {
   const [publishedPhase, setPublishedPhase] = useState("all");
   const [search, setSearch] = useState("");
   const [sortOrder, setSortOrder] = useState("latest");
-  const [page, setPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(DEFAULT_ITEMS_PER_PAGE);
 
   const admin = useMemo(() => {
     try {
@@ -271,25 +269,7 @@ export default function AdminActivities() {
     });
   }, [activities, activeStatus, publishedPhase, search, sortOrder]);
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredActivities.length / ITEMS_PER_PAGE)
-  );
-
-  const visibleActivities = filteredActivities.slice(
-    (page - 1) * ITEMS_PER_PAGE,
-    page * ITEMS_PER_PAGE
-  );
-
-  useEffect(() => {
-    setPage(1);
-  }, [activeStatus, publishedPhase, search, sortOrder]);
-
-  useEffect(() => {
-    if (page > totalPages) {
-      setPage(totalPages);
-    }
-  }, [page, totalPages]);
+  const visibleActivities = filteredActivities.slice(0, itemsPerPage);
 
   const openActivity = (activity) => {
     const activityId = activity.id || activity._id;
@@ -409,6 +389,20 @@ export default function AdminActivities() {
                     <option value="latest">วันที่ล่าสุด</option>
                     <option value="oldest">วันที่เก่าสุด</option>
                   </select>
+                </label>
+
+                <label className="activities-page-size">
+                  <span>แสดง</span>
+                  <select
+                    value={itemsPerPage}
+                    onChange={(event) => setItemsPerPage(Number(event.target.value))}
+                    aria-label="จำนวนกิจกรรมที่แสดง"
+                  >
+                    {[6, 10, 25, 50, 75, 100].map((amount) => (
+                      <option key={amount} value={amount}>{amount}</option>
+                    ))}
+                  </select>
+                  <span>รายการ</span>
                 </label>
               </div>
 
@@ -542,41 +536,6 @@ export default function AdminActivities() {
               </div>
             )}
 
-            {!loading && !error && filteredActivities.length > 0 && (
-              <footer className="activities-pagination">
-                <button
-                  type="button"
-                  disabled={page === 1}
-                  onClick={() => setPage((value) => value - 1)}
-                  aria-label="หน้าก่อนหน้า"
-                >
-                  <FiChevronLeft />
-                </button>
-
-                {Array.from(
-                  { length: totalPages },
-                  (_, index) => index + 1
-                ).map((pageNumber) => (
-                  <button
-                    type="button"
-                    key={pageNumber}
-                    className={page === pageNumber ? "active" : ""}
-                    onClick={() => setPage(pageNumber)}
-                  >
-                    {pageNumber}
-                  </button>
-                ))}
-
-                <button
-                  type="button"
-                  disabled={page === totalPages}
-                  onClick={() => setPage((value) => value + 1)}
-                  aria-label="หน้าถัดไป"
-                >
-                  <FiChevronRight />
-                </button>
-              </footer>
-            )}
           </section>
         </div>
       </main>

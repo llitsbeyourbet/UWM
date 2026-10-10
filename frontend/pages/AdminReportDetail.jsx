@@ -207,7 +207,7 @@ export default function AdminReportDetail() {
     return (
       <div className="admin-shell">
         <main className="admin-main">
-          <div className="report-detail-state">
+          <div className={`report-detail-state ${loading ? "is-loading" : ""}`}>
             {loading ? (
               <span className="report-detail-loader" />
             ) : (
@@ -654,7 +654,7 @@ export default function AdminReportDetail() {
                         label: "ปฏิเสธการระงับกิจกรรม",
                         description: "ไม่ระงับกิจกรรมจากรายงานนี้",
                       },
-                    ].map((option) => (
+                    ].filter((option) => !isCompleted || option.value === decision).map((option) => (
                       <button
                         key={option.value}
                         type="button"
@@ -678,13 +678,18 @@ export default function AdminReportDetail() {
                 <div className="report-decision-bottom">
                   <label className="report-decision-field report-decision-note">
                     <span>หมายเหตุจากผู้ดูแลระบบ</span>
-                    <textarea
-                      rows="3"
-                      value={adminNote}
-                      onChange={(event) => setAdminNote(event.target.value)}
-                      placeholder="ระบุรายละเอียดผลการตรวจสอบ..."
-                      disabled={isCompleted}
-                    />
+                    {isCompleted ? (
+                      <div className="report-admin-note-readonly">
+                        {adminNote.trim() || "ไม่มีหมายเหตุจากผู้ดูแลระบบ"}
+                      </div>
+                    ) : (
+                      <textarea
+                        rows="3"
+                        value={adminNote}
+                        onChange={(event) => setAdminNote(event.target.value)}
+                        placeholder="ระบุรายละเอียดผลการตรวจสอบ..."
+                      />
+                    )}
                   </label>
 
                   {!isCompleted && (

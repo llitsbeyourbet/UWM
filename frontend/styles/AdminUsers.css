@@ -509,3 +509,7 @@
   }
 
 }
+.users-toolbar-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.users-page-size { display: inline-flex; align-items: center; gap: 8px; color: #777e94; font-size: 14px; white-space: nowrap; }
+.users-page-size select { height: 43px; min-width: 68px; padding: 0 10px; border: 1px solid #dddfea; border-radius: 10px; background: #fff; color: #62687e; font: inherit; cursor: pointer; }
+@media (max-width: 720px) { .users-toolbar-controls { width: 100%; } .users-toolbar-controls .users-sort { flex: 1; min-width: 0; } }

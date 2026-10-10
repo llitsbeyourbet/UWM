@@ -556,3 +556,34 @@
     font-size: 22px;
   }
 }
+/* จำนวนกิจกรรมที่แสดง — อยู่ข้างตัวเลือกวันที่ */
+.activities-page-size {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  color: #777f97;
+  font-size: 13px;
+}
+
+.activities-page-size select {
+  width: 72px;
+  height: 43px;
+  padding: 0 10px;
+  border: 1px solid #dedfeb;
+  border-radius: 10px;
+  background: #fff;
+  color: #5f667e;
+  font: inherit;
+  cursor: pointer;
+}
+
+@media (max-width: 720px) {
+  .activities-toolbar-left {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .activities-page-size {
+    flex-shrink: 0;
+  }
+}

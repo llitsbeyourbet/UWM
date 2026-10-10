@@ -1126,7 +1126,7 @@ width: 36px;
 
 .modal-title {
     margin: 0 0 8px;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
     color: #111;
     text-align: center;
@@ -1134,8 +1134,8 @@ width: 36px;
 
 .modal-subtitle {
     margin: 0 0 20px;
-    font-size: 14px;
-    color: #666;
+    font-size: 15px;
+    color: #555555;
     text-align: center;
 }
 
@@ -1177,8 +1177,8 @@ width: 36px;
 }
 
 .other-reason-lbl {
-    font-size: 12px;
-    color: #888;
+    font-size: 14px;
+    color: #e00606;
     margin: 0;
 }
 
@@ -1196,6 +1196,7 @@ width: 36px;
     color: #111;
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;    /* Firefox */
+    
 }
 
 .other-reason-input::-webkit-scrollbar {
@@ -1227,6 +1228,11 @@ width: 36px;
 .modal-cancel-btn {
     background: #eee;
     color: #666;
+}
+
+.other-reason-input::placeholder {
+  color: #B0B0B0;
+  opacity: 1;
 }
 
 .modal-cancel-btn:hover {

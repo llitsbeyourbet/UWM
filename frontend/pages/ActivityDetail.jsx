@@ -1090,7 +1090,7 @@ function ActivityDetail() {
           <div className="modal-overlay" onClick={() => !deleteLoading && setShowDeleteModal(false)}>
             <div className="modal-card" onClick={(e) => e.stopPropagation()}>
               <h3 className="modal-title">ลบกิจกรรม</h3>
-              <p className="modal-subtitle">กิจกรรมนี้มีผู้เข้าร่วมแล้ว กรุณาระบุเหตุผลในการลบเพื่อแจ้งให้ผู้เข้าร่วมทราบ</p>
+              <p className="modal-subtitle">กิจกรรมนี้มีผู้เข้าร่วมแล้ว <br />กรุณาระบุเหตุผลในการลบเพื่อแจ้งให้ผู้เข้าร่วมทราบ</p>
               <div className="other-reason-wrap">
                 <p className="other-reason-lbl">เหตุผลในการลบกิจกรรม *</p>
                 <textarea className="other-reason-input" value={deleteReason}
