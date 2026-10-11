@@ -6,6 +6,45 @@ import ImageCropModal from "../components/ImageCropModal";
 import "../styles/CreateActivities.css";
 import { getCategoryIcon } from "../utils/categoryIcons";
 
+// ตรวจสอบช่วงเวลาเช็คอิน โดยรองรับกิจกรรมที่สิ้นสุดในวันถัดไป
+const validateCheckinWindow = ({ time, endTime, endsNextDay, checkinStart, checkinEnd }) => {
+  if (!checkinStart || !checkinEnd) return null;
+
+  const toMinutes = (value) => {
+    if (!/^\d{2}:\d{2}(?::\d{2})?$/.test(String(value))) return NaN;
+    const [hours, minutes, seconds = 0] = String(value).split(":").map(Number);
+    if (hours > 23 || minutes > 59 || seconds > 59) return NaN;
+    return hours * 60 + minutes + seconds / 60;
+  };
+
+  const activityStart = toMinutes(time);
+  const activityEnd = toMinutes(endTime) + (endsNextDay ? 1440 : 0);
+  let checkinFrom = toMinutes(checkinStart);
+  let checkinUntil = toMinutes(checkinEnd);
+
+  if (![activityStart, activityEnd, checkinFrom, checkinUntil].every(Number.isFinite)) {
+    return "รูปแบบเวลาไม่ถูกต้อง";
+  }
+
+  // เวลาเช็คอินเป็นเวลา HH:mm จึงใช้วันเริ่มกิจกรรมเป็นฐาน
+  // ถ้าเวลาเช็คอินสิ้นสุดน้อยกว่าเวลาเริ่ม ให้ถือว่าเป็นวันถัดไป
+  if (checkinUntil <= checkinFrom && endsNextDay) checkinUntil += 1440;
+
+  // กรณีกิจกรรมข้ามวัน: ทั้งช่วงเช็คอินอาจอยู่หลังเที่ยงคืน
+  if (endsNextDay && checkinFrom < activityStart && checkinUntil <= activityStart) {
+    checkinFrom += 1440;
+    checkinUntil += 1440;
+  }
+
+  if (checkinUntil <= checkinFrom) {
+    return "เวลาสิ้นสุดเช็คอินต้องอยู่หลังเวลาเริ่มเช็คอิน";
+  }
+  if (checkinUntil > activityEnd - 1) {
+    return "เวลาสิ้นสุดเช็คอินต้องอยู่ก่อนเวลาสิ้นสุดกิจกรรมอย่างน้อย 1 นาที";
+  }
+  return null;
+};
+
 function EditActivity() {
   const navigate = useNavigate();
   const { showAlert, showConfirm } = useAlert();
@@ -220,8 +259,9 @@ function EditActivity() {
       await showAlert({ type: "warning", title: "เวลาไม่ถูกต้อง", message: "ระยะเวลากิจกรรมต้องน้อยกว่า 24 ชั่วโมง" });
       return;
     }
-    if (checkinStart && checkinEnd && ((!endsNextDay && checkinEnd <= checkinStart) || (endsNextDay && checkinEnd === checkinStart))) {
-      await showAlert({ type: "warning", title: "เวลาไม่ถูกต้อง", message: "เวลาเช็คอินไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง" });
+    const checkinError = validateCheckinWindow({ time, endTime, endsNextDay, checkinStart, checkinEnd });
+    if (checkinError) {
+      await showAlert({ type: "warning", title: "เวลาไม่ถูกต้อง", message: checkinError });
       return;
     }
 

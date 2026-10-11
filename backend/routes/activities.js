@@ -27,6 +27,76 @@ const {
 const {
   hybridAnalyzeFields,
 } = require("../services/hybridModerationService");
+// ตรวจสอบเวลาเช็คอิน รองรับกิจกรรมข้ามวัน
+const validateCheckinWindow = ({
+  time,
+  endTime,
+  endsNextDay,
+  checkinStart,
+  checkinEnd,
+}) => {
+  if (!checkinStart || !checkinEnd) return null;
+
+  const toMinutes = (value) => {
+    const text = String(value);
+
+    if (!/^\d{2}:\d{2}(?::\d{2})?$/.test(text)) {
+      return NaN;
+    }
+
+    const [hours, minutes, seconds = 0] =
+      text.split(":").map(Number);
+
+    if (hours > 23 || minutes > 59 || seconds > 59) {
+      return NaN;
+    }
+
+    return hours * 60 + minutes + seconds / 60;
+  };
+
+  const activityStart = toMinutes(time);
+  const activityEnd =
+    toMinutes(endTime) + (endsNextDay ? 1440 : 0);
+
+  let checkinFrom = toMinutes(checkinStart);
+  let checkinUntil = toMinutes(checkinEnd);
+
+  if (
+    ![
+      activityStart,
+      activityEnd,
+      checkinFrom,
+      checkinUntil,
+    ].every(Number.isFinite)
+  ) {
+    return "รูปแบบเวลาไม่ถูกต้อง";
+  }
+
+  // กรณีเวลาเช็คอินข้ามเที่ยงคืน
+  if (endsNextDay && checkinUntil <= checkinFrom) {
+    checkinUntil += 1440;
+  }
+
+  // กรณีทั้งช่วงเช็คอินอยู่ในวันถัดไป
+  if (
+    endsNextDay &&
+    checkinFrom < activityStart &&
+    checkinUntil <= activityStart
+  ) {
+    checkinFrom += 1440;
+    checkinUntil += 1440;
+  }
+
+  if (checkinUntil <= checkinFrom) {
+    return "เวลาสิ้นสุดเช็คอินต้องอยู่หลังเวลาเริ่มเช็คอิน";
+  }
+
+  if (checkinUntil > activityEnd - 1) {
+    return "เวลาสิ้นสุดเช็คอินต้องอยู่ก่อนเวลาสิ้นสุดกิจกรรมอย่างน้อย 1 นาที";
+  }
+
+  return null;
+};
 
 // ตรวจว่ากิจกรรมถึงเวลาเริ่มแล้วหรือยัง
 const isActivityStarted = (activity) => {
@@ -600,7 +670,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-
 // สร้างกิจกรรม
 router.post("/", auth, async (req, res) => {
   try {
@@ -686,27 +755,17 @@ router.post("/", auth, async (req, res) => {
       });
     }
 
-    if (
-      checkinStart &&
-      checkinEnd &&
-      !endsNextDay &&
-      checkinEnd <= checkinStart
-    ) {
-      return res.status(400).json({
-        message:
-          "เวลาสิ้นสุดเช็คอินต้องอยู่หลังเวลาเริ่มเช็คอิน",
-      });
-    }
+    const checkinError = validateCheckinWindow({
+      time,
+      endTime,
+      endsNextDay,
+      checkinStart,
+      checkinEnd,
+    });
 
-    if (
-      checkinStart &&
-      checkinEnd &&
-      endsNextDay &&
-      checkinEnd === checkinStart
-    ) {
+    if (checkinError) {
       return res.status(400).json({
-        message:
-          "เวลาเริ่มและสิ้นสุดการเช็คอินต้องไม่ตรงกัน",
+        message: checkinError,
       });
     }
 
@@ -1132,27 +1191,17 @@ router.put("/:id", auth, async (req, res) => {
       updates.checkinEnd ??
       activity.checkinEnd;
 
-    if (
-      nextCheckinStart &&
-      nextCheckinEnd &&
-      !nextEndsNextDay &&
-      nextCheckinEnd <= nextCheckinStart
-    ) {
-      return res.status(400).json({
-        message:
-          "เวลาสิ้นสุดเช็คอินต้องอยู่หลังเวลาเริ่มเช็คอิน",
-      });
-    }
+    const checkinError = validateCheckinWindow({
+      time: nextTime,
+      endTime: nextEndTime,
+      endsNextDay: nextEndsNextDay,
+      checkinStart: nextCheckinStart,
+      checkinEnd: nextCheckinEnd,
+    });
 
-    if (
-      nextCheckinStart &&
-      nextCheckinEnd &&
-      nextEndsNextDay &&
-      nextCheckinEnd === nextCheckinStart
-    ) {
+    if (checkinError) {
       return res.status(400).json({
-        message:
-          "เวลาเริ่มและสิ้นสุดการเช็คอินต้องไม่ตรงกัน",
+        message: checkinError,
       });
     }
     let moderationWasChecked = false;

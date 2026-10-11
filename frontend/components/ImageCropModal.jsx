@@ -17,6 +17,8 @@ function ImageCropModal({
   const frameRef = useRef(null);
   const fileInputRef = useRef(null);
   const dragRef = useRef(null);
+  const pointersRef = useRef(new Map());
+  const gestureRef = useRef(null);
   const localUrlRef = useRef(null);
 
   const [currentSrc, setCurrentSrc] = useState(src);
@@ -25,8 +27,13 @@ function ImageCropModal({
   const [frame, setFrame] = useState({ width: 0, height: 0 });
   const [zoom, setZoom] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const zoomRef = useRef(zoom);
+  const offsetRef = useRef(offset);
   const [saving, setSaving] = useState(false);
   const [dragging, setDragging] = useState(false);
+
+  zoomRef.current = zoom;
+  offsetRef.current = offset;
 
   const isProfileCrop = Math.abs(aspect - 1) < 0.01;
 
@@ -36,6 +43,8 @@ function ImageCropModal({
     setZoom(1);
     setOffset({ x: 0, y: 0 });
     setNatural({ width: 0, height: 0 });
+    pointersRef.current.clear();
+    gestureRef.current = null;
   }, [src, fileName]);
 
   useEffect(() => {
@@ -101,45 +110,95 @@ function ImageCropModal({
     }));
   }, [metrics?.maxX, metrics?.maxY]);
 
-  const startDrag = (e) => {
-    if (!metrics) return;
-
-    e.currentTarget.setPointerCapture?.(e.pointerId);
-
-    dragRef.current = {
-      startX: e.clientX,
-      startY: e.clientY,
-      originX: offset.x,
-      originY: offset.y,
+  const getBounds = (nextZoom) => {
+    if (!natural.width || !natural.height || !frame.width || !frame.height) return null;
+    const baseScale = Math.max(frame.width / natural.width, frame.height / natural.height);
+    return {
+      x: Math.max(0, (natural.width * baseScale * nextZoom - frame.width) / 2),
+      y: Math.max(0, (natural.height * baseScale * nextZoom - frame.height) / 2),
     };
+  };
 
+  const setPosition = (nextZoom, x, y) => {
+    const z = clamp(nextZoom, 1, 3);
+    const bounds = getBounds(z);
+    if (!bounds) return;
+    const nextOffset = {
+      x: clamp(x, -bounds.x, bounds.x),
+      y: clamp(y, -bounds.y, bounds.y),
+    };
+    zoomRef.current = z;
+    offsetRef.current = nextOffset;
+    setZoom(z);
+    setOffset(nextOffset);
+  };
+
+  const getPair = () => Array.from(pointersRef.current.values()).slice(0, 2);
+  const getDistance = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const getMidpoint = (a, b) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
+
+  const startDrag = (e) => {
+    if (!metrics || e.target.closest("button")) return;
+    e.preventDefault();
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const points = getPair();
+    if (points.length === 2) {
+      const [a, b] = points;
+      gestureRef.current = {
+        kind: "pinch",
+        distance: Math.max(1, getDistance(a, b)),
+        midpoint: getMidpoint(a, b),
+        zoom: zoomRef.current,
+        offset: { ...offsetRef.current },
+      };
+    } else if (points.length === 1) {
+      gestureRef.current = {
+        kind: "drag", start: points[0], offset: { ...offsetRef.current },
+      };
+    }
     setDragging(true);
   };
 
   const moveDrag = (e) => {
-    if (!dragRef.current || !metrics) return;
+    if (!pointersRef.current.has(e.pointerId)) return;
+    pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const points = getPair();
+    const gesture = gestureRef.current;
+    if (!gesture) return;
 
-    const nextX =
-      dragRef.current.originX +
-      (e.clientX - dragRef.current.startX);
-
-    const nextY =
-      dragRef.current.originY +
-      (e.clientY - dragRef.current.startY);
-
-    setOffset({
-      x: clamp(nextX, -metrics.maxX, metrics.maxX),
-      y: clamp(nextY, -metrics.maxY, metrics.maxY),
-    });
+    if (points.length === 2 && gesture.kind === "pinch") {
+      const [a, b] = points;
+      const midpoint = getMidpoint(a, b);
+      const nextZoom = clamp(gesture.zoom * getDistance(a, b) / gesture.distance, 1, 3);
+      const ratio = nextZoom / gesture.zoom;
+      const rect = frameRef.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      // Keep the image point beneath the fingers anchored while zooming.
+      const x = midpoint.x - centerX - (gesture.midpoint.x - centerX - gesture.offset.x) * ratio;
+      const y = midpoint.y - centerY - (gesture.midpoint.y - centerY - gesture.offset.y) * ratio;
+      setPosition(nextZoom, x, y);
+    } else if (points.length === 1 && gesture.kind === "drag") {
+      setPosition(zoomRef.current,
+        gesture.offset.x + points[0].x - gesture.start.x,
+        gesture.offset.y + points[0].y - gesture.start.y);
+    }
   };
 
-  const endDrag = () => {
-    dragRef.current = null;
-    setDragging(false);
+  const endDrag = (e) => {
+    pointersRef.current.delete(e.pointerId);
+    const points = getPair();
+    if (points.length === 1) {
+      gestureRef.current = { kind: "drag", start: points[0], offset: { ...offsetRef.current } };
+    } else if (points.length === 0) {
+      gestureRef.current = null;
+      setDragging(false);
+    }
   };
 
   const changeZoom = (nextZoom) => {
-    setZoom(clamp(nextZoom, 1, 3));
+    setPosition(nextZoom, offsetRef.current.x, offsetRef.current.y);
   };
 
   const handleWheel = (e) => {
@@ -263,6 +322,15 @@ function ImageCropModal({
           isProfileCrop ? "profile-crop" : ""
         }`}
       >
+        <div className="crop-modal-header">
+          <div>
+            <h2>ปรับแต่งรูปภาพ</h2>
+            <p>ลากรูปเพื่อจัดตำแหน่ง ใช้สองนิ้วเพื่อย่อหรือขยาย</p>
+          </div>
+          <span className="crop-aspect-tag">{isProfileCrop ? "1:1" : "16:9"}</span>
+          
+        </div>
+        <div className="crop-stage">
         <div
           ref={frameRef}
           className={`crop-frame ${
@@ -334,24 +402,10 @@ function ImageCropModal({
             </>
           )}
 
-          <button
-            type="button"
-            className="crop-floating crop-floating-cancel"
-            onClick={(e) => {
-              e.stopPropagation();
-              onCancel();
-            }}
-            aria-label="ยกเลิก"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path d="M6 6l12 12M18 6L6 18" />
-            </svg>
-          </button>
+
         </div>
 
+        </div>
         <div className="crop-toolbar">
           <button
             type="button"
@@ -380,8 +434,11 @@ function ImageCropModal({
               />
               <path d="M4.5 17l4.7-4.6 3.4 3.1 2.5-2.4 4.4 3.9" />
             </svg>
+            <span className="crop-action-label">เปลี่ยนรูป</span>
           </button>
 
+          <div className="crop-zoom-area">
+            <span className="crop-zoom-label">ย่อ / ขยาย</span>
           <div className="crop-zoom">
             <button
               type="button"
@@ -420,6 +477,7 @@ function ImageCropModal({
             </button>
           </div>
 
+          </div>
           <div className="crop-confirm-group">
             <button
               type="button"
@@ -433,6 +491,7 @@ function ImageCropModal({
               >
                 <path d="M6 6l12 12M18 6L6 18" />
               </svg>
+              <span>ยกเลิก</span>
             </button>
 
             <button
@@ -455,6 +514,7 @@ function ImageCropModal({
                   <path d="M5 12.5l4.2 4.2L19 7" />
                 </svg>
               )}
+              <span>{saving ? "กำลังบันทึก" : "ใช้รูปภาพนี้"}</span>
             </button>
           </div>
 
