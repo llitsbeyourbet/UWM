@@ -78,6 +78,22 @@ const getSafeConfidenceLevel = (value) => {
     return "safe-very-low";
 };
 
+// เลือกผลไม่เหมาะสมที่มีค่าความมั่นใจสูงสุดก่อนผล safe
+// หากไม่มีผลไม่เหมาะสม ให้เลือกผล safe ที่มีค่าความมั่นใจสูงสุด
+const getDisplayModerationFlag = (flags = []) => {
+    const validFlags = flags.filter((flag) => flag && flag.label);
+    const unsafeFlags = validFlags.filter(
+        (flag) => String(flag.label).toLowerCase() !== "safe"
+    );
+    const candidates = unsafeFlags.length ? unsafeFlags : validFlags;
+
+    return [...candidates].sort((a, b) => {
+        const confidenceDifference = (Number(b.confidence) || 0) - (Number(a.confidence) || 0);
+        if (confidenceDifference !== 0) return confidenceDifference;
+        return (new Date(b.createdAt).getTime() || 0) - (new Date(a.createdAt).getTime() || 0);
+    })[0] || null;
+};
+
 const getItemStatus = (flags = []) => {
     if (flags.some((flag) => flag.status === "pending")) return "pending";
     if (flags.some((flag) => flag.status === "actioned")) return "actioned";
@@ -570,7 +586,7 @@ export default function AdminModerationActivities() {
                                     <tbody>
                                         {visibleActivities.map((activity) => {
                                             const status = getItemStatus(activity.moderationFlags);
-                                            const latestFlag = [...(activity.moderationFlags || [])].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+                                            const latestFlag = getDisplayModerationFlag(activity.moderationFlags);
                                             const typeMeta = getModerationTypeMeta(latestFlag?.label);
                                             const TypeIcon = typeMeta.Icon;
 
