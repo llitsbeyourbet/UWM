@@ -258,6 +258,7 @@ export default function AdminModerationActivities() {
             }
 
             if (!keyword) return true;
+//... (rest of the function)
 
             const flagText = (activity.moderationFlags || [])
                 .map(

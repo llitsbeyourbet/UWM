@@ -1696,19 +1696,18 @@ const formatFlag = (flag, comment = null) => ({
 
 router.get("/moderation/activities", auth, isAdmin, async (req, res) => {
   try {
+    // แสดงกิจกรรมทั้งหมดในหน้าตรวจสอบ รวมถึงกิจกรรมที่ AI จัดว่าเหมาะสม
+    // กิจกรรมที่ไม่มี ModerationFlag จะถูกแสดงเป็น "เหมาะสม" เฉพาะในผลลัพธ์
+    // โดยไม่สร้าง Flag ลงฐานข้อมูล ไม่แจ้งเตือน และไม่ระงับกิจกรรม
     const flags = await ModerationFlag.findAll({
       where: { contentType: "activity" },
       order: [["createdAt", "DESC"]],
       raw: true,
     });
 
-    if (!flags.length) return res.json([]);
-
-    const activityIds = [...new Set(flags.map(f => Number(f.activityId)).filter(Boolean))];
-
     const activities = await Activity.findAll({
-      where: { id: { [Op.in]: activityIds } },
       paranoid: false,
+      order: [["createdAt", "DESC"]],
       raw: true,
     });
 
@@ -1733,7 +1732,21 @@ router.get("/moderation/activities", auth, isAdmin, async (req, res) => {
 
     const result = activities.map(activity => {
       const creator = creatorMap.get(Number(activity.createdBy));
-      const moderationFlags = flagMap.get(Number(activity.id)) || [];
+      const existingFlags = flagMap.get(Number(activity.id)) || [];
+      const moderationFlags = existingFlags.length
+        ? existingFlags
+        : [{
+            id: `safe-${activity.id}`,
+            contentType: "activity",
+            activityId: activity.id,
+            field: "activityName",
+            label: "safe",
+            confidence: 1,
+            flaggedText: activity.activityName || "",
+            status: "reviewed",
+            createdAt: activity.updatedAt || activity.createdAt,
+            isSyntheticSafeResult: true,
+          }];
 
       return {
         ...activity,
@@ -1741,7 +1754,7 @@ router.get("/moderation/activities", auth, isAdmin, async (req, res) => {
         creatorUsername: creator?.username || null,
         creatorProfileImage: creator?.profileImage || null,
         moderationFlags,
-        flagCount: moderationFlags.length,
+        flagCount: existingFlags.length,
       };
     });
 
@@ -1763,12 +1776,6 @@ router.get("/moderation/activities/:activityId", auth, isAdmin, async (req, res)
       raw: true,
     });
 
-    if (!flags.length) {
-      return res.status(404).json({
-        message: "ไม่พบข้อมูลการตรวจสอบกิจกรรมนี้",
-      });
-    }
-
     const creator = await User.findByPk(activity.createdBy, {
       attributes: ["id", "username", "name", "profileImage"],
       raw: true,
@@ -1779,7 +1786,20 @@ router.get("/moderation/activities/:activityId", auth, isAdmin, async (req, res)
       creatorName: creator?.name || creator?.username || "ไม่ระบุผู้สร้าง",
       creatorUsername: creator?.username || null,
       creatorProfileImage: creator?.profileImage || null,
-      moderationFlags: flags.map(flag => formatFlag(flag)),
+      moderationFlags: flags.length
+        ? flags.map(flag => formatFlag(flag))
+        : [{
+            id: `safe-${activity.id}`,
+            contentType: "activity",
+            activityId: activity.id,
+            field: "activityName",
+            label: "safe",
+            confidence: 1,
+            flaggedText: activity.activityName || "",
+            status: "reviewed",
+            createdAt: activity.updatedAt || activity.createdAt,
+            isSyntheticSafeResult: true,
+          }],
     });
   } catch (error) {
     console.error("Get activity moderation detail error:", error);
