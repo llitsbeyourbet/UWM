@@ -351,8 +351,12 @@ function Notifications() {
       return (<>กิจกรรม{" "}<span className="bold">{n.activityName}</span><br />ได้รับคำเตือนจากผู้ดูแลระบบ</>);
     if (n.type === "activity_suspended")
       return (<>กิจกรรม{" "}<span className="bold">{n.activityName}</span><br />ถูกระงับโดยผู้ดูแลระบบ</>);
-    if (n.type === "activity_content_warning")
-      return (<>AI ตรวจพบเนื้อหาที่อาจไม่เหมาะสมในกิจกรรม<br /><span className="bold">{n.activityName}</span><br />กรุณาตรวจสอบและแก้ไขกิจกรรม</>);
+    if (n.type === "activity_content_warning") {
+      const wasSuspendedByAI = (n.adminNote || "").includes("ถูกระงับจาก AI");
+      return wasSuspendedByAI
+        ? (<>กิจกรรม <span className="bold">{n.activityName}</span> ถูกระงับจาก AI เนื่องจากพบเนื้อหาไม่เหมาะสม</>)
+        : (<>AI ตรวจพบเนื้อหาที่อาจไม่เหมาะสมในกิจกรรม<br /><span className="bold">{n.activityName}</span><br />กรุณาตรวจสอบและแก้ไขกิจกรรม</>);
+    }
     if (n.type === "review_hidden_by_admin")
       return (<>ผู้ดูแลระบบได้ซ่อนข้อความรีวิวในกิจกรรม<br /><span className="bold">{n.activityName}</span><br />
       เนื่องจากตรวจพบเนื้อหาที่ไม่เหมาะสม</>);
@@ -429,7 +433,7 @@ function Notifications() {
         navigate(`/review/${n.activityId}`);
       } else if (n.type === "report") {
         navigate("/admin/reports");
-      } else if (n.type === "activity_content_warning" && n.activityId) {
+      } else if (n.type === "activity_content_warning" && n.activityId && !(n.adminNote || "").includes("ถูกระงับจาก AI")) {
         navigate(`/edit-activity/${n.activityId}`);
       } else if (n.activityId) {
         navigate(`/activity-detail?id=${n.activityId}`);

@@ -418,6 +418,7 @@ router.put("/suspend/:activityId", auth, isAdmin, async (req, res) => {
     await Promise.all([
       activity.update({
         status: "suspended",
+        suspensionSource: "admin",
       }),
 
       Report.update(
@@ -1408,6 +1409,7 @@ router.put("/reports/:id/status", auth, isAdmin, async (req, res) => {
 
       await activity.update({
         status: "suspended",
+        suspensionSource: "admin",
       });
 
       /*แจ้งเตือนล้มเหลวต้องไม่ทำให้การบันทึกผลตรวจสอบล้มเหลว*/
@@ -1823,7 +1825,7 @@ router.put("/moderation/activities/:activityId/suspend", auth, isAdmin, async (r
 
     const reviewedAt = new Date();
 
-    await activity.update({ status: "suspended" });
+    await activity.update({ status: "suspended", suspensionSource: "admin" });
     await ModerationFlag.update(
       {
         status: "actioned",

@@ -20,6 +20,7 @@ const Activity = sequelize.define("Activity", {
   cover: { type: DataTypes.STRING, defaultValue: null },
   createdBy: { type: DataTypes.INTEGER },
   status: {type: DataTypes.ENUM("active", "suspended"),defaultValue: "active",},
+  suspensionSource: { type: DataTypes.STRING(20), allowNull: true, defaultValue: null },
   reportCount: { type: DataTypes.INTEGER, defaultValue: 0 },
   category: {type: DataTypes.JSON, allowNull: false, defaultValue: [],},
   checkinStart: { type: DataTypes.TIME },  // เวลาที่เริ่มเช็คอินได้

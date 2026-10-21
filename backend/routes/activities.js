@@ -878,6 +878,7 @@ router.post("/", auth, async (req, res) => {
       checkinEnd: checkinEnd || null,
       createdBy: req.userId,
       status: aiModerationFlags.length > 0 ? "suspended" : "active",
+      suspensionSource: aiModerationFlags.length > 0 ? "ai" : null,
     });
 
     for (const flag of (moderation.aiResults || [])) {
@@ -929,7 +930,7 @@ router.post("/", auth, async (req, res) => {
           null,
           {
             adminNote: aiModerationFlags.length > 0
-              ? `กิจกรรมถูกระงับโดย AI เนื่องจากค่าความมั่นใจตั้งแต่ 80% ขึ้นไป ใน${warningFields.join(" และ")}`
+              ? `กิจกรรม ${activity.activityName} ถูกระงับจาก AI เนื่องจากพบเนื้อหาไม่เหมาะสม ใน${warningFields.join(" และ")}`
               : `AI ตรวจพบเนื้อหาที่อาจไม่เหมาะสมใน${warningFields.join(" และ")} กรุณาตรวจสอบและแก้ไขกิจกรรม`,
             deduplicate: true,
           }
@@ -1416,7 +1417,7 @@ router.put("/:id", auth, async (req, res) => {
     }
 
     if (aiModerationFlags.length > 0 && activity.status !== "suspended") {
-      await activity.update({ status: "suspended" });
+      await activity.update({ status: "suspended", suspensionSource: "ai" });
     }
 
     const creatorWarningFlags = [
@@ -1447,7 +1448,7 @@ router.put("/:id", auth, async (req, res) => {
           null,
           {
             adminNote: aiModerationFlags.length > 0
-              ? `กิจกรรมถูกระงับโดย AI เนื่องจากค่าความมั่นใจตั้งแต่ 80% ขึ้นไป ใน${warningFields.join(" และ")}`
+              ? `กิจกรรม ${activity.activityName} ถูกระงับจาก AI เนื่องจากพบเนื้อหาไม่เหมาะสม ใน${warningFields.join(" และ")}`
               : `AI ตรวจพบเนื้อหาที่อาจไม่เหมาะสมใน${warningFields.join(" และ")} กรุณาตรวจสอบและแก้ไขกิจกรรมอีกครั้ง`,
             deduplicate: true,
           }

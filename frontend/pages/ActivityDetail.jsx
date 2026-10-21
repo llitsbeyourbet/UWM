@@ -353,7 +353,7 @@ function ActivityDetail() {
     const ended = activity && getActivityEnd(activity) <= new Date();
 
     if (activity.status === "suspended") {
-      await showAlert({ type: 'warning', title: 'ไม่สามารถลบได้', message: 'กิจกรรมที่ถูกระงับโดยแอดมินไม่สามารถลบได้' });
+      await showAlert({ type: 'warning', title: 'ไม่สามารถลบได้', message: (activity.suspensionSource === "ai" ? 'กิจกรรมที่ถูกระงับโดย AI ไม่สามารถลบได้' : 'กิจกรรมที่ถูกระงับโดยแอดมินไม่สามารถลบได้') });
       return;
     }
 
@@ -981,7 +981,7 @@ function ActivityDetail() {
         {activity.status === "suspended" ? (
           <div className="join-section">
             <button className="join-btn suspended" disabled>
-              🚫 กิจกรรมนี้ถูกระงับโดย Admin
+              🚫 {activity.suspensionSource === "ai" ? "กิจกรรมนี้ถูกระงับโดย AI" : "กิจกรรมนี้ถูกระงับโดยผู้ดูแลระบบ"}
             </button>
           </div>
 
