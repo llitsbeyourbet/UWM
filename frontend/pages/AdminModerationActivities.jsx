@@ -95,7 +95,6 @@ const getDisplayModerationFlag = (flags = []) => {
 };
 
 const getItemStatus = (flags = []) => {
-    if (!flags.length) return "no_result";
     if (flags.some((flag) => flag.status === "pending")) return "pending";
     if (flags.some((flag) => flag.status === "actioned")) return "actioned";
     if (flags.some((flag) => flag.status === "reviewed")) return "reviewed";
@@ -104,7 +103,6 @@ const getItemStatus = (flags = []) => {
 };
 
 const STATUS_LABELS = {
-    no_result: "ไม่มีผลการตรวจสอบ",
     pending: "รอตรวจสอบ",
     reviewed: "ตรวจสอบแล้ว",
     actioned: "ดำเนินการแล้ว",
@@ -660,9 +658,7 @@ export default function AdminModerationActivities() {
                                                                 <span className="admin-moderation-type-divider" />
                                                                 <span>{typeMeta.label}</span>
                                                             </span>
-                                                        ) : (
-                                                            <span>ยังไม่มีผลตรวจ</span>
-                                                        )}
+                                                        ) : "-"}
                                                     </td>
                                                     <td>
                                                         {latestFlag ? (

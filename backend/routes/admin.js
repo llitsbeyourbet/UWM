@@ -1694,82 +1694,63 @@ const formatFlag = (flag, comment = null) => ({
 
 /* ---------- ACTIVITIES ---------- */
 
-
 router.get("/moderation/activities", auth, isAdmin, async (req, res) => {
   try {
-    // 1. ดึงกิจกรรมทั้งหมดก่อน ไม่จำกัดเฉพาะกิจกรรมที่มี ModerationFlag
-    const activities = await Activity.findAll({
-      paranoid: false,
+    const flags = await ModerationFlag.findAll({
+      where: { contentType: "activity" },
       order: [["createdAt", "DESC"]],
       raw: true,
     });
 
-    if (!activities.length) return res.json([]);
+    if (!flags.length) return res.json([]);
 
-    const activityIds = activities.map((a) => Number(a.id));
-    const creatorIds = [
-      ...new Set(
-        activities.map((a) => Number(a.createdBy)).filter(Boolean)
-      ),
-    ];
+    const activityIds = [...new Set(flags.map(f => Number(f.activityId)).filter(Boolean))];
 
-    // 2. ดึงผลตรวจ AI ของกิจกรรมที่มีอยู่
-    const [flags, creators] = await Promise.all([
-      ModerationFlag.findAll({
-        where: {
-          contentType: "activity",
-          activityId: { [Op.in]: activityIds },
-        },
-        order: [["createdAt", "DESC"]],
+    const activities = await Activity.findAll({
+      where: { id: { [Op.in]: activityIds } },
+      paranoid: false,
+      raw: true,
+    });
+
+    const creatorIds = [...new Set(activities.map(a => Number(a.createdBy)).filter(Boolean))];
+
+    const creators = creatorIds.length
+      ? await User.findAll({
+        where: { id: { [Op.in]: creatorIds } },
+        attributes: ["id", "username", "name", "profileImage"],
         raw: true,
-      }),
-      creatorIds.length
-        ? User.findAll({
-            where: { id: { [Op.in]: creatorIds } },
-            attributes: ["id", "username", "name", "profileImage"],
-            raw: true,
-          })
-        : [],
-    ]);
+      })
+      : [];
 
-    // 3. จัดกลุ่มผลตรวจตามรหัสกิจกรรม
-    const creatorMap = new Map(
-      creators.map((u) => [Number(u.id), u])
-    );
+    const creatorMap = new Map(creators.map(u => [Number(u.id), u]));
     const flagMap = new Map();
 
-    flags.forEach((flag) => {
+    flags.forEach(flag => {
       const id = Number(flag.activityId);
       if (!flagMap.has(id)) flagMap.set(id, []);
       flagMap.get(id).push(formatFlag(flag));
     });
 
-    // 4. ส่งกิจกรรมทั้งหมด พร้อมผลตรวจที่มีจริง
-    const result = activities.map((activity) => {
+    const result = activities.map(activity => {
       const creator = creatorMap.get(Number(activity.createdBy));
       const moderationFlags = flagMap.get(Number(activity.id)) || [];
 
       return {
         ...activity,
-        creatorName:
-          creator?.name || creator?.username || "ไม่ระบุผู้สร้าง",
+        creatorName: creator?.name || creator?.username || "ไม่ระบุผู้สร้าง",
         creatorUsername: creator?.username || null,
         creatorProfileImage: creator?.profileImage || null,
         moderationFlags,
         flagCount: moderationFlags.length,
-        hasModerationResult: moderationFlags.length > 0,
       };
     });
 
     return res.json(result);
   } catch (error) {
     console.error("Get activity moderation error:", error);
-    return res.status(500).json({
-      message: "ไม่สามารถโหลดกิจกรรมที่ต้องตรวจสอบได้",
-    });
+    return res.status(500).json({ message: "ไม่สามารถโหลดกิจกรรมที่ต้องตรวจสอบได้" });
   }
 });
-
 
 router.get("/moderation/activities/:activityId", auth, isAdmin, async (req, res) => {
   try {
@@ -1781,6 +1762,12 @@ router.get("/moderation/activities/:activityId", auth, isAdmin, async (req, res)
       order: [["createdAt", "DESC"]],
       raw: true,
     });
+
+    if (!flags.length) {
+      return res.status(404).json({
+        message: "ไม่พบข้อมูลการตรวจสอบกิจกรรมนี้",
+      });
+    }
 
     const creator = await User.findByPk(activity.createdBy, {
       attributes: ["id", "username", "name", "profileImage"],
