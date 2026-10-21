@@ -1743,7 +1743,7 @@ router.get("/moderation/activities", auth, isAdmin, async (req, res) => {
             label: "safe",
             confidence: 1,
             flaggedText: activity.activityName || "",
-            status: "reviewed",
+            status: "pending",
             createdAt: activity.updatedAt || activity.createdAt,
             isSyntheticSafeResult: true,
           }];
@@ -1796,7 +1796,7 @@ router.get("/moderation/activities/:activityId", auth, isAdmin, async (req, res)
             label: "safe",
             confidence: 1,
             flaggedText: activity.activityName || "",
-            status: "reviewed",
+            status: "pending",
             createdAt: activity.updatedAt || activity.createdAt,
             isSyntheticSafeResult: true,
           }],
@@ -1814,7 +1814,34 @@ router.put("/moderation/activities/:activityId/reviewed", auth, isAdmin, async (
       { where: { contentType: "activity", activityId: req.params.activityId, status: "pending" } }
     );
 
-    if (!updated) return res.status(404).json({ message: "ไม่พบรายการที่รอตรวจสอบ" });
+    if (!updated) {
+      // กิจกรรมเก่าที่ไม่มี ModerationFlag จะมีผล safe จำลองในหน้า Admin
+      // เมื่อผู้ดูแลกดยืนยัน ให้บันทึกสถานะตรวจสอบแล้วจริงเพื่อไม่ให้ค้างเป็นรอตรวจสอบ
+      const activity = await Activity.findByPk(req.params.activityId, { paranoid: false });
+      if (!activity) return res.status(404).json({ message: "ไม่พบกิจกรรม" });
+
+      const existingFlags = await ModerationFlag.count({
+        where: { contentType: "activity", activityId: activity.id },
+      });
+      if (existingFlags > 0) {
+        return res.status(404).json({ message: "ไม่พบรายการที่รอตรวจสอบ" });
+      }
+
+      await ModerationFlag.create({
+        contentType: "activity",
+        activityId: activity.id,
+        commentId: null,
+        userId: activity.createdBy,
+        field: "activityName",
+        label: "safe",
+        confidence: 1,
+        processingTimeMs: null,
+        flaggedText: activity.activityName || "",
+        status: "reviewed",
+        reviewedBy: req.userId,
+        reviewedAt: new Date(),
+      });
+    }
     return res.json({ message: "ตรวจสอบกิจกรรมเรียบร้อยแล้ว" });
   } catch (error) {
     console.error("Review activity moderation error:", error);
@@ -1837,10 +1864,10 @@ router.put("/moderation/activities/:activityId/suspend", auth, isAdmin, async (r
       },
     });
 
-    if (!actionableFlags) {
-      return res.status(404).json({
-        message: "ไม่พบรายการที่สามารถดำเนินการได้",
-      });
+    // อนุญาตให้ผู้ดูแลระงับด้วยตนเองได้ แม้กิจกรรม safe เก่าจะไม่มี ModerationFlag
+    // การระงับจะเกิดขึ้นเฉพาะเมื่อผู้ดูแลกดปุ่มนี้ ไม่ใช่การระงับอัตโนมัติ
+    if (!actionableFlags && activity.status === "suspended") {
+      return res.status(400).json({ message: "กิจกรรมนี้ถูกระงับอยู่แล้ว" });
     }
 
     const reviewedAt = new Date();

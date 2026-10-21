@@ -166,6 +166,8 @@ const hybridAnalyzeFields = async (fields = {}) => {
       aiFlags,
       aiWarnings,
       aiResults: aiResults.filter((result) => result.decision === "warn" || result.decision === "block"),
+      // เก็บผล AI ทุกประเภทแยกจากรายการที่ต้องเตือน/ตรวจสอบ เพื่อให้บันทึกเวลา safe ได้ด้วย
+      aiFieldResults: aiResults,
       processingTimeMs,
     };
   }
@@ -185,6 +187,7 @@ const hybridAnalyzeFields = async (fields = {}) => {
       aiFlags: [],
       aiWarnings,
       aiResults: aiResults.filter((result) => result.decision === "warn"),
+      aiFieldResults: aiResults,
       processingTimeMs,
     };
   }
@@ -197,6 +200,8 @@ const hybridAnalyzeFields = async (fields = {}) => {
     aiFlags: [],
     aiWarnings: [],
     aiResults: [],
+    // ผล safe ของแต่ละ field พร้อมเก็บไว้แสดงเวลาประมวลผลจริงในหน้าผู้ดูแล
+    aiFieldResults: aiResults,
     processingTimeMs,
   };
 };

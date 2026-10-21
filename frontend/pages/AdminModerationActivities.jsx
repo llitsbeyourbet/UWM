@@ -119,6 +119,10 @@ const getActivityModerationStatus = (activity) => {
         return "ai_suspended";
     }
 
+    if (activity.status === "suspended" && activity.suspensionSource === "admin") {
+        return "actioned";
+    }
+
     return getItemStatus(activity.moderationFlags);
 };
 

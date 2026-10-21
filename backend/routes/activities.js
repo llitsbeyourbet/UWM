@@ -875,7 +875,14 @@ router.post("/", auth, async (req, res) => {
       suspensionSource: aiModerationFlags.length > 0 ? "ai" : null,
     });
 
-    for (const flag of (moderation.aiResults || [])) {
+    // บันทึกผล AI ที่ต้องตรวจสอบตามเดิม และบันทึกผล safe ด้วย
+    // เพื่อให้หน้าผู้ดูแลแสดงเวลาประมวลผลจริงได้ โดย safe ไม่ทำให้ระงับ/แจ้งเตือนอัตโนมัติ
+    const flagsToPersist = [
+      ...(moderation.aiResults || []),
+      ...(moderation.aiFieldResults || []).filter((flag) => flag.decision === "allow"),
+    ];
+
+    for (const flag of flagsToPersist) {
       const flaggedText =
         flag.field === "activityName"
           ? activityName.trim()
@@ -1207,6 +1214,7 @@ router.put("/:id", auth, async (req, res) => {
     let aiModerationFlags = [];
     let aiModerationWarnings = [];
     let aiModerationResults = [];
+    let aiModerationFieldResults = [];
     let moderationProcessingTimeMs = null;
 
     if (
@@ -1234,6 +1242,7 @@ router.put("/:id", auth, async (req, res) => {
         moderation.processingTimeMs ?? null;
       moderationWasChecked = true;
       aiModerationResults = moderation.aiResults || [];
+      aiModerationFieldResults = moderation.aiFieldResults || [];
       aiModerationWarnings = moderation.aiWarnings || [];
 
       // Rule-based ตรวจพบ → ไม่อนุญาตให้แก้ไข
@@ -1380,9 +1389,10 @@ router.put("/:id", auth, async (req, res) => {
       }
 
       // สร้าง Flag รอบใหม่เฉพาะ field ที่แก้แล้ว AI ยังตรวจพบ
-      const newFlags = aiModerationResults.filter((flag) =>
-        changedModerationFields.includes(flag.field)
-      );
+      const newFlags = [
+        ...aiModerationResults,
+        ...aiModerationFieldResults.filter((flag) => flag.decision === "allow"),
+      ].filter((flag) => changedModerationFields.includes(flag.field));
 
       for (const flag of newFlags) {
         const flaggedText =
