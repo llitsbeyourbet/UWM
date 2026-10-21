@@ -503,6 +503,12 @@
   color: #d94f63;
 }
 
+.admin-moderation-status.ai_suspended {
+  background: #fff0f2;
+  color: #d9364f;
+  border: 1px solid #ffc5ce;
+}
+
 .admin-moderation-eye {
   width: 41px;
   height: 38px;

@@ -263,12 +263,21 @@ const moderateWithAI = async (text) => {
     throw serviceError;
   }
 
+  // confidence จาก AI อยู่ในช่วง 0-1: safe ผ่านเสมอ,
+  // unsafe <= 0.50 ไม่ดำเนินการ, > 0.50 ถึง < 0.80 เตือน,
+  // และ >= 0.80 ระงับกิจกรรมอัตโนมัติ
+  const decision = ALLOW_LABELS.has(label)
+    ? "allow"
+    : confidence <= 0.5
+      ? "allow"
+      : confidence < 0.8
+        ? "warn"
+        : "block";
+
   return {
     label,
     confidence,
-    decision: ALLOW_LABELS.has(label)
-      ? "allow"
-      : "block",
+    decision,
   };
 };
 

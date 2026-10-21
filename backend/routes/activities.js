@@ -790,9 +790,12 @@ router.post("/", auth, async (req, res) => {
 
     // AI ตรวจพบ → อนุญาตให้สร้าง แต่เก็บไว้ Flag ให้ Admin ตรวจภายหลัง
     const aiModerationFlags =
-      moderation.decision === "block" &&
-        moderation.source === "ai"
+      moderation.source === "ai" && moderation.decision === "block"
         ? moderation.aiFlags || []
+        : [];
+    const aiModerationWarnings =
+      moderation.source === "ai" && moderation.decision === "warn"
+        ? moderation.aiWarnings || []
         : [];
 
     // ตรวจสอบเวลาคาบเกี่ยว (Conflict Check)
@@ -874,6 +877,7 @@ router.post("/", auth, async (req, res) => {
       checkinStart: checkinStart || null,
       checkinEnd: checkinEnd || null,
       createdBy: req.userId,
+      status: aiModerationFlags.length > 0 ? "suspended" : "active",
     });
 
     for (const flag of (moderation.aiResults || [])) {
@@ -897,9 +901,10 @@ router.post("/", auth, async (req, res) => {
         status: "pending",
       });
     }
-    const creatorWarningFlags = aiModerationFlags.filter(
-      (flag) => Number(flag.confidence) > 0.5
-    );
+    const creatorWarningFlags = [
+      ...aiModerationWarnings,
+      ...aiModerationFlags,
+    ];
 
     if (creatorWarningFlags.length > 0) {
       try {
@@ -923,10 +928,9 @@ router.post("/", auth, async (req, res) => {
           null,
           null,
           {
-            adminNote:
-              `AI ตรวจพบเนื้อหาที่อาจไม่เหมาะสมใน${warningFields.join(
-                " และ"
-              )} กรุณาตรวจสอบและแก้ไขกิจกรรม`,
+            adminNote: aiModerationFlags.length > 0
+              ? `กิจกรรมถูกระงับโดย AI เนื่องจากค่าความมั่นใจตั้งแต่ 80% ขึ้นไป ใน${warningFields.join(" และ")}`
+              : `AI ตรวจพบเนื้อหาที่อาจไม่เหมาะสมใน${warningFields.join(" และ")} กรุณาตรวจสอบและแก้ไขกิจกรรม`,
             deduplicate: true,
           }
         );
@@ -1206,6 +1210,7 @@ router.put("/:id", auth, async (req, res) => {
     }
     let moderationWasChecked = false;
     let aiModerationFlags = [];
+    let aiModerationWarnings = [];
     let aiModerationResults = [];
     let moderationProcessingTimeMs = null;
 
@@ -1234,6 +1239,7 @@ router.put("/:id", auth, async (req, res) => {
         moderation.processingTimeMs ?? null;
       moderationWasChecked = true;
       aiModerationResults = moderation.aiResults || [];
+      aiModerationWarnings = moderation.aiWarnings || [];
 
       // Rule-based ตรวจพบ → ไม่อนุญาตให้แก้ไข
       if (
@@ -1406,11 +1412,17 @@ router.put("/:id", auth, async (req, res) => {
       }
 
       aiModerationFlags = newFlags.filter((flag) => flag.decision === "block");
+      aiModerationWarnings = newFlags.filter((flag) => flag.decision === "warn");
     }
 
-    const creatorWarningFlags = aiModerationFlags.filter(
-      (flag) => Number(flag.confidence) > 0.5
-    );
+    if (aiModerationFlags.length > 0 && activity.status !== "suspended") {
+      await activity.update({ status: "suspended" });
+    }
+
+    const creatorWarningFlags = [
+      ...aiModerationWarnings,
+      ...aiModerationFlags,
+    ];
 
     if (creatorWarningFlags.length > 0) {
       try {
@@ -1434,10 +1446,9 @@ router.put("/:id", auth, async (req, res) => {
           null,
           null,
           {
-            adminNote:
-              `AI ยังตรวจพบเนื้อหาที่อาจไม่เหมาะสมใน${warningFields.join(
-                " และ"
-              )} กรุณาตรวจสอบและแก้ไขกิจกรรมอีกครั้ง`,
+            adminNote: aiModerationFlags.length > 0
+              ? `กิจกรรมถูกระงับโดย AI เนื่องจากค่าความมั่นใจตั้งแต่ 80% ขึ้นไป ใน${warningFields.join(" และ")}`
+              : `AI ตรวจพบเนื้อหาที่อาจไม่เหมาะสมใน${warningFields.join(" และ")} กรุณาตรวจสอบและแก้ไขกิจกรรมอีกครั้ง`,
             deduplicate: true,
           }
         );

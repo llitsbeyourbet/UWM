@@ -60,6 +60,22 @@ const hybridAnalyzeText = async (text) => {
     };
   }
 
+  if (aiResult.decision === "warn") {
+    return {
+      status: "warning",
+      riskScore: 0,
+      categories: [aiResult.label],
+      categoryLabels: [getCategoryLabel(aiResult.label)],
+      matchedWords: [],
+      decision: "warn",
+      source: "ai",
+      ai: aiResult,
+      aiFlags: [],
+      aiWarnings: [aiResult],
+      processingTimeMs: getProcessingTime(startTime),
+    };
+  }
+
   return {
     status: "warning",
     riskScore: 0,
@@ -91,6 +107,7 @@ const hybridAnalyzeFields = async (fields = {}) => {
 
   const fieldResults = {};
   const aiFlags = [];
+  const aiWarnings = [];
   const aiResults = [];
   let aiProcessingTimeMs = 0;
 
@@ -118,10 +135,9 @@ const hybridAnalyzeFields = async (fields = {}) => {
     aiResults.push({ field, ...aiResult });
 
     if (aiResult.decision === "block") {
-      aiFlags.push({
-        field,
-        ...aiResult,
-      });
+      aiFlags.push({ field, ...aiResult });
+    } else if (aiResult.decision === "warn") {
+      aiWarnings.push({ field, ...aiResult });
     }
   }
 
@@ -147,7 +163,27 @@ const hybridAnalyzeFields = async (fields = {}) => {
       source: "ai",
       ai: fieldResults,
       aiFlags,
-      aiResults,
+      aiWarnings,
+      aiResults: aiResults.filter((result) => result.decision === "warn" || result.decision === "block"),
+      processingTimeMs,
+    };
+  }
+
+  if (aiWarnings.length > 0) {
+    const categories = [...new Set(aiWarnings.map((flag) => flag.label))];
+    return {
+      status: "warning",
+      riskScore: 0,
+      categories,
+      categoryLabels: categories.map(getCategoryLabel),
+      matchedWords: [],
+      fields: ruleResult.fields,
+      decision: "warn",
+      source: "ai",
+      ai: fieldResults,
+      aiFlags: [],
+      aiWarnings,
+      aiResults: aiResults.filter((result) => result.decision === "warn"),
       processingTimeMs,
     };
   }
@@ -158,7 +194,8 @@ const hybridAnalyzeFields = async (fields = {}) => {
     source: "ai",
     ai: fieldResults,
     aiFlags: [],
-    aiResults,
+    aiWarnings: [],
+    aiResults: [],
     processingTimeMs,
   };
 };

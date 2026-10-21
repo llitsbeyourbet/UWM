@@ -107,6 +107,19 @@ const STATUS_LABELS = {
     reviewed: "ตรวจสอบแล้ว",
     actioned: "ดำเนินการแล้ว",
     resolved: "ผู้สร้างแก้ไขแล้ว",
+    ai_suspended: "ถูกระงับจาก AI",
+};
+
+const getActivityModerationStatus = (activity) => {
+    const hasHighConfidenceUnsafeFlag = (activity.moderationFlags || []).some(
+        (flag) => String(flag.label || "").toLowerCase() !== "safe" && Number(flag.confidence) >= 0.8
+    );
+
+    if (activity.status === "suspended" && hasHighConfidenceUnsafeFlag) {
+        return "ai_suspended";
+    }
+
+    return getItemStatus(activity.moderationFlags);
 };
 
 const FILTERS = [
@@ -585,7 +598,7 @@ export default function AdminModerationActivities() {
 
                                     <tbody>
                                         {visibleActivities.map((activity) => {
-                                            const status = getItemStatus(activity.moderationFlags);
+                                            const status = getActivityModerationStatus(activity);
                                             const latestFlag = getDisplayModerationFlag(activity.moderationFlags);
                                             const typeMeta = getModerationTypeMeta(latestFlag?.label);
                                             const TypeIcon = typeMeta.Icon;
@@ -951,15 +964,17 @@ export default function AdminModerationActivities() {
                                         ตรวจสอบแล้ว
                                     </button>
 
-                                    <button
-                                        type="button"
-                                        className="admin-moderation-action danger"
-                                        onClick={confirmSuspend}
-                                        disabled={actionLoading}
-                                    >
-                                        <FiXCircle />
-                                        ระงับกิจกรรม
-                                    </button>
+                                    {selectedActivity.status !== "suspended" && (
+                                        <button
+                                            type="button"
+                                            className="admin-moderation-action danger"
+                                            onClick={confirmSuspend}
+                                            disabled={actionLoading}
+                                        >
+                                            <FiXCircle />
+                                            ระงับกิจกรรม
+                                        </button>
+                                    )}
                                 </>
                             ) : (
                                 <div
