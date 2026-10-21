@@ -788,15 +788,9 @@ router.post("/", auth, async (req, res) => {
       });
     }
 
-    // AI ตรวจพบ → อนุญาตให้สร้าง แต่เก็บไว้ Flag ให้ Admin ตรวจภายหลัง
-    const aiModerationFlags =
-      moderation.source === "ai" && moderation.decision === "block"
-        ? moderation.aiFlags || []
-        : [];
-    const aiModerationWarnings =
-      moderation.source === "ai" && moderation.decision === "warn"
-        ? moderation.aiWarnings || []
-        : [];
+    // AI ตรวจพบ -> อนุญาตให้สร้าง และเก็บ Flag ให้ Admin ตรวจเสมอ (ไม่ว่าผลจะเป็นอะไร)
+    const aiModerationFlags = moderation.aiResults || [];
+    const aiModerationWarnings = moderation.aiWarnings || [];
 
     // ตรวจสอบเวลาคาบเกี่ยว (Conflict Check)
     if (!req.body.confirmConflict) {
