@@ -871,8 +871,9 @@ router.post("/", auth, async (req, res) => {
       checkinStart: checkinStart || null,
       checkinEnd: checkinEnd || null,
       createdBy: req.userId,
-      status: aiModerationFlags.length > 0 ? "suspended" : "active",
-      suspensionSource: aiModerationFlags.length > 0 ? "ai" : null,
+      // AI เป็นเพียงผลวิเคราะห์เพื่อให้ Admin ตรวจสอบ ไม่ระงับกิจกรรมอัตโนมัติ
+      status: "active",
+      suspensionSource: null,
     });
 
     // บันทึกผล AI ที่ต้องตรวจสอบตามเดิม และบันทึกผล safe ด้วย
@@ -931,8 +932,8 @@ router.post("/", auth, async (req, res) => {
           null,
           {
             adminNote: aiModerationFlags.length > 0
-              ? `กิจกรรม ${activity.activityName} ถูกระงับจาก AI เนื่องจากพบเนื้อหาไม่เหมาะสม ใน${warningFields.join(" และ")}`
-              : `AI ตรวจพบเนื้อหาที่อาจไม่เหมาะสมใน${warningFields.join(" และ")} กรุณาตรวจสอบและแก้ไขกิจกรรม`,
+              ? `AI ตรวจพบเนื้อหาที่อาจไม่เหมาะสมในกิจกรรม ${activity.activityName} บริเวณ${warningFields.join(" และ")} กรุณารอการตรวจสอบจากผู้ดูแลระบบ`
+              : `AI ตรวจพบเนื้อหาที่ควรตรวจสอบใน${warningFields.join(" และ")} กรุณาตรวจสอบและแก้ไขกิจกรรม`,
             deduplicate: true,
           }
         );
