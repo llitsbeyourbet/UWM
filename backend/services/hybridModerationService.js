@@ -70,7 +70,7 @@ const hybridAnalyzeText = async (text) => {
       decision: "warn",
       source: "ai",
       ai: aiResult,
-      aiFlags: [],
+      aiFlags: [aiResult],
       aiWarnings: [aiResult],
       processingTimeMs: getProcessingTime(startTime),
     };
@@ -82,10 +82,11 @@ const hybridAnalyzeText = async (text) => {
     categories: [aiResult.label],
     categoryLabels: [getCategoryLabel(aiResult.label)],
     matchedWords: [],
-    decision: "block",
+    decision: "warn",
     source: "ai",
     ai: aiResult,
     aiFlags: [aiResult],
+    aiWarnings: [aiResult],
     processingTimeMs: getProcessingTime(startTime),
   };
 };
