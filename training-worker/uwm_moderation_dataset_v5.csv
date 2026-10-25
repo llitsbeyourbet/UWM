@@ -1,0 +1,2939 @@
+﻿text,label,split,decision,source
+นัดเพื่อน ดูหนัง วันเสาร์,safe,train,allow,uwm-v3.1-remap
+ใครว่าง เดินตลาด สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน ทํารายงาน สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน ไปคาเฟ่ วันเสาร์,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน กินข้าว หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน อ่านหนังสือ ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+ใครว่าง เล่นบอร์ดเกม พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ กินข้าว ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน เดินตลาด สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ไปคาเฟ่ ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ เตะฟุตบอล หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ซ้อมดนตรี หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ทําจิตอาสา ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ทําจิตอาสา ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ตีแบด สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ ซ้อมดนตรี ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ ตีแบด ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ตีแบด สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ซ้อมดนตรี หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ซ้อมดนตรี ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ตีแบด ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน เตะฟุตบอล พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ดูหนัง หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ เล่นบอร์ดเกม ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน เดินตลาด ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ดูหนัง ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+ใครว่าง เดินตลาด หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ทํารายงาน ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ดูหนัง พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน ซ้อมดนตรี ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน เล่นบอร์ดเกม ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ปลูกต้นไม้ วันเสาร์,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน ดูหนัง ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน กินข้าว ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน อ่านหนังสือ สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ไปคาเฟ่ สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ ถ่ายรูป สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ดูหนัง พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ ปลูกต้นไม้ สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ ทํารายงาน ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน เตะฟุตบอล สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ตีแบด ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ตีแบด ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ดูหนัง ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน ทํารายงาน สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน ดูหนัง หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน เตะฟุตบอล พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ วิ่งออกกําลังกาย ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ถ่ายรูป สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน อ่านหนังสือ ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ ดูหนัง หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน เล่นบอร์ดเกม วันเสาร์,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ปลูกต้นไม้ ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน เล่นบอร์ดเกม หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ ทําจิตอาสา สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน กินข้าว วันเสาร์,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ เดินตลาด ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน กินข้าว ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ดูหนัง ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ถ่ายรูป พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน ดูหนัง ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน ซ้อมดนตรี วันเสาร์,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ ทํารายงาน หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ใครว่าง เล่นบอร์ดเกม ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ ดูหนัง พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน เล่นบอร์ดเกม พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ทํารายงาน ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ เตะฟุตบอล ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน ตีแบด หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน ตีแบด ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+ใครว่าง เตะฟุตบอล ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ถ่ายรูป ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ดูหนัง สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ปลูกต้นไม้ พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน เดินตลาด พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน ทํารายงาน ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ไปคาเฟ่ ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน ตีแบด สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ เดินตลาด พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ ถ่ายรูป หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน เดินตลาด หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน วิ่งออกกําลังกาย ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน ตีแบด วันเสาร์,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ซ้อมดนตรี วันเสาร์,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ เตะฟุตบอล พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน ถ่ายรูป หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ใครว่าง อ่านหนังสือ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ทํารายงาน วันเสาร์,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ดูหนัง ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน เตะฟุตบอล ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ดูหนัง วันเสาร์,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน เดินตลาด สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน เดินตลาด ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน อ่านหนังสือ ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ซ้อมดนตรี วันเสาร์,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ อ่านหนังสือ ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน เดินตลาด ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ดูหนัง วันเสาร์,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน กินข้าว หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ไปคาเฟ่ ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ดูหนัง สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+ใครว่าง กินข้าว พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ปลูกต้นไม้ ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน วิ่งออกกําลังกาย พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน วิ่งออกกําลังกาย ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ปลูกต้นไม้ ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ เตะฟุตบอล วันเสาร์,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน ทําจิตอาสา วันเสาร์,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน ทําจิตอาสา หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน ทํารายงาน วันเสาร์,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ ดูหนัง วันเสาร์,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ทํารายงาน ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน เดินตลาด หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ทํารายงาน สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ ปลูกต้นไม้ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน อ่านหนังสือ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน เล่นบอร์ดเกม พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ทํารายงาน พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ทําจิตอาสา วันเสาร์,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ทํารายงาน ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ เตะฟุตบอล สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ปลูกต้นไม้ สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน วิ่งออกกําลังกาย วันเสาร์,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ตีแบด พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+ใครว่าง อ่านหนังสือ พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ เล่นบอร์ดเกม ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน อ่านหนังสือ สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน อ่านหนังสือ ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ปลูกต้นไม้ ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน เล่นบอร์ดเกม วันเสาร์,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน ทํารายงาน วันเสาร์,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ ถ่ายรูป พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน ตีแบด ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ดูหนัง หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน วิ่งออกกําลังกาย ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน เดินตลาด สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน ไปคาเฟ่ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ปลูกต้นไม้ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน เล่นบอร์ดเกม ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน กินข้าว สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน อ่านหนังสือ ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ ดูหนัง ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน ไปคาเฟ่ ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน กินข้าว หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ เตะฟุตบอล ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน ถ่ายรูป วันเสาร์,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ทําจิตอาสา ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน อ่านหนังสือ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ ตีแบด สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน อ่านหนังสือ วันเสาร์,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ไปคาเฟ่ ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน ไปคาเฟ่ พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน เตะฟุตบอล ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ทําจิตอาสา ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน วิ่งออกกําลังกาย ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน อ่านหนังสือ พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ถ่ายรูป หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ ปลูกต้นไม้ วันเสาร์,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ดูหนัง ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน กินข้าว พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ถ่ายรูป หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน ปลูกต้นไม้ พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน เตะฟุตบอล พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน ดูหนัง สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ปลูกต้นไม้ พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ซ้อมดนตรี ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ถ่ายรูป ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน เดินตลาด ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน เตะฟุตบอล ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+ใครว่าง เตะฟุตบอล ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ ตีแบด วันเสาร์,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ทําจิตอาสา วันเสาร์,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน ดูหนัง พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ ถ่ายรูป วันเสาร์,safe,train,allow,uwm-v3.1-remap
+ใครว่าง เดินตลาด ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ถ่ายรูป วันเสาร์,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน ทํารายงาน ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+ใครว่าง เล่นบอร์ดเกม ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน อ่านหนังสือ วันเสาร์,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ทํารายงาน หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ วิ่งออกกําลังกาย ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ไปคาเฟ่ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ซ้อมดนตรี ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน ทําจิตอาสา วันเสาร์,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ทํารายงาน ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ตีแบด ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน ปลูกต้นไม้ ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ถ่ายรูป ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ อ่านหนังสือ ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ทํารายงาน หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน อ่านหนังสือ ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ถ่ายรูป สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ทํารายงาน พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน ปลูกต้นไม้ สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ทําจิตอาสา หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน กินข้าว สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน ดูหนัง ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน เตะฟุตบอล วันเสาร์,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน วิ่งออกกําลังกาย สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน ทําจิตอาสา พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ปลูกต้นไม้ วันเสาร์,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ถ่ายรูป ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ทําจิตอาสา สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน เตะฟุตบอล วันเสาร์,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ซ้อมดนตรี ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน เดินตลาด ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน วิ่งออกกําลังกาย สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+ใครว่าง อ่านหนังสือ ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+ใครว่าง เดินตลาด พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน ถ่ายรูป ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ทําจิตอาสา หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ซ้อมดนตรี พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน เล่นบอร์ดเกม หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+อยากหาเพื่อน ดูหนัง หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน ถ่ายรูป ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน เล่นบอร์ดเกม ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน ทํารายงาน ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+ชวนทุกคน ดูหนัง ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ ไปคาเฟ่ ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+ใครสนใจ ทําจิตอาสา พรุ่งนี้,safe,train,allow,uwm-v3.1-remap
+ใครว่าง ทํารายงาน ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อน ถ่ายรูป ตอนเย็น,safe,train,allow,uwm-v3.1-remap
+ใครว่าง เล่นบอร์ดเกม ตอนเช้า,safe,train,allow,uwm-v3.1-remap
+ใครว่าง เดินตลาด ช่วงบ่าย,safe,train,allow,uwm-v3.1-remap
+หาเพื่อน ทําจิตอาสา สุดสัปดาห์นี้,safe,validation,allow,uwm-v3.1-remap
+นัดเพื่อน เล่นบอร์ดเกม ตอนเช้า,safe,validation,allow,uwm-v3.1-remap
+ใครสนใจ กินข้าว สุดสัปดาห์นี้,safe,validation,allow,uwm-v3.1-remap
+ใครว่าง วิ่งออกกําลังกาย วันเสาร์,safe,validation,allow,uwm-v3.1-remap
+อยากหาเพื่อน ทํารายงาน วันเสาร์,safe,validation,allow,uwm-v3.1-remap
+หาเพื่อน วิ่งออกกําลังกาย สุดสัปดาห์นี้,safe,validation,allow,uwm-v3.1-remap
+อยากหาเพื่อน ตีแบด หลังเลิกเรียน,safe,validation,allow,uwm-v3.1-remap
+นัดเพื่อน ไปคาเฟ่ วันเสาร์,safe,validation,allow,uwm-v3.1-remap
+ใครสนใจ วิ่งออกกําลังกาย หลังเลิกเรียน,safe,validation,allow,uwm-v3.1-remap
+หาเพื่อน วิ่งออกกําลังกาย พรุ่งนี้,safe,validation,allow,uwm-v3.1-remap
+ใครว่าง ปลูกต้นไม้ ช่วงบ่าย,safe,validation,allow,uwm-v3.1-remap
+ใครสนใจ ไปคาเฟ่ พรุ่งนี้,safe,validation,allow,uwm-v3.1-remap
+นัดเพื่อน ดูหนัง สุดสัปดาห์นี้,safe,validation,allow,uwm-v3.1-remap
+หาเพื่อน ทําจิตอาสา ช่วงบ่าย,safe,validation,allow,uwm-v3.1-remap
+อยากหาเพื่อน ซ้อมดนตรี สุดสัปดาห์นี้,safe,validation,allow,uwm-v3.1-remap
+อยากหาเพื่อน ทําจิตอาสา ตอนเย็น,safe,validation,allow,uwm-v3.1-remap
+ชวนทุกคน ทําจิตอาสา ช่วงบ่าย,safe,validation,allow,uwm-v3.1-remap
+หาเพื่อน ซ้อมดนตรี หลังเลิกเรียน,safe,validation,allow,uwm-v3.1-remap
+หาเพื่อน อ่านหนังสือ ช่วงบ่าย,safe,validation,allow,uwm-v3.1-remap
+อยากหาเพื่อน อ่านหนังสือ สุดสัปดาห์นี้,safe,validation,allow,uwm-v3.1-remap
+นัดเพื่อน กินข้าว ช่วงบ่าย,safe,validation,allow,uwm-v3.1-remap
+ชวนทุกคน เตะฟุตบอล วันเสาร์,safe,validation,allow,uwm-v3.1-remap
+อยากหาเพื่อน อ่านหนังสือ หลังเลิกเรียน,safe,validation,allow,uwm-v3.1-remap
+อยากหาเพื่อน ไปคาเฟ่ พรุ่งนี้,safe,validation,allow,uwm-v3.1-remap
+ใครว่าง ไปคาเฟ่ วันเสาร์,safe,validation,allow,uwm-v3.1-remap
+หาเพื่อน ปลูกต้นไม้ พรุ่งนี้,safe,validation,allow,uwm-v3.1-remap
+ชวนทุกคน เตะฟุตบอล ตอนเช้า,safe,validation,allow,uwm-v3.1-remap
+ใครสนใจ กินข้าว ตอนเช้า,safe,validation,allow,uwm-v3.1-remap
+หาเพื่อน ตีแบด ช่วงบ่าย,safe,validation,allow,uwm-v3.1-remap
+อยากหาเพื่อน ไปคาเฟ่ หลังเลิกเรียน,safe,validation,allow,uwm-v3.1-remap
+ชวนทุกคน ทําจิตอาสา พรุ่งนี้,safe,validation,allow,uwm-v3.1-remap
+หาเพื่อน เตะฟุตบอล สุดสัปดาห์นี้,safe,validation,allow,uwm-v3.1-remap
+ใครสนใจ เดินตลาด ช่วงบ่าย,safe,validation,allow,uwm-v3.1-remap
+ชวนทุกคน ปลูกต้นไม้ วันเสาร์,safe,validation,allow,uwm-v3.1-remap
+ใครสนใจ วิ่งออกกําลังกาย ช่วงบ่าย,safe,validation,allow,uwm-v3.1-remap
+ชวนทุกคน ตีแบด ช่วงบ่าย,safe,validation,allow,uwm-v3.1-remap
+นัดเพื่อน เดินตลาด ตอนเย็น,safe,validation,allow,uwm-v3.1-remap
+ใครว่าง ตีแบด หลังเลิกเรียน,safe,validation,allow,uwm-v3.1-remap
+หาเพื่อน เดินตลาด ตอนเช้า,safe,validation,allow,uwm-v3.1-remap
+ใครสนใจ วิ่งออกกําลังกาย สุดสัปดาห์นี้,safe,validation,allow,uwm-v3.1-remap
+นัดเพื่อน กินข้าว พรุ่งนี้,safe,validation,allow,uwm-v3.1-remap
+นัดเพื่อน ไปคาเฟ่ สุดสัปดาห์นี้,safe,validation,allow,uwm-v3.1-remap
+ชวนทุกคน ทํารายงาน พรุ่งนี้,safe,validation,allow,uwm-v3.1-remap
+ชวนทุกคน กินข้าว ตอนเช้า,safe,validation,allow,uwm-v3.1-remap
+อยากหาเพื่อน ทํารายงาน สุดสัปดาห์นี้,safe,validation,allow,uwm-v3.1-remap
+ใครว่าง เตะฟุตบอล หลังเลิกเรียน,safe,validation,allow,uwm-v3.1-remap
+ใครสนใจ ทําจิตอาสา วันเสาร์,safe,validation,allow,uwm-v3.1-remap
+หาเพื่อน ตีแบด หลังเลิกเรียน,safe,validation,allow,uwm-v3.1-remap
+นัดเพื่อน ทํารายงาน วันเสาร์,safe,test,allow,uwm-v3.1-remap
+ใครว่าง วิ่งออกกําลังกาย ตอนเช้า,safe,test,allow,uwm-v3.1-remap
+ชวนทุกคน ปลูกต้นไม้ หลังเลิกเรียน,safe,test,allow,uwm-v3.1-remap
+ชวนทุกคน กินข้าว ช่วงบ่าย,safe,test,allow,uwm-v3.1-remap
+หาเพื่อน ทําจิตอาสา หลังเลิกเรียน,safe,test,allow,uwm-v3.1-remap
+อยากหาเพื่อน ถ่ายรูป ตอนเช้า,safe,test,allow,uwm-v3.1-remap
+ใครสนใจ ไปคาเฟ่ ตอนเช้า,safe,test,allow,uwm-v3.1-remap
+ชวนทุกคน เดินตลาด ช่วงบ่าย,safe,test,allow,uwm-v3.1-remap
+อยากหาเพื่อน เล่นบอร์ดเกม ตอนเช้า,safe,test,allow,uwm-v3.1-remap
+หาเพื่อน ทํารายงาน ช่วงบ่าย,safe,test,allow,uwm-v3.1-remap
+ใครสนใจ ซ้อมดนตรี หลังเลิกเรียน,safe,test,allow,uwm-v3.1-remap
+หาเพื่อน ตีแบด พรุ่งนี้,safe,test,allow,uwm-v3.1-remap
+นัดเพื่อน วิ่งออกกําลังกาย วันเสาร์,safe,test,allow,uwm-v3.1-remap
+อยากหาเพื่อน เตะฟุตบอล ช่วงบ่าย,safe,test,allow,uwm-v3.1-remap
+ใครสนใจ วิ่งออกกําลังกาย วันเสาร์,safe,test,allow,uwm-v3.1-remap
+นัดเพื่อน ซ้อมดนตรี สุดสัปดาห์นี้,safe,test,allow,uwm-v3.1-remap
+ใครสนใจ เล่นบอร์ดเกม พรุ่งนี้,safe,test,allow,uwm-v3.1-remap
+ใครว่าง อ่านหนังสือ สุดสัปดาห์นี้,safe,test,allow,uwm-v3.1-remap
+ชวนทุกคน ซ้อมดนตรี พรุ่งนี้,safe,test,allow,uwm-v3.1-remap
+ชวนทุกคน วิ่งออกกําลังกาย วันเสาร์,safe,test,allow,uwm-v3.1-remap
+ชวนทุกคน เล่นบอร์ดเกม พรุ่งนี้,safe,test,allow,uwm-v3.1-remap
+อยากหาเพื่อน ทําจิตอาสา สุดสัปดาห์นี้,safe,test,allow,uwm-v3.1-remap
+ใครว่าง เดินตลาด วันเสาร์,safe,test,allow,uwm-v3.1-remap
+หาเพื่อน เตะฟุตบอล ตอนเย็น,safe,test,allow,uwm-v3.1-remap
+อยากหาเพื่อน กินข้าว ตอนเช้า,safe,test,allow,uwm-v3.1-remap
+ใครสนใจ เล่นบอร์ดเกม ตอนเย็น,safe,test,allow,uwm-v3.1-remap
+นัดเพื่อน เดินตลาด วันเสาร์,safe,test,allow,uwm-v3.1-remap
+อยากหาเพื่อน ซ้อมดนตรี หลังเลิกเรียน,safe,test,allow,uwm-v3.1-remap
+นัดเพื่อน เตะฟุตบอล วันเสาร์,safe,test,allow,uwm-v3.1-remap
+ชวนทุกคน เดินตลาด พรุ่งนี้,safe,test,allow,uwm-v3.1-remap
+ชวนทุกคน ทําจิตอาสา ตอนเช้า,safe,test,allow,uwm-v3.1-remap
+นัดเพื่อน วิ่งออกกําลังกาย ช่วงบ่าย,safe,test,allow,uwm-v3.1-remap
+ชวนทุกคน ถ่ายรูป พรุ่งนี้,safe,test,allow,uwm-v3.1-remap
+หาเพื่อน ซ้อมดนตรี สุดสัปดาห์นี้,safe,test,allow,uwm-v3.1-remap
+ใครสนใจ ไปคาเฟ่ หลังเลิกเรียน,safe,test,allow,uwm-v3.1-remap
+อยากหาเพื่อน เล่นบอร์ดเกม ช่วงบ่าย,safe,test,allow,uwm-v3.1-remap
+อยากหาเพื่อน ดูหนัง ช่วงบ่าย,safe,test,allow,uwm-v3.1-remap
+ใครว่าง เล่นบอร์ดเกม สุดสัปดาห์นี้,safe,test,allow,uwm-v3.1-remap
+หาเพื่อน เล่นบอร์ดเกม หลังเลิกเรียน,safe,test,allow,uwm-v3.1-remap
+หาเพื่อน กินข้าว ช่วงบ่าย,safe,test,allow,uwm-v3.1-remap
+หาเพื่อน ปลูกต้นไม้ วันเสาร์,safe,test,allow,uwm-v3.1-remap
+อยากหาเพื่อน ถ่ายรูป สุดสัปดาห์นี้,safe,test,allow,uwm-v3.1-remap
+อยากหาเพื่อน ทําจิตอาสา พรุ่งนี้,safe,test,allow,uwm-v3.1-remap
+ชวนทุกคน เล่นบอร์ดเกม สุดสัปดาห์นี้,safe,test,allow,uwm-v3.1-remap
+ชวนทุกคน ตีแบด วันเสาร์,safe,test,allow,uwm-v3.1-remap
+ชวนทุกคน ถ่ายรูป ช่วงบ่าย,safe,test,allow,uwm-v3.1-remap
+ใครว่าง ไปคาเฟ่ ตอนเช้า,safe,test,allow,uwm-v3.1-remap
+อยากหาเพื่อน ถ่ายรูป ตอนเย็น,safe,test,allow,uwm-v3.1-remap
+กิจกรรมนี้ พังชิบหาย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ เหี้ย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ กาก เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ กาก มาก,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ น่ารําคาญชิบหาย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ เฮงซวย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+โคตร น่ารําคาญชิบหาย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+แม่ง กากชิบหาย สุดๆ,profanity,train,block,uwm-v3.1-remap
+แม่ง เหี้ย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ กากชิบหาย มาก,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ ห่วยแตก จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ กาก มาก,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ กากชิบหาย สุดๆ,profanity,train,block,uwm-v3.1-remap
+งานนี้ เฮงซวย สุดๆ,profanity,train,block,uwm-v3.1-remap
+แม่ง ห่วย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+วันนี้ กากชิบหาย สุดๆ,profanity,train,block,uwm-v3.1-remap
+แม่ง เฮงซวย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+งานนี้ กากชิบหาย ชะมัด,profanity,train,block,uwm-v3.1-remap
+โคตร เฮงซวย สุดๆ,profanity,train,block,uwm-v3.1-remap
+วันนี้ พังชิบหาย มาก,profanity,train,block,uwm-v3.1-remap
+งานนี้ กาก มาก,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ ห่วย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+โคตร ห่วยแตก เสียเวลา,profanity,train,block,uwm-v3.1-remap
+แม่ง กาก สุดๆ,profanity,train,block,uwm-v3.1-remap
+วันนี้ เฮงซวย จริงๆ,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ ห่วยแตก เสียเวลา,profanity,train,block,uwm-v3.1-remap
+แม่ง ห่วย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+แม่ง กาก มาก,profanity,train,block,uwm-v3.1-remap
+งานนี้ ห่วยแตก จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+แม่ง พังชิบหาย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+งานนี้ พังชิบหาย มาก,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ เหี้ย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ น่ารําคาญชิบหาย มาก,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ เหี้ย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ ห่วย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ กากชิบหาย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+โคตร เฮงซวย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ กากชิบหาย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ ห่วย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ เหี้ย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+วันนี้ ห่วยแตก มาก,profanity,train,block,uwm-v3.1-remap
+งานนี้ น่ารําคาญชิบหาย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+โคตร เหี้ย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ กากชิบหาย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+งานนี้ ห่วย มาก,profanity,train,block,uwm-v3.1-remap
+โคตร น่ารําคาญชิบหาย มาก,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ กากชิบหาย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+งานนี้ กาก เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+วันนี้ ห่วยแตก จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+แม่ง เฮงซวย จริงๆ,profanity,train,block,uwm-v3.1-remap
+โคตร กากชิบหาย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+งานนี้ กากชิบหาย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+งานนี้ ห่วย ชะมัด,profanity,train,block,uwm-v3.1-remap
+โคตร กากชิบหาย ชะมัด,profanity,train,block,uwm-v3.1-remap
+งานนี้ กาก สุดๆ,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ กาก สุดๆ,profanity,train,block,uwm-v3.1-remap
+งานนี้ ห่วยแตก มาก,profanity,train,block,uwm-v3.1-remap
+วันนี้ ห่วยแตก สุดๆ,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ เฮงซวย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+แม่ง กากชิบหาย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+โคตร น่ารําคาญชิบหาย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ เฮงซวย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ เฮงซวย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+วันนี้ กากชิบหาย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+วันนี้ กาก ชะมัด,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ พังชิบหาย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+โคตร เหี้ย ชะมัด,profanity,train,block,uwm-v3.1-remap
+โคตร กาก เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+แม่ง ห่วยแตก จริงๆ,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ เหี้ย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ น่ารําคาญชิบหาย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+โคตร พังชิบหาย สุดๆ,profanity,train,block,uwm-v3.1-remap
+โคตร กากชิบหาย มาก,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ พังชิบหาย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ ห่วยแตก เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+แม่ง ห่วย มาก,profanity,train,block,uwm-v3.1-remap
+แม่ง พังชิบหาย สุดๆ,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ น่ารําคาญชิบหาย ชะมัด,profanity,train,block,uwm-v3.1-remap
+โคตร พังชิบหาย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+โคตร ห่วย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+วันนี้ เหี้ย จริงๆ,profanity,train,block,uwm-v3.1-remap
+วันนี้ ห่วยแตก จริงๆ,profanity,train,block,uwm-v3.1-remap
+วันนี้ เฮงซวย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+แม่ง พังชิบหาย จริงๆ,profanity,train,block,uwm-v3.1-remap
+โคตร กาก มาก,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ พังชิบหาย ชะมัด,profanity,train,block,uwm-v3.1-remap
+วันนี้ พังชิบหาย จริงๆ,profanity,train,block,uwm-v3.1-remap
+วันนี้ ห่วย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ กากชิบหาย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+วันนี้ เฮงซวย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+งานนี้ น่ารําคาญชิบหาย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+วันนี้ น่ารําคาญชิบหาย จริงๆ,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ กากชิบหาย จริงๆ,profanity,train,block,uwm-v3.1-remap
+โคตร กาก ชะมัด,profanity,train,block,uwm-v3.1-remap
+งานนี้ เหี้ย ชะมัด,profanity,train,block,uwm-v3.1-remap
+วันนี้ น่ารําคาญชิบหาย สุดๆ,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ กาก ชะมัด,profanity,train,block,uwm-v3.1-remap
+งานนี้ กากชิบหาย สุดๆ,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ ห่วยแตก สุดๆ,profanity,train,block,uwm-v3.1-remap
+งานนี้ ห่วย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+งานนี้ กากชิบหาย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ ห่วยแตก ชะมัด,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ เหี้ย ชะมัด,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ ห่วย สุดๆ,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ ห่วย จริงๆ,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ ห่วย ชะมัด,profanity,train,block,uwm-v3.1-remap
+โคตร เหี้ย จริงๆ,profanity,train,block,uwm-v3.1-remap
+งานนี้ น่ารําคาญชิบหาย ชะมัด,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ น่ารําคาญชิบหาย จริงๆ,profanity,train,block,uwm-v3.1-remap
+งานนี้ พังชิบหาย ชะมัด,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ กาก จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ กาก เสียเวลา,profanity,train,block,uwm-v3.1-remap
+วันนี้ เหี้ย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ เหี้ย มาก,profanity,train,block,uwm-v3.1-remap
+โคตร กาก สุดๆ,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ เฮงซวย มาก,profanity,train,block,uwm-v3.1-remap
+โคตร พังชิบหาย จริงๆ,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ ห่วยแตก เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ กากชิบหาย ชะมัด,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ ห่วย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+งานนี้ เฮงซวย ชะมัด,profanity,train,block,uwm-v3.1-remap
+แม่ง เหี้ย สุดๆ,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ กาก จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+โคตร เหี้ย มาก,profanity,train,block,uwm-v3.1-remap
+งานนี้ เฮงซวย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+งานนี้ เฮงซวย จริงๆ,profanity,train,block,uwm-v3.1-remap
+วันนี้ ห่วย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+วันนี้ น่ารําคาญชิบหาย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ กากชิบหาย จริงๆ,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ พังชิบหาย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+โคตร กาก จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ พังชิบหาย สุดๆ,profanity,train,block,uwm-v3.1-remap
+วันนี้ กากชิบหาย จริงๆ,profanity,train,block,uwm-v3.1-remap
+โคตร ห่วย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+งานนี้ เหี้ย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+วันนี้ น่ารําคาญชิบหาย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ พังชิบหาย สุดๆ,profanity,train,block,uwm-v3.1-remap
+งานนี้ เหี้ย จริงๆ,profanity,train,block,uwm-v3.1-remap
+แม่ง ห่วยแตก จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+แม่ง เฮงซวย มาก,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ เฮงซวย ชะมัด,profanity,train,block,uwm-v3.1-remap
+โคตร พังชิบหาย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ ห่วย จริงๆ,profanity,train,block,uwm-v3.1-remap
+งานนี้ น่ารําคาญชิบหาย สุดๆ,profanity,train,block,uwm-v3.1-remap
+งานนี้ กาก จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+โคตร เหี้ย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+วันนี้ เหี้ย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+โคตร น่ารําคาญชิบหาย สุดๆ,profanity,train,block,uwm-v3.1-remap
+โคตร เฮงซวย ชะมัด,profanity,train,block,uwm-v3.1-remap
+วันนี้ กากชิบหาย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+แม่ง กากชิบหาย จริงๆ,profanity,train,block,uwm-v3.1-remap
+แม่ง ห่วย ชะมัด,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ เหี้ย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+โคตร ห่วย มาก,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ กาก เสียเวลา,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ ห่วย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ กาก สุดๆ,profanity,train,block,uwm-v3.1-remap
+งานนี้ กากชิบหาย จริงๆ,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ น่ารําคาญชิบหาย ชะมัด,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ พังชิบหาย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ น่ารําคาญชิบหาย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+โคตร กากชิบหาย สุดๆ,profanity,train,block,uwm-v3.1-remap
+โคตร พังชิบหาย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+โคตร น่ารําคาญชิบหาย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+วันนี้ กากชิบหาย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+แม่ง ห่วย สุดๆ,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ ห่วยแตก สุดๆ,profanity,train,block,uwm-v3.1-remap
+วันนี้ กากชิบหาย ชะมัด,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ กากชิบหาย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+งานนี้ กาก จริงๆ,profanity,train,block,uwm-v3.1-remap
+แม่ง น่ารําคาญชิบหาย สุดๆ,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ ห่วย มาก,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ กากชิบหาย จริงๆ,profanity,train,block,uwm-v3.1-remap
+งานนี้ พังชิบหาย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+โคตร ห่วยแตก ชะมัด,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ เฮงซวย มาก,profanity,train,block,uwm-v3.1-remap
+งานนี้ ห่วยแตก ชะมัด,profanity,train,block,uwm-v3.1-remap
+งานนี้ พังชิบหาย จริงๆ,profanity,train,block,uwm-v3.1-remap
+แม่ง เฮงซวย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+วันนี้ ห่วยแตก ชะมัด,profanity,train,block,uwm-v3.1-remap
+โคตร ห่วยแตก มาก,profanity,train,block,uwm-v3.1-remap
+วันนี้ พังชิบหาย ชะมัด,profanity,train,block,uwm-v3.1-remap
+งานนี้ เหี้ย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+งานนี้ พังชิบหาย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+วันนี้ ห่วย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ เฮงซวย สุดๆ,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ เฮงซวย จริงๆ,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ ห่วย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+โคตร น่ารําคาญชิบหาย ชะมัด,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ ห่วย สุดๆ,profanity,train,block,uwm-v3.1-remap
+งานนี้ เฮงซวย มาก,profanity,train,block,uwm-v3.1-remap
+งานนี้ ห่วยแตก เสียเวลา,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ ห่วยแตก จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ เหี้ย มาก,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ เฮงซวย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+แม่ง น่ารําคาญชิบหาย ชะมัด,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ เฮงซวย จริงๆ,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ เฮงซวย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+งานนี้ น่ารําคาญชิบหาย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+วันนี้ เฮงซวย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+วันนี้ เหี้ย สุดๆ,profanity,train,block,uwm-v3.1-remap
+งานนี้ เหี้ย สุดๆ,profanity,train,block,uwm-v3.1-remap
+งานนี้ เหี้ย มาก,profanity,train,block,uwm-v3.1-remap
+งานนี้ ห่วยแตก สุดๆ,profanity,train,block,uwm-v3.1-remap
+แม่ง เหี้ย ชะมัด,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ ห่วย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+โคตร เฮงซวย มาก,profanity,train,block,uwm-v3.1-remap
+ระบบนี้ ห่วยแตก เสียเวลา,profanity,train,block,uwm-v3.1-remap
+งานนี้ เหี้ย เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ น่ารําคาญชิบหาย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ น่ารําคาญชิบหาย มาก,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ เฮงซวย มาก,profanity,train,block,uwm-v3.1-remap
+วันนี้ กาก เสียเวลา,profanity,train,block,uwm-v3.1-remap
+งานนี้ ห่วย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+โคตร ห่วยแตก จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ ห่วยแตก เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+งานอะไรวะ ห่วยแตก จริงๆ,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ กาก มาก,profanity,train,block,uwm-v3.1-remap
+แม่ง น่ารําคาญชิบหาย เสียเวลา,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ น่ารําคาญชิบหาย จริงๆ,profanity,train,block,uwm-v3.1-remap
+แม่ง พังชิบหาย จนไม่ไหว,profanity,train,block,uwm-v3.1-remap
+โคตร ห่วยแตก เลยว่ะ,profanity,train,block,uwm-v3.1-remap
+วันนี้ เฮงซวย มาก,profanity,train,block,uwm-v3.1-remap
+งานนี้ น่ารําคาญชิบหาย มาก,profanity,train,block,uwm-v3.1-remap
+กิจกรรมนี้ น่ารําคาญชิบหาย สุดๆ,profanity,validation,block,uwm-v3.1-remap
+กิจกรรมนี้ น่ารําคาญชิบหาย มาก,profanity,validation,block,uwm-v3.1-remap
+งานอะไรวะ พังชิบหาย จริงๆ,profanity,validation,block,uwm-v3.1-remap
+แม่ง กากชิบหาย ชะมัด,profanity,validation,block,uwm-v3.1-remap
+โคตร เหี้ย สุดๆ,profanity,validation,block,uwm-v3.1-remap
+กิจกรรมนี้ เฮงซวย เลยว่ะ,profanity,validation,block,uwm-v3.1-remap
+งานอะไรวะ พังชิบหาย เลยว่ะ,profanity,validation,block,uwm-v3.1-remap
+งานนี้ ห่วย สุดๆ,profanity,validation,block,uwm-v3.1-remap
+โคตร กากชิบหาย เลยว่ะ,profanity,validation,block,uwm-v3.1-remap
+งานนี้ กากชิบหาย มาก,profanity,validation,block,uwm-v3.1-remap
+งานอะไรวะ กาก จริงๆ,profanity,validation,block,uwm-v3.1-remap
+กิจกรรมนี้ กากชิบหาย มาก,profanity,validation,block,uwm-v3.1-remap
+แม่ง เฮงซวย เสียเวลา,profanity,validation,block,uwm-v3.1-remap
+วันนี้ ห่วยแตก เสียเวลา,profanity,validation,block,uwm-v3.1-remap
+วันนี้ กาก เลยว่ะ,profanity,validation,block,uwm-v3.1-remap
+งานนี้ ห่วย เลยว่ะ,profanity,validation,block,uwm-v3.1-remap
+งานอะไรวะ เฮงซวย ชะมัด,profanity,validation,block,uwm-v3.1-remap
+งานนี้ เฮงซวย เลยว่ะ,profanity,validation,block,uwm-v3.1-remap
+ระบบนี้ กาก จริงๆ,profanity,validation,block,uwm-v3.1-remap
+วันนี้ เหี้ย เลยว่ะ,profanity,validation,block,uwm-v3.1-remap
+โคตร เหี้ย เสียเวลา,profanity,validation,block,uwm-v3.1-remap
+งานอะไรวะ ห่วยแตก มาก,profanity,validation,block,uwm-v3.1-remap
+ระบบนี้ เหี้ย เสียเวลา,profanity,validation,block,uwm-v3.1-remap
+งานนี้ ห่วยแตก จริงๆ,profanity,validation,block,uwm-v3.1-remap
+โคตร ห่วย ชะมัด,profanity,validation,block,uwm-v3.1-remap
+โคตร น่ารําคาญชิบหาย จริงๆ,profanity,validation,block,uwm-v3.1-remap
+โคตร กาก เสียเวลา,profanity,validation,block,uwm-v3.1-remap
+กิจกรรมนี้ น่ารําคาญชิบหาย จนไม่ไหว,profanity,validation,block,uwm-v3.1-remap
+โคตร พังชิบหาย มาก,profanity,validation,block,uwm-v3.1-remap
+แม่ง ห่วยแตก ชะมัด,profanity,validation,block,uwm-v3.1-remap
+งานอะไรวะ ห่วย สุดๆ,profanity,validation,block,uwm-v3.1-remap
+กิจกรรมนี้ พังชิบหาย จริงๆ,profanity,validation,block,uwm-v3.1-remap
+กิจกรรมนี้ กากชิบหาย สุดๆ,profanity,validation,block,uwm-v3.1-remap
+วันนี้ ห่วย จริงๆ,profanity,validation,block,uwm-v3.1-remap
+แม่ง น่ารําคาญชิบหาย จนไม่ไหว,profanity,validation,block,uwm-v3.1-remap
+งานอะไรวะ เหี้ย จนไม่ไหว,profanity,validation,block,uwm-v3.1-remap
+แม่ง เหี้ย เสียเวลา,profanity,validation,block,uwm-v3.1-remap
+แม่ง กากชิบหาย เลยว่ะ,profanity,validation,block,uwm-v3.1-remap
+ระบบนี้ เหี้ย จนไม่ไหว,profanity,validation,block,uwm-v3.1-remap
+งานนี้ น่ารําคาญชิบหาย จริงๆ,profanity,validation,block,uwm-v3.1-remap
+วันนี้ ห่วย ชะมัด,profanity,validation,block,uwm-v3.1-remap
+กิจกรรมนี้ เฮงซวย จริงๆ,profanity,validation,block,uwm-v3.1-remap
+วันนี้ กาก จริงๆ,profanity,validation,block,uwm-v3.1-remap
+ระบบนี้ กากชิบหาย เลยว่ะ,profanity,validation,block,uwm-v3.1-remap
+กิจกรรมนี้ เฮงซวย สุดๆ,profanity,validation,block,uwm-v3.1-remap
+งานอะไรวะ พังชิบหาย จนไม่ไหว,profanity,validation,block,uwm-v3.1-remap
+วันนี้ เหี้ย มาก,profanity,validation,block,uwm-v3.1-remap
+ระบบนี้ กากชิบหาย จนไม่ไหว,profanity,validation,block,uwm-v3.1-remap
+ระบบนี้ น่ารําคาญชิบหาย สุดๆ,profanity,test,block,uwm-v3.1-remap
+วันนี้ กาก มาก,profanity,test,block,uwm-v3.1-remap
+งานอะไรวะ กาก ชะมัด,profanity,test,block,uwm-v3.1-remap
+ระบบนี้ น่ารําคาญชิบหาย จนไม่ไหว,profanity,test,block,uwm-v3.1-remap
+งานอะไรวะ ห่วย จริงๆ,profanity,test,block,uwm-v3.1-remap
+กิจกรรมนี้ กาก ชะมัด,profanity,test,block,uwm-v3.1-remap
+ระบบนี้ เหี้ย มาก,profanity,test,block,uwm-v3.1-remap
+แม่ง ห่วยแตก มาก,profanity,test,block,uwm-v3.1-remap
+กิจกรรมนี้ กาก สุดๆ,profanity,test,block,uwm-v3.1-remap
+กิจกรรมนี้ กาก จริงๆ,profanity,test,block,uwm-v3.1-remap
+งานอะไรวะ เฮงซวย สุดๆ,profanity,test,block,uwm-v3.1-remap
+กิจกรรมนี้ กาก เลยว่ะ,profanity,test,block,uwm-v3.1-remap
+งานอะไรวะ กากชิบหาย มาก,profanity,test,block,uwm-v3.1-remap
+แม่ง ห่วยแตก สุดๆ,profanity,test,block,uwm-v3.1-remap
+งานนี้ ห่วย จริงๆ,profanity,test,block,uwm-v3.1-remap
+วันนี้ กาก จนไม่ไหว,profanity,test,block,uwm-v3.1-remap
+แม่ง กาก ชะมัด,profanity,test,block,uwm-v3.1-remap
+แม่ง กาก เสียเวลา,profanity,test,block,uwm-v3.1-remap
+ระบบนี้ ห่วยแตก มาก,profanity,test,block,uwm-v3.1-remap
+ระบบนี้ พังชิบหาย จริงๆ,profanity,test,block,uwm-v3.1-remap
+ระบบนี้ ห่วย เสียเวลา,profanity,test,block,uwm-v3.1-remap
+ระบบนี้ ห่วยแตก จริงๆ,profanity,test,block,uwm-v3.1-remap
+แม่ง เฮงซวย สุดๆ,profanity,test,block,uwm-v3.1-remap
+ระบบนี้ ห่วย เลยว่ะ,profanity,test,block,uwm-v3.1-remap
+งานอะไรวะ น่ารําคาญชิบหาย เลยว่ะ,profanity,test,block,uwm-v3.1-remap
+แม่ง น่ารําคาญชิบหาย เลยว่ะ,profanity,test,block,uwm-v3.1-remap
+ระบบนี้ พังชิบหาย มาก,profanity,test,block,uwm-v3.1-remap
+แม่ง น่ารําคาญชิบหาย มาก,profanity,test,block,uwm-v3.1-remap
+งานอะไรวะ ห่วยแตก ชะมัด,profanity,test,block,uwm-v3.1-remap
+วันนี้ ห่วย สุดๆ,profanity,test,block,uwm-v3.1-remap
+งานอะไรวะ เฮงซวย จนไม่ไหว,profanity,test,block,uwm-v3.1-remap
+งานนี้ กากชิบหาย เสียเวลา,profanity,test,block,uwm-v3.1-remap
+ระบบนี้ พังชิบหาย สุดๆ,profanity,test,block,uwm-v3.1-remap
+ระบบนี้ ห่วยแตก สุดๆ,profanity,test,block,uwm-v3.1-remap
+แม่ง ห่วย จริงๆ,profanity,test,block,uwm-v3.1-remap
+กิจกรรมนี้ เหี้ย จริงๆ,profanity,test,block,uwm-v3.1-remap
+งานอะไรวะ กากชิบหาย ชะมัด,profanity,test,block,uwm-v3.1-remap
+กิจกรรมนี้ พังชิบหาย ชะมัด,profanity,test,block,uwm-v3.1-remap
+โคตร ห่วย สุดๆ,profanity,test,block,uwm-v3.1-remap
+โคตร ห่วย เสียเวลา,profanity,test,block,uwm-v3.1-remap
+ระบบนี้ พังชิบหาย จนไม่ไหว,profanity,test,block,uwm-v3.1-remap
+งานอะไรวะ ห่วย ชะมัด,profanity,test,block,uwm-v3.1-remap
+แม่ง กากชิบหาย จนไม่ไหว,profanity,test,block,uwm-v3.1-remap
+โคตร เฮงซวย เลยว่ะ,profanity,test,block,uwm-v3.1-remap
+โคตร ห่วย จริงๆ,profanity,test,block,uwm-v3.1-remap
+วันนี้ น่ารําคาญชิบหาย มาก,profanity,test,block,uwm-v3.1-remap
+แม่ง พังชิบหาย ชะมัด,profanity,test,block,uwm-v3.1-remap
+กิจกรรมนี้ กาก เสียเวลา,profanity,test,block,uwm-v3.1-remap
+แก ไม่ได้เรื่อง ชะมัด,insult,train,block,uwm-v3.1-remap
+คนนี้ ไร้ความสามารถ จริงๆ,insult,train,block,uwm-v3.1-remap
+คนนี้ คิดอะไรไม่เป็น แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+คนอะไร คิดอะไรไม่เป็น แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+มึง คิดอะไรไม่เป็น อีกแล้ว,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่มีความคิด แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+มึง ไม่มีปัญญา อีกแล้ว,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว คิดอะไรไม่เป็น อีกแล้ว,insult,train,block,uwm-v3.1-remap
+คนอะไร ไม่มีปัญญา จริงๆ,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ โง่มาก สุดๆ,insult,train,block,uwm-v3.1-remap
+มึง ไม่ได้เรื่อง สุดๆ,insult,train,block,uwm-v3.1-remap
+แก ไม่ได้เรื่อง จริงๆ,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ ไร้ความสามารถ จริงๆ,insult,train,block,uwm-v3.1-remap
+แก ไม่มีปัญญา แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว ไม่มีความคิด แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่มีสมอง อีกแล้ว,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว ไม่ได้เรื่อง อีกแล้ว,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ เป็นภาระ ชะมัด,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ เป็นภาระ แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+คนนี้ โง่มาก ชะมัด,insult,train,block,uwm-v3.1-remap
+คนนี้ ไม่ได้เรื่อง ชะมัด,insult,train,block,uwm-v3.1-remap
+คนอะไร คิดอะไรไม่เป็น แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ ไม่มีสมอง แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ ไม่มีความคิด จริงๆ,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ ไม่มีปัญญา ชะมัด,insult,train,block,uwm-v3.1-remap
+มึง ไม่มีความคิด แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+คนนี้ ไม่มีสมอง แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+คนนี้ ไม่มีปัญญา แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว ไม่มีความคิด มาก,insult,train,block,uwm-v3.1-remap
+คนนี้ ไม่มีปัญญา มาก,insult,train,block,uwm-v3.1-remap
+คนนี้ โง่มาก สุดๆ,insult,train,block,uwm-v3.1-remap
+แก คิดอะไรไม่เป็น มาก,insult,train,block,uwm-v3.1-remap
+คนอะไร ไม่มีความคิด แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+คนอะไร ไร้ความสามารถ แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+มึง คิดอะไรไม่เป็น จริงๆ,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ ไร้ความสามารถ แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่มีความคิด ชะมัด,insult,train,block,uwm-v3.1-remap
+คนอะไร เป็นภาระ ชะมัด,insult,train,block,uwm-v3.1-remap
+คนนี้ ไม่มีปัญญา สุดๆ,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ เป็นภาระ สุดๆ,insult,train,block,uwm-v3.1-remap
+มึง ไม่มีปัญญา มาก,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว ไม่มีปัญญา อีกแล้ว,insult,train,block,uwm-v3.1-remap
+คนอะไร ไม่มีปัญญา มาก,insult,train,block,uwm-v3.1-remap
+คนอะไร ไม่ได้เรื่อง จริงๆ,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ ไร้ความสามารถ ชะมัด,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่มีสมอง จริงๆ,insult,train,block,uwm-v3.1-remap
+แก โง่มาก ชะมัด,insult,train,block,uwm-v3.1-remap
+คนนี้ ไม่มีความคิด สุดๆ,insult,train,block,uwm-v3.1-remap
+คนอะไร ไม่มีความคิด จริงๆ,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ เป็นภาระ สุดๆ,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว โง่มาก ชะมัด,insult,train,block,uwm-v3.1-remap
+มึง โง่มาก แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ โง่มาก แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว ไม่มีความคิด ชะมัด,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว เป็นภาระ แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ ไม่ได้เรื่อง แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว คิดอะไรไม่เป็น จริงๆ,insult,train,block,uwm-v3.1-remap
+แก ไร้ความสามารถ ชะมัด,insult,train,block,uwm-v3.1-remap
+มึง ไม่มีความคิด แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+คนนี้ ไม่มีสมอง แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ คิดอะไรไม่เป็น มาก,insult,train,block,uwm-v3.1-remap
+แก ไม่มีสมอง มาก,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ ไร้ความสามารถ แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว ไม่มีปัญญา มาก,insult,train,block,uwm-v3.1-remap
+คนนี้ ไร้ความสามารถ สุดๆ,insult,train,block,uwm-v3.1-remap
+คนอะไร ไม่มีความคิด มาก,insult,train,block,uwm-v3.1-remap
+แก คิดอะไรไม่เป็น แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ ไม่ได้เรื่อง จริงๆ,insult,train,block,uwm-v3.1-remap
+แก ไม่มีปัญญา ชะมัด,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ โง่มาก แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว ไม่มีสมอง สุดๆ,insult,train,block,uwm-v3.1-remap
+คนนี้ ไร้ความสามารถ อีกแล้ว,insult,train,block,uwm-v3.1-remap
+คนอะไร เป็นภาระ จริงๆ,insult,train,block,uwm-v3.1-remap
+มึง ไม่ได้เรื่อง ชะมัด,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ โง่มาก อีกแล้ว,insult,train,block,uwm-v3.1-remap
+คนนี้ ไร้ความสามารถ มาก,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ คิดอะไรไม่เป็น อีกแล้ว,insult,train,block,uwm-v3.1-remap
+มึง ไร้ความสามารถ มาก,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ ไร้ความสามารถ แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+แก ไร้ความสามารถ สุดๆ,insult,train,block,uwm-v3.1-remap
+คนอะไร เป็นภาระ อีกแล้ว,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว เป็นภาระ สุดๆ,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ ไม่มีความคิด สุดๆ,insult,train,block,uwm-v3.1-remap
+แก ไม่มีความคิด ชะมัด,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ เป็นภาระ จริงๆ,insult,train,block,uwm-v3.1-remap
+คนนี้ ไม่มีสมอง ชะมัด,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว ไร้ความสามารถ มาก,insult,train,block,uwm-v3.1-remap
+มึง ไม่ได้เรื่อง จริงๆ,insult,train,block,uwm-v3.1-remap
+มึง ไม่มีปัญญา แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+แก ไม่มีปัญญา มาก,insult,train,block,uwm-v3.1-remap
+คนนี้ คิดอะไรไม่เป็น อีกแล้ว,insult,train,block,uwm-v3.1-remap
+แก ไม่มีปัญญา แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+คนนี้ ไร้ความสามารถ แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+คนอะไร โง่มาก อีกแล้ว,insult,train,block,uwm-v3.1-remap
+คนนี้ เป็นภาระ ชะมัด,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่มีปัญญา ชะมัด,insult,train,block,uwm-v3.1-remap
+มึง ไม่มีความคิด อีกแล้ว,insult,train,block,uwm-v3.1-remap
+แก เป็นภาระ อีกแล้ว,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ ไม่มีความคิด แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+มึง ไม่มีสมอง สุดๆ,insult,train,block,uwm-v3.1-remap
+คนนี้ ไม่มีปัญญา แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว ไม่มีสมอง มาก,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่มีความคิด จริงๆ,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ ไม่ได้เรื่อง แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่มีสมอง ชะมัด,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ ไม่มีปัญญา อีกแล้ว,insult,train,block,uwm-v3.1-remap
+คนนี้ ไม่มีสมอง มาก,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่มีสมอง สุดๆ,insult,train,block,uwm-v3.1-remap
+คนนี้ โง่มาก แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+คนนี้ ไม่มีความคิด ชะมัด,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่ได้เรื่อง จริงๆ,insult,train,block,uwm-v3.1-remap
+มึง ไร้ความสามารถ แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+แก โง่มาก จริงๆ,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ โง่มาก แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว ไม่มีความคิด สุดๆ,insult,train,block,uwm-v3.1-remap
+แก ไร้ความสามารถ มาก,insult,train,block,uwm-v3.1-remap
+แก โง่มาก อีกแล้ว,insult,train,block,uwm-v3.1-remap
+คนนี้ คิดอะไรไม่เป็น สุดๆ,insult,train,block,uwm-v3.1-remap
+คนนี้ ไม่มีปัญญา จริงๆ,insult,train,block,uwm-v3.1-remap
+มึง ไม่ได้เรื่อง อีกแล้ว,insult,train,block,uwm-v3.1-remap
+คนนี้ เป็นภาระ สุดๆ,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว ไม่มีความคิด แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+แก ไม่ได้เรื่อง แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว ไม่มีสมอง แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+แก คิดอะไรไม่เป็น จริงๆ,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว ไม่มีสมอง อีกแล้ว,insult,train,block,uwm-v3.1-remap
+คนนี้ โง่มาก มาก,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ เป็นภาระ แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+แก ไม่มีความคิด มาก,insult,train,block,uwm-v3.1-remap
+คนนี้ คิดอะไรไม่เป็น จริงๆ,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว คิดอะไรไม่เป็น สุดๆ,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่มีปัญญา มาก,insult,train,block,uwm-v3.1-remap
+มึง ไม่มีสมอง ชะมัด,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว ไร้ความสามารถ สุดๆ,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว ไม่มีความคิด อีกแล้ว,insult,train,block,uwm-v3.1-remap
+มึง คิดอะไรไม่เป็น สุดๆ,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว คิดอะไรไม่เป็น แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+คนนี้ ไม่มีความคิด แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+แก ไม่มีปัญญา จริงๆ,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่มีปัญญา จริงๆ,insult,train,block,uwm-v3.1-remap
+มึง ไม่ได้เรื่อง มาก,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ ไร้ความสามารถ อีกแล้ว,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ คิดอะไรไม่เป็น แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+คนอะไร ไม่มีสมอง ชะมัด,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ ไม่มีสมอง ชะมัด,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ ไร้ความสามารถ สุดๆ,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ ไร้ความสามารถ จริงๆ,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว ไม่มีสมอง จริงๆ,insult,train,block,uwm-v3.1-remap
+คนอะไร ไร้ความสามารถ อีกแล้ว,insult,train,block,uwm-v3.1-remap
+แก เป็นภาระ จริงๆ,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว ไร้ความสามารถ จริงๆ,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่มีปัญญา แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ ไม่มีความคิด มาก,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ เป็นภาระ ชะมัด,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว ไม่มีความคิด จริงๆ,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ ไม่มีปัญญา สุดๆ,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว ไม่มีสมอง ชะมัด,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ คิดอะไรไม่เป็น จริงๆ,insult,train,block,uwm-v3.1-remap
+แก คิดอะไรไม่เป็น สุดๆ,insult,train,block,uwm-v3.1-remap
+คนนี้ ไม่มีความคิด แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+มึง เป็นภาระ แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ คิดอะไรไม่เป็น อีกแล้ว,insult,train,block,uwm-v3.1-remap
+คนอะไร ไม่มีความคิด ชะมัด,insult,train,block,uwm-v3.1-remap
+แก ไม่ได้เรื่อง สุดๆ,insult,train,block,uwm-v3.1-remap
+มึง ไร้ความสามารถ แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่มีความคิด อีกแล้ว,insult,train,block,uwm-v3.1-remap
+คนอะไร โง่มาก จริงๆ,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ โง่มาก อีกแล้ว,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ คิดอะไรไม่เป็น สุดๆ,insult,train,block,uwm-v3.1-remap
+คนอะไร ไม่มีปัญญา อีกแล้ว,insult,train,block,uwm-v3.1-remap
+มึง คิดอะไรไม่เป็น แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+มึง โง่มาก สุดๆ,insult,train,block,uwm-v3.1-remap
+คนอะไร ไม่มีปัญญา ชะมัด,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว ไม่มีปัญญา แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว ไม่ได้เรื่อง จริงๆ,insult,train,block,uwm-v3.1-remap
+คนนี้ เป็นภาระ แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+มึง โง่มาก ชะมัด,insult,train,block,uwm-v3.1-remap
+คนนี้ ไม่มีสมอง สุดๆ,insult,train,block,uwm-v3.1-remap
+แก โง่มาก แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+มึง ไม่มีความคิด ชะมัด,insult,train,block,uwm-v3.1-remap
+มึง โง่มาก มาก,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ ไร้ความสามารถ สุดๆ,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ ไม่ได้เรื่อง มาก,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ โง่มาก ชะมัด,insult,train,block,uwm-v3.1-remap
+คนอะไร ไม่มีความคิด อีกแล้ว,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่ได้เรื่อง แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ โง่มาก มาก,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ เป็นภาระ มาก,insult,train,block,uwm-v3.1-remap
+แก ไม่มีสมอง อีกแล้ว,insult,train,block,uwm-v3.1-remap
+คนนี้ เป็นภาระ จริงๆ,insult,train,block,uwm-v3.1-remap
+คนอะไร ไม่มีสมอง อีกแล้ว,insult,train,block,uwm-v3.1-remap
+แก ไม่มีความคิด แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+คนนี้ โง่มาก อีกแล้ว,insult,train,block,uwm-v3.1-remap
+คนอะไร ไม่มีปัญญา แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+คนอะไร ไม่ได้เรื่อง สุดๆ,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว โง่มาก แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว ไม่ได้เรื่อง แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+มึง โง่มาก อีกแล้ว,insult,train,block,uwm-v3.1-remap
+คนอะไร ไม่มีสมอง สุดๆ,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่มีปัญญา อีกแล้ว,insult,train,block,uwm-v3.1-remap
+คนนี้ ไม่ได้เรื่อง อีกแล้ว,insult,train,block,uwm-v3.1-remap
+คนอะไร คิดอะไรไม่เป็น สุดๆ,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ โง่มาก จริงๆ,insult,train,block,uwm-v3.1-remap
+แก ไร้ความสามารถ แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+เห็นแล้ว ไร้ความสามารถ แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+คนนี้ คิดอะไรไม่เป็น ชะมัด,insult,train,block,uwm-v3.1-remap
+คนนี้ โง่มาก แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+คนอะไร ไร้ความสามารถ สุดๆ,insult,train,block,uwm-v3.1-remap
+แก ไม่มีสมอง แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ เป็นภาระ แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+แก ไม่มีสมอง สุดๆ,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่ได้เรื่อง อีกแล้ว,insult,train,block,uwm-v3.1-remap
+มึง ไม่มีปัญญา แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่มีความคิด มาก,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ ไม่มีสมอง แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ เป็นภาระ มาก,insult,train,block,uwm-v3.1-remap
+คนอะไร เป็นภาระ แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+มึง คิดอะไรไม่เป็น แล้วยังไม่รู้ตัว,insult,train,block,uwm-v3.1-remap
+แก เป็นภาระ แล้วยังอวดเก่ง,insult,train,block,uwm-v3.1-remap
+มึง เป็นภาระ สุดๆ,insult,train,block,uwm-v3.1-remap
+แก ไม่มีความคิด จริงๆ,insult,train,block,uwm-v3.1-remap
+แก ไม่มีความคิด อีกแล้ว,insult,train,block,uwm-v3.1-remap
+คนอะไร ไม่มีปัญญา สุดๆ,insult,train,block,uwm-v3.1-remap
+พูดแบบนี้ ไม่มีความคิด อีกแล้ว,insult,train,block,uwm-v3.1-remap
+คนอะไร ไม่มีสมอง มาก,insult,validation,block,uwm-v3.1-remap
+พูดแบบนี้ โง่มาก มาก,insult,validation,block,uwm-v3.1-remap
+มึง ไม่มีสมอง แล้วยังอวดเก่ง,insult,validation,block,uwm-v3.1-remap
+พูดแบบนี้ ไร้ความสามารถ ชะมัด,insult,validation,block,uwm-v3.1-remap
+พูดแบบนี้ เป็นภาระ อีกแล้ว,insult,validation,block,uwm-v3.1-remap
+คนนี้ เป็นภาระ แล้วยังไม่รู้ตัว,insult,validation,block,uwm-v3.1-remap
+เห็นแล้ว คิดอะไรไม่เป็น มาก,insult,validation,block,uwm-v3.1-remap
+คนอะไร ไม่มีปัญญา แล้วยังอวดเก่ง,insult,validation,block,uwm-v3.1-remap
+มึง เป็นภาระ ชะมัด,insult,validation,block,uwm-v3.1-remap
+คนอะไร ไม่ได้เรื่อง แล้วยังอวดเก่ง,insult,validation,block,uwm-v3.1-remap
+แก คิดอะไรไม่เป็น ชะมัด,insult,validation,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่มีสมอง แล้วยังไม่รู้ตัว,insult,validation,block,uwm-v3.1-remap
+พูดแบบนี้ คิดอะไรไม่เป็น ชะมัด,insult,validation,block,uwm-v3.1-remap
+เห็นแล้ว โง่มาก จริงๆ,insult,validation,block,uwm-v3.1-remap
+ทําแบบนี้ โง่มาก สุดๆ,insult,validation,block,uwm-v3.1-remap
+เห็นแล้ว ไม่มีปัญญา แล้วยังอวดเก่ง,insult,validation,block,uwm-v3.1-remap
+เห็นแล้ว เป็นภาระ อีกแล้ว,insult,validation,block,uwm-v3.1-remap
+เห็นแล้ว ไม่ได้เรื่อง แล้วยังไม่รู้ตัว,insult,validation,block,uwm-v3.1-remap
+คนอะไร ไม่มีความคิด สุดๆ,insult,validation,block,uwm-v3.1-remap
+มึง ไม่มีปัญญา จริงๆ,insult,validation,block,uwm-v3.1-remap
+มึง ไม่ได้เรื่อง แล้วยังอวดเก่ง,insult,validation,block,uwm-v3.1-remap
+คนนี้ ไม่ได้เรื่อง จริงๆ,insult,validation,block,uwm-v3.1-remap
+คนนี้ ไม่มีสมอง อีกแล้ว,insult,validation,block,uwm-v3.1-remap
+แก โง่มาก แล้วยังไม่รู้ตัว,insult,validation,block,uwm-v3.1-remap
+คนอะไร ไร้ความสามารถ แล้วยังอวดเก่ง,insult,validation,block,uwm-v3.1-remap
+พูดแบบนี้ ไม่มีความคิด แล้วยังไม่รู้ตัว,insult,validation,block,uwm-v3.1-remap
+แก เป็นภาระ สุดๆ,insult,validation,block,uwm-v3.1-remap
+ทําแบบนี้ คิดอะไรไม่เป็น ชะมัด,insult,validation,block,uwm-v3.1-remap
+มึง โง่มาก แล้วยังไม่รู้ตัว,insult,validation,block,uwm-v3.1-remap
+เห็นแล้ว เป็นภาระ ชะมัด,insult,validation,block,uwm-v3.1-remap
+พูดแบบนี้ โง่มาก ชะมัด,insult,validation,block,uwm-v3.1-remap
+มึง โง่มาก จริงๆ,insult,validation,block,uwm-v3.1-remap
+เห็นแล้ว เป็นภาระ มาก,insult,validation,block,uwm-v3.1-remap
+แก ไม่ได้เรื่อง แล้วยังไม่รู้ตัว,insult,validation,block,uwm-v3.1-remap
+คนอะไร โง่มาก ชะมัด,insult,validation,block,uwm-v3.1-remap
+แก ไม่มีสมอง แล้วยังอวดเก่ง,insult,validation,block,uwm-v3.1-remap
+มึง เป็นภาระ แล้วยังไม่รู้ตัว,insult,validation,block,uwm-v3.1-remap
+แก ไม่ได้เรื่อง มาก,insult,validation,block,uwm-v3.1-remap
+ทําแบบนี้ คิดอะไรไม่เป็น แล้วยังอวดเก่ง,insult,validation,block,uwm-v3.1-remap
+พูดแบบนี้ ไม่มีปัญญา มาก,insult,validation,block,uwm-v3.1-remap
+มึง ไม่มีความคิด จริงๆ,insult,validation,block,uwm-v3.1-remap
+คนอะไร เป็นภาระ แล้วยังอวดเก่ง,insult,validation,block,uwm-v3.1-remap
+เห็นแล้ว ไม่ได้เรื่อง มาก,insult,validation,block,uwm-v3.1-remap
+คนนี้ ไม่ได้เรื่อง สุดๆ,insult,validation,block,uwm-v3.1-remap
+คนนี้ ไม่มีความคิด มาก,insult,validation,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่ได้เรื่อง ชะมัด,insult,validation,block,uwm-v3.1-remap
+แก เป็นภาระ ชะมัด,insult,validation,block,uwm-v3.1-remap
+คนอะไร โง่มาก สุดๆ,insult,validation,block,uwm-v3.1-remap
+มึง ไร้ความสามารถ สุดๆ,insult,test,block,uwm-v3.1-remap
+พูดแบบนี้ ไร้ความสามารถ มาก,insult,test,block,uwm-v3.1-remap
+คนนี้ ไม่มีความคิด จริงๆ,insult,test,block,uwm-v3.1-remap
+เห็นแล้ว โง่มาก แล้วยังอวดเก่ง,insult,test,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่ได้เรื่อง มาก,insult,test,block,uwm-v3.1-remap
+พูดแบบนี้ โง่มาก จริงๆ,insult,test,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่มีปัญญา แล้วยังไม่รู้ตัว,insult,test,block,uwm-v3.1-remap
+เห็นแล้ว เป็นภาระ จริงๆ,insult,test,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่ได้เรื่อง สุดๆ,insult,test,block,uwm-v3.1-remap
+คนอะไร ไม่ได้เรื่อง ชะมัด,insult,test,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่มีปัญญา สุดๆ,insult,test,block,uwm-v3.1-remap
+คนนี้ ไร้ความสามารถ ชะมัด,insult,test,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่มีความคิด สุดๆ,insult,test,block,uwm-v3.1-remap
+คนอะไร เป็นภาระ มาก,insult,test,block,uwm-v3.1-remap
+ทําแบบนี้ เป็นภาระ อีกแล้ว,insult,test,block,uwm-v3.1-remap
+พูดแบบนี้ ไร้ความสามารถ อีกแล้ว,insult,test,block,uwm-v3.1-remap
+คนอะไร ไม่มีสมอง แล้วยังอวดเก่ง,insult,test,block,uwm-v3.1-remap
+แก ไม่มีสมอง ชะมัด,insult,test,block,uwm-v3.1-remap
+คนนี้ ไม่มีสมอง จริงๆ,insult,test,block,uwm-v3.1-remap
+มึง เป็นภาระ จริงๆ,insult,test,block,uwm-v3.1-remap
+คนอะไร โง่มาก แล้วยังอวดเก่ง,insult,test,block,uwm-v3.1-remap
+คนอะไร ไม่มีสมอง แล้วยังไม่รู้ตัว,insult,test,block,uwm-v3.1-remap
+ทําแบบนี้ ไม่ได้เรื่อง แล้วยังไม่รู้ตัว,insult,test,block,uwm-v3.1-remap
+เห็นแล้ว โง่มาก อีกแล้ว,insult,test,block,uwm-v3.1-remap
+พูดแบบนี้ ไม่มีสมอง สุดๆ,insult,test,block,uwm-v3.1-remap
+มึง ไม่มีปัญญา สุดๆ,insult,test,block,uwm-v3.1-remap
+เห็นแล้ว ไม่มีสมอง แล้วยังอวดเก่ง,insult,test,block,uwm-v3.1-remap
+แก ไม่มีความคิด แล้วยังไม่รู้ตัว,insult,test,block,uwm-v3.1-remap
+แก เป็นภาระ แล้วยังไม่รู้ตัว,insult,test,block,uwm-v3.1-remap
+พูดแบบนี้ ไม่มีปัญญา แล้วยังไม่รู้ตัว,insult,test,block,uwm-v3.1-remap
+พูดแบบนี้ ไม่มีสมอง จริงๆ,insult,test,block,uwm-v3.1-remap
+คนนี้ ไม่ได้เรื่อง แล้วยังไม่รู้ตัว,insult,test,block,uwm-v3.1-remap
+ทําแบบนี้ ไร้ความสามารถ มาก,insult,test,block,uwm-v3.1-remap
+คนอะไร ไร้ความสามารถ มาก,insult,test,block,uwm-v3.1-remap
+เห็นแล้ว โง่มาก สุดๆ,insult,test,block,uwm-v3.1-remap
+คนอะไร เป็นภาระ สุดๆ,insult,test,block,uwm-v3.1-remap
+พูดแบบนี้ ไม่มีปัญญา แล้วยังอวดเก่ง,insult,test,block,uwm-v3.1-remap
+แก เป็นภาระ มาก,insult,test,block,uwm-v3.1-remap
+คนอะไร คิดอะไรไม่เป็น มาก,insult,test,block,uwm-v3.1-remap
+มึง เป็นภาระ อีกแล้ว,insult,test,block,uwm-v3.1-remap
+เห็นแล้ว เป็นภาระ แล้วยังอวดเก่ง,insult,test,block,uwm-v3.1-remap
+แก ไม่ได้เรื่อง อีกแล้ว,insult,test,block,uwm-v3.1-remap
+พูดแบบนี้ ไม่ได้เรื่อง อีกแล้ว,insult,test,block,uwm-v3.1-remap
+คนอะไร คิดอะไรไม่เป็น อีกแล้ว,insult,test,block,uwm-v3.1-remap
+พูดแบบนี้ ไม่มีสมอง อีกแล้ว,insult,test,block,uwm-v3.1-remap
+แก ไร้ความสามารถ แล้วยังอวดเก่ง,insult,test,block,uwm-v3.1-remap
+มึง ไม่มีสมอง มาก,insult,test,block,uwm-v3.1-remap
+เห็นแล้ว ไม่มีปัญญา สุดๆ,insult,test,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ สนุกแบบถึงเนื้อถึงตัว ไหม,sexual,train,block,uwm-v3.1-remap
+คืนนี้ มีอะไรลึกซึ้งกัน แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา มีอะไรลึกซึ้งกัน คืนนี้,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว ทําอะไรเสียวๆ ทักมา,sexual,train,block,uwm-v3.1-remap
+คืนนี้ สนุกแบบถึงเนื้อถึงตัว คืนนี้,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน ทําเรื่องผู้ใหญ่กัน คืนนี้,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน ทําอะไรเสียวๆ แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว มีความสัมพันธ์ทางเพศ ทักมา,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา ทําเรื่องผู้ใหญ่กัน ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา ทําเรื่องอย่างว่า หน่อย,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา มีความสัมพันธ์ทางเพศ หน่อย,sexual,train,block,uwm-v3.1-remap
+คืนนี้ ทําเรื่องอย่างว่า ทักมา,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน ทําเรื่องอย่างว่า แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน สนุกแบบถึงเนื้อถึงตัว แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน สนุกแบบถึงเนื้อถึงตัว คืนนี้,sexual,train,block,uwm-v3.1-remap
+คืนนี้ ทําเรื่องอย่างว่า ไหม,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน สนุกแบบถึงเนื้อถึงตัว ทักมา,sexual,train,block,uwm-v3.1-remap
+คืนนี้ มีเซ็กซ์กัน คืนนี้,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน สนุกแบบถึงเนื้อถึงตัว ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน มีความสัมพันธ์ทางเพศ ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน ทํากิจกรรมบนเตียง แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน มีความสัมพันธ์ทางเพศ ทักมา,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ มีอะไรลึกซึ้งกัน คืนนี้,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน มีความสัมพันธ์ทางเพศ คืนนี้,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทําเรื่องอย่างว่า หน่อย,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว มีอะไรลึกซึ้งกัน ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+คืนนี้ ทําเรื่องผู้ใหญ่กัน แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+คืนนี้ ทํากิจกรรมบนเตียง คืนนี้,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว มีเซ็กซ์กัน หน่อย,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน ทํากิจกรรมบนเตียง ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา มีเซ็กซ์กัน ทักมา,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว สนุกแบบถึงเนื้อถึงตัว ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ ทําเรื่องอย่างว่า แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน ทําเรื่องผู้ใหญ่กัน ทักมา,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทําอะไรเสียวๆ ไหม,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว ทําเรื่องผู้ใหญ่กัน ไหม,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน ทําอะไรเสียวๆ คืนนี้,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน ทําอะไรเสียวๆ ทักมา,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน สนุกแบบถึงเนื้อถึงตัว คืนนี้,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน มีอะไรลึกซึ้งกัน คืนนี้,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน มีเซ็กซ์กัน ทักมา,sexual,train,block,uwm-v3.1-remap
+คืนนี้ มีเซ็กซ์กัน แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว มีความสัมพันธ์ทางเพศ ทักมา,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ ทําเรื่องผู้ใหญ่กัน แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา มีเซ็กซ์กัน ไหม,sexual,train,block,uwm-v3.1-remap
+คืนนี้ ทําอะไรเสียวๆ ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว ทําเรื่องอย่างว่า ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ ทําเรื่องผู้ใหญ่กัน คืนนี้,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา ทําเรื่องผู้ใหญ่กัน ทักมา,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว มีอะไรลึกซึ้งกัน หน่อย,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน ทําเรื่องผู้ใหญ่กัน คืนนี้,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว สนุกแบบถึงเนื้อถึงตัว ไหม,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ มีความสัมพันธ์ทางเพศ คืนนี้,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ ทําเรื่องผู้ใหญ่กัน หน่อย,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา ทําอะไรเสียวๆ แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทําเรื่องผู้ใหญ่กัน ไหม,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน มีความสัมพันธ์ทางเพศ ไหม,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา ทํากิจกรรมบนเตียง คืนนี้,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว มีเซ็กซ์กัน ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ สนุกแบบถึงเนื้อถึงตัว ทักมา,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ มีความสัมพันธ์ทางเพศ ไหม,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว มีอะไรลึกซึ้งกัน คืนนี้,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว สนุกแบบถึงเนื้อถึงตัว ทักมา,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน ทําเรื่องอย่างว่า คืนนี้,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน ทําเรื่องผู้ใหญ่กัน ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+คืนนี้ สนุกแบบถึงเนื้อถึงตัว แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ มีความสัมพันธ์ทางเพศ ทักมา,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ ทําเรื่องอย่างว่า หน่อย,sexual,train,block,uwm-v3.1-remap
+คืนนี้ มีอะไรลึกซึ้งกัน ไหม,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว ทําอะไรเสียวๆ ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา ทํากิจกรรมบนเตียง หน่อย,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทําเรื่องอย่างว่า ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+คืนนี้ ทําเรื่องผู้ใหญ่กัน ทักมา,sexual,train,block,uwm-v3.1-remap
+คืนนี้ ทํากิจกรรมบนเตียง ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทําเรื่องผู้ใหญ่กัน ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว มีเซ็กซ์กัน ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว สนุกแบบถึงเนื้อถึงตัว ทักมา,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทํากิจกรรมบนเตียง คืนนี้,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา มีอะไรลึกซึ้งกัน ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทําเรื่องอย่างว่า คืนนี้,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว ทําเรื่องผู้ใหญ่กัน แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว สนุกแบบถึงเนื้อถึงตัว แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทําเรื่องอย่างว่า แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ ทําเรื่องอย่างว่า ทักมา,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ ทําเรื่องผู้ใหญ่กัน ทักมา,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน มีอะไรลึกซึ้งกัน ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา มีความสัมพันธ์ทางเพศ ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว สนุกแบบถึงเนื้อถึงตัว ไหม,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา มีอะไรลึกซึ้งกัน แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ ทําเรื่องผู้ใหญ่กัน ไหม,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว มีอะไรลึกซึ้งกัน ทักมา,sexual,train,block,uwm-v3.1-remap
+คืนนี้ ทําอะไรเสียวๆ คืนนี้,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน ทําเรื่องอย่างว่า แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว มีเซ็กซ์กัน ไหม,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน ทําเรื่องอย่างว่า ทักมา,sexual,train,block,uwm-v3.1-remap
+คืนนี้ สนุกแบบถึงเนื้อถึงตัว ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว มีเซ็กซ์กัน คืนนี้,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา ทําอะไรเสียวๆ ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา ทํากิจกรรมบนเตียง ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน มีเซ็กซ์กัน หน่อย,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว มีความสัมพันธ์ทางเพศ หน่อย,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ มีอะไรลึกซึ้งกัน ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน มีเซ็กซ์กัน ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว มีอะไรลึกซึ้งกัน ทักมา,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา ทําเรื่องอย่างว่า คืนนี้,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน มีความสัมพันธ์ทางเพศ แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ ทํากิจกรรมบนเตียง ทักมา,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว ทําอะไรเสียวๆ คืนนี้,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน ทําอะไรเสียวๆ คืนนี้,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน ทํากิจกรรมบนเตียง คืนนี้,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ สนุกแบบถึงเนื้อถึงตัว คืนนี้,sexual,train,block,uwm-v3.1-remap
+คืนนี้ มีความสัมพันธ์ทางเพศ ทักมา,sexual,train,block,uwm-v3.1-remap
+คืนนี้ สนุกแบบถึงเนื้อถึงตัว ไหม,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทํากิจกรรมบนเตียง หน่อย,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว ทําเรื่องอย่างว่า แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทําเรื่องผู้ใหญ่กัน แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว มีเซ็กซ์กัน คืนนี้,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว ทําเรื่องอย่างว่า ไหม,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา สนุกแบบถึงเนื้อถึงตัว แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว สนุกแบบถึงเนื้อถึงตัว คืนนี้,sexual,train,block,uwm-v3.1-remap
+คืนนี้ ทําอะไรเสียวๆ ไหม,sexual,train,block,uwm-v3.1-remap
+คืนนี้ มีอะไรลึกซึ้งกัน ทักมา,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทําเรื่องผู้ใหญ่กัน คืนนี้,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน สนุกแบบถึงเนื้อถึงตัว ไหม,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ มีเซ็กซ์กัน หน่อย,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว มีความสัมพันธ์ทางเพศ ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว สนุกแบบถึงเนื้อถึงตัว แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+คืนนี้ มีอะไรลึกซึ้งกัน หน่อย,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ มีความสัมพันธ์ทางเพศ ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา ทําเรื่องผู้ใหญ่กัน แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว มีความสัมพันธ์ทางเพศ ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน มีเซ็กซ์กัน คืนนี้,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ ทําเรื่องอย่างว่า คืนนี้,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว มีความสัมพันธ์ทางเพศ ไหม,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทําเรื่องอย่างว่า ทักมา,sexual,train,block,uwm-v3.1-remap
+คืนนี้ ทําอะไรเสียวๆ ทักมา,sexual,train,block,uwm-v3.1-remap
+คืนนี้ มีอะไรลึกซึ้งกัน คืนนี้,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน มีอะไรลึกซึ้งกัน ทักมา,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน ทําอะไรเสียวๆ ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา ทําเรื่องผู้ใหญ่กัน ไหม,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน ทําเรื่องผู้ใหญ่กัน ไหม,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา ทําเรื่องอย่างว่า ไหม,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว มีอะไรลึกซึ้งกัน คืนนี้,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว มีความสัมพันธ์ทางเพศ ไหม,sexual,train,block,uwm-v3.1-remap
+คืนนี้ ทําเรื่องผู้ใหญ่กัน ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+คืนนี้ ทํากิจกรรมบนเตียง แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว มีอะไรลึกซึ้งกัน หน่อย,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ ทํากิจกรรมบนเตียง หน่อย,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน ทําเรื่องผู้ใหญ่กัน หน่อย,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทําเรื่องอย่างว่า ไหม,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน ทํากิจกรรมบนเตียง ไหม,sexual,train,block,uwm-v3.1-remap
+คืนนี้ มีความสัมพันธ์ทางเพศ หน่อย,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน มีอะไรลึกซึ้งกัน แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว มีเซ็กซ์กัน ทักมา,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน มีอะไรลึกซึ้งกัน ทักมา,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน ทํากิจกรรมบนเตียง ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+คืนนี้ มีเซ็กซ์กัน หน่อย,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ ทําอะไรเสียวๆ คืนนี้,sexual,train,block,uwm-v3.1-remap
+คืนนี้ สนุกแบบถึงเนื้อถึงตัว ทักมา,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน ทําเรื่องผู้ใหญ่กัน หน่อย,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว ทําเรื่องผู้ใหญ่กัน ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน มีเซ็กซ์กัน แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว ทําเรื่องอย่างว่า ทักมา,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา ทําเรื่องอย่างว่า แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว สนุกแบบถึงเนื้อถึงตัว คืนนี้,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ สนุกแบบถึงเนื้อถึงตัว ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน ทําอะไรเสียวๆ ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน ทํากิจกรรมบนเตียง ทักมา,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน มีความสัมพันธ์ทางเพศ หน่อย,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว มีเซ็กซ์กัน แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน มีความสัมพันธ์ทางเพศ หน่อย,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน ทําเรื่องอย่างว่า คืนนี้,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ สนุกแบบถึงเนื้อถึงตัว หน่อย,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา สนุกแบบถึงเนื้อถึงตัว ทักมา,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทําอะไรเสียวๆ หน่อย,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา มีเซ็กซ์กัน หน่อย,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ ทําเรื่องอย่างว่า ไหม,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว ทําอะไรเสียวๆ หน่อย,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว ทํากิจกรรมบนเตียง หน่อย,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว ทําเรื่องผู้ใหญ่กัน ทักมา,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา ทําอะไรเสียวๆ ไหม,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา สนุกแบบถึงเนื้อถึงตัว คืนนี้,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน สนุกแบบถึงเนื้อถึงตัว แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน มีความสัมพันธ์ทางเพศ ทักมา,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา มีเซ็กซ์กัน คืนนี้,sexual,train,block,uwm-v3.1-remap
+คืนนี้ สนุกแบบถึงเนื้อถึงตัว หน่อย,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว มีเซ็กซ์กัน แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน มีอะไรลึกซึ้งกัน หน่อย,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน ทําเรื่องอย่างว่า ไหม,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา ทําเรื่องอย่างว่า ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน ทําเรื่องอย่างว่า ไหม,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา มีอะไรลึกซึ้งกัน ไหม,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ ทํากิจกรรมบนเตียง ไหม,sexual,train,block,uwm-v3.1-remap
+คืนนี้ ทํากิจกรรมบนเตียง ทักมา,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว สนุกแบบถึงเนื้อถึงตัว หน่อย,sexual,train,block,uwm-v3.1-remap
+คืนนี้ ทําเรื่องอย่างว่า แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว ทํากิจกรรมบนเตียง ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ ทํากิจกรรมบนเตียง ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน ทําอะไรเสียวๆ แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว ทํากิจกรรมบนเตียง ไหม,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ ทํากิจกรรมบนเตียง แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ มีเซ็กซ์กัน ไหม,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน ทําเรื่องอย่างว่า ทักมา,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน ทําอะไรเสียวๆ ไหม,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน มีเซ็กซ์กัน ทักมา,sexual,train,block,uwm-v3.1-remap
+คืนนี้ มีความสัมพันธ์ทางเพศ คืนนี้,sexual,train,block,uwm-v3.1-remap
+คืนนี้ ทําเรื่องอย่างว่า คืนนี้,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ มีเซ็กซ์กัน แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน ทําเรื่องผู้ใหญ่กัน ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา มีความสัมพันธ์ทางเพศ คืนนี้,sexual,train,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทํากิจกรรมบนเตียง ไหม,sexual,train,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ ทําเรื่องอย่างว่า ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน ทําอะไรเสียวๆ ไหม,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว ทําเรื่องอย่างว่า คืนนี้,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน ทําเรื่องผู้ใหญ่กัน แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+อยากหาใครสักคน มีความสัมพันธ์ทางเพศ ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน ทํากิจกรรมบนเตียง หน่อย,sexual,train,block,uwm-v3.1-remap
+คืนนี้ มีเซ็กซ์กัน ไหม,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา ทําอะไรเสียวๆ ทักมา,sexual,train,block,uwm-v3.1-remap
+หาเพื่อน มีอะไรลึกซึ้งกัน คืนนี้,sexual,train,block,uwm-v3.1-remap
+คืนนี้ มีอะไรลึกซึ้งกัน ด้วยกัน,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว มีเซ็กซ์กัน ทักมา,sexual,train,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว ทํากิจกรรมบนเตียง แบบไม่ผูกมัด,sexual,train,block,uwm-v3.1-remap
+มาห้องเรา มีความสัมพันธ์ทางเพศ ไหม,sexual,train,block,uwm-v3.1-remap
+คืนนี้ ทําเรื่องอย่างว่า หน่อย,sexual,validation,block,uwm-v3.1-remap
+หาเพื่อน ทํากิจกรรมบนเตียง แบบไม่ผูกมัด,sexual,validation,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ ทําอะไรเสียวๆ ไหม,sexual,validation,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ มีเซ็กซ์กัน คืนนี้,sexual,validation,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ มีอะไรลึกซึ้งกัน ไหม,sexual,validation,block,uwm-v3.1-remap
+คืนนี้ ทํากิจกรรมบนเตียง ไหม,sexual,validation,block,uwm-v3.1-remap
+อยากหาใครสักคน ทําอะไรเสียวๆ หน่อย,sexual,validation,block,uwm-v3.1-remap
+มาห้องเรา ทําอะไรเสียวๆ หน่อย,sexual,validation,block,uwm-v3.1-remap
+หาเพื่อน ทําอะไรเสียวๆ หน่อย,sexual,validation,block,uwm-v3.1-remap
+หาเพื่อน ทําเรื่องอย่างว่า หน่อย,sexual,validation,block,uwm-v3.1-remap
+หาเพื่อน มีอะไรลึกซึ้งกัน ไหม,sexual,validation,block,uwm-v3.1-remap
+คืนนี้ ทําเรื่องอย่างว่า ด้วยกัน,sexual,validation,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว มีความสัมพันธ์ทางเพศ คืนนี้,sexual,validation,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว สนุกแบบถึงเนื้อถึงตัว ด้วยกัน,sexual,validation,block,uwm-v3.1-remap
+อยากหาใครสักคน มีเซ็กซ์กัน หน่อย,sexual,validation,block,uwm-v3.1-remap
+อยากหาใครสักคน ทําเรื่องอย่างว่า ด้วยกัน,sexual,validation,block,uwm-v3.1-remap
+มาห้องเรา ทํากิจกรรมบนเตียง ทักมา,sexual,validation,block,uwm-v3.1-remap
+หาเพื่อน มีอะไรลึกซึ้งกัน แบบไม่ผูกมัด,sexual,validation,block,uwm-v3.1-remap
+มาห้องเรา มีเซ็กซ์กัน แบบไม่ผูกมัด,sexual,validation,block,uwm-v3.1-remap
+อยากหาใครสักคน ทําเรื่องผู้ใหญ่กัน แบบไม่ผูกมัด,sexual,validation,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทําอะไรเสียวๆ คืนนี้,sexual,validation,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทํากิจกรรมบนเตียง แบบไม่ผูกมัด,sexual,validation,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว มีอะไรลึกซึ้งกัน แบบไม่ผูกมัด,sexual,validation,block,uwm-v3.1-remap
+อยากหาใครสักคน ทําเรื่องอย่างว่า หน่อย,sexual,validation,block,uwm-v3.1-remap
+หาเพื่อน ทําเรื่องผู้ใหญ่กัน ไหม,sexual,validation,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทําอะไรเสียวๆ แบบไม่ผูกมัด,sexual,validation,block,uwm-v3.1-remap
+หาเพื่อน ทํากิจกรรมบนเตียง ทักมา,sexual,validation,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ มีอะไรลึกซึ้งกัน หน่อย,sexual,validation,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว มีอะไรลึกซึ้งกัน ไหม,sexual,validation,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ ทําอะไรเสียวๆ หน่อย,sexual,validation,block,uwm-v3.1-remap
+มาห้องเรา มีอะไรลึกซึ้งกัน ทักมา,sexual,validation,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ มีความสัมพันธ์ทางเพศ แบบไม่ผูกมัด,sexual,validation,block,uwm-v3.1-remap
+อยากหาใครสักคน สนุกแบบถึงเนื้อถึงตัว หน่อย,sexual,validation,block,uwm-v3.1-remap
+อยากหาใครสักคน มีความสัมพันธ์ทางเพศ ไหม,sexual,validation,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว สนุกแบบถึงเนื้อถึงตัว หน่อย,sexual,validation,block,uwm-v3.1-remap
+คืนนี้ ทําอะไรเสียวๆ แบบไม่ผูกมัด,sexual,validation,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว ทําเรื่องอย่างว่า หน่อย,sexual,validation,block,uwm-v3.1-remap
+อยากหาใครสักคน ทํากิจกรรมบนเตียง คืนนี้,sexual,validation,block,uwm-v3.1-remap
+อยากหาใครสักคน มีอะไรลึกซึ้งกัน ด้วยกัน,sexual,validation,block,uwm-v3.1-remap
+มาห้องเรา มีเซ็กซ์กัน ด้วยกัน,sexual,validation,block,uwm-v3.1-remap
+อยากหาใครสักคน มีอะไรลึกซึ้งกัน ไหม,sexual,validation,block,uwm-v3.1-remap
+คืนนี้ มีเซ็กซ์กัน ทักมา,sexual,validation,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ ทําอะไรเสียวๆ ทักมา,sexual,validation,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ มีเซ็กซ์กัน ทักมา,sexual,validation,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว ทําเรื่องผู้ใหญ่กัน คืนนี้,sexual,validation,block,uwm-v3.1-remap
+คืนนี้ มีความสัมพันธ์ทางเพศ ด้วยกัน,sexual,validation,block,uwm-v3.1-remap
+หาเพื่อน สนุกแบบถึงเนื้อถึงตัว ด้วยกัน,sexual,validation,block,uwm-v3.1-remap
+มาห้องเรา ทํากิจกรรมบนเตียง แบบไม่ผูกมัด,sexual,validation,block,uwm-v3.1-remap
+คืนนี้ ทําเรื่องผู้ใหญ่กัน คืนนี้,sexual,test,block,uwm-v3.1-remap
+คืนนี้ มีเซ็กซ์กัน ด้วยกัน,sexual,test,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ มีความสัมพันธ์ทางเพศ หน่อย,sexual,test,block,uwm-v3.1-remap
+คืนนี้ ทําอะไรเสียวๆ หน่อย,sexual,test,block,uwm-v3.1-remap
+อยากหาใครสักคน ทําอะไรเสียวๆ ทักมา,sexual,test,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ สนุกแบบถึงเนื้อถึงตัว แบบไม่ผูกมัด,sexual,test,block,uwm-v3.1-remap
+หาเพื่อน ทํากิจกรรมบนเตียง ไหม,sexual,test,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว มีเซ็กซ์กัน ไหม,sexual,test,block,uwm-v3.1-remap
+อยากหาใครสักคน มีเซ็กซ์กัน แบบไม่ผูกมัด,sexual,test,block,uwm-v3.1-remap
+มาห้องเรา มีความสัมพันธ์ทางเพศ แบบไม่ผูกมัด,sexual,test,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว มีเซ็กซ์กัน หน่อย,sexual,test,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ ทําอะไรเสียวๆ ด้วยกัน,sexual,test,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทําอะไรเสียวๆ ด้วยกัน,sexual,test,block,uwm-v3.1-remap
+หาเพื่อน มีอะไรลึกซึ้งกัน หน่อย,sexual,test,block,uwm-v3.1-remap
+มาห้องเรา มีอะไรลึกซึ้งกัน หน่อย,sexual,test,block,uwm-v3.1-remap
+คืนนี้ ทํากิจกรรมบนเตียง หน่อย,sexual,test,block,uwm-v3.1-remap
+มาห้องเรา ทําอะไรเสียวๆ คืนนี้,sexual,test,block,uwm-v3.1-remap
+มาห้องเรา สนุกแบบถึงเนื้อถึงตัว ด้วยกัน,sexual,test,block,uwm-v3.1-remap
+หาเพื่อน มีเซ็กซ์กัน ด้วยกัน,sexual,test,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ มีอะไรลึกซึ้งกัน ทักมา,sexual,test,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว มีความสัมพันธ์ทางเพศ หน่อย,sexual,test,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว ทําเรื่องผู้ใหญ่กัน หน่อย,sexual,test,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว ทําอะไรเสียวๆ ไหม,sexual,test,block,uwm-v3.1-remap
+อยากหาใครสักคน มีเซ็กซ์กัน คืนนี้,sexual,test,block,uwm-v3.1-remap
+หาเพื่อน ทําเรื่องอย่างว่า ด้วยกัน,sexual,test,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทํากิจกรรมบนเตียง ด้วยกัน,sexual,test,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ ทํากิจกรรมบนเตียง คืนนี้,sexual,test,block,uwm-v3.1-remap
+มาห้องเรา ทําเรื่องผู้ใหญ่กัน คืนนี้,sexual,test,block,uwm-v3.1-remap
+นัดสองต่อสองเพื่อ มีเซ็กซ์กัน ด้วยกัน,sexual,test,block,uwm-v3.1-remap
+อยากหาใครสักคน มีเซ็กซ์กัน ไหม,sexual,test,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว มีความสัมพันธ์ทางเพศ แบบไม่ผูกมัด,sexual,test,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทําเรื่องผู้ใหญ่กัน ทักมา,sexual,test,block,uwm-v3.1-remap
+อยากหาใครสักคน สนุกแบบถึงเนื้อถึงตัว ทักมา,sexual,test,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทําอะไรเสียวๆ ทักมา,sexual,test,block,uwm-v3.1-remap
+คืนนี้ ทําเรื่องผู้ใหญ่กัน ไหม,sexual,test,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทําเรื่องผู้ใหญ่กัน หน่อย,sexual,test,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว มีความสัมพันธ์ทางเพศ คืนนี้,sexual,test,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว มีอะไรลึกซึ้งกัน ด้วยกัน,sexual,test,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว ทํากิจกรรมบนเตียง ทักมา,sexual,test,block,uwm-v3.1-remap
+มาห้องเรา ทํากิจกรรมบนเตียง ไหม,sexual,test,block,uwm-v3.1-remap
+คืนนี้ มีความสัมพันธ์ทางเพศ แบบไม่ผูกมัด,sexual,test,block,uwm-v3.1-remap
+หาเพื่อน สนุกแบบถึงเนื้อถึงตัว ไหม,sexual,test,block,uwm-v3.1-remap
+หาเพื่อน ทําเรื่องผู้ใหญ่กัน ทักมา,sexual,test,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว มีอะไรลึกซึ้งกัน ไหม,sexual,test,block,uwm-v3.1-remap
+มาค้างคืนนี้แล้ว ทํากิจกรรมบนเตียง คืนนี้,sexual,test,block,uwm-v3.1-remap
+มาห้องเรา สนุกแบบถึงเนื้อถึงตัว หน่อย,sexual,test,block,uwm-v3.1-remap
+มาหาที่ห้องแล้ว มีความสัมพันธ์ทางเพศ แบบไม่ผูกมัด,sexual,test,block,uwm-v3.1-remap
+อยากหาใครสักคน มีความสัมพันธ์ทางเพศ แบบไม่ผูกมัด,sexual,test,block,uwm-v3.1-remap
+สมาชิกใหม่ รับผลตอบแทนหลายเท่า ด่วน,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ ได้เงินง่ายๆ รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+กดลิงก์นี้ รับผลตอบแทนหลายเท่า ง่ายๆ,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ รับเครดิตฟรี ทันที,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ รับเครดิตฟรี เลย,spam,validation,block,uwm-v3.1-remap
+กดลิงก์นี้ รับเครดิตฟรี ทันที,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ ได้เงินง่ายๆ ด่วน,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ ได้เงินง่ายๆ เลย,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ รับเครดิตฟรี ง่ายๆ,spam,test,block,uwm-v3.1-remap
+มีช่องทาง รับผลตอบแทนหลายเท่า รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ สร้างรายได้แบบไม่ต้องทํางาน ทันที,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ รับผลตอบแทนหลายเท่า ทันที,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ ได้เงินง่ายๆ ง่ายๆ,spam,train,block,uwm-v3.1-remap
+มีช่องทาง รับเงินแจก รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ ทําเงินวันละหลายพัน ทันที,spam,train,block,uwm-v3.1-remap
+มีช่องทาง ทําเงินวันละหลายพัน รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ ได้เงินง่ายๆ วันนี้,spam,train,block,uwm-v3.1-remap
+มีช่องทาง รับผลตอบแทนหลายเท่า วันนี้,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ สร้างรายได้แบบไม่ต้องทํางาน ด่วน,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ รับเงินแจก รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ สร้างรายได้แบบไม่ต้องทํางาน ง่ายๆ,spam,train,block,uwm-v3.1-remap
+มีช่องทาง รับผลตอบแทนหลายเท่า เลย,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ รับเงินแจก วันนี้,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ รับเครดิตฟรี ง่ายๆ,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ รับเงินแจก ด่วน,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ รับเครดิตฟรี วันนี้,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ รับเงินแจก ง่ายๆ,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ ได้เงินง่ายๆ เลย,spam,train,block,uwm-v3.1-remap
+มีช่องทาง รับผลตอบแทนหลายเท่า ทันที,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ รับเครดิตฟรี ทันที,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ รับเงินแจก เลย,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ สร้างรายได้แบบไม่ต้องทํางาน วันนี้,spam,train,block,uwm-v3.1-remap
+กดลิงก์นี้ รับเครดิตฟรี รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ รับเงินแจก วันนี้,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ ได้เงินง่ายๆ วันนี้,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ สร้างรายได้แบบไม่ต้องทํางาน รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ รับผลตอบแทนหลายเท่า เลย,spam,train,block,uwm-v3.1-remap
+กดลิงก์นี้ รับโบนัสทันที ทันที,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ รับเงินแจก ทันที,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ รับโบนัสทันที วันนี้,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ ทําเงินวันละหลายพัน ง่ายๆ,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ รับเงินแจก ด่วน,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ ได้เงินง่ายๆ ทันที,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ รับเงินแจก เลย,spam,train,block,uwm-v3.1-remap
+กดลิงก์นี้ สร้างรายได้แบบไม่ต้องทํางาน วันนี้,spam,train,block,uwm-v3.1-remap
+มีช่องทาง รับเครดิตฟรี วันนี้,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ รับเครดิตฟรี ง่ายๆ,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ รับเครดิตฟรี เลย,spam,train,block,uwm-v3.1-remap
+มีช่องทาง รับเงินแจก ด่วน,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ ได้เงินง่ายๆ วันนี้,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ รับเครดิตฟรี ด่วน,spam,test,block,uwm-v3.1-remap
+สมัครวันนี้ ได้เงินง่ายๆ ทันที,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ ทําเงินวันละหลายพัน วันนี้,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ รับเครดิตฟรี รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+กดลิงก์นี้ ทําเงินวันละหลายพัน รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ รับโบนัสทันที วันนี้,spam,train,block,uwm-v3.1-remap
+มีช่องทาง รับโบนัสทันที เลย,spam,train,block,uwm-v3.1-remap
+กดลิงก์นี้ รับผลตอบแทนหลายเท่า ด่วน,spam,train,block,uwm-v3.1-remap
+กดลิงก์นี้ รับเครดิตฟรี เลย,spam,test,block,uwm-v3.1-remap
+ใช้มือถือก็ ทําเงินวันละหลายพัน ง่ายๆ,spam,train,block,uwm-v3.1-remap
+มีช่องทาง รับเงินแจก เลย,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ รับผลตอบแทนหลายเท่า ง่ายๆ,spam,train,block,uwm-v3.1-remap
+มีช่องทาง ทําเงินวันละหลายพัน ง่ายๆ,spam,train,block,uwm-v3.1-remap
+มีช่องทาง รับโบนัสทันที วันนี้,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ รับผลตอบแทนหลายเท่า รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+กดลิงก์นี้ รับเงินแจก ทันที,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ รับเครดิตฟรี รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ รับผลตอบแทนหลายเท่า เลย,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ รับเครดิตฟรี ด่วน,spam,test,block,uwm-v3.1-remap
+สมาชิกใหม่ รับเครดิตฟรี ทันที,spam,train,block,uwm-v3.1-remap
+มีช่องทาง ทําเงินวันละหลายพัน ด่วน,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ รับโบนัสทันที ทันที,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ รับผลตอบแทนหลายเท่า วันนี้,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ รับโบนัสทันที รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+มีช่องทาง รับเครดิตฟรี ด่วน,spam,validation,block,uwm-v3.1-remap
+สมัครตอนนี้ รับเงินแจก เลย,spam,train,block,uwm-v3.1-remap
+กดลิงก์นี้ รับเงินแจก ด่วน,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ ทําเงินวันละหลายพัน เลย,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ รับโบนัสทันที ง่ายๆ,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ รับโบนัสทันที ง่ายๆ,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ รับโบนัสทันที ทันที,spam,train,block,uwm-v3.1-remap
+มีช่องทาง รับเครดิตฟรี เลย,spam,validation,block,uwm-v3.1-remap
+ทักมาเพื่อ รับเงินแจก ง่ายๆ,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ รับโบนัสทันที รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+กดลิงก์นี้ รับผลตอบแทนหลายเท่า เลย,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ รับผลตอบแทนหลายเท่า รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ รับเครดิตฟรี ทันที,spam,test,block,uwm-v3.1-remap
+ใช้มือถือก็ ทําเงินวันละหลายพัน ทันที,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ ทําเงินวันละหลายพัน รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ รับเครดิตฟรี วันนี้,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ รับเครดิตฟรี เลย,spam,validation,block,uwm-v3.1-remap
+สมาชิกใหม่ รับผลตอบแทนหลายเท่า ทันที,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ ได้เงินง่ายๆ ง่ายๆ,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ รับเครดิตฟรี รับจํานวนจํากัด,spam,validation,block,uwm-v3.1-remap
+สมัครตอนนี้ สร้างรายได้แบบไม่ต้องทํางาน วันนี้,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ รับผลตอบแทนหลายเท่า วันนี้,spam,train,block,uwm-v3.1-remap
+กดลิงก์นี้ รับเงินแจก วันนี้,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ รับโบนัสทันที ง่ายๆ,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ สร้างรายได้แบบไม่ต้องทํางาน ด่วน,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ รับโบนัสทันที วันนี้,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ รับโบนัสทันที ด่วน,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ ทําเงินวันละหลายพัน รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ สร้างรายได้แบบไม่ต้องทํางาน ด่วน,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ รับผลตอบแทนหลายเท่า รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+กดลิงก์นี้ รับผลตอบแทนหลายเท่า รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ รับโบนัสทันที เลย,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ รับโบนัสทันที ง่ายๆ,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ ทําเงินวันละหลายพัน เลย,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ รับเครดิตฟรี ด่วน,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ รับเครดิตฟรี ง่ายๆ,spam,test,block,uwm-v3.1-remap
+กดลิงก์นี้ รับผลตอบแทนหลายเท่า ทันที,spam,train,block,uwm-v3.1-remap
+มีช่องทาง รับเครดิตฟรี ง่ายๆ,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ รับโบนัสทันที ด่วน,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ รับผลตอบแทนหลายเท่า เลย,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ ได้เงินง่ายๆ เลย,spam,train,block,uwm-v3.1-remap
+กดลิงก์นี้ สร้างรายได้แบบไม่ต้องทํางาน ง่ายๆ,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ รับเงินแจก ทันที,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ รับเครดิตฟรี ด่วน,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ สร้างรายได้แบบไม่ต้องทํางาน ง่ายๆ,spam,train,block,uwm-v3.1-remap
+กดลิงก์นี้ ทําเงินวันละหลายพัน ด่วน,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ สร้างรายได้แบบไม่ต้องทํางาน รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ รับเครดิตฟรี ง่ายๆ,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ ทําเงินวันละหลายพัน รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ รับผลตอบแทนหลายเท่า ง่ายๆ,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ ทําเงินวันละหลายพัน ด่วน,spam,train,block,uwm-v3.1-remap
+มีช่องทาง ได้เงินง่ายๆ วันนี้,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ สร้างรายได้แบบไม่ต้องทํางาน ด่วน,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ รับโบนัสทันที ด่วน,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ รับผลตอบแทนหลายเท่า วันนี้,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ ทําเงินวันละหลายพัน วันนี้,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ ทําเงินวันละหลายพัน ด่วน,spam,train,block,uwm-v3.1-remap
+มีช่องทาง สร้างรายได้แบบไม่ต้องทํางาน ด่วน,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ รับเครดิตฟรี เลย,spam,train,block,uwm-v3.1-remap
+มีช่องทาง รับโบนัสทันที ด่วน,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ ทําเงินวันละหลายพัน ง่ายๆ,spam,train,block,uwm-v3.1-remap
+มีช่องทาง สร้างรายได้แบบไม่ต้องทํางาน ง่ายๆ,spam,train,block,uwm-v3.1-remap
+มีช่องทาง ทําเงินวันละหลายพัน วันนี้,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ ทําเงินวันละหลายพัน ด่วน,spam,train,block,uwm-v3.1-remap
+กดลิงก์นี้ สร้างรายได้แบบไม่ต้องทํางาน รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ สร้างรายได้แบบไม่ต้องทํางาน วันนี้,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ รับเงินแจก ด่วน,spam,train,block,uwm-v3.1-remap
+มีช่องทาง ได้เงินง่ายๆ เลย,spam,train,block,uwm-v3.1-remap
+มีช่องทาง รับเงินแจก ทันที,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ รับเงินแจก ทันที,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ รับเครดิตฟรี เลย,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ ทําเงินวันละหลายพัน ง่ายๆ,spam,train,block,uwm-v3.1-remap
+กดลิงก์นี้ รับเครดิตฟรี วันนี้,spam,test,block,uwm-v3.1-remap
+ทักมาเพื่อ รับโบนัสทันที รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ รับเครดิตฟรี ทันที,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ ทําเงินวันละหลายพัน เลย,spam,train,block,uwm-v3.1-remap
+มีช่องทาง รับโบนัสทันที ทันที,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ ได้เงินง่ายๆ รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ รับเงินแจก รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ รับผลตอบแทนหลายเท่า ง่ายๆ,spam,train,block,uwm-v3.1-remap
+มีช่องทาง รับเงินแจก ง่ายๆ,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ สร้างรายได้แบบไม่ต้องทํางาน เลย,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ รับเครดิตฟรี วันนี้,spam,test,block,uwm-v3.1-remap
+สมาชิกใหม่ สร้างรายได้แบบไม่ต้องทํางาน เลย,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ รับเครดิตฟรี วันนี้,spam,test,block,uwm-v3.1-remap
+สมัครวันนี้ รับเงินแจก รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+กดลิงก์นี้ รับผลตอบแทนหลายเท่า วันนี้,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ สร้างรายได้แบบไม่ต้องทํางาน เลย,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ ทําเงินวันละหลายพัน ทันที,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ รับเครดิตฟรี ด่วน,spam,test,block,uwm-v3.1-remap
+สมาชิกใหม่ ได้เงินง่ายๆ ด่วน,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ รับโบนัสทันที เลย,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ รับโบนัสทันที ทันที,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ ได้เงินง่ายๆ ง่ายๆ,spam,train,block,uwm-v3.1-remap
+มีช่องทาง รับโบนัสทันที รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ รับเงินแจก ง่ายๆ,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ รับโบนัสทันที ด่วน,spam,train,block,uwm-v3.1-remap
+มีช่องทาง รับเงินแจก วันนี้,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ ได้เงินง่ายๆ เลย,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ รับเงินแจก เลย,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ รับโบนัสทันที เลย,spam,train,block,uwm-v3.1-remap
+กดลิงก์นี้ สร้างรายได้แบบไม่ต้องทํางาน เลย,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ รับเครดิตฟรี รับจํานวนจํากัด,spam,validation,block,uwm-v3.1-remap
+สมัครตอนนี้ ได้เงินง่ายๆ เลย,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ ทําเงินวันละหลายพัน ง่ายๆ,spam,train,block,uwm-v3.1-remap
+มีช่องทาง ได้เงินง่ายๆ ง่ายๆ,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ รับเงินแจก ง่ายๆ,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ ได้เงินง่ายๆ ทันที,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ ได้เงินง่ายๆ รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+มีช่องทาง สร้างรายได้แบบไม่ต้องทํางาน ทันที,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ รับผลตอบแทนหลายเท่า วันนี้,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ ได้เงินง่ายๆ ด่วน,spam,train,block,uwm-v3.1-remap
+กดลิงก์นี้ รับโบนัสทันที ง่ายๆ,spam,train,block,uwm-v3.1-remap
+ทักมาเพื่อ ทําเงินวันละหลายพัน เลย,spam,train,block,uwm-v3.1-remap
+มีช่องทาง รับผลตอบแทนหลายเท่า ง่ายๆ,spam,train,block,uwm-v3.1-remap
+มีช่องทาง สร้างรายได้แบบไม่ต้องทํางาน รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ ทําเงินวันละหลายพัน วันนี้,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ ได้เงินง่ายๆ ทันที,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ สร้างรายได้แบบไม่ต้องทํางาน รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ รับเงินแจก รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ ทําเงินวันละหลายพัน ด่วน,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ ทําเงินวันละหลายพัน รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ สร้างรายได้แบบไม่ต้องทํางาน รับจํานวนจํากัด,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ รับเครดิตฟรี รับจํานวนจํากัด,spam,validation,block,uwm-v3.1-remap
+มีช่องทาง สร้างรายได้แบบไม่ต้องทํางาน เลย,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ รับผลตอบแทนหลายเท่า ด่วน,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ สร้างรายได้แบบไม่ต้องทํางาน ง่ายๆ,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ รับโบนัสทันที ง่ายๆ,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ สร้างรายได้แบบไม่ต้องทํางาน วันนี้,spam,train,block,uwm-v3.1-remap
+ใช้มือถือก็ รับผลตอบแทนหลายเท่า ง่ายๆ,spam,train,block,uwm-v3.1-remap
+สมัครวันนี้ สร้างรายได้แบบไม่ต้องทํางาน ทันที,spam,train,block,uwm-v3.1-remap
+สมาชิกใหม่ สร้างรายได้แบบไม่ต้องทํางาน ง่ายๆ,spam,train,block,uwm-v3.1-remap
+มีช่องทาง รับโบนัสทันที ง่ายๆ,spam,validation,block,uwm-v3.1-remap
+กดลิงก์นี้ ได้เงินง่ายๆ ด่วน,spam,validation,block,uwm-v3.1-remap
+ใช้มือถือก็ รับผลตอบแทนหลายเท่า ทันที,spam,validation,block,uwm-v3.1-remap
+สมัครตอนนี้ ทําเงินวันละหลายพัน ทันที,spam,validation,block,uwm-v3.1-remap
+สมัครวันนี้ รับผลตอบแทนหลายเท่า ด่วน,spam,validation,block,uwm-v3.1-remap
+ทักมาเพื่อ สร้างรายได้แบบไม่ต้องทํางาน ทันที,spam,validation,block,uwm-v3.1-remap
+สมัครวันนี้ สร้างรายได้แบบไม่ต้องทํางาน เลย,spam,validation,block,uwm-v3.1-remap
+กดลิงก์นี้ รับเงินแจก เลย,spam,validation,block,uwm-v3.1-remap
+กดลิงก์นี้ ทําเงินวันละหลายพัน เลย,spam,validation,block,uwm-v3.1-remap
+ทักมาเพื่อ รับผลตอบแทนหลายเท่า ด่วน,spam,validation,block,uwm-v3.1-remap
+สมัครวันนี้ ได้เงินง่ายๆ ด่วน,spam,validation,block,uwm-v3.1-remap
+ทักมาเพื่อ สร้างรายได้แบบไม่ต้องทํางาน รับจํานวนจํากัด,spam,validation,block,uwm-v3.1-remap
+สมัครตอนนี้ สร้างรายได้แบบไม่ต้องทํางาน ด่วน,spam,validation,block,uwm-v3.1-remap
+ทักมาเพื่อ ทําเงินวันละหลายพัน ทันที,spam,validation,block,uwm-v3.1-remap
+กดลิงก์นี้ ได้เงินง่ายๆ วันนี้,spam,validation,block,uwm-v3.1-remap
+กดลิงก์นี้ ได้เงินง่ายๆ ง่ายๆ,spam,validation,block,uwm-v3.1-remap
+สมัครตอนนี้ ได้เงินง่ายๆ รับจํานวนจํากัด,spam,validation,block,uwm-v3.1-remap
+สมัครตอนนี้ รับเครดิตฟรี วันนี้,spam,test,block,uwm-v3.1-remap
+มีช่องทาง รับเครดิตฟรี รับจํานวนจํากัด,spam,test,block,uwm-v3.1-remap
+ใช้มือถือก็ รับเงินแจก วันนี้,spam,validation,block,uwm-v3.1-remap
+ทักมาเพื่อ รับผลตอบแทนหลายเท่า รับจํานวนจํากัด,spam,validation,block,uwm-v3.1-remap
+กดลิงก์นี้ รับโบนัสทันที เลย,spam,validation,block,uwm-v3.1-remap
+สมัครวันนี้ รับเงินแจก วันนี้,spam,validation,block,uwm-v3.1-remap
+ทักมาเพื่อ ได้เงินง่ายๆ ด่วน,spam,validation,block,uwm-v3.1-remap
+ใช้มือถือก็ รับผลตอบแทนหลายเท่า เลย,spam,validation,block,uwm-v3.1-remap
+กดลิงก์นี้ ทําเงินวันละหลายพัน ทันที,spam,validation,block,uwm-v3.1-remap
+สมาชิกใหม่ รับผลตอบแทนหลายเท่า วันนี้,spam,validation,block,uwm-v3.1-remap
+กดลิงก์นี้ ได้เงินง่ายๆ รับจํานวนจํากัด,spam,validation,block,uwm-v3.1-remap
+สมัครตอนนี้ สร้างรายได้แบบไม่ต้องทํางาน ทันที,spam,validation,block,uwm-v3.1-remap
+สมัครตอนนี้ สร้างรายได้แบบไม่ต้องทํางาน เลย,spam,validation,block,uwm-v3.1-remap
+กดลิงก์นี้ รับโบนัสทันที รับจํานวนจํากัด,spam,validation,block,uwm-v3.1-remap
+ใช้มือถือก็ ได้เงินง่ายๆ รับจํานวนจํากัด,spam,validation,block,uwm-v3.1-remap
+สมัครตอนนี้ รับโบนัสทันที เลย,spam,validation,block,uwm-v3.1-remap
+สมัครวันนี้ รับผลตอบแทนหลายเท่า รับจํานวนจํากัด,spam,validation,block,uwm-v3.1-remap
+มีช่องทาง ได้เงินง่ายๆ ทันที,spam,validation,block,uwm-v3.1-remap
+กดลิงก์นี้ รับเครดิตฟรี ด่วน,spam,test,block,uwm-v3.1-remap
+มีช่องทาง รับผลตอบแทนหลายเท่า ด่วน,spam,validation,block,uwm-v3.1-remap
+สมัครวันนี้ ได้เงินง่ายๆ วันนี้,spam,validation,block,uwm-v3.1-remap
+สมัครวันนี้ รับเงินแจก เลย,spam,validation,block,uwm-v3.1-remap
+ใช้มือถือก็ ทําเงินวันละหลายพัน ด่วน,spam,validation,block,uwm-v3.1-remap
+กดลิงก์นี้ ได้เงินง่ายๆ ทันที,spam,validation,block,uwm-v3.1-remap
+สมัครตอนนี้ รับผลตอบแทนหลายเท่า ทันที,spam,test,block,uwm-v3.1-remap
+กดลิงก์นี้ รับโบนัสทันที ด่วน,spam,test,block,uwm-v3.1-remap
+มีช่องทาง รับเครดิตฟรี ทันที,spam,test,block,uwm-v3.1-remap
+ใช้มือถือก็ รับโบนัสทันที ด่วน,spam,test,block,uwm-v3.1-remap
+ทักมาเพื่อ รับโบนัสทันที ทันที,spam,test,block,uwm-v3.1-remap
+มีช่องทาง สร้างรายได้แบบไม่ต้องทํางาน วันนี้,spam,test,block,uwm-v3.1-remap
+มีช่องทาง ได้เงินง่ายๆ รับจํานวนจํากัด,spam,test,block,uwm-v3.1-remap
+กดลิงก์นี้ รับเครดิตฟรี ง่ายๆ,spam,test,block,uwm-v3.1-remap
+กดลิงก์นี้ รับโบนัสทันที วันนี้,spam,test,block,uwm-v3.1-remap
+สมัครวันนี้ รับโบนัสทันที วันนี้,spam,test,block,uwm-v3.1-remap
+กดลิงก์นี้ ทําเงินวันละหลายพัน วันนี้,spam,test,block,uwm-v3.1-remap
+สมัครวันนี้ รับโบนัสทันที รับจํานวนจํากัด,spam,test,block,uwm-v3.1-remap
+ใช้มือถือก็ สร้างรายได้แบบไม่ต้องทํางาน ทันที,spam,test,block,uwm-v3.1-remap
+ใช้มือถือก็ ได้เงินง่ายๆ ง่ายๆ,spam,test,block,uwm-v3.1-remap
+สมัครวันนี้ ทําเงินวันละหลายพัน รับจํานวนจํากัด,spam,test,block,uwm-v3.1-remap
+ใช้มือถือก็ รับโบนัสทันที วันนี้,spam,test,block,uwm-v3.1-remap
+ทักมาเพื่อ รับเงินแจก ทันที,spam,test,block,uwm-v3.1-remap
+ใช้มือถือก็ รับโบนัสทันที รับจํานวนจํากัด,spam,test,block,uwm-v3.1-remap
+ใช้มือถือก็ รับผลตอบแทนหลายเท่า ด่วน,spam,test,block,uwm-v3.1-remap
+สมัครตอนนี้ ได้เงินง่ายๆ ง่ายๆ,spam,test,block,uwm-v3.1-remap
+กดลิงก์นี้ รับเงินแจก ง่ายๆ,spam,test,block,uwm-v3.1-remap
+สมัครตอนนี้ ได้เงินง่ายๆ ทันที,spam,test,block,uwm-v3.1-remap
+กดลิงก์นี้ สร้างรายได้แบบไม่ต้องทํางาน ด่วน,spam,test,block,uwm-v3.1-remap
+สมัครตอนนี้ รับเงินแจก วันนี้,spam,test,block,uwm-v3.1-remap
+สมัครวันนี้ รับเงินแจก ทันที,spam,test,block,uwm-v3.1-remap
+มีช่องทาง ทําเงินวันละหลายพัน ทันที,spam,test,block,uwm-v3.1-remap
+กดลิงก์นี้ ทําเงินวันละหลายพัน ง่ายๆ,spam,test,block,uwm-v3.1-remap
+มีช่องทาง ได้เงินง่ายๆ ด่วน,spam,test,block,uwm-v3.1-remap
+สมาชิกใหม่ ทําเงินวันละหลายพัน วันนี้,spam,test,block,uwm-v3.1-remap
+กดลิงก์นี้ สร้างรายได้แบบไม่ต้องทํางาน ทันที,spam,test,block,uwm-v3.1-remap
+สมัครตอนนี้ รับเงินแจก ด่วน,spam,test,block,uwm-v3.1-remap
+ทักมาเพื่อ รับเงินแจก รับจํานวนจํากัด,spam,test,block,uwm-v3.1-remap
+สมัครวันนี้ รับเงินแจก ด่วน,spam,test,block,uwm-v3.1-remap
+คืนนี้ ตั้งวงดื่ม ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ตั้งวงดื่ม กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา ดื่มเครื่องดื่มแอลกอฮอล์ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สังสรรค์ที่ร้านเหล้า กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ จิบไวน์ ไหม,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ สังสรรค์ที่ร้านเหล้า กัน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ตั้งวงดื่ม หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา ดื่มเบียร์ กัน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ชนแก้ว หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา ไปบาร์ ไหม,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ชนแก้ว กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ ตั้งวงดื่ม กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา ดื่มเครื่องดื่มแอลกอฮอล์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา สังสรรค์ที่ร้านเหล้า ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ดื่มเหล้า กัน,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ ไปบาร์ ไหม,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ ดื่มเบียร์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ จิบไวน์ ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ดื่มเครื่องดื่มแอลกอฮอล์ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ จิบไวน์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ดื่มเหล้า กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ไปบาร์ ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ดื่มเครื่องดื่มแอลกอฮอล์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ดื่มเบียร์ กัน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา ไปบาร์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ ไปบาร์ ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ดื่มเบียร์ หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ดื่มเบียร์ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ นั่งร้านเหล้า กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ ตั้งวงดื่ม ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ชนแก้ว กัน,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ ดื่มเครื่องดื่มแอลกอฮอล์ หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา ดื่มเหล้า ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ดื่มเครื่องดื่มแอลกอฮอล์ ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา นั่งร้านเหล้า ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา ดื่มเบียร์ ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ นั่งร้านเหล้า หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ดื่มเหล้า ไหม,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน จิบไวน์ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา นั่งร้านเหล้า กัน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ตั้งวงดื่ม กัน,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ นั่งร้านเหล้า หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ตั้งวงดื่ม กัน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน จิบไวน์ กัน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน นั่งร้านเหล้า ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ชนแก้ว ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา สังสรรค์ที่ร้านเหล้า กัน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ดื่มเบียร์ ไหม,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา ชนแก้ว กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ชนแก้ว กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา ชนแก้ว ไหม,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ดื่มเบียร์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ ตั้งวงดื่ม กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ตั้งวงดื่ม หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ดื่มเครื่องดื่มแอลกอฮอล์ กัน,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ จิบไวน์ ไหม,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ ไปบาร์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ สังสรรค์ที่ร้านเหล้า หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา ตั้งวงดื่ม กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ดื่มเครื่องดื่มแอลกอฮอล์ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สังสรรค์ที่ร้านเหล้า ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ นั่งร้านเหล้า ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา ดื่มเหล้า กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ตั้งวงดื่ม กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ จิบไวน์ หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ดื่มเครื่องดื่มแอลกอฮอล์ หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สังสรรค์ที่ร้านเหล้า กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ สังสรรค์ที่ร้านเหล้า กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สังสรรค์ที่ร้านเหล้า กัน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ดื่มเบียร์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ จิบไวน์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ จิบไวน์ ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ตั้งวงดื่ม ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ตั้งวงดื่ม ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ ตั้งวงดื่ม กัน,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ ดื่มเบียร์ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ ไปบาร์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ดื่มเบียร์ ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ ชนแก้ว ไหม,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ ตั้งวงดื่ม หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ดื่มเหล้า ไหม,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ จิบไวน์ ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ไปบาร์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ไปบาร์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ นั่งร้านเหล้า หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน จิบไวน์ ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ จิบไวน์ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ชนแก้ว กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ ดื่มเหล้า กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ดื่มเบียร์ ไหม,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ไปบาร์ ไหม,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ ดื่มเหล้า ไหม,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ จิบไวน์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ จิบไวน์ ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน นั่งร้านเหล้า กัน,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ ไปบาร์ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ ดื่มเหล้า กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ไปบาร์ หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ดื่มเครื่องดื่มแอลกอฮอล์ หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา ชนแก้ว ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ดื่มเหล้า หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ ชนแก้ว กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ตั้งวงดื่ม กัน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ดื่มเหล้า หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ชนแก้ว ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ตั้งวงดื่ม ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ชนแก้ว ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ตั้งวงดื่ม กัน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ดื่มเบียร์ หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ชนแก้ว ไหม,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ จิบไวน์ ไหม,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ จิบไวน์ กัน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สังสรรค์ที่ร้านเหล้า กัน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา ดื่มเหล้า หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ จิบไวน์ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ นั่งร้านเหล้า ไหม,safe,train,allow,uwm-v3.1-remap
+คืนนี้ จิบไวน์ กัน,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ ดื่มเบียร์ กัน,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ ดื่มเครื่องดื่มแอลกอฮอล์ กัน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา ตั้งวงดื่ม กัน,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ชนแก้ว ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ จิบไวน์ หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา ตั้งวงดื่ม ไหม,safe,train,allow,uwm-v3.1-remap
+หลังสอบ จิบไวน์ กัน,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ สังสรรค์ที่ร้านเหล้า ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ นั่งร้านเหล้า ไหม,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ชนแก้ว กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ชนแก้ว ไหม,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ชนแก้ว หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา จิบไวน์ กัน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ตั้งวงดื่ม ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ชนแก้ว ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ ดื่มเครื่องดื่มแอลกอฮอล์ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ชนแก้ว ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ ไปบาร์ หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ ตั้งวงดื่ม ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ นั่งร้านเหล้า ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน จิบไวน์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ดื่มเครื่องดื่มแอลกอฮอล์ หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ ชนแก้ว หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา ดื่มเครื่องดื่มแอลกอฮอล์ กัน,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ จิบไวน์ กัน,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ไปบาร์ ไหม,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สังสรรค์ที่ร้านเหล้า ไหม,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สังสรรค์ที่ร้านเหล้า ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ จิบไวน์ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ ชนแก้ว หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ ไปบาร์ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ตั้งวงดื่ม หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ ดื่มเบียร์ ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา ดื่มเหล้า ไหม,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา ตั้งวงดื่ม ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ไปบาร์ กัน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ชนแก้ว กัน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สังสรรค์ที่ร้านเหล้า หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา สังสรรค์ที่ร้านเหล้า ไหม,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ไปบาร์ หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ดื่มเหล้า กัน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สังสรรค์ที่ร้านเหล้า กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ ดื่มเหล้า ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ดื่มเบียร์ กัน,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ ดื่มเหล้า ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ไปบาร์ กัน,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ สังสรรค์ที่ร้านเหล้า ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา จิบไวน์ หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ดื่มเบียร์ ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สังสรรค์ที่ร้านเหล้า ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สังสรรค์ที่ร้านเหล้า ไหม,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ ตั้งวงดื่ม หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ นั่งร้านเหล้า ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ไปบาร์ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ชนแก้ว กัน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ นั่งร้านเหล้า กัน,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ จิบไวน์ กัน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ดื่มเหล้า กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา ชนแก้ว กัน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ดื่มเหล้า ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ จิบไวน์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ นั่งร้านเหล้า กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ไปบาร์ กัน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา นั่งร้านเหล้า หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน นั่งร้านเหล้า ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ดื่มเหล้า ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ไปบาร์ กัน,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ ดื่มเบียร์ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ นั่งร้านเหล้า กัน,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ สังสรรค์ที่ร้านเหล้า กัน,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ดื่มเครื่องดื่มแอลกอฮอล์ ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ สังสรรค์ที่ร้านเหล้า กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ดื่มเบียร์ ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ดื่มเครื่องดื่มแอลกอฮอล์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ สังสรรค์ที่ร้านเหล้า กัน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา นั่งร้านเหล้า ไหม,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ ดื่มเครื่องดื่มแอลกอฮอล์ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ ดื่มเหล้า หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ ดื่มเหล้า กัน,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ ไปบาร์ ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ ตั้งวงดื่ม กัน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน นั่งร้านเหล้า ไหม,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ ดื่มเครื่องดื่มแอลกอฮอล์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ นั่งร้านเหล้า กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ดื่มเหล้า กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ ดื่มเบียร์ ไหม,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ นั่งร้านเหล้า ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา ไปบาร์ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ ดื่มเหล้า หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ สังสรรค์ที่ร้านเหล้า ไหม,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ สังสรรค์ที่ร้านเหล้า ไหม,safe,train,allow,uwm-v3.1-remap
+ศุกร์นี้ ดื่มเครื่องดื่มแอลกอฮอล์ ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ไปบาร์ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ สังสรรค์ที่ร้านเหล้า ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ นั่งร้านเหล้า ไหม,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา จิบไวน์ ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+ช่วงค่ํา ตั้งวงดื่ม หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สังสรรค์ที่ร้านเหล้า ไหม,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ สังสรรค์ที่ร้านเหล้า หลังส่งงาน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ดื่มเหล้า ไหม,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ชนแก้ว ไหม,safe,train,allow,uwm-v3.1-remap
+หลังสอบ นั่งร้านเหล้า ไหม,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ชนแก้ว กัน,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ไปบาร์ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+วันเกิดนี้ ชนแก้ว ไหม,safe,train,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ชนแก้ว ไหม,safe,train,allow,uwm-v3.1-remap
+หลังสอบ นั่งร้านเหล้า ฉลองกัน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ดื่มเหล้า ไหม,safe,validation,allow,uwm-v3.1-remap
+วันเกิดนี้ ดื่มเบียร์ ฉลองกัน,safe,validation,allow,uwm-v3.1-remap
+หลังเลิกเรียน จิบไวน์ ไหม,safe,validation,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ จิบไวน์ ช่วงค่ํา,safe,validation,allow,uwm-v3.1-remap
+ช่วงค่ํา จิบไวน์ กับเพื่อน,safe,validation,allow,uwm-v3.1-remap
+คืนนี้ นั่งร้านเหล้า หลังส่งงาน,safe,validation,allow,uwm-v3.1-remap
+หลังเลิกเรียน ดื่มเหล้า กัน,safe,validation,allow,uwm-v3.1-remap
+ศุกร์นี้ ตั้งวงดื่ม ไหม,safe,validation,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ดื่มเหล้า ฉลองกัน,safe,validation,allow,uwm-v3.1-remap
+วันเกิดนี้ ดื่มเหล้า ฉลองกัน,safe,validation,allow,uwm-v3.1-remap
+หลังสอบ ดื่มเบียร์ ช่วงค่ํา,safe,validation,allow,uwm-v3.1-remap
+หลังสอบ ตั้งวงดื่ม กับเพื่อน,safe,validation,allow,uwm-v3.1-remap
+วันเกิดนี้ ไปบาร์ หลังส่งงาน,safe,validation,allow,uwm-v3.1-remap
+คืนนี้ ดื่มเบียร์ กับเพื่อน,safe,validation,allow,uwm-v3.1-remap
+ช่วงค่ํา ชนแก้ว ฉลองกัน,safe,validation,allow,uwm-v3.1-remap
+ช่วงค่ํา สังสรรค์ที่ร้านเหล้า ช่วงค่ํา,safe,validation,allow,uwm-v3.1-remap
+วันเกิดนี้ จิบไวน์ ช่วงค่ํา,safe,validation,allow,uwm-v3.1-remap
+หลังสอบ สังสรรค์ที่ร้านเหล้า หลังส่งงาน,safe,validation,allow,uwm-v3.1-remap
+ศุกร์นี้ ดื่มเครื่องดื่มแอลกอฮอล์ กัน,safe,validation,allow,uwm-v3.1-remap
+ช่วงค่ํา ดื่มเครื่องดื่มแอลกอฮอล์ หลังส่งงาน,safe,validation,allow,uwm-v3.1-remap
+วันเกิดนี้ ไปบาร์ ไหม,safe,validation,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ตั้งวงดื่ม ช่วงค่ํา,safe,validation,allow,uwm-v3.1-remap
+หลังสอบ นั่งร้านเหล้า กับเพื่อน,safe,validation,allow,uwm-v3.1-remap
+ศุกร์นี้ ชนแก้ว ช่วงค่ํา,safe,validation,allow,uwm-v3.1-remap
+ช่วงค่ํา ไปบาร์ กัน,safe,validation,allow,uwm-v3.1-remap
+ช่วงค่ํา จิบไวน์ ช่วงค่ํา,safe,validation,allow,uwm-v3.1-remap
+หลังเลิกเรียน ชนแก้ว ฉลองกัน,safe,validation,allow,uwm-v3.1-remap
+ศุกร์นี้ ไปบาร์ กัน,safe,validation,allow,uwm-v3.1-remap
+ช่วงค่ํา ดื่มเบียร์ กับเพื่อน,safe,validation,allow,uwm-v3.1-remap
+ศุกร์นี้ ดื่มเครื่องดื่มแอลกอฮอล์ ไหม,safe,validation,allow,uwm-v3.1-remap
+หลังสอบ ดื่มเบียร์ กัน,safe,validation,allow,uwm-v3.1-remap
+คืนนี้ ไปบาร์ ไหม,safe,validation,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ นั่งร้านเหล้า ฉลองกัน,safe,validation,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ดื่มเบียร์ ฉลองกัน,safe,validation,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ จิบไวน์ ฉลองกัน,safe,validation,allow,uwm-v3.1-remap
+คืนนี้ ไปบาร์ หลังส่งงาน,safe,validation,allow,uwm-v3.1-remap
+ช่วงค่ํา จิบไวน์ ไหม,safe,validation,allow,uwm-v3.1-remap
+วันเกิดนี้ ตั้งวงดื่ม ไหม,safe,validation,allow,uwm-v3.1-remap
+ศุกร์นี้ ดื่มเบียร์ หลังส่งงาน,safe,validation,allow,uwm-v3.1-remap
+หลังสอบ ดื่มเหล้า กัน,safe,validation,allow,uwm-v3.1-remap
+คืนนี้ จิบไวน์ หลังส่งงาน,safe,validation,allow,uwm-v3.1-remap
+ศุกร์นี้ ดื่มเครื่องดื่มแอลกอฮอล์ กับเพื่อน,safe,validation,allow,uwm-v3.1-remap
+หลังเลิกเรียน ดื่มเบียร์ ช่วงค่ํา,safe,validation,allow,uwm-v3.1-remap
+วันเกิดนี้ จิบไวน์ หลังส่งงาน,safe,validation,allow,uwm-v3.1-remap
+หลังเลิกเรียน ชนแก้ว หลังส่งงาน,safe,validation,allow,uwm-v3.1-remap
+ศุกร์นี้ นั่งร้านเหล้า ฉลองกัน,safe,validation,allow,uwm-v3.1-remap
+หลังเลิกเรียน ไปบาร์ ช่วงค่ํา,safe,validation,allow,uwm-v3.1-remap
+ช่วงค่ํา ไปบาร์ หลังส่งงาน,safe,validation,allow,uwm-v3.1-remap
+หลังเลิกเรียน จิบไวน์ หลังส่งงาน,safe,test,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ดื่มเครื่องดื่มแอลกอฮอล์ หลังส่งงาน,safe,test,allow,uwm-v3.1-remap
+หลังสอบ ดื่มเหล้า ฉลองกัน,safe,test,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ จิบไวน์ หลังส่งงาน,safe,test,allow,uwm-v3.1-remap
+ศุกร์นี้ นั่งร้านเหล้า กัน,safe,test,allow,uwm-v3.1-remap
+ช่วงค่ํา ดื่มเหล้า ฉลองกัน,safe,test,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ตั้งวงดื่ม กับเพื่อน,safe,test,allow,uwm-v3.1-remap
+วันเกิดนี้ ดื่มเหล้า ช่วงค่ํา,safe,test,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ไปบาร์ กับเพื่อน,safe,test,allow,uwm-v3.1-remap
+วันเกิดนี้ ดื่มเหล้า ไหม,safe,test,allow,uwm-v3.1-remap
+หลังเลิกเรียน ตั้งวงดื่ม ไหม,safe,test,allow,uwm-v3.1-remap
+หลังสอบ ไปบาร์ ไหม,safe,test,allow,uwm-v3.1-remap
+ช่วงค่ํา ไปบาร์ ฉลองกัน,safe,test,allow,uwm-v3.1-remap
+ช่วงค่ํา นั่งร้านเหล้า กับเพื่อน,safe,test,allow,uwm-v3.1-remap
+คืนนี้ ตั้งวงดื่ม ไหม,safe,test,allow,uwm-v3.1-remap
+หลังเลิกเรียน ดื่มเหล้า ช่วงค่ํา,safe,test,allow,uwm-v3.1-remap
+หลังเลิกเรียน ดื่มเครื่องดื่มแอลกอฮอล์ กับเพื่อน,safe,test,allow,uwm-v3.1-remap
+หลังสอบ ตั้งวงดื่ม ฉลองกัน,safe,test,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ นั่งร้านเหล้า ช่วงค่ํา,safe,test,allow,uwm-v3.1-remap
+ศุกร์นี้ สังสรรค์ที่ร้านเหล้า กับเพื่อน,safe,test,allow,uwm-v3.1-remap
+หลังเลิกเรียน ดื่มเบียร์ กัน,safe,test,allow,uwm-v3.1-remap
+ศุกร์นี้ ชนแก้ว กัน,safe,test,allow,uwm-v3.1-remap
+วันเกิดนี้ ดื่มเครื่องดื่มแอลกอฮอล์ ไหม,safe,test,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ นั่งร้านเหล้า กัน,safe,test,allow,uwm-v3.1-remap
+หลังสอบ ดื่มเครื่องดื่มแอลกอฮอล์ ฉลองกัน,safe,test,allow,uwm-v3.1-remap
+ศุกร์นี้ ตั้งวงดื่ม ช่วงค่ํา,safe,test,allow,uwm-v3.1-remap
+คืนนี้ ไปบาร์ ฉลองกัน,safe,test,allow,uwm-v3.1-remap
+วันเกิดนี้ สังสรรค์ที่ร้านเหล้า ไหม,safe,test,allow,uwm-v3.1-remap
+หลังสอบ ดื่มเครื่องดื่มแอลกอฮอล์ ไหม,safe,test,allow,uwm-v3.1-remap
+หลังเลิกเรียน ดื่มเครื่องดื่มแอลกอฮอล์ ฉลองกัน,safe,test,allow,uwm-v3.1-remap
+หลังเลิกเรียน นั่งร้านเหล้า กับเพื่อน,safe,test,allow,uwm-v3.1-remap
+คืนนี้ สังสรรค์ที่ร้านเหล้า หลังส่งงาน,safe,test,allow,uwm-v3.1-remap
+หลังเลิกเรียน ไปบาร์ หลังส่งงาน,safe,test,allow,uwm-v3.1-remap
+หลังเลิกเรียน ชนแก้ว ช่วงค่ํา,safe,test,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ดื่มเครื่องดื่มแอลกอฮอล์ ไหม,safe,test,allow,uwm-v3.1-remap
+ช่วงค่ํา ชนแก้ว หลังส่งงาน,safe,test,allow,uwm-v3.1-remap
+หลังเลิกเรียน ตั้งวงดื่ม ฉลองกัน,safe,test,allow,uwm-v3.1-remap
+ศุกร์นี้ ชนแก้ว กับเพื่อน,safe,test,allow,uwm-v3.1-remap
+ศุกร์นี้ ชนแก้ว ฉลองกัน,safe,test,allow,uwm-v3.1-remap
+คืนนี้ ดื่มเครื่องดื่มแอลกอฮอล์ ไหม,safe,test,allow,uwm-v3.1-remap
+หลังสอบ ไปบาร์ ฉลองกัน,safe,test,allow,uwm-v3.1-remap
+สุดสัปดาห์นี้ ดื่มเบียร์ ช่วงค่ํา,safe,test,allow,uwm-v3.1-remap
+ช่วงค่ํา ดื่มเบียร์ หลังส่งงาน,safe,test,allow,uwm-v3.1-remap
+หลังสอบ จิบไวน์ กับเพื่อน,safe,test,allow,uwm-v3.1-remap
+วันเกิดนี้ ดื่มเหล้า กัน,safe,test,allow,uwm-v3.1-remap
+ศุกร์นี้ ดื่มเบียร์ ไหม,safe,test,allow,uwm-v3.1-remap
+หลังเลิกเรียน ดื่มเครื่องดื่มแอลกอฮอล์ ไหม,safe,test,allow,uwm-v3.1-remap
+หลังสอบ จิบไวน์ ไหม,safe,test,allow,uwm-v3.1-remap
+หลังสอบ สูบบุหรี่ไฟฟ้า ไหม,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบบุหรี่ ไหม,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบพอต กัน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบบุหรี่ หน่อย,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบพอต กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบซิการ์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบบุหรี่มวน กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบุหรี่มวน กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบบุหรี่ไฟฟ้า ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบยาเส้น หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบพอต หน่อย,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบบารากู่ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบบุหรี่มวน ไหม,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบพอต หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบบุหรี่ไฟฟ้า หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบบุหรี่ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบยาสูบ ไหม,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบยาสูบ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบบุหรี่ไฟฟ้า ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบยาเส้น กัน,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบยาเส้น กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบบารากู่ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบยาสูบ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบบุหรี่ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบบุหรี่ กัน,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบบุหรี่มวน หน่อย,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบยาสูบ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบยาเส้น หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบยาเส้น ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบพอต หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบบารากู่ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบบุหรี่ไฟฟ้า ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบซิการ์ กัน,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบพอต หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบยาสูบ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบบุหรี่ ไหม,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบารากู่ ไหม,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบบุหรี่ไฟฟ้า กัน,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบบารากู่ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบยาเส้น กัน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบยาสูบ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบบารากู่ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบุหรี่มวน ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบบุหรี่มวน กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบบุหรี่ไฟฟ้า ไหม,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบารากู่ กัน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบซิการ์ หน่อย,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบบารากู่ ไหม,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบบุหรี่ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบบุหรี่ไฟฟ้า ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบพอต ไหม,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบารากู่ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบบารากู่ กัน,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบบุหรี่ หน่อย,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบซิการ์ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบบุหรี่มวน ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบบุหรี่มวน หน่อย,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบบุหรี่ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบุหรี่ไฟฟ้า หน่อย,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบซิการ์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบบุหรี่ไฟฟ้า หน่อย,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบซิการ์ ไหม,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบบารากู่ ไหม,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบบุหรี่ไฟฟ้า หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบบารากู่ หน่อย,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบบารากู่ หน่อย,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบยาสูบ หน่อย,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบซิการ์ หน่อย,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบยาเส้น กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบพอต หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบบุหรี่ ไหม,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบซิการ์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบพอต ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบารากู่ หน่อย,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบพอต ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบยาเส้น ไหม,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบพอต กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบยาสูบ กัน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบยาเส้น ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบพอต หน่อย,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบุหรี่มวน หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบพอต ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบบารากู่ หน่อย,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบยาเส้น หน่อย,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบบุหรี่มวน ไหม,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบบุหรี่มวน กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบบุหรี่ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบุหรี่มวน ไหม,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบพอต ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบบุหรี่ไฟฟ้า กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบซิการ์ ไหม,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบบุหรี่ไฟฟ้า หน่อย,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบบุหรี่ กัน,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบยาเส้น หน่อย,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบบุหรี่มวน ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบซิการ์ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบบุหรี่มวน กัน,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบบุหรี่มวน ไหม,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบบุหรี่ไฟฟ้า หน่อย,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบพอต กัน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบบุหรี่ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบบุหรี่ไฟฟ้า ไหม,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบพอต ไหม,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบยาสูบ หน่อย,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบบุหรี่ไฟฟ้า หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบบุหรี่ ไหม,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบพอต ไหม,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบบุหรี่มวน กัน,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบบารากู่ หน่อย,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบยาสูบ กัน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบยาเส้น หน่อย,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบบุหรี่ไฟฟ้า หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบุหรี่ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบซิการ์ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบบารากู่ ไหม,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบบารากู่ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบบุหรี่มวน ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบซิการ์ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบยาเส้น หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบุหรี่ไฟฟ้า ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบซิการ์ ไหม,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบยาสูบ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบยาสูบ กัน,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบพอต กัน,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบพอต ไหม,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบบุหรี่มวน กัน,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบบุหรี่ หน่อย,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบซิการ์ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบุหรี่ไฟฟ้า กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบยาเส้น กัน,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบยาเส้น หน่อย,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบบุหรี่มวน ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบยาเส้น ไหม,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบยาสูบ ไหม,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบซิการ์ หน่อย,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบบุหรี่ กัน,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบบุหรี่มวน กัน,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบบุหรี่ กัน,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบบุหรี่ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบบารากู่ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบบารากู่ กัน,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบซิการ์ ไหม,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบยาเส้น หน่อย,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบซิการ์ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบบารากู่ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบยาสูบ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบยาสูบ กัน,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบบุหรี่ ไหม,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบบุหรี่ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบุหรี่มวน หน่อย,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบบุหรี่ กัน,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบบุหรี่ไฟฟ้า กัน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบบุหรี่ไฟฟ้า กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบยาสูบ หน่อย,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบบุหรี่ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบซิการ์ กัน,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบบารากู่ ไหม,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบพอต ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบซิการ์ หน่อย,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบซิการ์ กัน,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบบุหรี่ไฟฟ้า ไหม,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบยาสูบ หน่อย,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบซิการ์ ไหม,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบบุหรี่มวน หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบบุหรี่ หน่อย,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบยาสูบ ไหม,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบพอต ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบพอต กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบุหรี่มวน กัน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบารากู่ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบบุหรี่ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบบุหรี่ หน่อย,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบบุหรี่ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบยาเส้น กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบบุหรี่มวน หน่อย,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบพอต กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบซิการ์ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบบุหรี่ ไหม,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบยาสูบ กัน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบยาเส้น กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบบุหรี่มวน หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบยาเส้น หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบซิการ์ กัน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบุหรี่ กัน,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบซิการ์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบุหรี่ไฟฟ้า ไหม,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบพอต กัน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบยาสูบ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบยาสูบ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบบุหรี่มวน หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบบุหรี่มวน หน่อย,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบบารากู่ ไหม,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบบุหรี่ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบบุหรี่ไฟฟ้า ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบยาสูบ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบุหรี่ไฟฟ้า กัน,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบยาสูบ ไหม,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบยาสูบ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบยาสูบ หน่อย,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบบุหรี่มวน กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบบุหรี่ไฟฟ้า หน่อย,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบบุหรี่มวน กัน,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบบุหรี่ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบพอต กัน,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบพอต หน่อย,safe,train,allow,uwm-v3.1-remap
+ช่วงเย็น สูบยาสูบ ไหม,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบยาสูบ กัน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบบุหรี่มวน ไหม,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบซิการ์ หน่อย,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบบุหรี่ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบบารากู่ กัน,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบยาสูบ ช่วงค่ํา,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบยาเส้น ไหม,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบบุหรี่ หน่อย,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบพอต หน่อย,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบุหรี่ หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบบารากู่ กัน,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบบุหรี่มวน หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+พักเบรก สูบยาสูบ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบซิการ์ หน่อย,safe,train,allow,uwm-v3.1-remap
+หลังตึก สูบพอต หน่อย,safe,train,allow,uwm-v3.1-remap
+หลังสอบ สูบยาเส้น หลังเลิกเรียน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบซิการ์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังเรียน สูบซิการ์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ สูบบารากู่ ช่วงค่ํา,safe,validation,allow,uwm-v3.1-remap
+พักเบรก สูบพอต กับเพื่อน,safe,validation,allow,uwm-v3.1-remap
+หลังตึก สูบบุหรี่ไฟฟ้า กับเพื่อน,safe,validation,allow,uwm-v3.1-remap
+หลังตึก สูบพอต กับเพื่อน,safe,validation,allow,uwm-v3.1-remap
+ช่วงเย็น สูบบารากู่ กัน,safe,validation,allow,uwm-v3.1-remap
+หลังเรียน สูบบุหรี่ไฟฟ้า กับเพื่อน,safe,validation,allow,uwm-v3.1-remap
+หลังตึก สูบยาสูบ ช่วงค่ํา,safe,validation,allow,uwm-v3.1-remap
+หลังตึก สูบพอต ช่วงค่ํา,safe,validation,allow,uwm-v3.1-remap
+หลังสอบ สูบยาสูบ ไหม,safe,validation,allow,uwm-v3.1-remap
+คืนนี้ สูบพอต หน่อย,safe,validation,allow,uwm-v3.1-remap
+พักเบรก สูบพอต ไหม,safe,validation,allow,uwm-v3.1-remap
+หลังสอบ สูบพอต หลังเลิกเรียน,safe,validation,allow,uwm-v3.1-remap
+คืนนี้ สูบบุหรี่มวน หลังเลิกเรียน,safe,validation,allow,uwm-v3.1-remap
+ช่วงเย็น สูบยาสูบ หลังเลิกเรียน,safe,validation,allow,uwm-v3.1-remap
+พักเบรก สูบพอต กัน,safe,validation,allow,uwm-v3.1-remap
+ช่วงเย็น สูบบุหรี่มวน ไหม,safe,validation,allow,uwm-v3.1-remap
+พักเบรก สูบบารากู่ ช่วงค่ํา,safe,validation,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบุหรี่ไฟฟ้า หลังเลิกเรียน,safe,validation,allow,uwm-v3.1-remap
+ช่วงเย็น สูบซิการ์ หน่อย,safe,validation,allow,uwm-v3.1-remap
+หลังสอบ สูบบารากู่ ช่วงค่ํา,safe,validation,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบุหรี่ ไหม,safe,validation,allow,uwm-v3.1-remap
+หลังสอบ สูบบุหรี่ไฟฟ้า กับเพื่อน,safe,validation,allow,uwm-v3.1-remap
+พักเบรก สูบยาเส้น หลังเลิกเรียน,safe,validation,allow,uwm-v3.1-remap
+คืนนี้ สูบพอต ไหม,safe,validation,allow,uwm-v3.1-remap
+คืนนี้ สูบยาสูบ ช่วงค่ํา,safe,validation,allow,uwm-v3.1-remap
+ช่วงเย็น สูบพอต กับเพื่อน,safe,validation,allow,uwm-v3.1-remap
+พักเบรก สูบยาสูบ หลังเลิกเรียน,safe,validation,allow,uwm-v3.1-remap
+ช่วงเย็น สูบบุหรี่ ช่วงค่ํา,safe,validation,allow,uwm-v3.1-remap
+พักเบรก สูบบุหรี่ ช่วงค่ํา,safe,validation,allow,uwm-v3.1-remap
+พักเบรก สูบบารากู่ กับเพื่อน,safe,validation,allow,uwm-v3.1-remap
+พักเบรก สูบบารากู่ กัน,safe,validation,allow,uwm-v3.1-remap
+หลังสอบ สูบซิการ์ กัน,safe,validation,allow,uwm-v3.1-remap
+หลังสอบ สูบบารากู่ กับเพื่อน,safe,validation,allow,uwm-v3.1-remap
+หลังสอบ สูบพอต กัน,safe,validation,allow,uwm-v3.1-remap
+หลังเรียน สูบยาเส้น กัน,safe,validation,allow,uwm-v3.1-remap
+หลังตึก สูบบุหรี่มวน หน่อย,safe,validation,allow,uwm-v3.1-remap
+หลังสอบ สูบบุหรี่ไฟฟ้า หลังเลิกเรียน,safe,validation,allow,uwm-v3.1-remap
+หลังสอบ สูบยาเส้น ไหม,safe,validation,allow,uwm-v3.1-remap
+พักเบรก สูบซิการ์ ช่วงค่ํา,safe,validation,allow,uwm-v3.1-remap
+พักเบรก สูบบุหรี่ไฟฟ้า หน่อย,safe,validation,allow,uwm-v3.1-remap
+พักเบรก สูบบารากู่ ไหม,safe,validation,allow,uwm-v3.1-remap
+หลังสอบ สูบยาเส้น กับเพื่อน,safe,validation,allow,uwm-v3.1-remap
+คืนนี้ สูบบุหรี่ กัน,safe,validation,allow,uwm-v3.1-remap
+หลังตึก สูบบารากู่ หน่อย,safe,validation,allow,uwm-v3.1-remap
+หลังตึก สูบซิการ์ กัน,safe,validation,allow,uwm-v3.1-remap
+ช่วงเย็น สูบบุหรี่ไฟฟ้า หลังเลิกเรียน,safe,validation,allow,uwm-v3.1-remap
+คืนนี้ สูบยาเส้น หน่อย,safe,validation,allow,uwm-v3.1-remap
+ช่วงเย็น สูบยาเส้น ช่วงค่ํา,safe,validation,allow,uwm-v3.1-remap
+ช่วงเย็น สูบยาเส้น ไหม,safe,test,allow,uwm-v3.1-remap
+หลังเรียน สูบบุหรี่มวน กับเพื่อน,safe,test,allow,uwm-v3.1-remap
+หลังสอบ สูบยาเส้น กัน,safe,test,allow,uwm-v3.1-remap
+ช่วงเย็น สูบยาเส้น กับเพื่อน,safe,test,allow,uwm-v3.1-remap
+ช่วงเย็น สูบบุหรี่มวน ช่วงค่ํา,safe,test,allow,uwm-v3.1-remap
+หลังเรียน สูบยาเส้น หลังเลิกเรียน,safe,test,allow,uwm-v3.1-remap
+พักเบรก สูบยาเส้น ช่วงค่ํา,safe,test,allow,uwm-v3.1-remap
+หลังตึก สูบซิการ์ ช่วงค่ํา,safe,test,allow,uwm-v3.1-remap
+ช่วงเย็น สูบบุหรี่ไฟฟ้า หน่อย,safe,test,allow,uwm-v3.1-remap
+หลังตึก สูบซิการ์ กับเพื่อน,safe,test,allow,uwm-v3.1-remap
+หลังตึก สูบซิการ์ หลังเลิกเรียน,safe,test,allow,uwm-v3.1-remap
+คืนนี้ สูบบุหรี่มวน หน่อย,safe,test,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบยาเส้น ช่วงค่ํา,safe,test,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบยาเส้น ไหม,safe,test,allow,uwm-v3.1-remap
+คืนนี้ สูบซิการ์ ช่วงค่ํา,safe,test,allow,uwm-v3.1-remap
+หลังตึก สูบยาเส้น ไหม,safe,test,allow,uwm-v3.1-remap
+หลังสอบ สูบบารากู่ หลังเลิกเรียน,safe,test,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบารากู่ หลังเลิกเรียน,safe,test,allow,uwm-v3.1-remap
+หลังสอบ สูบซิการ์ ไหม,safe,test,allow,uwm-v3.1-remap
+หลังตึก สูบบารากู่ ช่วงค่ํา,safe,test,allow,uwm-v3.1-remap
+หลังสอบ สูบบุหรี่มวน กับเพื่อน,safe,test,allow,uwm-v3.1-remap
+หลังสอบ สูบบุหรี่มวน ไหม,safe,test,allow,uwm-v3.1-remap
+ช่วงเย็น สูบบารากู่ หน่อย,safe,test,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบุหรี่ หน่อย,safe,test,allow,uwm-v3.1-remap
+คืนนี้ สูบบุหรี่ หลังเลิกเรียน,safe,test,allow,uwm-v3.1-remap
+ช่วงเย็น สูบบารากู่ หลังเลิกเรียน,safe,test,allow,uwm-v3.1-remap
+คืนนี้ สูบซิการ์ ไหม,safe,test,allow,uwm-v3.1-remap
+คืนนี้ สูบบารากู่ กับเพื่อน,safe,test,allow,uwm-v3.1-remap
+หลังเรียน สูบบุหรี่ไฟฟ้า ไหม,safe,test,allow,uwm-v3.1-remap
+ช่วงเย็น สูบยาเส้น หน่อย,safe,test,allow,uwm-v3.1-remap
+หลังเรียน สูบบุหรี่มวน กัน,safe,test,allow,uwm-v3.1-remap
+หลังสอบ สูบบุหรี่ไฟฟ้า กัน,safe,test,allow,uwm-v3.1-remap
+คืนนี้ สูบยาเส้น กัน,safe,test,allow,uwm-v3.1-remap
+พักเบรก สูบพอต หลังเลิกเรียน,safe,test,allow,uwm-v3.1-remap
+หลังตึก สูบยาสูบ กับเพื่อน,safe,test,allow,uwm-v3.1-remap
+หลังตึก สูบพอต หลังเลิกเรียน,safe,test,allow,uwm-v3.1-remap
+หลังเรียน สูบบุหรี่มวน ช่วงค่ํา,safe,test,allow,uwm-v3.1-remap
+ช่วงเย็น สูบบุหรี่มวน หลังเลิกเรียน,safe,test,allow,uwm-v3.1-remap
+หลังสอบ สูบยาสูบ หน่อย,safe,test,allow,uwm-v3.1-remap
+หลังเลิกเรียน สูบบุหรี่ กับเพื่อน,safe,test,allow,uwm-v3.1-remap
+คืนนี้ สูบยาสูบ ไหม,safe,test,allow,uwm-v3.1-remap
+ช่วงเย็น สูบยาสูบ หน่อย,safe,test,allow,uwm-v3.1-remap
+คืนนี้ สูบบุหรี่ไฟฟ้า กัน,safe,test,allow,uwm-v3.1-remap
+หลังเรียน สูบซิการ์ ช่วงค่ํา,safe,test,allow,uwm-v3.1-remap
+คืนนี้ สูบยาสูบ กัน,safe,test,allow,uwm-v3.1-remap
+หลังเรียน สูบยาสูบ กับเพื่อน,safe,test,allow,uwm-v3.1-remap
+หลังเรียน สูบพอต หน่อย,safe,test,allow,uwm-v3.1-remap
+หลังตึก สูบบุหรี่ หลังเลิกเรียน,safe,test,allow,uwm-v3.1-remap
+งานชมรมนี้ มีรางวัลสําหรับผู้เข้าร่วม หลังจบงาน,safe,train,allow,uwm-v3.1-remap
+มาห้องเรา ช่วยทําโปรเจกต์ ให้ที,safe,train,allow,uwm-v3.1-remap
+เข้าร่วม งานได้โดยไม่มีค่าใช้จ่าย ได้เลย,safe,train,allow,uwm-v3.1-remap
+ระวัง พื้นลื่น ตอนกลับหอ,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ เล่นบอร์ดเกม ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+ระวัง รถบนถนน ตอนกลับหอ,safe,train,allow,uwm-v3.1-remap
+เดินทางกลับดีๆ ฝนตก ตอนกลับหอ,safe,train,allow,uwm-v3.1-remap
+มาห้องเรา ช่วยดูสไลด์ หน่อย,safe,train,allow,uwm-v3.1-remap
+มาที่ห้องชมรม ช่วยดูสไลด์ หน่อย,safe,train,allow,uwm-v3.1-remap
+ลงทะเบียนเข้าร่วม กิจกรรมได้ฟรี ได้เลย,safe,train,allow,uwm-v3.1-remap
+งานมหาวิทยาลัยนี้ มีของที่ระลึก สําหรับทุกคน,safe,train,allow,uwm-v3.1-remap
+มานอนค้างที่หอ เพื่อซ้อมนําเสนอ กัน,safe,train,allow,uwm-v3.1-remap
+เย็นนี้ เล่นบอร์ดเกม กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+มาห้องเรา ช่วยดูสไลด์ ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+เย็นนี้ ทํารายงาน กันไหม,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ ไปดูหนัง ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+มาห้องเรา ช่วยทําโปรเจกต์ หน่อย,safe,train,allow,uwm-v3.1-remap
+เดินทางกลับดีๆ พื้นลื่น ตอนกลับหอ,safe,train,allow,uwm-v3.1-remap
+กิจกรรมนี้ มีรางวัลสําหรับผู้เข้าร่วม หลังจบงาน,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ ทํารายงาน กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+เจอกันข้างนอกตึก แล้วไปสนามกีฬา หลังเรียน,safe,train,allow,uwm-v3.1-remap
+เดินทางกลับดีๆ อากาศแปรปรวน ตอนกลับหอ,safe,train,allow,uwm-v3.1-remap
+ลงทะเบียนเข้าร่วม งานได้โดยไม่มีค่าใช้จ่าย วันนี้,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ ซ้อมดนตรี กันไหม,safe,train,allow,uwm-v3.1-remap
+อย่าลืมระวัง ฝนตก ด้วย,safe,train,allow,uwm-v3.1-remap
+หาเพื่อนมาค้าง เพื่อเตรียมงานเช้า กัน,safe,train,allow,uwm-v3.1-remap
+มาห้องกิจกรรม ช่วยทําโปรเจกต์ หน่อย,safe,train,allow,uwm-v3.1-remap
+มาที่ห้องชมรม ทํารายงานกลุ่ม หน่อย,safe,train,allow,uwm-v3.1-remap
+ค้างคืนที่ห้องชมรม เพื่อทําโปรเจกต์ คืนนี้,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน เล่นบอร์ดเกม กันไหม,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ไปดูหนัง ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ทํารายงาน ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+สมัครเข้าร่วม กิจกรรมโดยไม่เสียเงิน ได้เลย,safe,train,allow,uwm-v3.1-remap
+ระวัง พื้นลื่น ด้วย,safe,train,allow,uwm-v3.1-remap
+มานอนค้างที่หอ เพื่อทําโปรเจกต์ ก่อนวันงาน,safe,train,allow,uwm-v3.1-remap
+อย่าลืมระวัง อากาศแปรปรวน นะ,safe,train,allow,uwm-v3.1-remap
+เดินทางกลับดีๆ รถบนถนน ตอนกลับหอ,safe,train,allow,uwm-v3.1-remap
+งานมหาวิทยาลัยนี้ มีรางวัลสําหรับผู้เข้าร่วม สําหรับทุกคน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ไปดูหนัง กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+เย็นนี้ ซ้อมดนตรี กันไหม,safe,train,allow,uwm-v3.1-remap
+ระวัง อากาศแปรปรวน ด้วย,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ทํารายงาน กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+เข้าร่วม กิจกรรมได้ฟรี ได้เลย,safe,train,allow,uwm-v3.1-remap
+หาเพื่อนมาค้าง เพื่อทําโปรเจกต์ คืนนี้,safe,train,allow,uwm-v3.1-remap
+มาห้องเรา ช่วยดูสไลด์ ให้ที,safe,train,allow,uwm-v3.1-remap
+เดินทางกลับดีๆ รถบนถนน ด้วย,safe,train,allow,uwm-v3.1-remap
+กิจกรรมนี้ มีรางวัลสําหรับผู้เข้าร่วม สําหรับทุกคน,safe,train,allow,uwm-v3.1-remap
+ระวัง ฝนตก นะ,safe,train,allow,uwm-v3.1-remap
+เจอกันหลังตึก แล้วไปโรงอาหาร กัน,safe,train,allow,uwm-v3.1-remap
+มาห้องเรา ช่วยทําโปรเจกต์ ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+อย่าลืมระวัง รถบนถนน ด้วย,safe,train,allow,uwm-v3.1-remap
+อย่าลืมระวัง พื้นลื่น ด้วย,safe,train,allow,uwm-v3.1-remap
+เจอกันข้างนอกตึก แล้วเดินไปห้องสมุด กัน,safe,train,allow,uwm-v3.1-remap
+มาห้องเรา ซ้อมพรีเซนต์ ให้ที,safe,train,allow,uwm-v3.1-remap
+หาเพื่อนมาค้าง เพื่อทําโปรเจกต์ ก่อนวันงาน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ซ้อมดนตรี กันไหม,safe,train,allow,uwm-v3.1-remap
+อย่าลืมระวัง พื้นลื่น ตอนกลับหอ,safe,train,allow,uwm-v3.1-remap
+เจอกันหลังตึก แล้วเดินไปห้องสมุด กัน,safe,train,allow,uwm-v3.1-remap
+งานมหาวิทยาลัยนี้ มีของที่ระลึก ด้วย,safe,train,allow,uwm-v3.1-remap
+มาที่ห้องชมรม ซ้อมพรีเซนต์ ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ อ่านหนังสือ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+มานอนค้างที่หอ เพื่อซ้อมนําเสนอ ก่อนวันงาน,safe,train,allow,uwm-v3.1-remap
+มาห้องเรา ซ้อมพรีเซนต์ ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+สมัครเข้าร่วม กิจกรรมได้ฟรี ได้เลย,safe,train,allow,uwm-v3.1-remap
+ลงทะเบียนเข้าร่วม กิจกรรมโดยไม่เสียเงิน วันนี้,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ อ่านหนังสือ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+ลงทะเบียนเข้าร่วม กิจกรรมโดยไม่เสียเงิน ผ่านระบบ,safe,train,allow,uwm-v3.1-remap
+มาห้องเรา ทํารายงานกลุ่ม ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ ไปดูหนัง กันไหม,safe,train,allow,uwm-v3.1-remap
+สมัครเข้าร่วม กิจกรรมได้ฟรี วันนี้,safe,train,allow,uwm-v3.1-remap
+งานมหาวิทยาลัยนี้ มีรางวัลสําหรับผู้เข้าร่วม หลังจบงาน,safe,train,allow,uwm-v3.1-remap
+ระวัง ฝนตก ด้วย,safe,train,allow,uwm-v3.1-remap
+งานมหาวิทยาลัยนี้ มีของรางวัล หลังจบงาน,safe,train,allow,uwm-v3.1-remap
+เจอกันหลังตึก แล้วไปสนามกีฬา พร้อมกัน,safe,train,allow,uwm-v3.1-remap
+นัดกันหน้าตึก แล้วไปสนามกีฬา หลังเรียน,safe,train,allow,uwm-v3.1-remap
+เย็นนี้ ทํารายงาน กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+อย่าลืมระวัง ฝนตก ตอนกลับหอ,safe,train,allow,uwm-v3.1-remap
+คืนนี้ เล่นบอร์ดเกม ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ทํารายงาน กันไหม,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ทํารายงาน กันไหม,safe,train,allow,uwm-v3.1-remap
+งานชมรมนี้ มีของที่ระลึก สําหรับทุกคน,safe,train,allow,uwm-v3.1-remap
+สมัครเข้าร่วม งานได้โดยไม่มีค่าใช้จ่าย ผ่านระบบ,safe,train,allow,uwm-v3.1-remap
+เข้าร่วม กิจกรรมได้ฟรี ผ่านระบบ,safe,train,allow,uwm-v3.1-remap
+หาเพื่อนมาค้าง เพื่อเตรียมงานเช้า ก่อนวันงาน,safe,train,allow,uwm-v3.1-remap
+ระวัง พื้นลื่น นะ,safe,train,allow,uwm-v3.1-remap
+มานอนค้างที่หอ เพื่อเตรียมงานเช้า คืนนี้,safe,train,allow,uwm-v3.1-remap
+มาที่ห้องชมรม ช่วยทําโปรเจกต์ หน่อย,safe,train,allow,uwm-v3.1-remap
+มาที่ห้องชมรม ช่วยทําโปรเจกต์ ให้ที,safe,train,allow,uwm-v3.1-remap
+เย็นนี้ ไปดูหนัง กันไหม,safe,train,allow,uwm-v3.1-remap
+เดินทางกลับดีๆ ฝนตก นะ,safe,train,allow,uwm-v3.1-remap
+เย็นนี้ อ่านหนังสือ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หาเพื่อนมาค้าง เพื่อเตรียมงานเช้า คืนนี้,safe,train,allow,uwm-v3.1-remap
+ลงทะเบียนเข้าร่วม งานได้โดยไม่มีค่าใช้จ่าย ได้เลย,safe,train,allow,uwm-v3.1-remap
+หาเพื่อนมาค้าง เพื่อทําโปรเจกต์ กัน,safe,train,allow,uwm-v3.1-remap
+มานอนค้างที่หอ เพื่อซ้อมนําเสนอ คืนนี้,safe,train,allow,uwm-v3.1-remap
+กิจกรรมนี้ มีรางวัลสําหรับผู้เข้าร่วม ด้วย,safe,train,allow,uwm-v3.1-remap
+เข้าร่วม งานได้โดยไม่มีค่าใช้จ่าย ผ่านระบบ,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน เล่นบอร์ดเกม ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ไปดูหนัง กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+มาห้องกิจกรรม ช่วยดูสไลด์ ให้ที,safe,train,allow,uwm-v3.1-remap
+เย็นนี้ เล่นบอร์ดเกม ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+ค้างคืนที่ห้องชมรม เพื่อเตรียมงานเช้า กัน,safe,train,allow,uwm-v3.1-remap
+กิจกรรมนี้ มีของที่ระลึก สําหรับทุกคน,safe,train,allow,uwm-v3.1-remap
+เย็นนี้ ซ้อมดนตรี ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+อย่าลืมระวัง พื้นลื่น นะ,safe,train,allow,uwm-v3.1-remap
+กิจกรรมนี้ มีของที่ระลึก ด้วย,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ซ้อมดนตรี กันไหม,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน อ่านหนังสือ กันไหม,safe,train,allow,uwm-v3.1-remap
+งานชมรมนี้ มีของรางวัล หลังจบงาน,safe,train,allow,uwm-v3.1-remap
+ค้างคืนที่ห้องชมรม เพื่อซ้อมนําเสนอ คืนนี้,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ ซ้อมดนตรี ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+เข้าร่วม กิจกรรมโดยไม่เสียเงิน ได้เลย,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ ทํารายงาน กันไหม,safe,train,allow,uwm-v3.1-remap
+เดินทางกลับดีๆ พื้นลื่น ด้วย,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ ทํารายงาน ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+ลงทะเบียนเข้าร่วม งานได้โดยไม่มีค่าใช้จ่าย ผ่านระบบ,safe,train,allow,uwm-v3.1-remap
+ระวัง รถบนถนน ด้วย,safe,train,allow,uwm-v3.1-remap
+นัดกันหน้าตึก แล้วเดินไปห้องสมุด หลังเรียน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ไปดูหนัง ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+นัดกันหน้าตึก แล้วไปโรงอาหาร พร้อมกัน,safe,train,allow,uwm-v3.1-remap
+งานชมรมนี้ มีของรางวัล ด้วย,safe,train,allow,uwm-v3.1-remap
+มานอนค้างที่หอ เพื่อเตรียมงานเช้า ก่อนวันงาน,safe,train,allow,uwm-v3.1-remap
+นัดกันหน้าตึก แล้วไปสนามกีฬา กัน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ อ่านหนังสือ ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+งานชมรมนี้ มีของที่ระลึก ด้วย,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ซ้อมดนตรี ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ เล่นบอร์ดเกม กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+ลงทะเบียนเข้าร่วม กิจกรรมได้ฟรี วันนี้,safe,train,allow,uwm-v3.1-remap
+สมัครเข้าร่วม กิจกรรมโดยไม่เสียเงิน ผ่านระบบ,safe,train,allow,uwm-v3.1-remap
+เข้าร่วม กิจกรรมโดยไม่เสียเงิน วันนี้,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ ซ้อมดนตรี กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ซ้อมดนตรี กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+ค้างคืนที่ห้องชมรม เพื่อทําโปรเจกต์ ก่อนวันงาน,safe,train,allow,uwm-v3.1-remap
+มาห้องกิจกรรม ช่วยดูสไลด์ หน่อย,safe,train,allow,uwm-v3.1-remap
+เจอกันข้างนอกตึก แล้วไปโรงอาหาร กัน,safe,train,allow,uwm-v3.1-remap
+เย็นนี้ ทํารายงาน ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+เจอกันหลังตึก แล้วเดินไปห้องสมุด พร้อมกัน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ไปดูหนัง กันไหม,safe,train,allow,uwm-v3.1-remap
+เดินทางกลับดีๆ รถบนถนน นะ,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ อ่านหนังสือ ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+เดินทางกลับดีๆ อากาศแปรปรวน ด้วย,safe,train,allow,uwm-v3.1-remap
+มาห้องกิจกรรม ช่วยทําโปรเจกต์ ให้ที,safe,train,allow,uwm-v3.1-remap
+มาห้องกิจกรรม ซ้อมพรีเซนต์ ให้ที,safe,train,allow,uwm-v3.1-remap
+นัดกันหน้าตึก แล้วไปโรงอาหาร หลังเรียน,safe,train,allow,uwm-v3.1-remap
+เจอกันหลังตึก แล้วไปสนามกีฬา หลังเรียน,safe,train,allow,uwm-v3.1-remap
+เย็นนี้ ไปดูหนัง ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+ระวัง อากาศแปรปรวน ตอนกลับหอ,safe,train,allow,uwm-v3.1-remap
+นัดกันหน้าตึก แล้วเดินไปห้องสมุด พร้อมกัน,safe,train,allow,uwm-v3.1-remap
+มาห้องกิจกรรม ซ้อมพรีเซนต์ หน่อย,safe,train,allow,uwm-v3.1-remap
+อย่าลืมระวัง รถบนถนน นะ,safe,train,allow,uwm-v3.1-remap
+คืนนี้ อ่านหนังสือ กันไหม,safe,train,allow,uwm-v3.1-remap
+มาห้องเรา ทํารายงานกลุ่ม หน่อย,safe,train,allow,uwm-v3.1-remap
+มาห้องกิจกรรม ทํารายงานกลุ่ม หน่อย,safe,train,allow,uwm-v3.1-remap
+มาที่ห้องชมรม ทํารายงานกลุ่ม ให้ที,safe,train,allow,uwm-v3.1-remap
+งานมหาวิทยาลัยนี้ มีของที่ระลึก หลังจบงาน,safe,train,allow,uwm-v3.1-remap
+ระวัง อากาศแปรปรวน นะ,safe,train,allow,uwm-v3.1-remap
+ลงทะเบียนเข้าร่วม กิจกรรมโดยไม่เสียเงิน ได้เลย,safe,train,allow,uwm-v3.1-remap
+ค้างคืนที่ห้องชมรม เพื่อเตรียมงานเช้า คืนนี้,safe,train,allow,uwm-v3.1-remap
+เย็นนี้ อ่านหนังสือ กันไหม,safe,train,allow,uwm-v3.1-remap
+สมัครเข้าร่วม กิจกรรมโดยไม่เสียเงิน วันนี้,safe,train,allow,uwm-v3.1-remap
+สมัครเข้าร่วม กิจกรรมได้ฟรี ผ่านระบบ,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ ไปดูหนัง กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ เล่นบอร์ดเกม กันไหม,safe,train,allow,uwm-v3.1-remap
+เดินทางกลับดีๆ พื้นลื่น นะ,safe,train,allow,uwm-v3.1-remap
+กิจกรรมนี้ มีของที่ระลึก หลังจบงาน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ซ้อมดนตรี ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน อ่านหนังสือ ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+เจอกันหลังตึก แล้วไปสนามกีฬา กัน,safe,train,allow,uwm-v3.1-remap
+หาเพื่อนมาค้าง เพื่อซ้อมนําเสนอ คืนนี้,safe,train,allow,uwm-v3.1-remap
+ระวัง ฝนตก ตอนกลับหอ,safe,train,allow,uwm-v3.1-remap
+เย็นนี้ เล่นบอร์ดเกม กันไหม,safe,train,allow,uwm-v3.1-remap
+งานชมรมนี้ มีรางวัลสําหรับผู้เข้าร่วม สําหรับทุกคน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ซ้อมดนตรี กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+ค้างคืนที่ห้องชมรม เพื่อเตรียมงานเช้า ก่อนวันงาน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ไปดูหนัง กันไหม,safe,train,allow,uwm-v3.1-remap
+สมัครเข้าร่วม งานได้โดยไม่มีค่าใช้จ่าย วันนี้,safe,train,allow,uwm-v3.1-remap
+นัดกันหน้าตึก แล้วเดินไปห้องสมุด กัน,safe,train,allow,uwm-v3.1-remap
+สมัครเข้าร่วม งานได้โดยไม่มีค่าใช้จ่าย ได้เลย,safe,train,allow,uwm-v3.1-remap
+อย่าลืมระวัง อากาศแปรปรวน ตอนกลับหอ,safe,train,allow,uwm-v3.1-remap
+กิจกรรมนี้ มีของรางวัล หลังจบงาน,safe,train,allow,uwm-v3.1-remap
+งานชมรมนี้ มีรางวัลสําหรับผู้เข้าร่วม ด้วย,safe,train,allow,uwm-v3.1-remap
+มาห้องเรา ทํารายงานกลุ่ม ให้ที,safe,train,allow,uwm-v3.1-remap
+มานอนค้างที่หอ เพื่อทําโปรเจกต์ คืนนี้,safe,train,allow,uwm-v3.1-remap
+เจอกันข้างนอกตึก แล้วไปโรงอาหาร หลังเรียน,safe,train,allow,uwm-v3.1-remap
+มานอนค้างที่หอ เพื่อทําโปรเจกต์ กัน,safe,train,allow,uwm-v3.1-remap
+มาห้องกิจกรรม ช่วยทําโปรเจกต์ ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+เดินทางกลับดีๆ อากาศแปรปรวน นะ,safe,train,allow,uwm-v3.1-remap
+มาห้องกิจกรรม ช่วยดูสไลด์ ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+ค้างคืนที่ห้องชมรม เพื่อซ้อมนําเสนอ ก่อนวันงาน,safe,train,allow,uwm-v3.1-remap
+ค้างคืนที่ห้องชมรม เพื่อทําโปรเจกต์ กัน,safe,train,allow,uwm-v3.1-remap
+อย่าลืมระวัง อากาศแปรปรวน ด้วย,safe,train,allow,uwm-v3.1-remap
+หาเพื่อนมาค้าง เพื่อซ้อมนําเสนอ ก่อนวันงาน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ทํารายงาน ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+เจอกันข้างนอกตึก แล้วเดินไปห้องสมุด หลังเรียน,safe,train,allow,uwm-v3.1-remap
+เย็นนี้ ซ้อมดนตรี กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+เจอกันหลังตึก แล้วไปโรงอาหาร หลังเรียน,safe,train,allow,uwm-v3.1-remap
+งานชมรมนี้ มีของรางวัล สําหรับทุกคน,safe,train,allow,uwm-v3.1-remap
+มาที่ห้องชมรม ช่วยดูสไลด์ ให้ที,safe,train,allow,uwm-v3.1-remap
+มาห้องกิจกรรม ทํารายงานกลุ่ม ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+อย่าลืมระวัง รถบนถนน ตอนกลับหอ,safe,train,allow,uwm-v3.1-remap
+งานมหาวิทยาลัยนี้ มีรางวัลสําหรับผู้เข้าร่วม ด้วย,safe,train,allow,uwm-v3.1-remap
+มาที่ห้องชมรม ซ้อมพรีเซนต์ หน่อย,safe,train,allow,uwm-v3.1-remap
+เข้าร่วม งานได้โดยไม่มีค่าใช้จ่าย วันนี้,safe,train,allow,uwm-v3.1-remap
+เย็นนี้ อ่านหนังสือ ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+งานมหาวิทยาลัยนี้ มีของรางวัล ด้วย,safe,train,allow,uwm-v3.1-remap
+หาเพื่อนมาค้าง เพื่อซ้อมนําเสนอ กัน,safe,train,allow,uwm-v3.1-remap
+นัดกันหน้าตึก แล้วไปโรงอาหาร กัน,safe,train,allow,uwm-v3.1-remap
+ระวัง รถบนถนน นะ,safe,train,allow,uwm-v3.1-remap
+มาห้องกิจกรรม ทํารายงานกลุ่ม ให้ที,safe,train,allow,uwm-v3.1-remap
+เจอกันข้างนอกตึก แล้วเดินไปห้องสมุด พร้อมกัน,safe,train,allow,uwm-v3.1-remap
+เข้าร่วม กิจกรรมโดยไม่เสียเงิน ผ่านระบบ,safe,train,allow,uwm-v3.1-remap
+งานชมรมนี้ มีของที่ระลึก หลังจบงาน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน ทํารายงาน กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ อ่านหนังสือ กันไหม,safe,train,allow,uwm-v3.1-remap
+มาที่ห้องชมรม ทํารายงานกลุ่ม ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน เล่นบอร์ดเกม กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+เจอกันข้างนอกตึก แล้วไปโรงอาหาร พร้อมกัน,safe,train,allow,uwm-v3.1-remap
+มาที่ห้องชมรม ช่วยทําโปรเจกต์ ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+กิจกรรมนี้ มีของรางวัล สําหรับทุกคน,safe,train,allow,uwm-v3.1-remap
+นัดกันหน้าตึก แล้วไปสนามกีฬา พร้อมกัน,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ เล่นบอร์ดเกม กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+เจอกันข้างนอกตึก แล้วไปสนามกีฬา กัน,safe,train,allow,uwm-v3.1-remap
+อย่าลืมระวัง ฝนตก นะ,safe,train,allow,uwm-v3.1-remap
+มานอนค้างที่หอ เพื่อเตรียมงานเช้า กัน,safe,train,allow,uwm-v3.1-remap
+ค้างคืนที่ห้องชมรม เพื่อซ้อมนําเสนอ กัน,safe,train,allow,uwm-v3.1-remap
+มาที่ห้องชมรม ซ้อมพรีเซนต์ ให้ที,safe,train,allow,uwm-v3.1-remap
+มาห้องกิจกรรม ซ้อมพรีเซนต์ ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+เดินทางกลับดีๆ ฝนตก ด้วย,safe,train,allow,uwm-v3.1-remap
+เจอกันข้างนอกตึก แล้วไปสนามกีฬา พร้อมกัน,safe,train,allow,uwm-v3.1-remap
+ลงทะเบียนเข้าร่วม กิจกรรมได้ฟรี ผ่านระบบ,safe,train,allow,uwm-v3.1-remap
+เจอกันหลังตึก แล้วไปโรงอาหาร พร้อมกัน,safe,train,allow,uwm-v3.1-remap
+เจอกันหลังตึก แล้วเดินไปห้องสมุด หลังเรียน,safe,train,allow,uwm-v3.1-remap
+กิจกรรมนี้ มีของรางวัล ด้วย,safe,train,allow,uwm-v3.1-remap
+มาที่ห้องชมรม ช่วยดูสไลด์ ด้วยกัน,safe,train,allow,uwm-v3.1-remap
+หลังเลิกเรียน อ่านหนังสือ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+มาห้องเรา ซ้อมพรีเซนต์ หน่อย,safe,train,allow,uwm-v3.1-remap
+งานมหาวิทยาลัยนี้ มีของรางวัล สําหรับทุกคน,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ เล่นบอร์ดเกม กันไหม,safe,train,allow,uwm-v3.1-remap
+เย็นนี้ ไปดูหนัง กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+เข้าร่วม กิจกรรมได้ฟรี วันนี้,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ ไปนั่งบาร์ กันไหม,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ไปดื่มเบียร์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังส่งงาน ร้านเหล้ามีโปร ใครไปบ้าง,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ ร้านเหล้ามีโปร กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ร้านเหล้ามีโปร กันไหม,safe,train,allow,uwm-v3.1-remap
+หลังส่งงาน ไปดื่มเบียร์ ใครไปบ้าง,safe,train,allow,uwm-v3.1-remap
+หาเพื่อนไป นั่งดื่มเบียร์ คืนนี้,safe,train,allow,uwm-v3.1-remap
+หาเพื่อนไป นั่งดื่มเบียร์ สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ไปนั่งบาร์ ใครไปบ้าง,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อนไป นั่งดื่มเบียร์ สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ไปจิบไวน์ กันไหม,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ไปนั่งบาร์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ ไปนั่งบาร์ ใครไปบ้าง,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ ไปดื่มเบียร์ กันไหม,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ ไปจิบไวน์ ใครไปบ้าง,safe,train,allow,uwm-v3.1-remap
+หลังส่งงาน ไปจิบไวน์ ใครไปบ้าง,safe,train,allow,uwm-v3.1-remap
+หลังส่งงาน ร้านเหล้ามีโปร กันไหม,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อนไป นั่งดื่มเบียร์ หลังเรียน,safe,train,allow,uwm-v3.1-remap
+หาเพื่อนไป สังสรรค์ที่ร้านเหล้า สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+หาเพื่อนไป ดื่มเครื่องดื่มแอลกอฮอล์ หลังเรียน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ไปจิบไวน์ ใครไปบ้าง,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ไปนั่งบาร์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ร้านเหล้ามีโปร กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ร้านเหล้ามีโปร ใครไปบ้าง,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อนไป สังสรรค์ที่ร้านเหล้า สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+หาเพื่อนไป สังสรรค์ที่ร้านเหล้า คืนนี้,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อนไป สังสรรค์ที่ร้านเหล้า หลังเรียน,safe,train,allow,uwm-v3.1-remap
+หาเพื่อนไป ดื่มเครื่องดื่มแอลกอฮอล์ สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ ไปดื่มเบียร์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ร้านเหล้ามีโปร ใครไปบ้าง,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ไปดื่มเบียร์ ใครไปบ้าง,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ไปนั่งบาร์ กันไหม,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ร้านเหล้ามีโปร กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+ชวนไป นั่งดื่มเบียร์ คืนนี้,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ ไปนั่งบาร์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อนไป นั่งดื่มเบียร์ คืนนี้,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ไปดื่มเบียร์ ใครไปบ้าง,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ร้านเหล้ามีโปร กันไหม,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ไปจิบไวน์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ ไปดื่มเบียร์ ใครไปบ้าง,safe,train,allow,uwm-v3.1-remap
+หลังส่งงาน ไปนั่งบาร์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อนไป สังสรรค์ที่ร้านเหล้า คืนนี้,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ ไปจิบไวน์ กันไหม,safe,train,allow,uwm-v3.1-remap
+ชวนไป ดื่มเครื่องดื่มแอลกอฮอล์ สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ ร้านเหล้ามีโปร ใครไปบ้าง,safe,train,allow,uwm-v3.1-remap
+ชวนไป สังสรรค์ที่ร้านเหล้า สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+หลังส่งงาน ไปจิบไวน์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ไปจิบไวน์ ใครไปบ้าง,safe,train,allow,uwm-v3.1-remap
+หาเพื่อนไป นั่งดื่มเบียร์ หลังเรียน,safe,train,allow,uwm-v3.1-remap
+หลังส่งงาน ไปดื่มเบียร์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ไปจิบไวน์ กันไหม,safe,train,allow,uwm-v3.1-remap
+ชวนไป นั่งดื่มเบียร์ หลังเรียน,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อนไป ดื่มเครื่องดื่มแอลกอฮอล์ คืนนี้,safe,train,allow,uwm-v3.1-remap
+ชวนไป ดื่มเครื่องดื่มแอลกอฮอล์ หลังเรียน,safe,train,allow,uwm-v3.1-remap
+หลังส่งงาน ไปจิบไวน์ กันไหม,safe,train,allow,uwm-v3.1-remap
+หาเพื่อนไป ดื่มเครื่องดื่มแอลกอฮอล์ คืนนี้,safe,train,allow,uwm-v3.1-remap
+ชวนไป สังสรรค์ที่ร้านเหล้า คืนนี้,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ ร้านเหล้ามีโปร กันไหม,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อนไป ดื่มเครื่องดื่มแอลกอฮอล์ สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+หลังส่งงาน ไปนั่งบาร์ ใครไปบ้าง,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ไปดื่มเบียร์ กันไหม,safe,train,allow,uwm-v3.1-remap
+คืนนี้ ไปนั่งบาร์ กันไหม,safe,train,allow,uwm-v3.1-remap
+หลังส่งงาน ไปดื่มเบียร์ กันไหม,safe,train,allow,uwm-v3.1-remap
+นัดเพื่อนไป ดื่มเครื่องดื่มแอลกอฮอล์ หลังเรียน,safe,train,allow,uwm-v3.1-remap
+ชวนไป นั่งดื่มเบียร์ สุดสัปดาห์นี้,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ไปดื่มเบียร์ กันไหม,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ไปดื่มเบียร์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หาเพื่อนไป สังสรรค์ที่ร้านเหล้า หลังเรียน,safe,train,allow,uwm-v3.1-remap
+ชวนไป ดื่มเครื่องดื่มแอลกอฮอล์ คืนนี้,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ไปนั่งบาร์ ใครไปบ้าง,safe,train,allow,uwm-v3.1-remap
+หลังสอบ ไปจิบไวน์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+หลังส่งงาน ไปนั่งบาร์ กันไหม,safe,train,allow,uwm-v3.1-remap
+หลังส่งงาน ร้านเหล้ามีโปร กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+วันศุกร์นี้ ไปจิบไวน์ กับเพื่อน,safe,train,allow,uwm-v3.1-remap
+ชวนไป สังสรรค์ที่ร้านเหล้า หลังเรียน,safe,train,allow,uwm-v3.1-remap
+คืนนี้มาห้องเราแล้วมีเซ็กซ์กัน,sexual,train,block,uwm-v3.1-remap
+คืนนี้มาห้องเราแล้วมีเซ็กซ์กัน จริงๆ,sexual,train,block,uwm-v3.1-remap
+คืนนี้มาห้องเราแล้วมีเซ็กซ์กัน ว่ะ,sexual,train,block,uwm-v3.1-remap
+คืนนี้มาห้องเราแล้วมีเซ็กซ์กัน นะ,sexual,train,block,uwm-v3.1-remap
+คืนนี้มาห้องเราแล้วมีเซ็กซ์กัน วันนี้,sexual,train,block,uwm-v3.1-remap
+คืนนี้มาห้องเราแล้วมีเซ็กซ์กัน มาก,sexual,train,block,uwm-v3.1-remap
+มานอนค้างเพื่อทําเรื่องอย่างว่า,sexual,train,block,uwm-v3.1-remap
+มานอนค้างเพื่อทําเรื่องอย่างว่า จริงๆ,sexual,train,block,uwm-v3.1-remap
+มานอนค้างเพื่อทําเรื่องอย่างว่า ว่ะ,sexual,train,block,uwm-v3.1-remap
+มานอนค้างเพื่อทําเรื่องอย่างว่า นะ,sexual,train,block,uwm-v3.1-remap
+มานอนค้างเพื่อทําเรื่องอย่างว่า วันนี้,sexual,train,block,uwm-v3.1-remap
+มานอนค้างเพื่อทําเรื่องอย่างว่า มาก,sexual,train,block,uwm-v3.1-remap
+มาห้องคืนนี้อยากทําอะไรเสียวๆ,sexual,train,block,uwm-v3.1-remap
+มาห้องคืนนี้อยากทําอะไรเสียวๆ จริงๆ,sexual,train,block,uwm-v3.1-remap
+มาห้องคืนนี้อยากทําอะไรเสียวๆ ว่ะ,sexual,train,block,uwm-v3.1-remap
+มาห้องคืนนี้อยากทําอะไรเสียวๆ นะ,sexual,train,block,uwm-v3.1-remap
+มาห้องคืนนี้อยากทําอะไรเสียวๆ วันนี้,sexual,train,block,uwm-v3.1-remap
+มาห้องคืนนี้อยากทําอะไรเสียวๆ มาก,sexual,train,block,uwm-v3.1-remap
+หาเพื่อนมาค้างเพื่อมีความสัมพันธ์ทางเพศ,sexual,train,block,uwm-v3.1-remap
+หาเพื่อนมาค้างเพื่อมีความสัมพันธ์ทางเพศ จริงๆ,sexual,train,block,uwm-v3.1-remap
+หาเพื่อนมาค้างเพื่อมีความสัมพันธ์ทางเพศ ว่ะ,sexual,train,block,uwm-v3.1-remap
+หาเพื่อนมาค้างเพื่อมีความสัมพันธ์ทางเพศ นะ,sexual,train,block,uwm-v3.1-remap
+หาเพื่อนมาค้างเพื่อมีความสัมพันธ์ทางเพศ วันนี้,sexual,train,block,uwm-v3.1-remap
+หาเพื่อนมาค้างเพื่อมีความสัมพันธ์ทางเพศ มาก,sexual,train,block,uwm-v3.1-remap
+คืนนี้ไม่ดูหนัง อยากทํากิจกรรมบนเตียง,sexual,train,block,uwm-v3.1-remap
+คืนนี้ไม่ดูหนัง อยากทํากิจกรรมบนเตียง จริงๆ,sexual,train,block,uwm-v3.1-remap
+คืนนี้ไม่ดูหนัง อยากทํากิจกรรมบนเตียง ว่ะ,sexual,train,block,uwm-v3.1-remap
+คืนนี้ไม่ดูหนัง อยากทํากิจกรรมบนเตียง นะ,sexual,train,block,uwm-v3.1-remap
+คืนนี้ไม่ดูหนัง อยากทํากิจกรรมบนเตียง วันนี้,sexual,train,block,uwm-v3.1-remap
+คืนนี้ไม่ดูหนัง อยากทํากิจกรรมบนเตียง มาก,sexual,train,block,uwm-v3.1-remap
+สมัครตอนนี้ฟรีแล้วรับเครดิตฟรี,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ฟรีแล้วรับเครดิตฟรี จริงๆ,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ฟรีแล้วรับเครดิตฟรี ว่ะ,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ฟรีแล้วรับเครดิตฟรี นะ,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ฟรีแล้วรับเครดิตฟรี วันนี้,spam,train,block,uwm-v3.1-remap
+สมัครตอนนี้ฟรีแล้วรับเครดิตฟรี มาก,spam,train,block,uwm-v3.1-remap
+ลงทะเบียนแล้วรับโบนัสเงินทันที,spam,train,block,uwm-v3.1-remap
+ลงทะเบียนแล้วรับโบนัสเงินทันที จริงๆ,spam,train,block,uwm-v3.1-remap
+ลงทะเบียนแล้วรับโบนัสเงินทันที ว่ะ,spam,train,block,uwm-v3.1-remap
+ลงทะเบียนแล้วรับโบนัสเงินทันที นะ,spam,train,block,uwm-v3.1-remap
+ลงทะเบียนแล้วรับโบนัสเงินทันที วันนี้,spam,train,block,uwm-v3.1-remap
+ลงทะเบียนแล้วรับโบนัสเงินทันที มาก,spam,train,block,uwm-v3.1-remap
+กดสมัครฟรีเพื่อรับเงินแจก,spam,train,block,uwm-v3.1-remap
+กดสมัครฟรีเพื่อรับเงินแจก จริงๆ,spam,train,block,uwm-v3.1-remap
+กดสมัครฟรีเพื่อรับเงินแจก ว่ะ,spam,train,block,uwm-v3.1-remap
+กดสมัครฟรีเพื่อรับเงินแจก นะ,spam,train,block,uwm-v3.1-remap
+กดสมัครฟรีเพื่อรับเงินแจก วันนี้,spam,train,block,uwm-v3.1-remap
+กดสมัครฟรีเพื่อรับเงินแจก มาก,spam,train,block,uwm-v3.1-remap
+มีของรางวัลเป็นเงินถ้ากดลิงก์นี้,spam,train,block,uwm-v3.1-remap
+มีของรางวัลเป็นเงินถ้ากดลิงก์นี้ จริงๆ,spam,train,block,uwm-v3.1-remap
+มีของรางวัลเป็นเงินถ้ากดลิงก์นี้ ว่ะ,spam,train,block,uwm-v3.1-remap
+มีของรางวัลเป็นเงินถ้ากดลิงก์นี้ นะ,spam,train,block,uwm-v3.1-remap
+มีของรางวัลเป็นเงินถ้ากดลิงก์นี้ วันนี้,spam,train,block,uwm-v3.1-remap
+มีของรางวัลเป็นเงินถ้ากดลิงก์นี้ มาก,spam,train,block,uwm-v3.1-remap
+เข้าร่วมแล้วทําเงินวันละหลายพัน,spam,train,block,uwm-v3.1-remap
+เข้าร่วมแล้วทําเงินวันละหลายพัน จริงๆ,spam,train,block,uwm-v3.1-remap
+เข้าร่วมแล้วทําเงินวันละหลายพัน ว่ะ,spam,train,block,uwm-v3.1-remap
+เข้าร่วมแล้วทําเงินวันละหลายพัน นะ,spam,train,block,uwm-v3.1-remap
+เข้าร่วมแล้วทําเงินวันละหลายพัน วันนี้,spam,train,block,uwm-v3.1-remap
+เข้าร่วมแล้วทําเงินวันละหลายพัน มาก,spam,train,block,uwm-v3.1-remap
+กิจกรรมแม่งห่วยชิบหาย,profanity,train,block,uwm-v3.1-remap
+กิจกรรมแม่งห่วยชิบหาย จริงๆ,profanity,train,block,uwm-v3.1-remap
+กิจกรรมแม่งห่วยชิบหาย ว่ะ,profanity,train,block,uwm-v3.1-remap
+กิจกรรมแม่งห่วยชิบหาย นะ,profanity,train,block,uwm-v3.1-remap
+กิจกรรมแม่งห่วยชิบหาย วันนี้,profanity,train,block,uwm-v3.1-remap
+กิจกรรมแม่งห่วยชิบหาย มาก,profanity,train,block,uwm-v3.1-remap
+งานนี้กากชิบหาย,profanity,train,block,uwm-v3.1-remap
+งานนี้กากชิบหาย ว่ะ,profanity,train,block,uwm-v3.1-remap
+งานนี้กากชิบหาย นะ,profanity,train,block,uwm-v3.1-remap
+งานนี้กากชิบหาย วันนี้,profanity,train,block,uwm-v3.1-remap
+ระบบเหี้ยมาก,profanity,train,block,uwm-v3.1-remap
+ระบบเหี้ยมาก จริงๆ,profanity,train,block,uwm-v3.1-remap
+ระบบเหี้ยมาก ว่ะ,profanity,train,block,uwm-v3.1-remap
+ระบบเหี้ยมาก นะ,profanity,train,block,uwm-v3.1-remap
+ระบบเหี้ยมาก วันนี้,profanity,train,block,uwm-v3.1-remap
+ระบบเหี้ยมาก มาก,profanity,train,block,uwm-v3.1-remap
+โคตรห่วยเลยว่ะ จริงๆ,profanity,train,block,uwm-v3.1-remap
+โคตรห่วยเลยว่ะ ว่ะ,profanity,train,block,uwm-v3.1-remap
+โคตรห่วยเลยว่ะ นะ,profanity,train,block,uwm-v3.1-remap
+โคตรห่วยเลยว่ะ วันนี้,profanity,train,block,uwm-v3.1-remap
+โคตรห่วยเลยว่ะ มาก,profanity,train,block,uwm-v3.1-remap
+งานแม่งเฮงซวย,profanity,train,block,uwm-v3.1-remap
+งานแม่งเฮงซวย จริงๆ,profanity,train,block,uwm-v3.1-remap
+งานแม่งเฮงซวย ว่ะ,profanity,train,block,uwm-v3.1-remap
+งานแม่งเฮงซวย นะ,profanity,train,block,uwm-v3.1-remap
+งานแม่งเฮงซวย วันนี้,profanity,train,block,uwm-v3.1-remap
+งานแม่งเฮงซวย มาก,profanity,train,block,uwm-v3.1-remap
+มาเอากัน,sexual,train,block,uwm-context-contrast-v4
+มาทำงานกัน,safe,train,allow,uwm-context-contrast-v4
+ไปเอากันคืนนี้ไหม,sexual,train,block,uwm-context-contrast-v4
+ไปทำงานกันคืนนี้ไหม,safe,train,allow,uwm-context-contrast-v4
+คืนนี้ไปนอนด้วยกันไหม,sexual,train,block,uwm-context-contrast-v4
+คืนนี้ไปอ่านหนังสือด้วยกันไหม,safe,train,allow,uwm-context-contrast-v4
+หาคนมานอนด้วยคืนนี้,sexual,train,block,uwm-context-contrast-v4
+หาคนมาทำโปรเจกต์ด้วยคืนนี้,safe,train,allow,uwm-context-contrast-v4
+อยากมีอะไรกับเธอ,sexual,train,block,uwm-context-contrast-v4
+มีอะไรให้ช่วยไหม,safe,train,allow,uwm-context-contrast-v4
+ไปทำเรื่องอย่างว่ากัน,sexual,train,block,uwm-context-contrast-v4
+ไปทำกิจกรรมอาสากัน,safe,train,allow,uwm-context-contrast-v4
+ชวนมามีเซ็กซ์กัน,sexual,train,block,uwm-context-contrast-v4
+ชวนมาประชุมกัน,safe,train,allow,uwm-context-contrast-v4
+คืนนี้มาห้องเราสิอยากเอาด้วย,sexual,train,block,uwm-context-contrast-v4
+คืนนี้มาห้องอ่านหนังสือกัน,safe,train,allow,uwm-context-contrast-v4
+หาคู่นอนคืนนี้,sexual,train,block,uwm-context-contrast-v4
+หาเพื่อนอ่านหนังสือคืนนี้,safe,train,allow,uwm-context-contrast-v4
+อยากนอนกับเธอ,sexual,train,block,uwm-context-contrast-v4
+อยากนั่งคุยกับเธอ,safe,train,allow,uwm-context-contrast-v4
+กดลิงก์รับเครดิตฟรี,spam,train,block,uwm-context-contrast-v4
+กดลิงก์สมัครกิจกรรม,safe,train,allow,uwm-context-contrast-v4
+เว็บพนันแจกเครดิตฟรี,spam,train,block,uwm-context-contrast-v4
+เว็บไซต์กิจกรรมเปิดให้สมัครฟรี,safe,train,allow,uwm-context-contrast-v4
+ฝาก 100 รับโบนัส 300 ทักมา,spam,train,block,uwm-context-contrast-v4
+ค่าสมัคร 100 บาท ลงทะเบียนได้,safe,train,allow,uwm-context-contrast-v4
+สมัครกิจกรรมวันนี้เข้าร่วมฟรี,safe,train,allow,uwm-context-contrast-v4
+แทงบอลออนไลน์กำไรชัวร์,spam,train,block,uwm-context-contrast-v4
+ดูบอลสดด้วยกันคืนนี้,safe,train,allow,uwm-context-contrast-v4
+โปรคาสิโนแตกง่ายทักมา,spam,train,block,uwm-context-contrast-v4
+โปรเจกต์นี้ทำง่ายมาช่วยกัน,safe,train,allow,uwm-context-contrast-v4
+คลิกรับโบนัสพนันฟรี,spam,train,block,uwm-context-contrast-v4
+คลิกดูรายละเอียดกิจกรรมฟรี,safe,train,allow,uwm-context-contrast-v4
+มึงโง่มาก,insult,train,block,uwm-context-contrast-v4
+โจทย์นี้ยากมาก,safe,train,allow,uwm-context-contrast-v4
+ไอ้ควายทำอะไรเนี่ย,insult,train,block,uwm-context-contrast-v4
+ไปดูควายที่ฟาร์มกัน,safe,train,allow,uwm-context-contrast-v4
+ปัญญาอ่อนจริง ๆ,insult,train,block,uwm-context-contrast-v4
+กิจกรรมฝึกทักษะทางปัญญา,safe,train,allow,uwm-context-contrast-v4
+ทำไมโง่ขนาดนี้,insult,train,block,uwm-context-contrast-v4
+ทำไมข้อนี้ยากขนาดนี้,safe,train,allow,uwm-context-contrast-v4
+สมองมีไว้คั่นหูหรือไง,insult,train,block,uwm-context-contrast-v4
+มาฟังเรื่องสมองและการเรียนรู้กัน,safe,train,allow,uwm-context-contrast-v4
+ไร้สมองชิบหาย,insult,train,block,uwm-context-contrast-v4
+เรียนรู้การทำงานของสมอง,safe,train,allow,uwm-context-contrast-v4
+งานเหี้ยอะไรวะ,profanity,train,block,uwm-context-contrast-v4
+งานวันนี้มีอะไรบ้าง,safe,train,allow,uwm-context-contrast-v4
+แม่งโคตรเหี้ย,profanity,train,block,uwm-context-contrast-v4
+วันนี้เหนื่อยมาก,safe,train,allow,uwm-context-contrast-v4
+ควยเอ๊ยทำพังอีกแล้ว,profanity,train,block,uwm-context-contrast-v4
+โอ๊ยทำพังอีกแล้ว,safe,train,allow,uwm-context-contrast-v4
+ชิบหายแล้วลืมส่งงาน,profanity,train,block,uwm-context-contrast-v4
+แย่แล้วลืมส่งงาน,safe,train,allow,uwm-context-contrast-v4
+สัสงานเยอะมาก,profanity,train,block,uwm-context-contrast-v4
+งานเยอะมากวันนี้,safe,train,allow,uwm-context-contrast-v4
+เย็ดแม่งโคตรหงุดหงิด,profanity,train,block,uwm-context-contrast-v4
+วันนี้โคตรหงุดหงิด,safe,train,allow,uwm-context-contrast-v4
+ไปดื่มเบียร์กันหลังเลิกเรียน,safe,train,allow,uwm-context-contrast-v4
+นัดเพื่อนไปร้านเหล้า,safe,train,allow,uwm-context-contrast-v4
+มีพื้นที่สูบบุหรี่อยู่ด้านนอก,safe,train,allow,uwm-context-contrast-v4
+ชวนกันไปสูบบุหรี่หลังอาหาร,safe,train,allow,uwm-context-contrast-v4
+ร้านนี้มีค็อกเทลกับเบียร์,safe,train,allow,uwm-context-contrast-v4
+ใครสูบบุหรี่ไปโซนด้านนอกได้,safe,train,allow,uwm-context-contrast-v4
+คืนนี้ใครว่างมาทำรายงานด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+คืนนี้ใครว่างมาทำโปรเจกต์ด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+คืนนี้ใครว่างมาทำการบ้านด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+คืนนี้ใครว่างมาทำสไลด์ด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+คืนนี้เพื่อน ๆ มาทำรายงานด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+คืนนี้เพื่อน ๆ มาทำโปรเจกต์ด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+คืนนี้เพื่อน ๆ มาทำการบ้านด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+คืนนี้เพื่อน ๆ มาทำสไลด์ด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+คืนนี้มาทำรายงานด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+คืนนี้มาทำโปรเจกต์ด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+คืนนี้มาทำการบ้านด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+คืนนี้มาทำสไลด์ด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+เย็นนี้ไปกินข้าวด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+เย็นนี้ไปอ่านหนังสือด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+เย็นนี้ไปวิ่งด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+เย็นนี้ไปดูหนังด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+เย็นนี้ไปประชุมงานด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+คืนนี้ไปกินข้าวด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+คืนนี้ไปวิ่งด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+คืนนี้ไปดูหนังด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+คืนนี้ไปประชุมงานด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+พรุ่งนี้ไปกินข้าวด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+พรุ่งนี้ไปอ่านหนังสือด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+พรุ่งนี้ไปวิ่งด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+พรุ่งนี้ไปดูหนังด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+พรุ่งนี้ไปประชุมงานด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+เสาร์นี้ไปกินข้าวด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+เสาร์นี้ไปอ่านหนังสือด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+เสาร์นี้ไปวิ่งด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+เสาร์นี้ไปดูหนังด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+เสาร์นี้ไปประชุมงานด้วยกันไหม,safe,train,allow,uwm-v5-context-expansion
+ใครมีอะไรให้แก้บอกได้เลย,safe,train,allow,uwm-v5-context-expansion
+ใครมีอะไรให้ดูบอกได้เลย,safe,train,allow,uwm-v5-context-expansion
+ถ้าใครมีอะไรให้ช่วยบอกได้เลย,safe,train,allow,uwm-v5-context-expansion
+ถ้าใครมีอะไรให้แก้บอกได้เลย,safe,train,allow,uwm-v5-context-expansion
+ถ้าใครมีอะไรให้ดูบอกได้เลย,safe,train,allow,uwm-v5-context-expansion
+เพื่อนคนไหนมีอะไรให้ช่วยบอกได้เลย,safe,train,allow,uwm-v5-context-expansion
+เพื่อนคนไหนมีอะไรให้แก้บอกได้เลย,safe,train,allow,uwm-v5-context-expansion
+เพื่อนคนไหนมีอะไรให้ดูบอกได้เลย,safe,train,allow,uwm-v5-context-expansion
+ควายที่ทุ่งนาน่ารักมาก,safe,train,allow,uwm-v5-context-expansion
+ควายที่คอกน่ารักมาก,safe,train,allow,uwm-v5-context-expansion
+วัวที่ฟาร์มน่ารักมาก,safe,train,allow,uwm-v5-context-expansion
+วัวที่ทุ่งนาน่ารักมาก,safe,train,allow,uwm-v5-context-expansion
+วัวที่คอกน่ารักมาก,safe,train,allow,uwm-v5-context-expansion
+หมาที่ฟาร์มน่ารักมาก,safe,train,allow,uwm-v5-context-expansion
+หมาที่ทุ่งนาน่ารักมาก,safe,train,allow,uwm-v5-context-expansion
+หมาที่คอกน่ารักมาก,safe,train,allow,uwm-v5-context-expansion
+วันนี้เรียนเรื่องระบบสืบพันธุ์,safe,train,allow,uwm-v5-context-expansion
+วันนี้เรียนเรื่องเพศศึกษา,safe,train,allow,uwm-v5-context-expansion
+วันนี้เรียนเรื่องสุขศึกษา,safe,train,allow,uwm-v5-context-expansion
+วันนี้เรียนเรื่องกายวิภาค,safe,train,allow,uwm-v5-context-expansion
+ร้านนี้มีเครื่องดื่มแอลกอฮอล์ขายด้วย,safe,train,allow,uwm-v5-context-expansion
+ร้านนี้มีบุหรี่ขายด้วย,safe,train,allow,uwm-v5-context-expansion
+ร้านข้างมหาวิทยาลัยมีเบียร์ขายด้วย,safe,train,allow,uwm-v5-context-expansion
+ร้านข้างมหาวิทยาลัยมีเครื่องดื่มแอลกอฮอล์ขายด้วย,safe,train,allow,uwm-v5-context-expansion
+ร้านข้างมหาวิทยาลัยมีบุหรี่ขายด้วย,safe,train,allow,uwm-v5-context-expansion
+ร้านอาหารแถวนี้มีเบียร์ขายด้วย,safe,train,allow,uwm-v5-context-expansion
+ร้านอาหารแถวนี้มีเครื่องดื่มแอลกอฮอล์ขายด้วย,safe,train,allow,uwm-v5-context-expansion
+ร้านอาหารแถวนี้มีบุหรี่ขายด้วย,safe,train,allow,uwm-v5-context-expansion
+ด้านหลังอาคารมีพื้นที่สำหรับสูบบุหรี่,safe,train,allow,uwm-v5-context-expansion
+ด้านหลังอาคารมีพื้นที่สำหรับพักผ่อน,safe,train,allow,uwm-v5-context-expansion
+ด้านหลังอาคารมีพื้นที่สำหรับรับประทานอาหาร,safe,train,allow,uwm-v5-context-expansion
+ด้านนอกมีพื้นที่สำหรับสูบบุหรี่,safe,train,allow,uwm-v5-context-expansion
+ด้านนอกมีพื้นที่สำหรับพักผ่อน,safe,train,allow,uwm-v5-context-expansion
+ด้านนอกมีพื้นที่สำหรับรับประทานอาหาร,safe,train,allow,uwm-v5-context-expansion
+บริเวณลานมีพื้นที่สำหรับสูบบุหรี่,safe,train,allow,uwm-v5-context-expansion
+บริเวณลานมีพื้นที่สำหรับพักผ่อน,safe,train,allow,uwm-v5-context-expansion
+บริเวณลานมีพื้นที่สำหรับรับประทานอาหาร,safe,train,allow,uwm-v5-context-expansion
+เบียร์หมดแล้วเดี๋ยวไปซื้อเพิ่ม,safe,train,allow,uwm-v5-context-expansion
+น้ำเปล่าหมดแล้วเดี๋ยวไปซื้อเพิ่ม,safe,train,allow,uwm-v5-context-expansion
+ขนมหมดแล้วเดี๋ยวไปซื้อเพิ่ม,safe,train,allow,uwm-v5-context-expansion
+คำว่าแม่งเป็นคำที่ไม่สุภาพ,safe,train,allow,uwm-v5-context-expansion
+คำว่าเชี่ยเป็นคำที่ไม่สุภาพ,safe,train,allow,uwm-v5-context-expansion
+คำว่าเหี้ยเป็นคำที่ไม่สุภาพ,safe,train,allow,uwm-v5-context-expansion
+คำว่าสัสเป็นคำที่ไม่สุภาพ,safe,train,allow,uwm-v5-context-expansion
+ตัวอย่างประโยคนี้มีคำว่าแม่งเพื่อใช้ทดสอบระบบ,safe,train,allow,uwm-v5-context-expansion
+ตัวอย่างประโยคนี้มีคำว่าเชี่ยเพื่อใช้ทดสอบระบบ,safe,train,allow,uwm-v5-context-expansion
+ตัวอย่างประโยคนี้มีคำว่าควายเพื่อใช้ทดสอบระบบ,safe,train,allow,uwm-v5-context-expansion
+ตัวอย่างประโยคนี้มีคำว่าเซ็กซ์เพื่อใช้ทดสอบระบบ,safe,train,allow,uwm-v5-context-expansion
+เกมนี้เรากากเองต้องฝึกเพิ่ม,safe,train,allow,uwm-v5-context-expansion
+เกมนี้เราเล่นพลาดเองต้องฝึกเพิ่ม,safe,train,allow,uwm-v5-context-expansion
+เกมนี้เราทำไม่ดีเองต้องฝึกเพิ่ม,safe,train,allow,uwm-v5-context-expansion
+เว็บไซต์นี้เปิดรับสมัครนักศึกษา,safe,train,allow,uwm-v5-context-expansion
+เว็บไซต์นี้ให้ลงทะเบียนกิจกรรมฟรี,safe,train,allow,uwm-v5-context-expansion
+เว็บไซต์นี้แจกเอกสารการเรียนฟรี,safe,train,allow,uwm-v5-context-expansion
+คืนนี้มานั่งทำงานที่ห้องเราได้นะ,safe,train,allow,uwm-v5-context-expansion
+มาห้องเราเพื่อซ้อมพรีเซนต์กันไหม,safe,train,allow,uwm-v5-context-expansion
+ไปนอนพักก่อนนะพรุ่งนี้มีเรียนเช้า,safe,train,allow,uwm-v5-context-expansion
+คืนนี้นอนให้พอแล้วค่อยทำงานต่อ,safe,train,allow,uwm-v5-context-expansion
+ใครว่างมาช่วยจัดห้องกิจกรรมหน่อย,safe,train,allow,uwm-v5-context-expansion
+มีอะไรติดขัดเรื่องงานถามเราได้,safe,train,allow,uwm-v5-context-expansion
+คำว่าควายในประโยคนี้หมายถึงสัตว์,safe,train,allow,uwm-v5-context-expansion
+อาจารย์ยกตัวอย่างคำหยาบในชั้นเรียน,safe,train,allow,uwm-v5-context-expansion
+รายงานเรื่องผลกระทบของการสูบบุหรี่เสร็จแล้ว,safe,train,allow,uwm-v5-context-expansion
+งานวิจัยนี้ศึกษาเรื่องการดื่มแอลกอฮอล์,safe,train,allow,uwm-v5-context-expansion
+ชมรมจัดกิจกรรมรณรงค์งดสูบบุหรี่,safe,train,allow,uwm-v5-context-expansion
+ร้านอาหารแจ้งว่ามีเบียร์ในเมนู,safe,train,allow,uwm-v5-context-expansion
+ไปกินหมูกระทะด้วยกันหลังเลิกเรียน,safe,train,allow,uwm-v5-context-expansion
+คืนนี้นัดประชุมกลุ่มที่ห้องเรา,safe,train,allow,uwm-v5-context-expansion
+มานอนพักที่ห้องรับรองได้ถ้าเหนื่อย,safe,train,allow,uwm-v5-context-expansion
+มีห้องพักสำหรับผู้เข้าร่วมกิจกรรม,safe,train,allow,uwm-v5-context-expansion
+แม่งเอ๊ยลืมส่งงานอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+แม่งเอ๊ยลืมกระเป๋าอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+แม่งเอ๊ยรถติดอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+แม่งเอ๊ยฝนตกอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+แม่งเอ๊ยเน็ตหลุดอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+แม่งเอ๊ยตื่นสายอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+แม่งเอ๊ยไฟดับอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+แม่งเอ๊ยงานหายอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+แม่งเอ๊ยรถเสียอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+แม่งเอ๊ยสอบยากอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+เชี่ยลืมส่งงานอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+เชี่ยลืมกระเป๋าอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+เชี่ยรถติดอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+เชี่ยฝนตกอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+เชี่ยเน็ตหลุดอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+เชี่ยตื่นสายอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+เชี่ยไฟดับอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+เชี่ยงานหายอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+เชี่ยรถเสียอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+เชี่ยสอบยากอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+เหี้ยเอ๊ยลืมส่งงานอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+เหี้ยเอ๊ยลืมกระเป๋าอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+เหี้ยเอ๊ยรถติดอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+เหี้ยเอ๊ยฝนตกอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+เหี้ยเอ๊ยเน็ตหลุดอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+เหี้ยเอ๊ยตื่นสายอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+เหี้ยเอ๊ยไฟดับอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+เหี้ยเอ๊ยงานหายอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+เหี้ยเอ๊ยรถเสียอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+เหี้ยเอ๊ยสอบยากอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+สัสเอ๊ยลืมส่งงานอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+สัสเอ๊ยลืมกระเป๋าอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+สัสเอ๊ยรถติดอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+สัสเอ๊ยฝนตกอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+สัสเอ๊ยเน็ตหลุดอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+สัสเอ๊ยตื่นสายอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+สัสเอ๊ยไฟดับอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+สัสเอ๊ยงานหายอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+สัสเอ๊ยรถเสียอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+สัสเอ๊ยสอบยากอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+โคตรเซ็งแม่งลืมส่งงานอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+โคตรเซ็งแม่งลืมกระเป๋าอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+โคตรเซ็งแม่งรถติดอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+โคตรเซ็งแม่งฝนตกอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+โคตรเซ็งแม่งเน็ตหลุดอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+โคตรเซ็งแม่งตื่นสายอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+โคตรเซ็งแม่งไฟดับอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+โคตรเซ็งแม่งงานหายอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+โคตรเซ็งแม่งรถเสียอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+โคตรเซ็งแม่งสอบยากอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+งานเยอะชิบหายวันนี้,profanity,train,block,uwm-v5-context-expansion
+เหนื่อยชิบหายเลย,profanity,train,block,uwm-v5-context-expansion
+ซวยชิบหายทั้งวัน,profanity,train,block,uwm-v5-context-expansion
+แม่งน่ารำคาญว่ะ,profanity,train,block,uwm-v5-context-expansion
+เชี่ยเอ๊ยเกือบไม่ทัน,profanity,train,block,uwm-v5-context-expansion
+สัสเหนื่อยว่ะ,profanity,train,block,uwm-v5-context-expansion
+ควยเอ๊ยเกมค้างอีกละ,profanity,train,block,uwm-v5-context-expansion
+เหี้ยเอ๊ยทำไฟล์หาย,profanity,train,block,uwm-v5-context-expansion
+แม่งพลาดอีกแล้ว,profanity,train,block,uwm-v5-context-expansion
+โคตรเหี้ยเลยวันนี้,profanity,train,block,uwm-v5-context-expansion
+มึงกากชะมัด,insult,train,block,uwm-v5-context-expansion
+มึงกระจอกว่ะ,insult,train,block,uwm-v5-context-expansion
+มึงไร้สมองจริง,insult,train,block,uwm-v5-context-expansion
+มึงปัญญาอ่อนมาก,insult,train,block,uwm-v5-context-expansion
+มึงทำอะไรไม่เป็นเลย,insult,train,block,uwm-v5-context-expansion
+มึงไร้ความสามารถ,insult,train,block,uwm-v5-context-expansion
+แกโง่มาก,insult,train,block,uwm-v5-context-expansion
+แกกากชะมัด,insult,train,block,uwm-v5-context-expansion
+แกกระจอกว่ะ,insult,train,block,uwm-v5-context-expansion
+แกไร้สมองจริง,insult,train,block,uwm-v5-context-expansion
+แกปัญญาอ่อนมาก,insult,train,block,uwm-v5-context-expansion
+แกทำอะไรไม่เป็นเลย,insult,train,block,uwm-v5-context-expansion
+แกไร้ความสามารถ,insult,train,block,uwm-v5-context-expansion
+ไอ้นี่โง่มาก,insult,train,block,uwm-v5-context-expansion
+ไอ้นี่กากชะมัด,insult,train,block,uwm-v5-context-expansion
+ไอ้นี่กระจอกว่ะ,insult,train,block,uwm-v5-context-expansion
+ไอ้นี่ไร้สมองจริง,insult,train,block,uwm-v5-context-expansion
+ไอ้นี่ปัญญาอ่อนมาก,insult,train,block,uwm-v5-context-expansion
+ไอ้นี่ทำอะไรไม่เป็นเลย,insult,train,block,uwm-v5-context-expansion
+ไอ้นี่ไร้ความสามารถ,insult,train,block,uwm-v5-context-expansion
+พวกมึงโง่มาก,insult,train,block,uwm-v5-context-expansion
+พวกมึงกากชะมัด,insult,train,block,uwm-v5-context-expansion
+พวกมึงกระจอกว่ะ,insult,train,block,uwm-v5-context-expansion
+พวกมึงไร้สมองจริง,insult,train,block,uwm-v5-context-expansion
+พวกมึงปัญญาอ่อนมาก,insult,train,block,uwm-v5-context-expansion
+พวกมึงทำอะไรไม่เป็นเลย,insult,train,block,uwm-v5-context-expansion
+พวกมึงไร้ความสามารถ,insult,train,block,uwm-v5-context-expansion
+คนนี้โง่มาก,insult,train,block,uwm-v5-context-expansion
+คนนี้กากชะมัด,insult,train,block,uwm-v5-context-expansion
+คนนี้กระจอกว่ะ,insult,train,block,uwm-v5-context-expansion
+คนนี้ไร้สมองจริง,insult,train,block,uwm-v5-context-expansion
+คนนี้ปัญญาอ่อนมาก,insult,train,block,uwm-v5-context-expansion
+คนนี้ทำอะไรไม่เป็นเลย,insult,train,block,uwm-v5-context-expansion
+คนนี้ไร้ความสามารถ,insult,train,block,uwm-v5-context-expansion
+สมองไม่มีหรือไงถึงทำแบบนี้,insult,train,block,uwm-v5-context-expansion
+ไอ้เวรทำพังอีกแล้ว,insult,train,block,uwm-v5-context-expansion
+โง่เหมือนควายจริง ๆ,insult,train,block,uwm-v5-context-expansion
+ทำแค่นี้ไม่ได้ก็กากเกิน,insult,train,block,uwm-v5-context-expansion
+อย่าทำเป็นเก่งเลยกระจอก,insult,train,block,uwm-v5-context-expansion
+คนอะไรไร้สมองจริง,insult,train,block,uwm-v5-context-expansion
+มึงนี่ไม่มีปัญญาทำอะไรเลย,insult,train,block,uwm-v5-context-expansion
+ไอ้ควายคิดได้แค่นี้เหรอ,insult,train,block,uwm-v5-context-expansion
+พวกแกมันห่วยแตก,insult,train,block,uwm-v5-context-expansion
+โง่แล้วยังอวดเก่งอีก,insult,train,block,uwm-v5-context-expansion
+คืนนี้มานอนด้วยกันไหม,sexual,train,block,uwm-v5-context-expansion
+คืนนี้มาค้างกับเราสองต่อสองไหม,sexual,train,block,uwm-v5-context-expansion
+คืนนี้มานอนห้องเราสองคนไหม,sexual,train,block,uwm-v5-context-expansion
+คืนนี้ไปต่อกันที่ห้องไหม,sexual,train,block,uwm-v5-context-expansion
+มาห้องเราคืนนี้เดี๋ยวจัดให้,sexual,train,block,uwm-v5-context-expansion
+คืนนี้อยากนอนกับเธอ,sexual,train,block,uwm-v5-context-expansion
+อยากเอากับเธอคืนนี้,sexual,train,block,uwm-v5-context-expansion
+อยากมีอะไรกับเธอคืนนี้,sexual,train,block,uwm-v5-context-expansion
+คืนนี้ว่างมาเอากันไหม,sexual,train,block,uwm-v5-context-expansion
+มาหาหน่อยอยากทำเรื่องอย่างว่า,sexual,train,block,uwm-v5-context-expansion
+หาเพื่อนนอนด้วยคืนนี้ทักมา,sexual,train,block,uwm-v5-context-expansion
+คืนนี้มาหาเราที่ห้องสองต่อสอง,sexual,train,block,uwm-v5-context-expansion
+อยากมีเซ็กซ์กับเธอ,sexual,train,block,uwm-v5-context-expansion
+ขอจับนมได้ไหม,sexual,train,block,uwm-v5-context-expansion
+อยากจับหน้าอกเธอ,sexual,train,block,uwm-v5-context-expansion
+คืนนี้มาค้างห้องเราแล้วค่อยว่ากัน,sexual,train,block,uwm-v5-context-expansion
+ไปต่อที่ห้องเราสองคนไหม,sexual,train,block,uwm-v5-context-expansion
+คืนนี้ไม่ต้องกลับมานอนกับเราไหม,sexual,train,block,uwm-v5-context-expansion
+อยากชวนเธอขึ้นเตียง,sexual,train,block,uwm-v5-context-expansion
+มานอนกอดกันสองต่อสองคืนนี้ไหม,sexual,train,block,uwm-v5-context-expansion
+คืนนี้มานอนกับเราไหม,sexual,train,block,uwm-v5-context-expansion
+คืนนี้ไปต่อที่ห้องเรามั้ย,sexual,train,block,uwm-v5-context-expansion
+คืนนี้มาค้างห้องเราสองคนไหม,sexual,train,block,uwm-v5-context-expansion
+คืนนี้อยากเอากันไหม,sexual,train,block,uwm-v5-context-expansion
+พรุ่งนี้คืนมานอนกับเราไหม,sexual,train,block,uwm-v5-context-expansion
+พรุ่งนี้คืนไปต่อที่ห้องเรามั้ย,sexual,train,block,uwm-v5-context-expansion
+พรุ่งนี้คืนมาค้างห้องเราสองคนไหม,sexual,train,block,uwm-v5-context-expansion
+พรุ่งนี้คืนอยากเอากันไหม,sexual,train,block,uwm-v5-context-expansion
+หลังงานเลิกมานอนกับเราไหม,sexual,train,block,uwm-v5-context-expansion
+หลังงานเลิกไปต่อที่ห้องเรามั้ย,sexual,train,block,uwm-v5-context-expansion
+หลังงานเลิกมาค้างห้องเราสองคนไหม,sexual,train,block,uwm-v5-context-expansion
+หลังงานเลิกอยากเอากันไหม,sexual,train,block,uwm-v5-context-expansion
+เครดิตฟรีกดลิงก์รับทันที,spam,train,block,uwm-v5-context-expansion
+สมัครเว็บพนันรับโบนัสสมาชิกใหม่,spam,train,block,uwm-v5-context-expansion
+ฝากร้อยรับเพิ่มสามร้อยทักแชต,spam,train,block,uwm-v5-context-expansion
+เว็บตรงแตกง่ายสมัครตอนนี้,spam,train,block,uwm-v5-context-expansion
+รับเครดิตฟรีไม่ต้องลงทุนคลิกเลย,spam,train,block,uwm-v5-context-expansion
+หาเงินง่ายวันละหมื่นสนใจทัก,spam,train,block,uwm-v5-context-expansion
+คาสิโนออนไลน์แจกโบนัสสมาชิกใหม่,spam,train,block,uwm-v5-context-expansion
+แทงบอลวันนี้รับเครดิตเพิ่มฟรี,spam,train,block,uwm-v5-context-expansion
+ลงทุนครั้งเดียวกำไรชัวร์ทักมา,spam,train,block,uwm-v5-context-expansion
+โปรสล็อตแตกหนักสมัครเลย,spam,train,block,uwm-v5-context-expansion
+สล็อตเครดิตฟรีสมัครผ่านลิงก์นี้,spam,train,block,uwm-v5-context-expansion
+รับโบนัสคาสิโนเพียงสมัครสมาชิก,spam,train,block,uwm-v5-context-expansion
+เว็บพนันเปิดใหม่แจกเครดิตฟรี,spam,train,block,uwm-v5-context-expansion
+ฝากเงินวันนี้รับโบนัสทันที,spam,train,block,uwm-v5-context-expansion
+การันตีกำไรลงทุนแล้วทักแชต,spam,train,block,uwm-v5-context-expansion
+งานออนไลน์รายได้วันละหมื่นสมัครด่วน,spam,train,block,uwm-v5-context-expansion
+คลิกลิงก์รับเงินฟรีทันที,spam,train,block,uwm-v5-context-expansion
+โปรพนันบอลสมาชิกใหม่รับเครดิต,spam,train,block,uwm-v5-context-expansion
+สล็อตเว็บตรงโบนัสแตกหนัก,spam,train,block,uwm-v5-context-expansion
+คาสิโนฝากน้อยรับโบนัสเพิ่ม,spam,train,block,uwm-v5-context-expansion
+สล็อตเครดิตฟรีทักมาเลย,spam,train,block,uwm-v5-context-expansion
+สล็อตโบนัสสมาชิกใหม่ทักมาเลย,spam,train,block,uwm-v5-context-expansion
+สล็อตฝากร้อยรับสามร้อยทักมาเลย,spam,train,block,uwm-v5-context-expansion
+สล็อตสมัครวันนี้รับเครดิตทักมาเลย,spam,train,block,uwm-v5-context-expansion
+คาสิโนเครดิตฟรีทักมาเลย,spam,train,block,uwm-v5-context-expansion
+คาสิโนโบนัสสมาชิกใหม่ทักมาเลย,spam,train,block,uwm-v5-context-expansion
+คาสิโนฝากร้อยรับสามร้อยทักมาเลย,spam,train,block,uwm-v5-context-expansion
+คาสิโนสมัครวันนี้รับเครดิตทักมาเลย,spam,train,block,uwm-v5-context-expansion
+แทงบอลเครดิตฟรีทักมาเลย,spam,train,block,uwm-v5-context-expansion
+แทงบอลโบนัสสมาชิกใหม่ทักมาเลย,spam,train,block,uwm-v5-context-expansion
+แทงบอลฝากร้อยรับสามร้อยทักมาเลย,spam,train,block,uwm-v5-context-expansion
+แทงบอลสมัครวันนี้รับเครดิตทักมาเลย,spam,train,block,uwm-v5-context-expansion
+บาคาร่าเครดิตฟรีทักมาเลย,spam,train,block,uwm-v5-context-expansion
+บาคาร่าโบนัสสมาชิกใหม่ทักมาเลย,spam,train,block,uwm-v5-context-expansion
+บาคาร่าฝากร้อยรับสามร้อยทักมาเลย,spam,train,block,uwm-v5-context-expansion
+บาคาร่าสมัครวันนี้รับเครดิตทักมาเลย,spam,train,block,uwm-v5-context-expansion

@@ -13,6 +13,7 @@ const Comment = require("../models/Comment");
 const ModerationFlag = require("../models/ModerationFlag");
 const notificationService = require("../services/notificationService");
 const InappropriateWord = require("../models/InappropriateWord");
+const { queueTrainingJobs, getTrainingQueueStatus } = require("../services/moderationTrainingQueue");
 const { setCustomWords } = require("../services/moderationService");
 const { getActivityStartDateTime, getActivityEndDateTime } = require("../utils/activityTime");
 
@@ -30,6 +31,66 @@ const refreshModerationWords = async () => {
 
   setCustomWords(words);
 };
+
+/* INTERNAL TRAINING WORKER API — shared token, never expose token to browser */
+const crypto = require("crypto");
+const ModerationTrainingJob = require("../models/ModerationTrainingJob");
+const ModerationTrainingWord = require("../models/ModerationTrainingWord");
+const sequelize = require("../database");
+const { QueryTypes } = require("sequelize");
+function workerAuth(req, res, next) {
+  const secret = process.env.MODERATION_WORKER_TOKEN;
+  const provided = req.get("x-training-token") || "";
+  if (!secret || Buffer.byteLength(provided) !== Buffer.byteLength(secret) ||
+      !crypto.timingSafeEqual(Buffer.from(provided), Buffer.from(secret))) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  next();
+}
+// Atomically claim the oldest pending job; one worker should poll this endpoint.
+router.post("/internal/training/claim", workerAuth, async (req, res) => {
+  try {
+    const result = await sequelize.transaction(async (transaction) => {
+      const rows = await sequelize.query(
+        "SELECT id FROM ModerationTrainingJobs WHERE status = 'pending' ORDER BY id LIMIT 1 FOR UPDATE",
+        { type: QueryTypes.SELECT, transaction }
+      );
+      if (!rows.length) return null;
+      const job = await ModerationTrainingJob.findByPk(rows[0].id, { transaction });
+      await job.update({ status: "preparing", startedAt: new Date(), errorMessage: null }, { transaction });
+      const words = await ModerationTrainingWord.findAll({
+        where: { trainingJobId: job.id }, raw: true, transaction,
+      });
+      return { jobId: job.id, words: words.map(w => ({ word: w.wordSnapshot, category: w.categorySnapshot })) };
+    });
+    return res.json(result || { job: null });
+  } catch (e) {
+    console.error("Claim training job error", e);
+    return res.status(500).json({ message: "Claim failed" });
+  }
+});
+router.post("/internal/training/:id/status", workerAuth, async (req, res) => {
+  try {
+    const status = String(req.body?.status || "");
+    if (!["training", "evaluating", "completed", "failed"].includes(status))
+      return res.status(400).json({ message: "Invalid status" });
+    const job = await ModerationTrainingJob.findByPk(req.params.id);
+    if (!job) return res.sendStatus(404);
+    const transitions = { preparing: ["training", "failed"], training: ["evaluating", "failed"], evaluating: ["completed", "failed"] };
+    if (!(transitions[job.status] || []).includes(status))
+      return res.status(409).json({ message: "Invalid transition" });
+    await job.update({ status,
+      modelVersion: status === "completed" ? String(req.body.modelVersion || "").slice(0, 100) : job.modelVersion,
+      errorMessage: status === "failed" ? String(req.body.errorMessage || "Training failed").slice(0, 2000) : null,
+      finishedAt: ["completed", "failed"].includes(status) ? new Date() : null,
+    });
+    return res.json({ id: job.id, status: job.status });
+  } catch (e) {
+    console.error("Training status error", e);
+    return res.status(500).json({ message: "Status update failed" });
+  }
+});
+
 /* ========================= DASHBOARD ========================= */
 
 router.get("/dashboard", auth, isAdmin, async (req, res) => {
@@ -2217,6 +2278,16 @@ router.put("/moderation/reviews/:activityId/:userId/hide", auth, isAdmin, async 
 
 /* ========================= INAPPROPRIATE WORDS ========================= */
 
+// ดูจำนวนคำที่รอเข้ารอบฝึกและงานฝึกที่สร้างแล้ว (เฉพาะ Admin)
+router.get("/moderation-training/status", auth, isAdmin, async (req, res) => {
+  try {
+    return res.json(await getTrainingQueueStatus());
+  } catch (error) {
+    console.error("Moderation training status error:", error);
+    return res.status(500).json({ message: "ไม่สามารถโหลดสถานะการฝึกได้" });
+  }
+});
+
 router.get("/inappropriate-words", auth, isAdmin, async (req, res) => {
   try {
     const customWords = await InappropriateWord.findAll({
@@ -2257,10 +2328,8 @@ router.post("/inappropriate-words", auth, isAdmin, async (req, res) => {
     const allowedCategories = [
       "profanity",
       "insult",
-      "threat",
       "sexual",
       "spam",
-      "alcohol",
     ];
 
     if (!allowedCategories.includes(category)) {
@@ -2294,6 +2363,13 @@ router.post("/inappropriate-words", auth, isAdmin, async (req, res) => {
     });
 
     await refreshModerationWords();
+
+    // คำถูกบันทึกและมีผลกับ Rule-based แล้ว แม้คิวฝึกมีปัญหา
+    try {
+      await queueTrainingJobs();
+    } catch (queueError) {
+      console.error("Moderation training queue error:", queueError);
+    }
 
     return res.status(201).json(created);
   } catch (error) {
@@ -2332,10 +2408,8 @@ router.put("/inappropriate-words/:id", auth, isAdmin, async (req, res) => {
     const allowedCategories = [
       "profanity",
       "insult",
-      "threat",
       "sexual",
       "spam",
-      "alcohol",
     ];
 
     if (!allowedCategories.includes(category)) {

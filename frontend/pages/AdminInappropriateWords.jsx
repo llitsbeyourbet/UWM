@@ -21,13 +21,8 @@ const API_URL = import.meta.env.VITE_API_URL;
 const CATEGORY_OPTIONS = [
     { value: "profanity", label: "คำหยาบ" },
     { value: "insult", label: "คำดูหมิ่นหรือด่าทอ" },
-    { value: "threat", label: "คำข่มขู่หรือคุกคาม" },
     { value: "sexual", label: "เนื้อหาทางเพศที่ไม่เหมาะสม" },
     { value: "spam", label: "สแปมหรือเนื้อหาเสี่ยง" },
-    {
-        value: "alcohol",
-        label: "เนื้อหาที่เกี่ยวข้องกับเครื่องดื่มมึนเมา",
-    },
 ];
 
 const CATEGORY_LABELS = Object.fromEntries(
@@ -157,7 +152,7 @@ export default function AdminInappropriateWords() {
 
         setForm({
             word: item.word || "",
-            category: item.category || "profanity",
+            category: getDisplayCategory(item.category) || "profanity",
             level:
                 Number(item.weight) >= 70 ? "danger" : "warning",
         });

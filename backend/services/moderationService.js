@@ -16,7 +16,6 @@ const getAllWords = () => customWords;
 const CATEGORY_LABELS = {
   profanity: "คำหยาบ",
   insult: "คำดูหมิ่นหรือด่าทอ",
-  threat: "คำข่มขู่หรือคุกคาม",
   sexual: "เนื้อหาทางเพศที่ไม่เหมาะสม",
   spam: "สแปมหรือเนื้อหาเสี่ยง",
 };
@@ -79,7 +78,6 @@ const calculateRiskScore = (matches) => {
 const BLOCK_CATEGORIES = new Set([
   "profanity",
   "insult",
-  "threat",
   "sexual",
   "spam",
 ]);
