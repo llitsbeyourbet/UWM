@@ -36,60 +36,426 @@ const refreshModerationWords = async () => {
 const crypto = require("crypto");
 const ModerationTrainingJob = require("../models/ModerationTrainingJob");
 const ModerationTrainingWord = require("../models/ModerationTrainingWord");
+const ModerationTrainingExample = require("../models/ModerationTrainingExample");
 const sequelize = require("../database");
 const { QueryTypes } = require("sequelize");
 function workerAuth(req, res, next) {
   const secret = process.env.MODERATION_WORKER_TOKEN;
   const provided = req.get("x-training-token") || "";
   if (!secret || Buffer.byteLength(provided) !== Buffer.byteLength(secret) ||
-      !crypto.timingSafeEqual(Buffer.from(provided), Buffer.from(secret))) {
+    !crypto.timingSafeEqual(Buffer.from(provided), Buffer.from(secret))) {
     return res.status(401).json({ message: "Unauthorized" });
   }
   next();
 }
-// Atomically claim the oldest pending job; one worker should poll this endpoint.
+
+
+/* ================= COMPLETED TRAINING HISTORY ================= */
+
+router.get("/internal/training/completed", workerAuth, async (req, res) => {
+  try {
+    const jobs = await ModerationTrainingJob.findAll({
+      where: { status: "completed" },
+      attributes: ["id", "modelVersion"],
+      order: [["id", "ASC"]],
+      raw: true,
+    });
+
+    const result = [];
+
+    for (const job of jobs) {
+      const examples = await ModerationTrainingExample.findAll({
+        where: {
+          trainingJobId: job.id,
+          status: "queued",
+        },
+        attributes: ["text", "category"],
+        order: [["id", "ASC"]],
+        raw: true,
+      });
+
+      if (examples.length !== 30) {
+        return res.status(409).json({
+          message: `Job ${job.id} มีข้อมูลไม่ครบ 30 ประโยค`,
+        });
+      }
+
+      result.push({
+        jobId: job.id,
+        modelVersion: job.modelVersion,
+        examples: examples.map((item) => ({
+          text: item.text,
+          label: item.category,
+        })),
+      });
+    }
+
+    return res.json({ jobs: result });
+  } catch (error) {
+    console.error("Get completed training jobs error:", error);
+
+    return res.status(500).json({
+      message: "ไม่สามารถโหลดประวัติการฝึกโมเดลได้",
+    });
+  }
+});
+
+
+/* ================= TRAINING JOB LEASE ================= */
+
+const TRAINING_LEASE_MS = 5 * 60 * 1000;
+const MAX_TRAINING_RETRIES = 3;
+
+const ACTIVE_TRAINING_STATUSES = [
+  "preparing",
+  "training",
+  "evaluating",
+];
+
+const validTrainingJobId = (value) => {
+  const id = Number(value);
+  return Number.isSafeInteger(id) && id > 0 ? id : null;
+};
+
+const getLeaseToken = (req) =>
+  String(req.get("x-training-lease") || "");
+
+const sameLeaseToken = (provided, expected) => {
+  if (!provided || !expected) return false;
+
+  const a = Buffer.from(provided);
+  const b = Buffer.from(expected);
+
+  return (
+    a.length === b.length &&
+    crypto.timingSafeEqual(a, b)
+  );
+};
+
+/* ================= CLAIM JOB ================= */
+
 router.post("/internal/training/claim", workerAuth, async (req, res) => {
   try {
     const result = await sequelize.transaction(async (transaction) => {
-      const rows = await sequelize.query(
-        "SELECT id FROM ModerationTrainingJobs WHERE status = 'pending' ORDER BY id LIMIT 1 FOR UPDATE",
-        { type: QueryTypes.SELECT, transaction }
-      );
-      if (!rows.length) return null;
-      const job = await ModerationTrainingJob.findByPk(rows[0].id, { transaction });
-      await job.update({ status: "preparing", startedAt: new Date(), errorMessage: null }, { transaction });
-      const words = await ModerationTrainingWord.findAll({
-        where: { trainingJobId: job.id }, raw: true, transaction,
+      const now = new Date();
+
+      // ล็อก Job ที่ยังรอ หรือ Job ที่ Lease หมดอายุ
+      const job = await ModerationTrainingJob.findOne({
+        where: {
+          [Op.or]: [
+            { status: "pending" },
+            {
+              status: {
+                [Op.in]: ACTIVE_TRAINING_STATUSES,
+              },
+              leaseExpiresAt: {
+                [Op.lt]: now,
+              },
+            },
+          ],
+        },
+        order: [["id", "ASC"]],
+        transaction,
+        lock: transaction.LOCK.UPDATE,
       });
-      return { jobId: job.id, words: words.map(w => ({ word: w.wordSnapshot, category: w.categorySnapshot })) };
+
+      if (!job) return null;
+
+      const isRecovery = job.status !== "pending";
+      const nextRetryCount = isRecovery
+        ? job.retryCount + 1
+        : job.retryCount;
+
+      if (nextRetryCount > MAX_TRAINING_RETRIES) {
+        await job.update(
+          {
+            status: "failed",
+            errorMessage: "Maximum recovery attempts exceeded",
+            finishedAt: now,
+            leaseToken: null,
+            leaseExpiresAt: null,
+            retryCount: nextRetryCount,
+          },
+          { transaction }
+        );
+
+        return {
+          skippedJobId: job.id,
+        };
+      }
+
+      const examples = await ModerationTrainingExample.findAll({
+        where: {
+          trainingJobId: job.id,
+          status: "queued",
+        },
+        attributes: ["text", "category"],
+        order: [["id", "ASC"]],
+        raw: true,
+        transaction,
+      });
+
+      if (examples.length !== 30) {
+        throw new Error(
+          `Training job ${job.id} has ${examples.length} examples; expected 30`
+        );
+      }
+
+      const leaseToken = crypto.randomBytes(32).toString("hex");
+
+      await job.update(
+        {
+          status: "preparing",
+          startedAt: now,
+          heartbeatAt: now,
+          leaseToken,
+          leaseExpiresAt: new Date(
+            now.getTime() + TRAINING_LEASE_MS
+          ),
+          retryCount: nextRetryCount,
+          errorMessage: null,
+          finishedAt: null,
+        },
+        { transaction }
+      );
+
+      return {
+        jobId: job.id,
+        leaseToken,
+        recovered: isRecovery,
+        examples: examples.map((example) => ({
+          text: example.text,
+          label: example.category,
+        })),
+      };
     });
+
+    if (result?.skippedJobId) {
+      return res.json({
+        job: null,
+        skippedJobId: result.skippedJobId,
+      });
+    }
+
     return res.json(result || { job: null });
-  } catch (e) {
-    console.error("Claim training job error", e);
-    return res.status(500).json({ message: "Claim failed" });
-  }
-});
-router.post("/internal/training/:id/status", workerAuth, async (req, res) => {
-  try {
-    const status = String(req.body?.status || "");
-    if (!["training", "evaluating", "completed", "failed"].includes(status))
-      return res.status(400).json({ message: "Invalid status" });
-    const job = await ModerationTrainingJob.findByPk(req.params.id);
-    if (!job) return res.sendStatus(404);
-    const transitions = { preparing: ["training", "failed"], training: ["evaluating", "failed"], evaluating: ["completed", "failed"] };
-    if (!(transitions[job.status] || []).includes(status))
-      return res.status(409).json({ message: "Invalid transition" });
-    await job.update({ status,
-      modelVersion: status === "completed" ? String(req.body.modelVersion || "").slice(0, 100) : job.modelVersion,
-      errorMessage: status === "failed" ? String(req.body.errorMessage || "Training failed").slice(0, 2000) : null,
-      finishedAt: ["completed", "failed"].includes(status) ? new Date() : null,
+  } catch (error) {
+    console.error("Claim training job error:", error);
+    return res.status(500).json({
+      message: "Claim failed",
     });
-    return res.json({ id: job.id, status: job.status });
-  } catch (e) {
-    console.error("Training status error", e);
-    return res.status(500).json({ message: "Status update failed" });
   }
 });
+
+/* ================= HEARTBEAT ================= */
+
+router.post(
+  "/internal/training/:id/heartbeat",
+  workerAuth,
+  async (req, res) => {
+    try {
+      const jobId = validTrainingJobId(req.params.id);
+      const leaseToken = getLeaseToken(req);
+
+      if (!jobId || !leaseToken) {
+        return res.status(400).json({
+          message: "Invalid job ID or lease token",
+        });
+      }
+
+      const result = await sequelize.transaction(
+        async (transaction) => {
+          const job = await ModerationTrainingJob.findByPk(
+            jobId,
+            {
+              transaction,
+              lock: transaction.LOCK.UPDATE,
+            }
+          );
+
+          if (
+            !job ||
+            !ACTIVE_TRAINING_STATUSES.includes(job.status) ||
+            !sameLeaseToken(leaseToken, job.leaseToken)
+          ) {
+            return false;
+          }
+
+          const now = new Date();
+
+          if (
+            !job.leaseExpiresAt ||
+            new Date(job.leaseExpiresAt) <= now
+          ) {
+            return false;
+          }
+
+          await job.update(
+            {
+              heartbeatAt: now,
+              leaseExpiresAt: new Date(
+                now.getTime() + TRAINING_LEASE_MS
+              ),
+            },
+            { transaction }
+          );
+
+          return true;
+        }
+      );
+
+      if (!result) {
+        return res.status(409).json({
+          message: "Lease expired or invalid",
+        });
+      }
+
+      return res.json({
+        jobId,
+        heartbeat: true,
+      });
+    } catch (error) {
+      console.error("Training heartbeat error:", error);
+      return res.status(500).json({
+        message: "Heartbeat update failed",
+      });
+    }
+  }
+);
+
+/* ================= UPDATE JOB STATUS ================= */
+
+router.post(
+  "/internal/training/:id/status",
+  workerAuth,
+  async (req, res) => {
+    try {
+      const jobId = validTrainingJobId(req.params.id);
+      const leaseToken = getLeaseToken(req);
+      const nextStatus = String(req.body?.status || "");
+
+      if (!jobId || !leaseToken) {
+        return res.status(400).json({
+          message: "Invalid job ID or lease token",
+        });
+      }
+
+      if (
+        !["training", "evaluating", "completed", "failed"]
+          .includes(nextStatus)
+      ) {
+        return res.status(400).json({
+          message: "Invalid status",
+        });
+      }
+
+      const result = await sequelize.transaction(
+        async (transaction) => {
+          const job = await ModerationTrainingJob.findByPk(
+            jobId,
+            {
+              transaction,
+              lock: transaction.LOCK.UPDATE,
+            }
+          );
+
+          if (
+            !job ||
+            !sameLeaseToken(leaseToken, job.leaseToken)
+          ) {
+            return null;
+          }
+
+          const now = new Date();
+
+          if (
+            !job.leaseExpiresAt ||
+            new Date(job.leaseExpiresAt) <= now
+          ) {
+            return null;
+          }
+
+          const transitions = {
+            preparing: ["training", "failed"],
+            training: ["evaluating", "failed"],
+            evaluating: ["completed", "failed"],
+          };
+
+          if (
+            !(transitions[job.status] || [])
+              .includes(nextStatus)
+          ) {
+            return null;
+          }
+
+          const finished = ["completed", "failed"]
+            .includes(nextStatus);
+
+          const modelVersion =
+            nextStatus === "completed"
+              ? String(req.body?.modelVersion || "")
+                  .trim()
+                  .slice(0, 100)
+              : job.modelVersion;
+
+          if (
+            nextStatus === "completed" &&
+            !modelVersion
+          ) {
+            return { invalidModelVersion: true };
+          }
+
+          await job.update(
+            {
+              status: nextStatus,
+              modelVersion,
+              errorMessage:
+                nextStatus === "failed"
+                  ? String(
+                      req.body?.errorMessage ||
+                      "Training failed"
+                    ).slice(0, 2000)
+                  : null,
+              finishedAt: finished ? now : null,
+              heartbeatAt: now,
+              leaseToken: finished ? null : job.leaseToken,
+              leaseExpiresAt: finished
+                ? null
+                : new Date(
+                    now.getTime() + TRAINING_LEASE_MS
+                  ),
+            },
+            { transaction }
+          );
+
+          return {
+            id: job.id,
+            status: nextStatus,
+          };
+        }
+      );
+
+      if (result?.invalidModelVersion) {
+        return res.status(400).json({
+          message: "Model version is required",
+        });
+      }
+
+      if (!result) {
+        return res.status(409).json({
+          message: "Invalid lease or status transition",
+        });
+      }
+
+      return res.json(result);
+    } catch (error) {
+      console.error("Training status error:", error);
+      return res.status(500).json({
+        message: "Status update failed",
+      });
+    }
+  }
+);
+
 
 /* ========================= DASHBOARD ========================= */
 
@@ -1797,17 +2163,17 @@ router.get("/moderation/activities", auth, isAdmin, async (req, res) => {
       const moderationFlags = existingFlags.length
         ? existingFlags
         : [{
-            id: `safe-${activity.id}`,
-            contentType: "activity",
-            activityId: activity.id,
-            field: "activityName",
-            label: "safe",
-            confidence: 1,
-            flaggedText: activity.activityName || "",
-            status: "pending",
-            createdAt: activity.updatedAt || activity.createdAt,
-            isSyntheticSafeResult: true,
-          }];
+          id: `safe-${activity.id}`,
+          contentType: "activity",
+          activityId: activity.id,
+          field: "activityName",
+          label: "safe",
+          confidence: 1,
+          flaggedText: activity.activityName || "",
+          status: "pending",
+          createdAt: activity.updatedAt || activity.createdAt,
+          isSyntheticSafeResult: true,
+        }];
 
       return {
         ...activity,
@@ -1850,17 +2216,17 @@ router.get("/moderation/activities/:activityId", auth, isAdmin, async (req, res)
       moderationFlags: flags.length
         ? flags.map(flag => formatFlag(flag))
         : [{
-            id: `safe-${activity.id}`,
-            contentType: "activity",
-            activityId: activity.id,
-            field: "activityName",
-            label: "safe",
-            confidence: 1,
-            flaggedText: activity.activityName || "",
-            status: "pending",
-            createdAt: activity.updatedAt || activity.createdAt,
-            isSyntheticSafeResult: true,
-          }],
+          id: `safe-${activity.id}`,
+          contentType: "activity",
+          activityId: activity.id,
+          field: "activityName",
+          label: "safe",
+          confidence: 1,
+          flaggedText: activity.activityName || "",
+          status: "pending",
+          createdAt: activity.updatedAt || activity.createdAt,
+          isSyntheticSafeResult: true,
+        }],
     });
   } catch (error) {
     console.error("Get activity moderation detail error:", error);
@@ -2150,7 +2516,7 @@ router.put("/moderation/reviews/:activityId/:userId/reviewed", auth, isAdmin, as
 router.put("/moderation/reviews/:activityId/:userId/hide", auth, isAdmin, async (req, res) => {
   try {
     const { activityId, userId } = req.params;
-        console.log("[REVIEW HIDE ROUTE] entered", {
+    console.log("[REVIEW HIDE ROUTE] entered", {
       activityId,
       userId,
       adminId: req.userId,
@@ -2173,7 +2539,7 @@ router.put("/moderation/reviews/:activityId/:userId/hide", auth, isAdmin, async 
       },
       raw: true,
     });
-        console.log("[REVIEW HIDE ROUTE] flags found", {
+    console.log("[REVIEW HIDE ROUTE] flags found", {
       count: flags.length,
     });
 
@@ -2482,5 +2848,87 @@ router.delete("/inappropriate-words/:id", auth, isAdmin, async (req, res) => {
     });
   }
 });
+
+
+/* ================= TRAINING EXAMPLES ================= */
+
+router.get("/training/examples", auth, isAdmin, async (req, res) => {
+  try {
+    const examples = await ModerationTrainingExample.findAll({
+      order: [["createdAt", "DESC"]],
+      limit: 100,
+    });
+
+    return res.json(examples);
+  } catch (error) {
+    console.error("Get training examples error:", error);
+    return res.status(500).json({
+      message: "ไม่สามารถโหลดประโยคฝึกโมเดลได้",
+    });
+  }
+});
+
+router.post("/training/examples", auth, isAdmin, async (req, res) => {
+  try {
+    const text = String(req.body?.text || "").trim();
+    const category = String(req.body?.category || "");
+
+    const allowedCategories = [
+      "profanity",
+      "insult",
+      "sexual",
+      "spam",
+    ];
+
+    if (!text || text.length > 2000) {
+      return res.status(400).json({
+        message: "กรุณากรอกประโยคความยาวไม่เกิน 2000 ตัวอักษร",
+      });
+    }
+
+    if (!allowedCategories.includes(category)) {
+      return res.status(400).json({
+        message: "ประเภทข้อความไม่ถูกต้อง",
+      });
+    }
+
+    const duplicate = await ModerationTrainingExample.findOne({
+      where: { text },
+    });
+
+    if (duplicate) {
+      return res.status(409).json({
+        message: "มีประโยคนี้อยู่แล้ว",
+      });
+    }
+
+    const example = await ModerationTrainingExample.create({
+      text,
+      category,
+      createdBy: req.userId,
+      status: "waiting",
+    });
+
+    let queueResult = null;
+
+    try {
+      queueResult = await queueTrainingJobs();
+    } catch (queueError) {
+      console.error("Training queue error:", queueError);
+    }
+
+    return res.status(201).json({
+      message: "เพิ่มประโยคฝึกโมเดลสำเร็จ",
+      example,
+      queueResult,
+    });
+  } catch (error) {
+    console.error("Create training example error:", error);
+    return res.status(500).json({
+      message: "ไม่สามารถเพิ่มประโยคฝึกโมเดลได้",
+    });
+  }
+});
+
 
 module.exports = router;

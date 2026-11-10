@@ -28,6 +28,7 @@ import AdminReports from "./pages/AdminReports";
 import AdminActivities from "./pages/AdminActivities";
 import AdminUsers from "./pages/AdminUsers";
 import AdminReportDetail from "./pages/AdminReportDetail";
+import AdminModelTraining from "./pages/AdminModelTraining";
 import CheckinHistory from "./pages/CheckinHistory";
 import JoinRequests from "./pages/JoinRequests";
 import AutoLogout from "./components/AutoLogout";
@@ -121,6 +122,7 @@ function App() {
                 <Route path="/admin/moderation/activities" element={<ProtectedRoute><AdminModerationActivities /></ProtectedRoute>} />
                 <Route path="/admin/moderation/reviews" element={<ProtectedRoute><AdminModerationReviews /></ProtectedRoute>} />
                 <Route path="/admin/inappropriate-words"element={<ProtectedRoute><AdminInappropriateWords /></ProtectedRoute>}/>
+                <Route path="/admin/model-training"element={<AdminModelTraining />}/>
                 
                 <Route path="/checkin-history" element={<ProtectedRoute><CheckinHistory /></ProtectedRoute>} />
               </Routes>

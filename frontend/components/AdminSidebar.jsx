@@ -8,6 +8,7 @@ import {
   FiShield,
   FiAlertTriangle,
   FiMessageSquare,
+  FiCpu,
 } from "react-icons/fi";
 import { MdGroups } from "react-icons/md";
 import { useAdminReport } from "../src/context/AdminReportContext";
@@ -41,6 +42,7 @@ export default function AdminSidebar() {
       pendingReviewModerations,
     ],
     ["เพิ่มคำไม่เหมาะสม", <FiShield />, "/admin/inappropriate-words", 0],
+    ["ฝึกโมเดล AI", <FiCpu />, "/admin/model-training", 0],
   ];
 
   const logout = async () => {
